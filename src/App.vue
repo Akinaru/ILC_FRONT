@@ -1,5 +1,7 @@
 <template>
-Hello word ILC!
+    <div id="content">
+      <RouterView />
+    </div>
 </template>
 
 <script setup>
