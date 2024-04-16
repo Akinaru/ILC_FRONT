@@ -4,6 +4,8 @@ import Index from './pages/index.vue'
 const routes = [
     { path: '/', name: 'Accueil', component: Index },
     { path: '/convert', name: 'Convert', component: () => import('./pages/convert.vue') },
+    { path: '/login', name: 'Login', component: () => import('./pages/login.vue') },
+    { path: '/dashboard', name: 'Dashboard', component: () => import('./pages/dashboard.vue') },
 
 ];
 
