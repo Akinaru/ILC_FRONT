@@ -1,5 +1,17 @@
 <template>
-    <p class="font-bold text-3xl">Index</p>
+    <div>
+        <div>
+            <p>Les accords</p>
+        </div>
+
+        <div>
+            <p>Espace communication</p>
+            <div>
+                <p>Articles</p>
+                <p>Agenda</p>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
