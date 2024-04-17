@@ -18,7 +18,7 @@
                 <p>{{ compo.comp_name }}</p>
                 <ul>
                     <li v-for="(dept, index) in compo.departments" :key="index" class="list-disc mx-10">
-                        <p :style="{backgroundColor: dept.dept_color}">{{ dept.dept_name }} ({{ dept.dept_shortname }})</p>
+                        <p class="m-1" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_name }} ({{ dept.dept_shortname }})</p>
                     </li>
                     <p class="list-disc mx-10" v-if="compo.departments.length == 0">Aucun département</p>
                 </ul>
