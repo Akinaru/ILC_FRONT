@@ -3,11 +3,20 @@
         <p>Composante</p>
         <div class="m-5">
             <p class="text-lg font-bold">Ajout composante</p>
+            <input type="color" id="comp_color">
             <input type="text" placeholder="Nom" id="comp_name">
             <input type="text" placeholder="Nom raccourci" id="comp_shortname">
             <input class="bg-slate-200 p-5 m-1" type="submit" value="Ajouter la composante" @click="addComponent">
         </div>
-        {{ composantes }}
+        <div>
+            <p>Liste composantes:</p>
+            <div>
+                <div class="m-2 flex items-center justify-center" v-for="(compo, index) in composantes" :key="index" >
+                    <p class="p-5 w-full" :style="{ backgroundColor: compo.comp_color }">{{ compo.comp_name }} ({{ compo.comp_shortname }}) - {{ compo.comp_color }}</p>
+                    <p class="bg-slate-400 p-5" @click="removeComponent(compo.comp_id)">X</p>
+                </div>
+            </div>
+        </div>
         <p>Réponse: {{ response }}</p>
     </div>
 </template>
@@ -19,15 +28,25 @@
     import config from '../../config';
 
     const composantes = ref([]);
+    const response = ref([]);
 
     async function addComponent(){
         const name = comp_name.value;
         const shortname = comp_shortname.value.toUpperCase();
+        const color = comp_color.value;
+        console.log(color)
 
-        const response = ref([]);
-
-        const requestData = { comp_name: name, comp_shortname: shortname };
+        const requestData = { comp_name: name, comp_shortname: shortname, comp_color: color };
         await request("POST", response, config.apiUrl+'component', requestData);
+        if (response.value.status == 201) {
+            comp_name.value = '';
+            comp_shortname.value = '';
+        }
+        fetchAll();
+    }
+
+    async function removeComponent(id){
+        await request('DELETE', response, config.apiUrl+'component/deletebyid/'+id);
         fetchAll();
     }
 
