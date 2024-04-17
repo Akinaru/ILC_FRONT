@@ -5,6 +5,7 @@
             <input class="bg-slate-200 p-5 m-1" type="submit" value="Réinitialiser la base" @click="resetMethod('all')">
             <input class="bg-slate-200 p-5 m-1" type="submit" value="Réinitialiser les actions" @click="resetMethod('action')">
             <input class="bg-slate-200 p-5 m-1" type="submit" value="Réinitialiser les articles" @click="resetMethod('t_e_article_art')">
+            <input class="bg-slate-200 p-5 m-1" type="submit" value="Réinitialiser les composantes" @click="resetMethod('t_e_component_comp')">
         </div>
         
         {{ response }}  
