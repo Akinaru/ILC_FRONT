@@ -34,7 +34,6 @@
 
     async function fetchAll(){
         await request('GET', articles, 'https://gallotta.fr/ILC/api/article')
-        console.log(articles.value);
     }
 
     onMounted(fetchAll)
