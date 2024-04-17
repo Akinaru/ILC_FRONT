@@ -1,13 +1,6 @@
 <template>
     <div class="min-h-screen min-w-screen">
-        <RouterLink :to="{name: 'Dashboard'}">Dashboard</RouterLink>
-        <form @submit.prevent="fetchUser">
-            <div>
-                <input type="text" placeholder="login" v-model="login">
-                <input type="submit">
-            </div>
-        </form>
-        {{ user }}
+        <RouterLink :to="{name: 'Dashboard'}" class="p-3 bg-slate-400">Dashboard</RouterLink>
     </div>
 </template>
 

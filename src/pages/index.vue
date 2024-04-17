@@ -6,7 +6,7 @@
 
         <div>
             <p>Espace communication</p>
-            <div>
+            <div class="m-5">
                 <p>Articles</p>
                 <div v-for="(article, index) in articles" :key="index" class="m-2 bg-slate-400">
                     <p v-if="article.art_pin" class="">
@@ -29,11 +29,12 @@
     import { onMounted } from 'vue';
     import { ref } from 'vue';
     import { request } from '../composables/httpRequest';
+    import config from '../config';
 
     const articles = ref([]);
 
     async function fetchAll(){
-        await request('GET', articles, 'https://gallotta.fr/ILC/api/article')
+        await request('GET', articles, config.apiUrl+'article')
     }
 
     onMounted(fetchAll)

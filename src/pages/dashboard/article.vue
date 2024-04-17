@@ -39,6 +39,7 @@
 <script setup>
     import { request } from '../../composables/httpRequest';
     import { onMounted, ref } from 'vue';
+    import config from '../../config';
 
     const response = ref([]);
     const articles = ref([]);
@@ -49,17 +50,17 @@
         const pinned = document.getElementById('art_pin').checked;
 
         const requestData = { art_title: title, art_description: description, art_pin: pinned };
-        await request("POST", response, 'https://gallotta.fr/ILC/api/article', requestData);
+        await request("POST", response, config.apiUrl+'article', requestData);
         fetchAll();
     }
 
     async function removeArticle(id){
-        await request('DELETE', response, 'https://gallotta.fr/ILC/api/article/deletebyid/'+id);
+        await request('DELETE', response, config.apiUrl+'article/deletebyid/'+id);
         fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', articles, 'https://gallotta.fr/ILC/api/article');
+        await request('GET', articles, config.apiUrl+'article');
     }
 
     onMounted(fetchAll);

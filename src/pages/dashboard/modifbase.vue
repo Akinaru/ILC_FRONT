@@ -13,12 +13,13 @@
 <script setup>
     import { ref } from 'vue';
     import { request } from '../../composables/httpRequest';
+    import config from '../../config';
 
 
     const response = ref([]);
     const password = ref('');
 
     async function resetMethod(who){
-        await request("DELETE", response, `https://gallotta.fr/ILC/api/reset/${who}?password=${password.value}`);
+        await request("DELETE", response, config.apiUrl+`reset/${who}?password=${password.value}`);
     }
 </script>
