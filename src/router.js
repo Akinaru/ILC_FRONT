@@ -12,6 +12,7 @@ const routes = [
         { path: 'composante', name: 'ComposanteDash', component: () => import('./pages/dashboard/composante.vue') },
         { path: 'parametres', name: 'ParametresDash', component: () => import('./pages/dashboard/parametres.vue') },
         { path: 'modifbase', name: 'ModifBaseDash', component: () => import('./pages/dashboard/modifbase.vue') },
+        { path: 'accord', name: 'AccordDash', component: () => import('./pages/dashboard/accord.vue') },
     ]},
 
 

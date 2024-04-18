@@ -1,13 +1,19 @@
 <template>
-<p class="text-xl font-bold">Articles</p>
+    <div>
+        <p class="text-xl font-bold">Articles</p>
+
+        <!-- Formulaire d'ajout d'article -->
         <div class="m-5">
             <p class="text-lg font-bold">Ajout article</p>
-            <input type="text" placeholder="Titre" id="art_title">
-            <input type="text" placeholder="Description" id="art_description">
-            <label for="art_pin">Epinglé ?</label>
-            <input id="art_pin" type="checkbox">
-            <input class="bg-slate-200 p-5 m-1" type="submit" value="Ajouter l'article" @click="addArticle">
+            <form @submit.prevent="addArticle">
+                <input type="text" placeholder="Titre" v-model="newArticle.title">
+                <input type="text" placeholder="Description" v-model="newArticle.description">
+                <label for="art_pin">Epinglé ?</label>
+                <input id="art_pin" type="checkbox" v-model="newArticle.pinned">
+                <button class="bg-slate-200 p-5 m-1" type="submit">Ajouter l'article</button>
+            </form>
         </div>
+
         <div class="m-5">
             <p class="text-lg font-bold">Liste article</p>
             <div v-for="(article, index) in articles" :key="index" class="m-2 bg-slate-400 flex items-center justify-between">
@@ -23,17 +29,12 @@
                         <p>{{ article.art_description }}</p>
                     </div>
                     <div>
-                        <p class="hover:opacity-60 p-5 hover:cursor-pointer" @click="removeArticle(article.art_id)">
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512.021 512.021" style="enable-background:new 0 0 512.021 512.021;" xml:space="preserve" width="32" height="32">
-                                <g>
-                                    <path d="M301.258,256.01L502.645,54.645c12.501-12.501,12.501-32.769,0-45.269c-12.501-12.501-32.769-12.501-45.269,0l0,0   L256.01,210.762L54.645,9.376c-12.501-12.501-32.769-12.501-45.269,0s-12.501,32.769,0,45.269L210.762,256.01L9.376,457.376   c-12.501,12.501-12.501,32.769,0,45.269s32.769,12.501,45.269,0L256.01,301.258l201.365,201.387   c12.501,12.501,32.769,12.501,45.269,0c12.501-12.501,12.501-32.769,0-45.269L301.258,256.01z"/>
-                                </g>
-                            </svg>
-                        </p>
+                        <p class="hover:opacity-60 p-5 hover:cursor-pointer" @click="removeArticle(article.art_id)">X</p>
                     </div>
                 </div>
-        </div>
-        {{ response }}
+            </div>
+            {{ response }}
+    </div>
 </template>
 
 <script setup>
@@ -43,20 +44,25 @@
 
     const response = ref([]);
     const articles = ref([]);
+    const newArticle = ref({ title: '', description: '', pinned: false });
 
     async function addArticle(){
-        const title = art_title.value;
-        const description = art_description.value;
-        const pinned = document.getElementById('art_pin').checked;
-
-        const requestData = { art_title: title, art_description: description, art_pin: pinned };
+        const requestData = { 
+            art_title: newArticle.value.title,
+            art_description: newArticle.value.description,
+            art_pin: newArticle.value.pinned 
+        };
         await request("POST", response, config.apiUrl+'article', requestData);
-        fetchAll();
+        await fetchAll();
+        // Réinitialiser les champs du formulaire après l'ajout de l'article
+        newArticle.value.title = '';
+        newArticle.value.description = '';
+        newArticle.value.pinned = false;
     }
 
     async function removeArticle(id){
         await request('DELETE', response, config.apiUrl+'article/deletebyid/'+id);
-        fetchAll();
+        await fetchAll();
     }
 
     async function fetchAll(){

@@ -3,22 +3,26 @@
         <p>Departement</p>
         <div class="m-5">
             <p class="text-lg font-bold">Ajout departement</p>
-            <div> 
-                <select id="comp_id" name="composante_id">
+
+            <form @submit.prevent="addDepartment" class="bg-slate-100">
+                <select v-model="newDep.comp">
                     <option v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }}</option>
                 </select> 
-                <input type="color" id="dept_color">
-                <input type="text" placeholder="Nom" id="dept_name">
-                <input type="text" placeholder="Nom raccourci" id="dept_shortname">
-                <input class="bg-slate-200 p-5 m-1" type="submit" value="Ajouter le departement" @click="addDepartment">
-            </div>
+                <input type="color" v-model="newDep.color">
+                <input type="text" placeholder="Nom" v-model="newDep.name">
+                <input type="text" placeholder="Nom raccourci" v-model="newDep.shortname">
+                <button class="bg-slate-200 p-5 m-1" type="submit">Ajouter le département</button>
+            </form>
         </div>
         <div>
             <div v-for="(compo, index) in composantes" :key="index">
                 <p>{{ compo.comp_name }}</p>
                 <ul>
-                    <li v-for="(dept, index) in compo.departments" :key="index" class="list-disc mx-10">
-                        <p class="m-1" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_name }} ({{ dept.dept_shortname }})</p>
+                    <li v-for="(dept, index) in compo.departments" :key="index" class="list-disc mx-10 flex items-center justify-center m-1">
+                        <p class="w-full p-2" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_name }} ({{ dept.dept_shortname }})</p>
+                        <div>
+                            <p class="hover:opacity-60 hover:cursor-pointer bg-slate-200 p-2" @click="removeDepartment(dept.dept_id)">X</p>
+                        </div>
                     </li>
                     <p class="list-disc mx-10" v-if="compo.departments.length == 0">Aucun département</p>
                 </ul>
@@ -38,19 +42,24 @@
     const composantes = ref([]);
     const response = ref([]);
 
-    async function addDepartment(){
-        const name = dept_name.value;
-        const shortname = dept_shortname.value.toUpperCase();
-        const color = dept_color.value;
-        const composante = comp_id.value;
+    const newDep = ref({ name: '', shortname: '', color: '#9e9e9e', compo: 1 });
 
-        const requestData = { dept_name: name, dept_shortname: shortname, dept_color: color , comp_id: composante};
+
+    async function addDepartment(){
+        const requestData = { 
+            dept_name: newDep.value.name,
+            dept_shortname: newDep.value.shortname,
+            dept_color: newDep.value.color,
+            comp_id: newDep.value.comp 
+        };
         await request("POST", response, config.apiUrl+'department', requestData);
-        if (response.value.status == 201) {
-            dept_name.value = '';
-            dept_shortname.value = '';
-        }
-        fetchAll();
+        await fetchAll();
+
+        newDep.value.name = '';
+        newDep.value.shortname = '';
+        newDep.value.color = '#9e9e9e';
+        newDep.value.compo = '';
+
     }
 
     async function removeDepartment(id){
