@@ -2,6 +2,11 @@
     <div>
         <div>
             <p>Les accords</p>
+            <div class="m-5">
+                <div v-for="(accord, index) in accords" :key="index">
+                    <p>{{ accord }}</p>
+                </div>
+            </div>
         </div>
 
         <div>
@@ -32,9 +37,11 @@
     import config from '../config';
 
     const articles = ref([]);
+    const accords = ref([]);
 
     async function fetchAll(){
         await request('GET', articles, config.apiUrl+'article')
+        await request('GET', accords, config.apiUrl+'agreement')
     }
 
     onMounted(fetchAll)
