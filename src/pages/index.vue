@@ -3,9 +3,12 @@
         <div>
             <p>Les accords</p>
             <div class="m-5">
-                <div v-for="(accord, index) in accords" :key="index">
-                    <p>{{ accord }}</p>
-                </div>
+                <ul v-for="(accord, index) in accords" :key="index" class="bg-slate-300 m-2 *:list-disc">
+                    <li>{{ accord.university.univ_name }} ({{ accord.university.univ_city }})</li>
+                    <li>{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}</li>
+                    <li>{{ accord.component.comp_name }}</li>
+                    <li>{{ accord.departments }}</li>
+                </ul>
             </div>
         </div>
 

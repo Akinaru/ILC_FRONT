@@ -32,7 +32,7 @@
         <p class="font-bold">Liste des accords:</p>
         
         <div v-for="(accord, index) in accords" :key="index" class="m-5 bg-slate-200">
-            <p>{{accord.university.univ_name}} ({{ accord.university.univ_shortname }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
+            <p>{{accord.university.univ_name}} ({{ accord.university.univ_city }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
             <p>Les départements: </p>
             <div class="flex items-center justify-start">
                 <div v-for="(dept, index) in accord.departments" :key="index">
