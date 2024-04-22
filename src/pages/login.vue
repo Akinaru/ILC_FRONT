@@ -6,6 +6,7 @@
 
 
 <script setup>
+
     import { request } from '../composables/httpRequest'
     import { ref } from 'vue';
 
@@ -15,4 +16,5 @@
     async function fetchUser(){
         await request('GET', user, 'https://srv-peda.iut-acy.local/ldama/ldap/?login='+login.value)
     }
+
 </script>
