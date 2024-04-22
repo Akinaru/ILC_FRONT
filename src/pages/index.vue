@@ -7,7 +7,12 @@
                     <li>{{ accord.university.univ_name }} ({{ accord.university.univ_city }})</li>
                     <li>{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}</li>
                     <li>{{ accord.component.comp_name }}</li>
-                    <li>{{ accord.departments }}</li>
+                    <li>
+                        <ul>
+                            <p>Les departements:</p>
+                            <li v-for="(dept,index) in accord.departments" class="list-disc mx-6" :key="index" :style="{ color: dept.pivot.deptagree_valide === 0 ? 'red' : '' }">{{ dept.dept_name }} ({{ dept.dept_shortname }}) - Validé par dep: {{ dept.pivot.deptagree_valide === 1 ? 'Oui' : 'Non' }}</li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
