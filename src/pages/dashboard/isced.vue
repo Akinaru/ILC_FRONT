@@ -34,7 +34,7 @@
         const code = isc_code.value;
 
         const requestData = { isc_code: code, isc_name: name };
-        await request("POST", response, config.apiUrl+'isced', requestData);
+        await request("POST", response, config.apiURL+'api/isced', requestData);
         if (response.value.status == 201) {
             isc_name.value = '';
             isc_code.value = '';
@@ -43,12 +43,12 @@
     }
 
     async function deleteIsced(id){
-        await request('DELETE', response, config.apiUrl+'isced/deletebyid/'+id);
+        await request('DELETE', response, config.apiURL+'api/isced/deletebyid/'+id);
         await fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', isced, config.apiUrl+'isced');
+        await request('GET', isced, config.apiURL+'api/isced');
     }
 
     onMounted(fetchAll);

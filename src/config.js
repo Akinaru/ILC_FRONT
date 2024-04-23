@@ -1,3 +1,3 @@
 export default{
-    apiUrl: 'https://gallotta.fr/ILC/api/'
+    apiUrl: 'https://gallotta.fr/ILC/'
 }

@@ -10,13 +10,13 @@
                 <input type="text" placeholder="Description" v-model="newArticle.description">
                 <label for="art_pin">Epinglé ?</label>
                 <input id="art_pin" type="checkbox" v-model="newArticle.pinned">
-                <button class="bg-slate-200 p-5 m-1" type="submit">Ajouter l'article</button>
+                <button class="bg-base-200 p-5 m-1" type="submit">Ajouter l'article</button>
             </form>
         </div>
 
         <div class="m-5">
             <p class="text-lg font-bold">Liste article</p>
-            <div v-for="(article, index) in articles" :key="index" class="m-2 bg-slate-400 flex items-center justify-between">
+            <div v-for="(article, index) in articles" :key="index" class="m-2 bg-base-300 flex items-center justify-between">
                     <div class="w-full">
                         <p v-if="article.art_pin" class="">
                             <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Epingle</span>
@@ -52,21 +52,23 @@
             art_description: newArticle.value.description,
             art_pin: newArticle.value.pinned 
         };
-        await request("POST", response, config.apiUrl+'article', requestData);
+        await request("POST", response, config.apiURL+'api/article', requestData);
+
         await fetchAll();
-        // Réinitialiser les champs du formulaire après l'ajout de l'article
+
         newArticle.value.title = '';
         newArticle.value.description = '';
         newArticle.value.pinned = false;
+
     }
 
     async function removeArticle(id){
-        await request('DELETE', response, config.apiUrl+'article/deletebyid/'+id);
+        await request('DELETE', response, config.apiURL+'api/article/deletebyid/'+id);
         await fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', articles, config.apiUrl+'article');
+        await request('GET', articles, config.apiURL+'api/article');
     }
 
     onMounted(fetchAll);

@@ -33,7 +33,7 @@
         const shortname = comp_shortname.value.toUpperCase();
 
         const requestData = { comp_name: name, comp_shortname: shortname };
-        await request("POST", response, config.apiUrl+'component', requestData);
+        await request("POST", response, config.apiURL+'api/component', requestData);
         if (response.value.status == 201) {
             comp_name.value = '';
             comp_shortname.value = '';
@@ -42,7 +42,7 @@
     }
 
     async function fetchAll(){
-        await request('GET', composantes, config.apiUrl+'component');
+        await request('GET', composantes, config.apiURL+'api/component');
     }
 
     onMounted(fetchAll);

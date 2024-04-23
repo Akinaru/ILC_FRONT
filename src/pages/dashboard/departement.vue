@@ -52,7 +52,7 @@
             dept_color: newDep.value.color,
             comp_id: newDep.value.comp 
         };
-        await request("POST", response, config.apiUrl+'department', requestData);
+        await request("POST", response, config.apiURL+'api/department', requestData);
         await fetchAll();
 
         newDep.value.name = '';
@@ -63,13 +63,13 @@
     }
 
     async function removeDepartment(id){
-        await request('DELETE', response, config.apiUrl+'department/deletebyid/'+id);
+        await request('DELETE', response, config.apiURL+'api/department/deletebyid/'+id);
         fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', departements, config.apiUrl+'department');
-        await request('GET', composantes, config.apiUrl+'component');
+        await request('GET', departements, config.apiURL+'api/department');
+        await request('GET', composantes, config.apiURL+'api/component');
     }
 
     onMounted(fetchAll);

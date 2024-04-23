@@ -87,16 +87,16 @@
             typeaccord: newAgreement.value.typeaccord,
             nbplace: newAgreement.value.nbplace 
         };
-        await request("POST", response, config.apiUrl+'agreement', requestData);
+        await request("POST", response, config.apiURL+'api/api/agreement', requestData);
         await fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', accords, config.apiUrl+'agreement');
-        await request('GET', isceds, config.apiUrl+'isced');
-        await request('GET', composantes, config.apiUrl+'component');
-        await request('GET', universites, config.apiUrl+'university');
-        await request('GET', departments, config.apiUrl+'department');
+        await request('GET', accords, config.apiURL+'api/agreement');
+        await request('GET', isceds, config.apiURL+'api/isced');
+        await request('GET', composantes, config.apiURL+'api/component');
+        await request('GET', universites, config.apiURL+'api/university');
+        await request('GET', departments, config.apiURL+'api/department');
 
         //On cache tous les formulaires
         showForms.value = Array(accords.value.length).fill(false);
@@ -110,7 +110,7 @@
     }
 
     async function removeDeptFromAgreement(agree_id, dept_id){
-        await request('DELETE', response, config.apiUrl+'departmentagreement/delete/'+agree_id+'/'+dept_id);
+        await request('DELETE', response, config.apiURL+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
         fetchAll();
     }
 
@@ -122,7 +122,7 @@
             dept_id: selectedDepartment.value[agree_id],
             deptagree_valide: true
         }
-        await request('POST', response, config.apiUrl+'departmentagreement', requestData);
+        await request('POST', response, config.apiURL+'api/departmentagreement', requestData);
         fetchAll();
     }
 

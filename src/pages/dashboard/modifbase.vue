@@ -21,6 +21,6 @@
     const password = ref('');
 
     async function resetMethod(who){
-        await request("DELETE", response, config.apiUrl+`reset/${who}?password=${password.value}`);
+        await request("DELETE", response, config.apiUrl+`api/reset/${who}?password=${password.value}`);
     }
 </script>
