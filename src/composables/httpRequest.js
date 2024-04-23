@@ -19,7 +19,6 @@ export async function request(method, object, url, data = null) {
         object.value = responseData;
         if (responseData.message || responseData.error) {
             alerts.push(responseData);
-            console.log(alerts)
             renderAlerts();
         }
     } catch (error) {

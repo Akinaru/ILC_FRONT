@@ -21,17 +21,20 @@
             </form>
         </div>
 
-        <div class="m-5">
+        <div>
             <p class="text-lg font-bold">Liste article</p>
 
-            <div class="flex flex-col">
-                <div v-for="(article, index) in articles" :key="index" class="flex my-1">
+
+            <div v-if="articles && articles.length > 0" class="flex flex-col">
+                <div v-for="(article, index) in articles" :key="index" class="flex my-1 mx-10">
                     <ArticleComp :article="article"></ArticleComp>
                     <button class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-300" @click="removeArticle(article.art_id)">
                         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-    
+            </div>
+            <div v-else class="flex items-center justify-center my-20">
+                <span class="loading loading-dots loading-lg"></span>
             </div>
         </div>
     </div>
