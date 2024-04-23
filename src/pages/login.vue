@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen min-w-screen">
-        <RouterLink :to="{name: 'Dashboard'}" class="p-3 bg-slate-400">Dashboard</RouterLink>
+        <RouterLink :to="{name: 'Dashboard'}" class="p-3 bg-base-300">Dashboard</RouterLink>
     </div>
 </template>
 

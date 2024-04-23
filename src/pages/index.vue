@@ -1,7 +1,7 @@
 <template>
     <div>
         <div>
-            <p>Les accords</p>
+            <p class="text-2xl font-bold">Les accords</p>
             <div class="m-5">
                 <ul v-for="(accord, index) in accords" :key="index" class="bg-base-300 m-2 *:list-disc">
                     <li>{{ accord.university.univ_name }} ({{ accord.university.univ_city }})</li>
@@ -18,13 +18,13 @@
         </div>
 
         <div>
-            <p>Espace communication</p>
+            <p class="text-2xl font-bold">Espace communication</p>
             <div class="m-5">
-                <p>Articles</p>
+                <p class="text-xl font-bold">Articles</p>
                 <div class="flex flex-col">
-                    <ArticleComp v-for="(article, index) in articles" :key="index" :article="article"></ArticleComp>
+                    <ArticleComp v-for="(article, index) in articles" :key="index" :article="article" class="my-1"></ArticleComp>
                 </div>
-                <p>Agenda</p>
+                <p class="text-xl font-bold">Agenda</p>
             </div>
         </div>
     </div>

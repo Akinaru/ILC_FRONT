@@ -1,6 +1,8 @@
 import AlertComp from '../components/AlertComp.vue';
 import { createApp, h } from 'vue';
 
+const alerts = [];
+
 export async function request(method, object, url, data = null) {
     const requestOptions = {
         method: method,
@@ -16,22 +18,33 @@ export async function request(method, object, url, data = null) {
         const responseData = await response.json();
         object.value = responseData;
         if (responseData.message || responseData.error) {
-            const app = createApp({
-                render() {
-                    return h(AlertComp, { response: responseData });
-                }
-            });
-
-            const tempDiv = document.createElement('div');
-            document.body.appendChild(tempDiv);
-            app.mount(tempDiv);
-
-            const alertHtml = tempDiv.innerHTML;
-            document.body.removeChild(tempDiv);
-            document.getElementById('alert-container').innerHTML += alertHtml;
-
+            alerts.push(responseData);
+            console.log(alerts)
+            renderAlerts();
         }
     } catch (error) {
         console.error('Error:', error);
     }
 }
+
+function renderAlerts() {
+    const alertContainer = document.getElementById('alert-container');
+    if (alertContainer) {
+        // Efface le contenu précédent du conteneur
+        alertContainer.innerHTML = '';
+        // Crée une instance d'application Vue pour les alertes
+        const alertApp = createApp({
+            render() {
+                // Utilise un fragment pour éviter d'ajouter une div supplémentaire
+                return h('div', {}, alerts.map(responseData => {
+                    return h(AlertComp, { response: responseData });
+                }));
+            }
+        });
+        // Monte les alertes directement dans le conteneur cible
+        alertApp.mount(alertContainer);
+    } else {
+        console.error("Alert container not found!");
+    }
+}
+

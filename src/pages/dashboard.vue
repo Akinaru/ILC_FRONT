@@ -1,7 +1,7 @@
 <template>
     <div>
-        <p>Dashboard</p>
-        <div class="m-5 flex">
+        <p class="text-2xl font-bold">Dashboard</p>
+        <div class="m-5 flex flex-wrap">
             <RouterLink :to="{name: 'ArticleDash'}" class="m-3 p-3 bg-base-300">Article</RouterLink>
             <RouterLink :to="{name: 'DepartementDash'}" class="m-3 p-3 bg-base-300">Departement</RouterLink>
             <RouterLink :to="{name: 'ComposanteDash'}" class="m-3 p-3 bg-base-300">Composante</RouterLink>
