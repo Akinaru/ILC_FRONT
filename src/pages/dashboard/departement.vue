@@ -62,7 +62,7 @@
     const composantes = ref([]);
     const response = ref([]);
 
-    const newDep = ref({ name: '', shortname: '', color: '#9e9e9e', compo: 1 });
+    const newDep = ref({ name: '', shortname: '', color: '#9e9e9e', compo: 0 });
 
 
     async function addDepartment(){
