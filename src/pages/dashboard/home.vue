@@ -6,7 +6,7 @@
 
 
     <div class="flex items-center justify-center">
-        <button @click="logout" class="btn btn-primary" type="submit">Se déconnecter</button>
+        <button @click="logout" class="btn btn-error" type="submit">Se déconnecter</button>
     </div>
 </template>
 
