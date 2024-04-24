@@ -1,21 +1,33 @@
 <template>
     <div>
-        <p>Composantes</p>
+        <p class="text-lg font-bold">Composantes</p>
         <div class="m-5">
-            <p class="text-lg font-bold">Ajout composante</p>
-            <input type="text" placeholder="Nom" id="comp_name">
-            <input type="text" placeholder="Nom raccourci" id="comp_shortname">
-            <input class="bg-slate-200 p-5 m-1" type="submit" value="Ajouter la composante" @click="addComponent">
+            <div class="m-5 flex justify-center items-center flex-col">
+                <p class="text-lg font-bold">Ajout composante</p>
+                <form @submit.prevent="addComponent" class="w-fit *:my-2">
+                    <input type="text" placeholder="Nom" v-model="newComp.name" class="input input-bordered w-full " />
+                    <input type="text" placeholder="Nom raccourci" v-model="newComp.shortname" class="input input-bordered w-full" />
+                    <div class="flex items-center justify-center">
+                        <button class="btn btn-primary" type="submit">Ajouter la composante</button>
+
+                    </div>
+                </form>
+            </div>
         </div>
         <div>
-            <p>Liste composantes:</p>
-            <ul>
-                <li class="list-disc mx-10" v-for="(compo, index) in composantes" :key="index">
-                    {{ compo.comp_name }} ({{ compo.comp_shortname }})
-                </li>
-            </ul>
+            <p class="text-lg font-bold">Liste composantes</p>
+            <div v-if="composantes && composantes.length > 0">
+                <div v-for="(compo, index) in composantes" :key="index" class="my-1 mx-10 flex">
+                    <p class="bg-base-300 p-5 w-full">{{ compo.comp_name }} ({{ compo.comp_shortname }})</p>
+                    <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeComponent(compo.comp_id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div v-else class="flex items-center justify-center my-20">
+                <span class="loading loading-dots loading-lg"></span>
+            </div>
         </div>
-        <p>Réponse: {{ response }}</p>
     </div>
 </template>
 
@@ -28,21 +40,25 @@
     const composantes = ref([]);
     const response = ref([]);
 
-    async function addComponent(){
-        const name = comp_name.value;
-        const shortname = comp_shortname.value.toUpperCase();
+    const newComp = ref({ name: '', shortname: '' });
 
-        const requestData = { comp_name: name, comp_shortname: shortname };
-        await request("POST", response, config.apiURL+'api/component', requestData);
+    async function addComponent(){
+        const requestData = { comp_name: newComp.value.name, comp_shortname: newComp.value.shortname.toUpperCase() };
+        await request("POST", response, config.apiUrl+'api/component', requestData);
         if (response.value.status == 201) {
-            comp_name.value = '';
-            comp_shortname.value = '';
+            newComp.value.name = '';
+            newComp.value.shortname = '';
         }
         fetchAll();
     }
 
+    async function removeComponent(id){
+        await request('DELETE', response, config.apiUrl+'api/component/deletebyid/'+id);
+        fetchAll();
+    }
+
     async function fetchAll(){
-        await request('GET', composantes, config.apiURL+'api/component');
+        await request('GET', composantes, config.apiUrl+'api/component');
     }
 
     onMounted(fetchAll);

@@ -68,7 +68,7 @@
     async function addDepartment(){
         const requestData = { 
             dept_name: newDep.value.name,
-            dept_shortname: newDep.value.shortname,
+            dept_shortname: newDep.value.shortname.toUpperCase(),
             dept_color: newDep.value.color,
             comp_id: newDep.value.comp 
         };

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="visible" role="alert" :class="{'alert-success': response && response.message, 'alert-error': response && response.error}" class="relative alert m-1">
+    <div v-if="visible" role="alert" :class="{'alert-success': response && response.message, 'alert-error': response && response.error}" class="relative alert m-1 w-2/5">
         <svg v-if="response && response.error" xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         <svg v-else xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         
@@ -17,22 +17,25 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { useAlertStore } from '../../stores/alertStore';
+    import { ref, onMounted, defineProps } from 'vue';
 
     const props = defineProps({
-        response: Object
-    })
+        response: Object,
+    });
 
     const visible = ref(true);
+    const alertStore = useAlertStore();
 
     function dismissAlert() {
         visible.value = false;
+        alertStore.removeAlert(props.response);
     }
 
     function startTimer() {
         setTimeout(() => {
             dismissAlert();
-        }, 10* 1000); //nb secondes * ajustement
+        }, 10 * 1000); //nb secondes * ajustement
     }
 
     onMounted(startTimer);

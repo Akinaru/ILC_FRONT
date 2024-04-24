@@ -1,22 +1,34 @@
 <template>
     <div>
-        <p>Isced</p>
+        <p class="text-lg font-bold">Isced</p>
         <div class="m-5">
-            <p class="text-lg font-bold">Ajout Isced</p>
-            <input type="number" placeholder="Code" id="isc_code">
-            <input type="text" placeholder="Nom" id="isc_name">
-            <input class="bg-slate-200 p-5 m-1 hover:cursor-pointer hover:opacity-60" type="submit" value="Ajouter l'isced" @click="addIsced">
+            <div class="m-5 flex justify-center items-center flex-col">
+                <p class="text-lg font-bold">Ajout isced</p>
+                <form @submit.prevent="addIsced" class="w-fit *:my-2">
+                    <input type="number" placeholder="Code" v-model="newIsced.code" class="input input-bordered w-full" />
+                    <input type="text" placeholder="Nom" v-model="newIsced.name" class="input input-bordered w-full " />
+                    <div class="flex items-center justify-center">
+                        <button class="btn btn-primary" type="submit">Ajouter l'isced</button>
+
+                    </div>
+                </form>
+            </div>
         </div>
         <div>
-            <p>Liste isced:</p>
-            <ul>
-                <li class="mx-10 flex items-center justify-between bg-slate-100" v-for="(isc, index) in isced" :key="index">
-                    <p class="bg-slate-100">({{ isc.isc_code }}) {{ isc.isc_name }}</p>
-                    <p @click="deleteIsced(isc.isc_id)" class="hover:cursor-pointer hover:opacity-60 bg-slate-300 p-3">X</p>
-                </li>
-            </ul>
+            <p class="text-lg font-bold">Liste isced</p>
+
+            <div v-if="isced && isced.length > 0">
+                <div  v-for="(isc, index) in isced" :key="index" class="my-1 mx-10 flex">
+                    <p class="bg-base-300 p-5 w-full">({{ isc.isc_code }}) {{ isc.isc_name }}</p>
+                    <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteIsced(isc.isc_id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div v-else class="flex items-center justify-center my-20">
+                <span class="loading loading-dots loading-lg"></span>
+            </div>
         </div>
-        <p>Réponse: {{ response }}</p>
     </div>
 </template>
 
@@ -29,26 +41,26 @@
     const isced = ref([]);
     const response = ref([]);
 
-    async function addIsced(){
-        const name = isc_name.value;
-        const code = isc_code.value;
+    const newIsced = ref({ code: 0, name: '' });
 
-        const requestData = { isc_code: code, isc_name: name };
-        await request("POST", response, config.apiURL+'api/isced', requestData);
+    async function addIsced(){
+
+        const requestData = { isc_code: newIsced.value.code.toString(), isc_name: newIsced.value.name };
+        await request("POST", response, config.apiUrl+'api/isced', requestData);
         if (response.value.status == 201) {
-            isc_name.value = '';
-            isc_code.value = '';
+            newIsced.value.code = 0;
+            newIsced.value.name = '';
         }
         fetchAll();
     }
 
     async function deleteIsced(id){
-        await request('DELETE', response, config.apiURL+'api/isced/deletebyid/'+id);
+        await request('DELETE', response, config.apiUrl+'api/isced/deletebyid/'+id);
         await fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', isced, config.apiURL+'api/isced');
+        await request('GET', isced, config.apiUrl+'api/isced');
     }
 
     onMounted(fetchAll);
