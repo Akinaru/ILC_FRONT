@@ -1,5 +1,8 @@
 <template>
     <p>Bienvenue {{ prenom }} sur votre dashboard !</p>
+    <div>
+        {{ accountStore }}
+    </div>
 
 
     <div class="flex items-center justify-center">
@@ -14,11 +17,12 @@
     const router = useRouter();
 
     const accountStore = useAccountStore();
-    const { nom, prenom } = storeToRefs(accountStore)
+    const { last_login, nom, prenom } = storeToRefs(accountStore)
 
     function logout(){
         const accountStore = useAccountStore();
         accountStore.logoutAccount();
         router.push({ name: 'Login' });
     }
+
 </script>

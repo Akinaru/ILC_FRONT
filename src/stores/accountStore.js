@@ -5,7 +5,8 @@ export const useAccountStore = defineStore("account", {
     login: null,
     nom: null,
     prenom: null,
-    logged: false
+    logged: false,
+    last_login: null,
   }),
   actions: {
     loginAccount(login, nom, prenom) {
@@ -13,6 +14,9 @@ export const useAccountStore = defineStore("account", {
       this.nom = nom;
       this.prenom = prenom;
       this.logged = true;
+      var currentDate = new Date();
+      currentDate.setUTCHours(currentDate.getUTCHours() + 2);
+      this.last_login = currentDate.toUTCString();
     },
     updateLogin(newLogin) {
       this.login = newLogin;
