@@ -10,11 +10,11 @@ export const useAlertStore = defineStore({
     addAlert(alert) {
       this.alerts.push(alert);
     },
-    removeAlert(alert) {
-      const index = this.alerts.indexOf(alert);
+    removeAlert(id) {
+      const index = this.alerts.findIndex(alert => alert.id === id);
       if (index !== -1) {
         this.alerts.splice(index, 1);
       }
-    },
+    }
   },
 });

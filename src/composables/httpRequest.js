@@ -16,7 +16,8 @@ export async function request(method, object, url, data = null) {
         object.value = responseData;
         const alertStore = useAlertStore();
         if (responseData.message || responseData.error) {
-            alertStore.addAlert(responseData);
+            const alertWithId = { response: responseData, id: Date.now() };
+            alertStore.addAlert(alertWithId);
         }
     } catch (error) {
         console.error('Error:', error);
