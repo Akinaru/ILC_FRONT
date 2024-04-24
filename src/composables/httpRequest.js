@@ -1,4 +1,4 @@
-import { useAlertStore } from "../stores/alertStore";
+import { addAlert } from "./addAlert";
 
 export async function request(method, object, url, data = null) {
     const requestOptions = {
@@ -14,10 +14,8 @@ export async function request(method, object, url, data = null) {
         const response = await fetch(url, requestOptions);
         const responseData = await response.json();
         object.value = responseData;
-        const alertStore = useAlertStore();
         if (responseData.message || responseData.error) {
-            const alertWithId = { response: responseData, id: Date.now() };
-            alertStore.addAlert(alertWithId);
+            addAlert(responseData);
         }
     } catch (error) {
         console.error('Error:', error);
