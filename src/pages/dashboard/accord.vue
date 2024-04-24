@@ -2,10 +2,10 @@
     <p class="font-bold text-xl">Accord</p>
     <div>
         <p class="font-bold">Ajout d'accord</p>
-        <div class="flex *:m-2 bg-slate-300">
+        <div class="flex *:m-2 bg-base-300">
 
 
-            <form @submit.prevent="addAgreement" class="bg-slate-100 *:m-1 w-full flex">
+            <form @submit.prevent="addAgreement" class="bg-base-100 *:m-1 w-full flex">
                 <select id="isced_id" name="numisced_id" v-model="newAgreement.isced">
                     <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
                 </select> 
@@ -23,7 +23,7 @@
                     <p>Nb de place</p>
                     <input type="number" name="" id="" value="0" v-model="newAgreement.nbplace">
                 </div>
-                <button class="bg-slate-200 p-5 m-1" type="submit">Ajouter l'accord</button>
+                <button class="bg-base-200 p-5 m-1" type="submit">Ajouter l'accord</button>
             </form>
             
         </div>
@@ -31,17 +31,17 @@
     <div>
         <p class="font-bold">Liste des accords:</p>
         
-        <div v-for="(accord, indexAccord) in accords" :key="indexAccord" class="m-5 bg-slate-200">
+        <div v-for="(accord, indexAccord) in accords" :key="indexAccord" class="m-5 bg-base-200">
             <p>{{accord.university.univ_name}} ({{ accord.university.univ_city }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
             <p>Les départements: </p>
             <div class="flex items-center justify-start">
                 <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
                     <div class="w-fit p-2 flex items-center justify-center" :style="{backgroundColor: dept.dept_color}">
                         <p>{{ dept.dept_shortname }} <span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? '(Non validé par le dep)' : '' }}</span></p>
-                        <p class="m-1 bg-slate-200 p-1 hover:cursor-pointer hover:opacity-60 select-none" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">X</p>
+                        <p class="m-1 bg-base-200 p-1 hover:cursor-pointer hover:opacity-60 select-none" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">X</p>
                     </div>
                 </div>
-                <p class="bg-slate-300 p-2 hover:cursor-pointer hover:opacity-60 select-none" @click="showForm(accord.agree_id)">+</p>
+                <p class="bg-base-300 p-2 hover:cursor-pointer hover:opacity-60 select-none" @click="showForm(accord.agree_id)">+</p>
             </div>
             <div v-if="showForms[accord.agree_id]">
                 <form @submit.prevent="submitForm(accord.agree_id)">
@@ -49,7 +49,7 @@
                     <select v-model="selectedDepartment[accord.agree_id]">
                         <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">{{ dept.dept_shortname }} ({{dept.component.comp_name}})</option>
                     </select>
-                    <button type="submit" class="p-5 bg-slate-300 hover:cursor-pointer hover:opacity-60">Submit</button>
+                    <button type="submit" class="p-5 bg-base-300 hover:cursor-pointer hover:opacity-60">Submit</button>
                 </form>
             </div>
         </div>
@@ -87,16 +87,16 @@
             typeaccord: newAgreement.value.typeaccord,
             nbplace: newAgreement.value.nbplace 
         };
-        await request("POST", response, config.apiURL+'api/api/agreement', requestData);
+        await request("POST", response, config.apiUrl+'api/api/agreement', requestData);
         await fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', accords, config.apiURL+'api/agreement');
-        await request('GET', isceds, config.apiURL+'api/isced');
-        await request('GET', composantes, config.apiURL+'api/component');
-        await request('GET', universites, config.apiURL+'api/university');
-        await request('GET', departments, config.apiURL+'api/department');
+        await request('GET', accords, config.apiUrl+'api/agreement');
+        await request('GET', isceds, config.apiUrl+'api/isced');
+        await request('GET', composantes, config.apiUrl+'api/component');
+        await request('GET', universites, config.apiUrl+'api/university');
+        await request('GET', departments, config.apiUrl+'api/department');
 
         //On cache tous les formulaires
         showForms.value = Array(accords.value.length).fill(false);
@@ -110,7 +110,7 @@
     }
 
     async function removeDeptFromAgreement(agree_id, dept_id){
-        await request('DELETE', response, config.apiURL+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
+        await request('DELETE', response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
         fetchAll();
     }
 
@@ -122,7 +122,7 @@
             dept_id: selectedDepartment.value[agree_id],
             deptagree_valide: true
         }
-        await request('POST', response, config.apiURL+'api/departmentagreement', requestData);
+        await request('POST', response, config.apiUrl+'api/departmentagreement', requestData);
         fetchAll();
     }
 
