@@ -1,10 +1,10 @@
 <template>
     <div>
-        <p class="text-lg font-bold">Isced</p>
+        <p class="text-xl font-bold">Isced</p>
         <div class="m-5">
             <div class="m-5 flex justify-center items-center flex-col">
                 <p class="text-lg font-bold">Ajout isced</p>
-                <form @submit.prevent="addIsced" class="w-fit *:my-2">
+                <form @submit.prevent="addIsced" class="w-2/5 *:my-2">
                     <input type="number" placeholder="Code" v-model="newIsced.code" class="input input-bordered w-full" />
                     <input type="text" placeholder="Nom" v-model="newIsced.name" class="input input-bordered w-full " />
                     <div class="flex items-center justify-center">

@@ -6,7 +6,7 @@
         <div class="m-5">
             <div class="m-5 flex justify-center items-center flex-col" >
                 <p class="text-lg font-bold">Ajout accord</p>
-                <form @submit.prevent="addAgreement" class="w-fit *:my-2">
+                <form @submit.prevent="addAgreement" class="w-2/5 *:my-2">
                     <select class="select select-bordered w-full" id="isced_select" v-model="newAgreement.isced">
                         <option disabled selected>Selectionnez un isced</option>
                         <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>

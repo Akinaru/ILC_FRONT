@@ -4,7 +4,7 @@
         <div class="m-5">
             <div class="m-5 flex justify-center items-center flex-col">
                 <p class="text-lg font-bold">Ajout département</p>
-                <form @submit.prevent="addDepartment" class="w-fit *:my-2">
+                <form @submit.prevent="addDepartment" class="w-2/5 *:my-2">
                     <select class="select select-bordered w-full" v-model="newDep.comp">
                         <option disabled selected>Selectionnez une composante</option>
                         <option v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }}</option>
@@ -74,11 +74,7 @@
         };
         await request("POST", response, config.apiUrl+'api/department', requestData);
         await fetchAll();
-
-        newDep.value.name = '';
-        newDep.value.shortname = '';
-        newDep.value.color = '#9e9e9e';
-        newDep.value.comp = document.querySelector('.select').options[0].value;
+        resetInput();
 
     }
 
@@ -90,6 +86,13 @@
     async function fetchAll(){
         await request('GET', departements, config.apiUrl+'api/department');
         await request('GET', composantes, config.apiUrl+'api/component');
+        resetInput();
+    }
+
+    function resetInput(){
+        newDep.value.name = '';
+        newDep.value.shortname = '';
+        newDep.value.color = '#9e9e9e';
         newDep.value.comp = document.querySelector('.select').options[0].value;
     }
 

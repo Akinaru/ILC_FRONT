@@ -5,7 +5,7 @@
         <!-- Formulaire d'ajout d'article -->
         <div class="m-5 flex justify-center items-center flex-col">
             <p class="text-lg font-bold">Ajout article</p>
-            <form @submit.prevent="addArticle" class="w-fit *:my-2">
+            <form @submit.prevent="addArticle" class="w-2/5 *:my-2">
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full " />
                 <input type="text" placeholder="Description" v-model="newArticle.description" class="input input-bordered w-full" />
                 <div class="form-control">

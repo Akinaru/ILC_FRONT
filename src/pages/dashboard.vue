@@ -4,6 +4,7 @@
         <div class="m-5 flex flex-wrap">
             <RouterLink :to="{name: 'ArticleDash'}" class="m-3 p-3 bg-base-300" :class="{ 'current-link': $route.name === 'ArticleDash' }">Article</RouterLink>
             <RouterLink :to="{name: 'DepartementDash'}" class="m-3 p-3 bg-base-300" :class="{ 'current-link': $route.name === 'DepartementDash' }">Departement</RouterLink>
+            <RouterLink :to="{name: 'UniversiteDash'}" class="m-3 p-3 bg-base-300" :class="{ 'current-link': $route.name === 'UniversiteDash' }">Université</RouterLink>
             <RouterLink :to="{name: 'ComposanteDash'}" class="m-3 p-3 bg-base-300" :class="{ 'current-link': $route.name === 'ComposanteDash' }">Composante</RouterLink>
             <RouterLink :to="{name: 'AccordDash'}" class="m-3 p-3 bg-base-300" :class="{ 'current-link': $route.name === 'AccordDash' }">Accord</RouterLink>
             <RouterLink :to="{name: 'IscedDash'}" class="m-3 p-3 bg-base-300" :class="{ 'current-link': $route.name === 'IscedDash' }">Isced</RouterLink>
