@@ -27,7 +27,7 @@
   
   <script setup>
     import { useAlertStore } from '../../stores/alertStore';
-    import { onMounted, defineProps } from 'vue';
+    import { onMounted } from 'vue';
   
     const props = defineProps({
       response: Object,

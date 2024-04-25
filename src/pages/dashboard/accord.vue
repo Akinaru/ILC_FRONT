@@ -7,23 +7,81 @@
             <div class="m-5 flex justify-center items-center flex-col" >
                 <p class="text-lg font-bold">Ajout accord</p>
                 <form @submit.prevent="addAgreement" class="w-2/5 *:my-2">
-                    <select class="select select-bordered w-full" id="isced_select" v-model="newAgreement.isced">
-                        <option disabled selected>Selectionnez un isced</option>
-                        <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
-                    </select>
-                    <select class="select select-bordered w-full" id="compo_select" v-model="newAgreement.compo">
-                        <option disabled selected>Selectionnez une composante</option>
-                        <option v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }}</option>
-                    </select>
-                    <select class="select select-bordered w-full" id="univ_select" v-model="newAgreement.univ">
-                        <option disabled selected>Selectionnez une université</option>
-                        <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }}</option>
-                    </select>
-                    <select class="select select-bordered w-full" id="typeaccord_select" v-model="newAgreement.typeaccord">
-                        <option disabled selected>Selectionnez un type d'accord</option>
-                        <option>Bilatéral</option>
-                        <option>Erasmus</option>
-                    </select>
+                    <!-- Formulaire Isced -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Isced</span>
+                        </div>
+                        <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
+                            <option disabled selected>Selectionnez un isced</option>
+                            <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
+                            <option value="addNew">Créer un isced</option>
+                        </select>
+                        <label class="form-control w-full my-1" v-if="newAgreement.isced === 'addNew'">
+                            <div class="label">
+                                <span class="label-text">Créer un Isced</span>
+                            </div>
+                            <input type="number" placeholder="Code" v-model="newAgreement.newisced.code" class="input input-bordered w-full" />
+                            <input type="text" placeholder="Nom" v-model="newAgreement.newisced.name" class="input input-bordered w-full " />
+                        </label>
+                    </label>
+                    <!-- Formualire composante -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Composante</span>
+                        </div>
+                        <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
+                            <option disabled selected>Selectionnez une composante</option>
+                            <option v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
+                            <option value="addNew">Créer une composante</option>
+                        </select>
+                        <label class="form-control w-full my-1" v-if="newAgreement.compo === 'addNew'">
+                            <div class="label">
+                                <span class="label-text">Créer une composante</span>
+                            </div>
+                            <input type="number" placeholder="Nom" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
+                            <input type="text" placeholder="Nom raccourci" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full " />
+                        </label>
+                    </label>
+                    <!-- Formulaire université -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Université</span>
+                        </div>
+                        <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
+                            <option disabled selected>Selectionnez une université</option>
+                            <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
+                            <option value="addNew">Créer une université</option>
+                        </select>
+                        <label class="form-control w-full my-1" v-if="newAgreement.univ === 'addNew'">
+                            <div class="label">
+                                <span class="label-text">Créer une université</span>
+                            </div>
+                            <span class="my-1">
+                                <input type="number" placeholder="Nom" v-model="newAgreement.newuniv.name" class="input input-bordered w-full " />
+                                <input type="text" placeholder="Ville" v-model="newAgreement.newuniv.city" class="input input-bordered w-full " />
+                            </span>
+                            <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
+                                <option disabled selected>Selectionnez un pays</option>
+                                <option v-for="(parco, index) in partnercountrys" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
+                                <option value="addNew">Créer un pays</option>
+                            </select>
+                            <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays" v-model="newAgreement.newuniv.partnercountry.newpartnercountry" class="input input-bordered w-full my-1" />
+
+                        </label>
+                    </label>
+                    <!-- Formulaire Typeaccord -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Type accord</span>
+                        </div>
+                        <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="newAgreement.typeaccord">
+                            <option disabled selected>Selectionnez un type d'accord</option>
+                            <option>Bilatéral</option>
+                            <option>Erasmus</option>
+                        </select>
+                    </label>
+                    <!-- Formulaire Nombre de place -->
                     <label class="form-control w-full">
                         <div class="label">
                             <span class="label-text">Nombre de place</span>
@@ -102,15 +160,20 @@
     const composantes = ref([]);
     const universites = ref([]);
     const departments = ref([]);
+    const partnercountrys = ref([]);
 
-    const newAgreement = ref({ isced: '', compo: '', univ: '', typeaccord: '', nbplace: 0 });
+    const newAgreement = ref({ 
+        isced: '',
+        compo: '',
+        univ: '',
+        typeaccord: '',
+        nbplace: 0,
+        newisced: {code: '', name: ''},
+        newcompo: {name: '', shortname: ''},
+        newuniv: {partnercountry: '', name: '', city: '', newpartnercountry: ''},
+    });
 
-    /**
-     * Pour les deux:
-     * agree_id: valeur
-     */
-    const showForms = ref([]);
-    const selectedDepartment = ref([]);
+
 
     async function addAgreement(){
         const requestData = { 
@@ -123,36 +186,51 @@
         await request("POST", response, config.apiUrl+'api/agreement', requestData);
         await fetchAll();
     }
-
     async function fetchAll(){
         await request('GET', accords, config.apiUrl+'api/agreement');
         await request('GET', isceds, config.apiUrl+'api/isced');
         await request('GET', composantes, config.apiUrl+'api/component');
         await request('GET', universites, config.apiUrl+'api/university');
         await request('GET', departments, config.apiUrl+'api/department');
+        await request('GET', partnercountrys, config.apiUrl+'api/partnercountry');
 
         //On cache tous les formulaires
         showForms.value = Array(accords.value.length).fill(false);
         selectedDepartment.value = Array(accords.value.length).fill('');
         resetInput();
     }
-
-    onMounted(fetchAll)
-
-    async function showForm(agree_id) {
-        showForms.value[agree_id] = !showForms.value[agree_id];
-    }
-
     async function removeDeptFromAgreement(agree_id, dept_id){
         await request('DELETE', response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
         fetchAll();
     }
-
     async function deleteAgreement(agree_id){
         await request('DELETE', response, config.apiUrl+'api/agreement/deletebyid/'+agree_id);
         fetchAll();
     }
+    function filteredDepartments(accord) {
+        const accordDepartmentIds = accord.departments.map(dept => dept.dept_id);
+        return departments.value.filter(dept => !accordDepartmentIds.includes(dept.dept_id));
+    }
+    function resetInput(){
+        newAgreement.value.isced = document.querySelector('#isced_select').options[0].value;
+        newAgreement.value.compo = document.querySelector('#compo_select').options[0].value;
+        newAgreement.value.univ = document.querySelector('#univ_select').options[0].value;
+        newAgreement.value.typeaccord = document.querySelector('#typeaccord_select').options[0].value;
+        
+    }
 
+
+
+
+        /**
+     * Pour les deux:
+     * agree_id: valeur
+     */
+     const showForms = ref([]);
+    const selectedDepartment = ref([]);
+    async function showForm(agree_id) {
+        showForms.value[agree_id] = !showForms.value[agree_id];
+    }
     async function submitForm(agree_id) {
         showForms.value[agree_id] = false;
         const requestData = {
@@ -164,15 +242,6 @@
         fetchAll();
     }
 
-    function filteredDepartments(accord) {
-        const accordDepartmentIds = accord.departments.map(dept => dept.dept_id);
-        return departments.value.filter(dept => !accordDepartmentIds.includes(dept.dept_id));
-    }
+    onMounted(fetchAll)
 
-    function resetInput(){
-        newAgreement.value.isced = document.querySelector('#isced_select').options[0].value;
-        newAgreement.value.compo = document.querySelector('#compo_select').options[0].value;
-        newAgreement.value.univ = document.querySelector('#univ_select').options[0].value;
-        newAgreement.value.typeaccord = document.querySelector('#typeaccord_select').options[0].value;
-    }
 </script>
