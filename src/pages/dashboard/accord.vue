@@ -21,8 +21,8 @@
                             <div class="label">
                                 <span class="label-text">Créer un Isced</span>
                             </div>
-                            <input type="number" placeholder="Code" v-model="newAgreement.newisced.code" class="input input-bordered w-full" />
-                            <input type="text" placeholder="Nom" v-model="newAgreement.newisced.name" class="input input-bordered w-full " />
+                            <input type="number" placeholder="Code (ex: 061)" v-model="newAgreement.newisced.code" class="input input-bordered w-full" />
+                            <input type="text" placeholder="Nom (ex: Information and Communication Technologies)" v-model="newAgreement.newisced.name" class="input input-bordered w-full " />
                         </label>
                     </label>
                     <!-- Formualire composante -->
@@ -39,8 +39,8 @@
                             <div class="label">
                                 <span class="label-text">Créer une composante</span>
                             </div>
-                            <input type="number" placeholder="Nom" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
-                            <input type="text" placeholder="Nom raccourci" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full " />
+                            <input type="number" placeholder="Nom (ex: IUT Annecy)" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
+                            <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full " />
                         </label>
                     </label>
                     <!-- Formulaire université -->
@@ -58,8 +58,8 @@
                                 <span class="label-text">Créer une université</span>
                             </div>
                             <span class="my-1">
-                                <input type="number" placeholder="Nom" v-model="newAgreement.newuniv.name" class="input input-bordered w-full " />
-                                <input type="text" placeholder="Ville" v-model="newAgreement.newuniv.city" class="input input-bordered w-full " />
+                                <input type="number" placeholder="Nom (ex: Université Savoie Mont Blanc)" v-model="newAgreement.newuniv.name" class="input input-bordered w-full " />
+                                <input type="text" placeholder="Ville (ex: Annecy)" v-model="newAgreement.newuniv.city" class="input input-bordered w-full " />
                             </span>
                             <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
                                 <option disabled selected>Selectionnez un pays</option>
@@ -68,7 +68,7 @@
                             </select>
                             <span class="flex items-center justify-center">
 
-                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays" v-model="newAgreement.newuniv.partnercountry.newpartnercountry" class="input input-bordered w-5/6 my-1" />
+                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.partnercountry.newpartnercountry" class="input input-bordered w-5/6 my-1" />
                             </span>
 
                         </label>
