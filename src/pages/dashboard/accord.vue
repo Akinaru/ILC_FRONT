@@ -8,7 +8,7 @@
                 <p class="text-lg font-bold">Ajout accord</p>
                 <form @submit.prevent="addAgreement" class="w-2/5 *:my-2">
                     <!-- Formulaire Isced -->
-                    <label class="form-control w-full">
+                    <label class="form-control w-full items-center justify-center">
                         <div class="label">
                             <span class="label-text">Isced</span>
                         </div>
@@ -17,7 +17,7 @@
                             <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
                             <option value="addNew">Créer un isced</option>
                         </select>
-                        <label class="form-control w-full my-1" v-if="newAgreement.isced === 'addNew'">
+                        <label class="form-control w-5/6 my-1" v-if="newAgreement.isced === 'addNew'">
                             <div class="label">
                                 <span class="label-text">Créer un Isced</span>
                             </div>
@@ -26,7 +26,7 @@
                         </label>
                     </label>
                     <!-- Formualire composante -->
-                    <label class="form-control w-full">
+                    <label class="form-control w-full items-center justify-center">
                         <div class="label">
                             <span class="label-text">Composante</span>
                         </div>
@@ -35,7 +35,7 @@
                             <option v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
                             <option value="addNew">Créer une composante</option>
                         </select>
-                        <label class="form-control w-full my-1" v-if="newAgreement.compo === 'addNew'">
+                        <label class="form-control w-5/6 my-1" v-if="newAgreement.compo === 'addNew'">
                             <div class="label">
                                 <span class="label-text">Créer une composante</span>
                             </div>
@@ -44,7 +44,7 @@
                         </label>
                     </label>
                     <!-- Formulaire université -->
-                    <label class="form-control w-full">
+                    <label class="form-control w-full items-center justify-center">
                         <div class="label">
                             <span class="label-text">Université</span>
                         </div>
@@ -53,7 +53,7 @@
                             <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
                             <option value="addNew">Créer une université</option>
                         </select>
-                        <label class="form-control w-full my-1" v-if="newAgreement.univ === 'addNew'">
+                        <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
                             <div class="label">
                                 <span class="label-text">Créer une université</span>
                             </div>
@@ -66,12 +66,15 @@
                                 <option v-for="(parco, index) in partnercountrys" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
                                 <option value="addNew">Créer un pays</option>
                             </select>
-                            <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays" v-model="newAgreement.newuniv.partnercountry.newpartnercountry" class="input input-bordered w-full my-1" />
+                            <span class="flex items-center justify-center">
+
+                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays" v-model="newAgreement.newuniv.partnercountry.newpartnercountry" class="input input-bordered w-5/6 my-1" />
+                            </span>
 
                         </label>
                     </label>
                     <!-- Formulaire Typeaccord -->
-                    <label class="form-control w-full">
+                    <label class="form-control w-full items-center justify-center">
                         <div class="label">
                             <span class="label-text">Type accord</span>
                         </div>
@@ -82,7 +85,7 @@
                         </select>
                     </label>
                     <!-- Formulaire Nombre de place -->
-                    <label class="form-control w-full">
+                    <label class="form-control w-full items-center justify-center">
                         <div class="label">
                             <span class="label-text">Nombre de place</span>
                         </div>
@@ -163,19 +166,32 @@
     const partnercountrys = ref([]);
 
     const newAgreement = ref({ 
-        isced: '',
-        compo: '',
-        univ: '',
+        isced: '', //Si addNew = nouveau isced
+        compo: '', //Si addNew = nouveau composante
+        univ: '', //Si addNew = nouveau univiserte
         typeaccord: '',
         nbplace: 0,
         newisced: {code: '', name: ''},
         newcompo: {name: '', shortname: ''},
-        newuniv: {partnercountry: '', name: '', city: '', newpartnercountry: ''},
+        newuniv: {
+            partnercountry: '', //Si addNew = nouveau pays partenaire
+            name: '', 
+            city: '', 
+            newpartnercountry: ''
+        },
     });
 
 
 
     async function addAgreement(){
+
+
+        console.log(newAgreement.value.isced === 'addNew', 'new Isced');
+        console.log(newAgreement.value.compo === 'addNew', 'new compo');
+        console.log(newAgreement.value.univ === 'addNew', 'new univ');
+        console.log(newAgreement.value.newuniv.partnercountry === 'addNew', 'new partnercountry');
+
+
         const requestData = { 
             isc_id: newAgreement.value.isced,
             comp_id: newAgreement.value.compo,
@@ -183,8 +199,9 @@
             typeaccord: newAgreement.value.typeaccord,
             nbplace: newAgreement.value.nbplace 
         };
-        await request("POST", response, config.apiUrl+'api/agreement', requestData);
-        await fetchAll();
+
+        // await request("POST", response, config.apiUrl+'api/agreement', requestData);
+        // await fetchAll();
     }
     async function fetchAll(){
         await request('GET', accords, config.apiUrl+'api/agreement');
