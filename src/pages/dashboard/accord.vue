@@ -171,7 +171,7 @@
         univ: '', //Si addNew = nouveau univiserte
         typeaccord: '',
         nbplace: 0,
-        newisced: {code: '', name: ''},
+        newisced: {code: 0, name: ''},
         newcompo: {name: '', shortname: ''},
         newuniv: {
             partnercountry: '', //Si addNew = nouveau pays partenaire
@@ -185,23 +185,23 @@
 
     async function addAgreement(){
 
-
-        console.log(newAgreement.value.isced === 'addNew', 'new Isced');
-        console.log(newAgreement.value.compo === 'addNew', 'new compo');
-        console.log(newAgreement.value.univ === 'addNew', 'new univ');
-        console.log(newAgreement.value.newuniv.partnercountry === 'addNew', 'new partnercountry');
-
-
         const requestData = { 
-            isc_id: newAgreement.value.isced,
             comp_id: newAgreement.value.compo,
             univ_id: newAgreement.value.univ,
             typeaccord: newAgreement.value.typeaccord,
             nbplace: newAgreement.value.nbplace 
         };
+        if (newAgreement.value.isced !== 'addNew') {
+            requestData.isc_id = newAgreement.value.isced;
+        } else {
+            requestData.newisced = {
+                code: newAgreement.value.newisced.code.toString(),
+                name: newAgreement.value.newisced.name
+            };
+        }
 
-        // await request("POST", response, config.apiUrl+'api/agreement', requestData);
-        // await fetchAll();
+         await request("POST", response, config.apiUrl+'api/agreement', requestData);
+         await fetchAll();
     }
     async function fetchAll(){
         await request('GET', accords, config.apiUrl+'api/agreement');
