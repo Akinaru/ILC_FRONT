@@ -39,7 +39,7 @@
                             <div class="label">
                                 <span class="label-text">Créer une composante</span>
                             </div>
-                            <input type="number" placeholder="Nom (ex: IUT Annecy)" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
+                            <input type="text" placeholder="Nom (ex: IUT Annecy)" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
                             <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full " />
                         </label>
                     </label>
@@ -58,7 +58,7 @@
                                 <span class="label-text">Créer une université</span>
                             </div>
                             <span class="my-1">
-                                <input type="number" placeholder="Nom (ex: Université Savoie Mont Blanc)" v-model="newAgreement.newuniv.name" class="input input-bordered w-full " />
+                                <input type="text" placeholder="Nom (ex: Université Savoie Mont Blanc)" v-model="newAgreement.newuniv.name" class="input input-bordered w-full " />
                                 <input type="text" placeholder="Ville (ex: Annecy)" v-model="newAgreement.newuniv.city" class="input input-bordered w-full " />
                             </span>
                             <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
@@ -68,7 +68,7 @@
                             </select>
                             <span class="flex items-center justify-center">
 
-                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.partnercountry.newpartnercountry" class="input input-bordered w-5/6 my-1" />
+                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.newpartnercountry" class="input input-bordered w-5/6 my-1" />
                             </span>
 
                         </label>
@@ -104,7 +104,7 @@
             <div v-if="accords && accords.length > 0" v-for="(accord, indexAccord) in accords" :key="indexAccord" class="m-5 p-3 flex">
                 <div class="w-full bg-base-300 p-2">
 
-                    <p>{{accord.university.univ_name}} ({{ accord.university.univ_city }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
+                    <p>({{ accord.partnercountry.parco_name }}) {{accord.university.univ_name}} ({{ accord.university.univ_city }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
                     <!-- Liste des départements d'un accord -->
                     <p>Les départements: </p>
                     <div class="flex items-center justify-start">
@@ -171,6 +171,7 @@
         univ: '', //Si addNew = nouveau univiserte
         typeaccord: '',
         nbplace: 0,
+
         newisced: {code: 0, name: ''},
         newcompo: {name: '', shortname: ''},
         newuniv: {
@@ -186,22 +187,45 @@
     async function addAgreement(){
 
         const requestData = { 
-            comp_id: newAgreement.value.compo,
-            univ_id: newAgreement.value.univ,
             typeaccord: newAgreement.value.typeaccord,
             nbplace: newAgreement.value.nbplace 
         };
+        // Gestion du nouveau isced
         if (newAgreement.value.isced !== 'addNew') {
             requestData.isc_id = newAgreement.value.isced;
         } else {
             requestData.newisced = {
-                code: newAgreement.value.newisced.code.toString(),
-                name: newAgreement.value.newisced.name
+                isc_code: newAgreement.value.newisced.code.toString(),
+                isc_name: newAgreement.value.newisced.name
             };
         }
+        // Gestion de la nouvelle composante
+        if (newAgreement.value.compo !== 'addNew') {
+            requestData.comp_id = newAgreement.value.compo;
+        } else {
+            requestData.newcompo = {
+                comp_name: newAgreement.value.newcompo.name,
+                comp_shortname: newAgreement.value.newcompo.shortname.toUpperCase()
+            };
+        }
+        // Gestion de la nouvelle université
+        if (newAgreement.value.univ !== 'addNew') {
+            requestData.univ_id = newAgreement.value.univ;
+        } else {
+            requestData.newuniv = {
+                univ_name: newAgreement.value.newuniv.name,
+                univ_city: newAgreement.value.newuniv.city,
+            };
+            if(newAgreement.value.newuniv.partnercountry !== 'addNew'){
+                requestData.newuniv.parco_id = newAgreement.value.newuniv.partnercountry;
+            }else{
+                requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry
+            }
+        }
 
-         await request("POST", response, config.apiUrl+'api/agreement', requestData);
-         await fetchAll();
+
+        await request("POST", response, config.apiUrl+'api/agreement', requestData);
+        await fetchAll();
     }
     async function fetchAll(){
         await request('GET', accords, config.apiUrl+'api/agreement');
