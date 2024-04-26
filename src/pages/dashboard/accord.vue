@@ -137,10 +137,33 @@
                         </form>
                     </div>
                 </div>
+                <!-- Bouton de modification -->
+                <label :for="'my_modal_'+ accord.agree_id" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                        <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </svg>
+                </label>
+
+                <!-- Modal -->
+                <input type="checkbox" :id="'my_modal_' + accord.agree_id" class="modal-toggle" />
+                <div class="modal modal-bottom sm:modal-middle" role="dialog">
+                    <div class="modal-box">
+                        <h3 class="font-bold text-lg">Modification de l'accord n° {{ accord.agree_id }}</h3>
+                        <!-- Utilisez l'accord passé en paramètre -->
+                        <p class="py-4">{{ accord }}</p>
+                        <div class="modal-action">
+                            <label :for="'my_modal_' + accord.agree_id" class="btn ">Annuler</label>
+                            <label :for="'my_modal_' + accord.agree_id" class="btn btn-success" @click="editAgreement(accord.agree_id)">Enregistrer</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Bouton de suppression -->
                 <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.agree_id)">
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
+
             <div v-else class="flex items-center justify-center my-20">
                 <span class="loading loading-dots loading-lg"></span>
             </div>
@@ -164,6 +187,7 @@
     const universites = ref([]);
     const departments = ref([]);
     const partnercountrys = ref([]);
+
 
     const newAgreement = ref({ 
         isced: '', //Si addNew = nouveau isced
@@ -226,6 +250,9 @@
 
         await request("POST", response, config.apiUrl+'api/agreement', requestData);
         await fetchAll();
+    }
+    async function editAgreement(agree_id){
+        console.log("modification apportée à l'accord",agree_id)
     }
     async function fetchAll(){
         await request('GET', accords, config.apiUrl+'api/agreement');

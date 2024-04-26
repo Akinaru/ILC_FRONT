@@ -28,6 +28,7 @@
   <script setup>
     import { useAlertStore } from '../../stores/alertStore';
     import { onMounted } from 'vue';
+    import config from '../../config';
   
     const props = defineProps({
       response: Object,
@@ -43,24 +44,25 @@
     function startTimer() {
       setTimeout(() => {
         dismissAlert();
-      }, 10 * 1000); //nb secondes * ajustement
+      }, config.alertTimeBeforeRemove * 1000);
+      document.documentElement.style.setProperty('--alert-time', config.alertTimeBeforeRemove + 's');
+  
     }
   
     onMounted(startTimer);
   </script>
   
   <style scoped>
-    .progress-bar {
-      animation: progressBar 10s linear forwards;
+  .progress-bar {
+    animation: progressBar var(--alert-time) linear forwards;
+  }
+
+  @keyframes progressBar {
+    0% {
+      width: 100%;
     }
-  
-    @keyframes progressBar {
-      0% {
-        width: 100%;
-      }
-      100% {
-        width: 0%;
-      }
+    100% {
+      width: 0%;
     }
-  </style>
-  
+  }
+</style>
