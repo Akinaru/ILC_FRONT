@@ -9,7 +9,7 @@
                 <p class="text-lg font-bold">{{ article.art_title }}</p>
             </div>
 
-            <p>{{ article.art_datetime }}</p>
+            <p>Dernière modif: {{ article.art_lastmodif }}</p>
 
         </div>
         <pre class="overflow-hidden whitespace-nowrap text-ellipsis">{{ article.art_description }}</pre>

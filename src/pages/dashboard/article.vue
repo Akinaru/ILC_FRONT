@@ -126,7 +126,7 @@
             art_id: currentArticleModif.value.art_id,
             art_title: currentArticleModif.value.art_title,
             art_description: currentArticleModif.value.art_description,
-            art_pin: currentArticleModif.value.art_pin 
+            art_pin: currentArticleModif.value.art_pin,
         };
         await request('PUT', response, config.apiUrl+'api/article', requestData);
         fetchAll();
