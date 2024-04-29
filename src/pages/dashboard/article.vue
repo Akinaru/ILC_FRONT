@@ -7,7 +7,7 @@
             <p class="text-lg font-bold">Ajout article</p>
             <form @submit.prevent="addArticle" class="w-2/5 *:my-2">
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full " />
-                <textarea class="textarea w-full textarea-bordered" placeholder="Description" v-model="newArticle.description"></textarea>
+                <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.description"></textarea>
                 <div class="form-control">
                     <label class="label cursor-pointer">
                         <span class="label-text">Épinglé ?</span> 
@@ -16,15 +16,12 @@
                 </div>
                 <div class="flex items-center justify-center">
                     <button class="btn btn-primary" type="submit">Ajouter l'article</button>
-
                 </div>
             </form>
         </div>
 
         <div>
             <p class="text-lg font-bold">Liste article</p>
-
-
             <div v-if="articles && articles.length > 0" class="flex flex-col">
                 <div v-for="(article, index) in articles" :key="index" class="flex my-1 mx-10">
                     <ArticleComp :article="article"></ArticleComp>
@@ -36,7 +33,9 @@
                         </svg>
                     </label>
                     <!-- Modal de modification d'accord -->
-                    <ModifArticleComp :article="article"></ModifArticleComp>
+                    
+                    <ModifArticleComp :art_id="article.art_id" @articleUpdated="refresh"></ModifArticleComp>
+                    
 
                     <!-- Bouton de suppression -->
                     <button class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-300" @click="removeArticle(article.art_id)">
@@ -55,10 +54,12 @@
     import { request } from '../../composables/httpRequest';
     import { onMounted, ref } from 'vue';
     import config from '../../config';
+    import { useRouter } from 'vue-router'
     
     import ArticleComp from '../../components/index/ArticleComp.vue';
     import ModifArticleComp from '../../components/modif/ModifArticleComp.vue'
 
+    const router = useRouter();
     const response = ref([]);
     const articles = ref([]);
     const newArticle = ref({ title: '', description: '', pinned: false });
@@ -88,6 +89,10 @@
     async function fetchAll(){
         await request('GET', articles, config.apiUrl+'api/article');
     }
+    function refresh(){
+        router.go(0);
+    }
+
 
     onMounted(fetchAll);
 </script>
