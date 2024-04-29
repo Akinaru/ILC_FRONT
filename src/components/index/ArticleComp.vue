@@ -12,7 +12,7 @@
             <p>{{ article.art_datetime }}</p>
 
         </div>
-        <p>{{ article.art_description }}</p>
+        <pre class="overflow-hidden whitespace-nowrap text-ellipsis">{{ article.art_description }}</pre>
     </div>
 </template>
 

@@ -22,7 +22,9 @@
             <div class="m-5">
                 <p class="text-xl font-bold">Articles</p>
                 <div class="flex flex-col">
-                    <ArticleComp v-for="(article, index) in articles" :key="index" :article="article" class="my-1"></ArticleComp>
+                    <RouterLink v-for="(article, index) in articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
+                        <ArticleComp :article="article" class="my-1"></ArticleComp>
+                    </RouterLink>
                 </div>
                 <p class="text-xl font-bold">Agenda</p>
             </div>

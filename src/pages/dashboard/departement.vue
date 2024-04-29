@@ -10,8 +10,8 @@
                         <option v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }}</option>
                     </select>
                     <div class="w-full flex items-center justify-between">
-                        <span class="label-text">Couleur</span> 
-                        <input type="color" v-model="newDep.color">
+                        <label for="colorPicker" class="label-text">Couleur</label> 
+                        <input type="color" id="colorPicker" v-model="newDep.color">
                     </div>
                     <input type="text" placeholder="Nom" v-model="newDep.name" class="input input-bordered w-full " />
                     <input type="text" placeholder="Nom raccourci" v-model="newDep.shortname" class="input input-bordered w-full" />
