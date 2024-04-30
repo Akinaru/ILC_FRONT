@@ -6,6 +6,7 @@
         <div class="m-5 flex justify-center items-center flex-col">
             <p class="text-lg font-bold">Ajout article</p>
             <form @submit.prevent="addArticle" class="w-2/5 *:my-2">
+                <input type="file" @change="handleFileInputChange" accept="image/*" class="file-input file-input-bordered w-full" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full " />
                 <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.description"></textarea>
                 <div class="form-control">
@@ -93,34 +94,51 @@
 
     const response = ref([]);
     const articles = ref([]);
-    const newArticle = ref({ title: '', description: '', pinned: false });
+    const newArticle = ref({ title: '', description: '', pinned: false, image: null });
 
     const currentArticleModif = ref([]);
 
+    // Gestion du changement d'image dans le formulaire
+    const handleFileInputChange = (event) => {
+        const file = event.target.files[0];
+        newArticle.value.image = file;
+    };
+
+    // Ajout d'article
     async function addArticle(){
-        const requestData = { 
-            art_title: newArticle.value.title,
-            art_description: newArticle.value.description,
-            art_pin: newArticle.value.pinned 
-        };
-        await request("POST", response, config.apiUrl+'api/article', requestData);
+        // Pour passer les images dans une requête il est nécessaire de passer par un FormData()
+        const formData = new FormData();
+        formData.append('art_title', newArticle.value.title);
+        formData.append('art_description', newArticle.value.description);
+        formData.append('art_pin', newArticle.value.pinned);
+        formData.append('image', newArticle.value.image);
+        console.log(formData)
+
+        await request("POST", response, config.apiUrl+'api/article', formData);
         await fetchAll();
 
+        // Reset du formulaire
         newArticle.value.title = '';
         newArticle.value.description = '';
         newArticle.value.pinned = false;
+        newArticle.value.image = null;
 
     }
 
+    // Suppression d'article
     async function removeArticle(id){
         await request('DELETE', response, config.apiUrl+'api/article/deletebyid/'+id);
         await fetchAll();
     }
 
+    // Gestion de la modification d'article
+    // Modifie la ref par l'article qu'on veut modifier
+    // pour afficher les bonnes informations dans le form de modif
     function modifArticle(article){
         currentArticleModif.value = article;
     }
 
+    // Confirmer la modification
     async function confirmModifArticle(){
         const requestData = { 
             art_id: currentArticleModif.value.art_id,

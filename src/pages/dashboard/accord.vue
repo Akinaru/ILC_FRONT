@@ -159,7 +159,7 @@
             </div>
         </div>
     </div>
-    <div v-else class="flex items-center justify-center my-20">
+    <div v-else class="flex items-center justify-center my-20 h-96">
         <span class="loading loading-dots loading-lg"></span>
     </div>
 </template>
