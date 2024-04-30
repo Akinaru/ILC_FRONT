@@ -5,8 +5,8 @@
         <!-- Formulaire d'ajout d'article -->
         <div class="m-5 flex justify-center items-center flex-col">
             <p class="text-lg font-bold">Ajout article</p>
-            <form @submit.prevent="addArticle" class="w-2/5 *:my-2">
-                <input type="file" @change="handleFileInputChange" accept="image/*" class="file-input file-input-bordered w-full" />
+            <form @submit.prevent="addArticle" class="w-2/5 *:my-2" enctype="multipart/form-data">
+                <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full " />
                 <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.description"></textarea>
                 <div class="form-control">
@@ -89,6 +89,7 @@
     import { request } from '../../composables/httpRequest';
     import { onMounted, ref } from 'vue';
     import config from '../../config';
+    import axios from 'axios';
     
     import ArticleComp from '../../components/index/ArticleComp.vue';
 
@@ -106,16 +107,28 @@
 
     // Ajout d'article
     async function addArticle(){
-        // Pour passer les images dans une requête il est nécessaire de passer par un FormData()
-        const formData = new FormData();
-        formData.append('art_title', newArticle.value.title);
-        formData.append('art_description', newArticle.value.description);
-        formData.append('art_pin', newArticle.value.pinned);
-        formData.append('image', newArticle.value.image);
-        console.log(formData)
 
-        await request("POST", response, config.apiUrl+'api/article', formData);
+        const requestData = {
+            art_title: newArticle.value.title, 
+            art_description: newArticle.value.description, 
+            art_pin: newArticle.value.pinned, 
+        }
+
+        var rep = ref();
+        await request("POST", rep, config.apiUrl+'api/article', requestData);
         await fetchAll();
+
+
+        const formData = new FormData();
+        formData.append('image', newArticle.value.image);
+        formData.append('fileName', 'img_art_' + rep.value.article.art_id);
+        formData.append('filePath', 'private/images/articles');
+        formData.append('articleId', rep.value.article.art_id);
+
+        const responseImage = await axios.post(config.apiUrl + 'api/image/upload', formData);
+        console.log(responseImage.data)
+
+
 
         // Reset du formulaire
         newArticle.value.title = '';

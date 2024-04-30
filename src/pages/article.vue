@@ -3,6 +3,7 @@
         <div v-if="art_id">
             <p class="text-2xl">{{ article.art_title }}</p>
             <pre>{{ article.art_description }}</pre>
+            <img class="w-96" :src="config.apiUrl+'api/article/image/'+article.art_id" alt="">
         </div>
         <div v-else>
             <p>Cet article n'existe pas.</p>
