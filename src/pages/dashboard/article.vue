@@ -126,7 +126,6 @@
         formData.append('articleId', rep.value.article.art_id);
 
         const responseImage = await axios.post(config.apiUrl + 'api/image/upload', formData);
-        console.log(responseImage.data)
 
 
 
