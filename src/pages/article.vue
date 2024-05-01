@@ -2,7 +2,7 @@
     <div class="m-5">
         <div v-if="art_id">
             <p class="text-2xl">{{ article.art_title }}</p>
-            <pre>{{ article.art_description }}</pre>
+            <div v-html="article.art_description"></div>
             <img class="w-96" :src="config.apiUrl+'api/article/image/'+article.art_id" alt="">
         </div>
         <div v-else>

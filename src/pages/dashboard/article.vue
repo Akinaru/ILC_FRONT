@@ -7,7 +7,11 @@
             <p class="text-lg font-bold">Ajout article</p>
             <form @submit.prevent="addArticle" class="w-2/5 *:my-2" enctype="multipart/form-data">
                 <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
-                <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full " />
+                <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full" />
+                <div class="*:mr-2">
+                    <label class="btn" @click="addElem('link')">Ajouter lien</label>
+                    <label class="btn" @click="addElem('image')">Ajouter Image</label>
+                </div>
                 <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.description"></textarea>
                 <div class="form-control">
                     <label class="label cursor-pointer">
@@ -15,10 +19,25 @@
                         <input type="checkbox"  checked="checked" class="checkbox" v-model="newArticle.pinned" />
                     </label>
                 </div>
-                <div class="flex items-center justify-center">
+                <div class="flex items-center justify-center *:mx-1">
+                    <label for="modal_apercu" class="btn">Aperçu</label>
+
                     <button class="btn btn-primary" type="submit">Ajouter l'article</button>
                 </div>
             </form>
+        </div>
+        <!-- The button to open modal -->
+
+        <input type="checkbox" id="modal_apercu" class="modal-toggle" />
+        <div class="modal w-full h-full" role="dialog">
+            <div class="modal-box h-full">
+                <h3 class="font-bold text-lg">Aperçu article</h3>
+                <div class="text-2xl py-2" v-html="newArticle.title"></div>
+                <pre v-html="newArticle.description"></pre>
+                <div class="modal-action">
+                    <label for="modal_apercu" class="btn">Fermer</label>
+                </div>
+            </div>
         </div>
         <!-- Liste des articles -->
         <div>
@@ -164,6 +183,14 @@
     
     async function fetchAll(){
         await request('GET', articles, config.apiUrl+'api/article');
+    }
+
+    function addElem(type){
+        if(type === 'link'){
+            newArticle.value.description = newArticle.value.description + "<a href='LIEN_ICI'>NOM_ICI</a>"
+        }else{
+            newArticle.value.description = newArticle.value.description + "<img src='LIEN_ICI' />"
+        }
     }
 
     onMounted(fetchAll);
