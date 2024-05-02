@@ -29,6 +29,7 @@ const routes = [
             { path: 'departement', name: 'DepartementDash', component: () => import('./pages/dashboard/departement.vue') },
             { path: 'modifbase', name: 'ModifBaseDash', component: () => import('./pages/dashboard/modifbase.vue') },
             { path: 'accord', name: 'AccordDash', component: () => import('./pages/dashboard/accord.vue') },
+            { path: 'access', name: 'AccessDash', component: () => import('./pages/dashboard/access.vue') },
         ]
     },
 ];

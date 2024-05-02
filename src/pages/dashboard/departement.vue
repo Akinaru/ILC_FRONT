@@ -72,20 +72,20 @@
             dept_color: newDep.value.color,
             comp_id: newDep.value.comp 
         };
-        await request("POST", response, config.apiUrl+'api/department', requestData);
+        await request("POST", true, response, config.apiUrl+'api/department', requestData);
         await fetchAll();
         resetInput();
 
     }
 
     async function removeDepartment(id){
-        await request('DELETE', response, config.apiUrl+'api/department/deletebyid/'+id);
+        await request('DELETE', true, response, config.apiUrl+'api/department/deletebyid/'+id);
         fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', departements, config.apiUrl+'api/department');
-        await request('GET', composantes, config.apiUrl+'api/component');
+        await request('GET', false, departements, config.apiUrl+'api/department');
+        await request('GET',false, composantes, config.apiUrl+'api/component');
         resetInput();
     }
 

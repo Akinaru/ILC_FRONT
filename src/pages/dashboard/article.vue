@@ -137,7 +137,7 @@
         }
 
         var rep = ref();
-        await request("POST", rep, config.apiUrl+'api/article', requestData);
+        await request("POST", true, rep, config.apiUrl+'api/article', requestData);
         await fetchAll();
 
 
@@ -161,7 +161,7 @@
 
     // Suppression d'article
     async function removeArticle(id){
-        await request('DELETE', response, config.apiUrl+'api/article/deletebyid/'+id);
+        await request('DELETE', true, response, config.apiUrl+'api/article/deletebyid/'+id);
         await fetchAll();
     }
 
@@ -183,12 +183,12 @@
             art_description: currentArticleModif.value.art_description,
             art_pin: currentArticleModif.value.art_pin,
         };
-        await request('PUT', response, config.apiUrl+'api/article', requestData);
+        await request('PUT', true, response, config.apiUrl+'api/article', requestData);
         fetchAll();
     }
     
     async function fetchAll(){
-        await request('GET', articles, config.apiUrl+'api/article');
+        await request('GET', false, articles, config.apiUrl+'api/article');
     }
 
     function addElem(element, type){

@@ -22,7 +22,7 @@
     const article = ref([]);
 
     async function fetchAll(){
-        await request('GET', article, config.apiUrl+'api/article/getbyid/'+art_id);
+        await request('GET', false, article, config.apiUrl+'api/article/getbyid/'+art_id);
     }
 
     onMounted(fetchAll)

@@ -1,10 +1,11 @@
-export function decomposeDN(dn) {
+export function decomposeDN(login, dn) {
     const info = {};
     const parts = dn.split(',');
 
+    info.login = login;
     // Extracting full name from the first CN
     const cn = parts[0].split('=')[1];
-    info.full_name = cn;
+    info.fullname = cn;
 
     // Extracting the status (Etudiants or Personnels) from the OU
     const ou = parts[2].split('=')[1];

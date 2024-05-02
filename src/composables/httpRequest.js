@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { addAlert } from "./addAlert";
 
-export async function request(method, object, url, data = null) {
+export async function request(method, sendAlert, object, url, data = null) {
     try {
         const axiosConfig = {
             method: method,
@@ -13,11 +13,14 @@ export async function request(method, object, url, data = null) {
         const responseData = response.data;
         object.value = responseData;
 
-        if (responseData.message || responseData.error) {
+        if ((responseData.message || responseData.error) && sendAlert) {
             addAlert(responseData);
         }
     } catch (error) {
         console.error('Error:', error);
-        addAlert(error)
+        object.value = error;
+        if (sendAlert){
+            addAlert(error);
+        }
     }
 }
