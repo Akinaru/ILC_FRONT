@@ -11,6 +11,9 @@
         <p class="font-bold">{{ response.response.error }}</p>
         <p>{{ response.response.message }}</p>
       </span>
+      <span v-if="response && response.data">
+        <p class="font-bold">{{ response.data }}</p>
+      </span>
       <span v-else>
         <p class="font-bold">{{ response.response.message }}</p>
       </span>
@@ -34,7 +37,6 @@
       response: Object,
     });
 
-  
     const alertStore = useAlertStore();
   
     function dismissAlert() {

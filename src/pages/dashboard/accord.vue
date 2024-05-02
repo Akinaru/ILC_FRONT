@@ -1,5 +1,5 @@
 <template>
-    <div v-if="accords.length > 0 && isceds.length > 0 && composantes.length > 0 && universites.length > 0">
+    <div>
 
         <p class="font-bold text-xl">Accord</p>
         <!-- Partie ajout d'un accord -->
@@ -14,7 +14,7 @@
                         </div>
                         <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
                             <option disabled selected>Selectionnez un isced</option>
-                            <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
+                            <option v-if="isceds && isceds.length > 0" v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
                             <option value="addNew">Créer un isced</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.isced === 'addNew'">
@@ -32,7 +32,7 @@
                         </div>
                         <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
                             <option disabled selected>Selectionnez une composante</option>
-                            <option v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
+                            <option v-if="composantes && composantes.length > 0" v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
                             <option value="addNew">Créer une composante</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.compo === 'addNew'">
@@ -50,7 +50,7 @@
                         </div>
                         <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
                             <option disabled selected>Selectionnez une université</option>
-                            <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
+                            <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
                             <option value="addNew">Créer une université</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
@@ -159,9 +159,7 @@
             </div>
         </div>
     </div>
-    <div v-else class="flex items-center justify-center my-20 h-96">
-        <span class="loading loading-dots loading-lg"></span>
-    </div>
+
 </template>
 
 <script setup>
@@ -273,8 +271,7 @@
         newAgreement.value.isced = document.querySelector('#isced_select').options[0].value;
         newAgreement.value.compo = document.querySelector('#compo_select').options[0].value;
         newAgreement.value.univ = document.querySelector('#univ_select').options[0].value;
-        newAgreement.value.typeaccord = document.querySelector('#typeaccord_select').options[0].value;
-        
+        newAgreement.value.typeaccord = document.querySelector('#typeaccord_select').options[0].value;  
     }
 
 

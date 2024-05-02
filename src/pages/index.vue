@@ -3,7 +3,7 @@
         <div>
             <p class="text-2xl font-bold">Les accords</p>
             <div class="m-5">
-                <ul v-for="(accord, index) in accords" :key="index" class="bg-base-300 m-2 *:list-disc">
+                <ul v-if="accords && accords.length > 0" v-for="(accord, index) in accords" :key="index" class="bg-base-300 m-2 *:list-disc">
                     <li>{{ accord.university.univ_name }} ({{ accord.university.univ_city }})</li>
                     <li>{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}</li>
                     <li>{{ accord.component.comp_name }}</li>
@@ -14,6 +14,9 @@
                         </ul>
                     </li>
                 </ul>
+                <div v-else>
+                    <p>Aucun accord n'a été trouvé.</p>
+                </div>
             </div>
         </div>
 
@@ -21,12 +24,19 @@
             <p class="text-2xl font-bold">Espace communication</p>
             <div class="m-5">
                 <p class="text-xl font-bold">Articles</p>
-                <div class="flex flex-col">
-                    <RouterLink v-for="(article, index) in articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
+                <div class="flex flex-col" v-if="articles && articles.length > 0">
+                    <RouterLink  v-for="(article, index) in articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
                         <ArticleComp :article="article" class="my-1"></ArticleComp>
                     </RouterLink>
                 </div>
+                <div v-else>
+                    <p>Aucun article n'a été trouvé.</p>
+                </div>
+                
                 <p class="text-xl font-bold">Agenda</p>
+                <div >
+                    <p>Aucun agenda n'a été trouvé.</p>
+                </div>
             </div>
         </div>
     </div>

@@ -21,5 +21,6 @@ export async function request(method, object, url, data = null) {
         }
     } catch (error) {
         console.error('Error:', error);
+        addAlert(error)
     }
 }
