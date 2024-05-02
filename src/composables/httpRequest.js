@@ -6,9 +6,6 @@ export async function request(method, object, url, data = null) {
         const axiosConfig = {
             method: method,
             url: url,
-            headers: {
-                "Content-Type": "application/json"
-            },
             data: data ? data : null
         };
 
