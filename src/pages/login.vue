@@ -12,6 +12,7 @@
                 </form>
             </div>
         </div>
+        {{ response }}
     </div>
 </template>
 
@@ -19,9 +20,10 @@
 <script setup>
 
     import { request } from '../composables/httpRequest'
-    import { ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     import { useAccountStore } from "../stores/accountStore";
     import { useRouter } from 'vue-router';
+    import axios from 'axios'
     const router = useRouter();
 
     const newLogin = ref({ login: '', password: '' });
@@ -34,5 +36,13 @@
             router.push({ name: 'Dashboard' });
         }
     }
+
+    const response = ref([]);
+
+    async function fetch(){
+        await request('GET', response, 'http://srv-peda.iut-acy.local/ldama/ldap/?login=ldama');
+    }
+
+    onMounted(fetch)
 
 </script>

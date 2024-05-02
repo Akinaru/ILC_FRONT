@@ -9,10 +9,10 @@
                 <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full" />
                 <div class="*:mr-2">
-                    <label class="btn" @click="addElem('link')">Ajouter lien</label>
-                    <label class="btn" @click="addElem('image')">Ajouter Image</label>
+                    <label class="btn" @click="addElem(newArticle, 'link')">Ajouter lien</label>
+                    <label class="btn" @click="addElem(newArticle, 'image')">Ajouter Image</label>
                 </div>
-                <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.description"></textarea>
+                <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.art_description"></textarea>
                 <div class="form-control">
                     <label class="label cursor-pointer">
                         <span class="label-text">Épinglé ?</span> 
@@ -26,14 +26,13 @@
                 </div>
             </form>
         </div>
-        <!-- The button to open modal -->
-
+        <!-- Modal aperçu -->
         <input type="checkbox" id="modal_apercu" class="modal-toggle" />
         <div class="modal w-full h-full" role="dialog">
             <div class="modal-box h-full">
                 <h3 class="font-bold text-lg">Aperçu article</h3>
                 <div class="text-2xl py-2" v-html="newArticle.title"></div>
-                <pre v-html="newArticle.description"></pre>
+                <pre v-html="newArticle.art_description"></pre>
                 <div class="modal-action">
                     <label for="modal_apercu" class="btn">Fermer</label>
                 </div>
@@ -78,6 +77,10 @@
                     </div>
                     <input type="text"  class="input input-bordered w-full" v-model="currentArticleModif.art_title"/>
                 </label>
+                <div class="*:mr-2 my-2">
+                    <label class="btn" @click="addElem(currentArticleModif, 'link')">Ajouter lien</label>
+                    <label class="btn" @click="addElem(currentArticleModif, 'image')">Ajouter Image</label>
+                </div>
                 <!-- Description -->
                 <label class="form-control w-full">
                     <div class="label">
@@ -129,7 +132,7 @@
 
         const requestData = {
             art_title: newArticle.value.title, 
-            art_description: newArticle.value.description, 
+            art_description: newArticle.value.art_description, 
             art_pin: newArticle.value.pinned, 
         }
 
@@ -150,7 +153,7 @@
 
         // Reset du formulaire
         newArticle.value.title = '';
-        newArticle.value.description = '';
+        newArticle.value.art_description = '';
         newArticle.value.pinned = false;
         newArticle.value.image = null;
 
@@ -166,7 +169,10 @@
     // Modifie la ref par l'article qu'on veut modifier
     // pour afficher les bonnes informations dans le form de modif
     function modifArticle(article){
-        currentArticleModif.value = article;
+        currentArticleModif.value.art_id = article.art_id;
+        currentArticleModif.value.art_title = article.art_title;
+        currentArticleModif.value.art_description = article.art_description;
+        currentArticleModif.value.art_pin = article.art_pin;
     }
 
     // Confirmer la modification
@@ -185,11 +191,19 @@
         await request('GET', articles, config.apiUrl+'api/article');
     }
 
-    function addElem(type){
+    function addElem(element, type){
+        let htmlContent = '';
+
         if(type === 'link'){
-            newArticle.value.description = newArticle.value.description + "<a href='LIEN_ICI'>NOM_ICI</a>"
-        }else{
-            newArticle.value.description = newArticle.value.description + "<img src='LIEN_ICI' />"
+            htmlContent = `<a class='link' href='LIEN_ICI'>NOM_ICI</a>`;
+        } else {
+            htmlContent = `<img class='max-w-96' src='LIEN_ICI' />`;
+        }
+
+        if (element.art_description !== undefined) {
+            element.art_description += htmlContent;
+        } else {
+            element.art_description = htmlContent;
         }
     }
 
