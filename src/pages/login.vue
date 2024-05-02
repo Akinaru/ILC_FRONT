@@ -47,6 +47,7 @@
         //     router.push({ name: 'Dashboard' });
         // }
         authLogAccount(newLogin.value.login);
+        cc
     }
 
     async function fetch(){
