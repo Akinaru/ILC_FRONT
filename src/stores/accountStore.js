@@ -3,36 +3,32 @@ import { defineStore } from 'pinia';
 export const useAccountStore = defineStore("account", {
   state: () => ({
     login: null,
-    nom: null,
-    prenom: null,
+    fullname: null,
     logged: false,
     last_login: null,
+    access: 0
   }),
   actions: {
-    loginAccount(login, nom, prenom) {
+    loginAccount(login, fullname) {
       this.login = login;
-      this.nom = nom;
-      this.prenom = prenom;
+      this.fullname = fullname;
       this.logged = true;
       var currentDate = new Date();
       currentDate.setUTCHours(currentDate.getUTCHours() + 2);
       this.last_login = currentDate.toUTCString();
     },
-    updateLogin(newLogin) {
-      this.login = newLogin;
+    setAccess(level){
+      this.access = level;
     },
-    updateNom(newNom) {
-      this.nom = newNom;
-    },
-    updatePrenom(newPrenom) {
-      this.prenom = newPrenom;
-    },
+
     logoutAccount() {
       this.login = null;
-      this.nom = null;
-      this.prenom = null;
+      this.fullname = null;
+      this.last_login = null;
       this.logged = false;
+      this.access = 0;
     },
+
     isLogged() {
       return this.logged;
     },

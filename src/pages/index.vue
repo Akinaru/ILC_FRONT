@@ -30,22 +30,28 @@
             <p class="text-2xl font-bold">Espace communication</p>
             <div class="m-5">
                 <p class="text-xl font-bold">Articles</p>
-                <div v-if="articles && articles.articles">
-                    <div class="flex flex-col" v-if="articles && articles.count > 0">
-                        <RouterLink  v-for="(article, index) in articles.articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
-                            <ArticleComp :article="article" class="my-1"></ArticleComp>
-                        </RouterLink>
+                <div class="m-5">
+
+                    <div v-if="articles && articles.articles">
+                        <div class="flex flex-col" v-if="articles && articles.count > 0">
+                            <RouterLink  v-for="(article, index) in articles.articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
+                                <ArticleComp :article="article" class="my-1"></ArticleComp>
+                            </RouterLink>
+                        </div>
+                        <div v-else>
+                            <p>Aucun article n'a été trouvé.</p>
+                        </div>
                     </div>
-                    <div v-else>
-                        <p>Aucun article n'a été trouvé.</p>
+                    <div v-else class="flex items-center justify-center my-20">
+                        <span class="loading loading-dots loading-lg"></span>
                     </div>
                 </div>
-                <div v-else class="flex items-center justify-center my-20">
-                    <span class="loading loading-dots loading-lg"></span>
-                </div>
+
                 <p class="text-xl font-bold">Agenda</p>
-                <div >
-                    <p>Aucun agenda n'a été trouvé.</p>
+                <div class="m-5">
+                    <div>
+                        <p>Aucun agenda n'a été trouvé.</p>
+                    </div>
                 </div>
             </div>
         </div>
