@@ -6,11 +6,11 @@
       <div class="flex items-center justify-center">
         <div v-if="accountStore.isLogged()">
           <!-- Afficher les informations de l'utilisateur -->
-          <p class="mx-5"><RouterLink :to="{name: 'Dashboard'}">{{ fullname }}</RouterLink></p>
+          <p class="mx-5 hover:opacity-70 transition-all"><RouterLink :to="{name: 'Dashboard'}">{{ fullname }}</RouterLink></p>
         </div>
         <div v-else>
           <!-- Afficher le portail de connexion -->
-          <p class="mx-5"><RouterLink :to="{name: 'Login'}">Portail connexion</RouterLink></p>
+          <p class="mx-5 hover:opacity-70 transition-all"><RouterLink :to="{name: 'Login'}">Portail connexion</RouterLink></p>
         </div>
         <div class="scale-75">
           <label class="swap swap-rotate">

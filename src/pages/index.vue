@@ -33,7 +33,7 @@
                 <div class="m-5">
 
                     <div v-if="articles && articles.articles">
-                        <div class="flex flex-col" v-if="articles && articles.count > 0">
+                        <div class="flex flex-col" v-if="articles.count > 0">
                             <RouterLink  v-for="(article, index) in articles.articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
                                 <ArticleComp :article="article" class="my-1"></ArticleComp>
                             </RouterLink>

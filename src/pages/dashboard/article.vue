@@ -41,22 +41,28 @@
         <!-- Liste des articles -->
         <div>
             <p class="text-lg font-bold">Liste article</p>
-            <div v-if="articles && articles.length > 0" class="flex flex-col py-5">
-                <div v-for="(article, index) in articles" :key="index" class="flex my-1 mx-10">
-                    <ArticleComp :article="article"></ArticleComp>
-                    <!-- Bouton de modification -->
-                    <label for="modal_modif" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
-                        <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                            <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                        </svg>
-                    </label>
-                    
+            <div v-if="articles && articles.articles" class="flex flex-col py-5">
+                <div v-if="articles.count > 0">
 
-                    <!-- Bouton de suppression -->
-                    <button class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-300" @click="removeArticle(article.art_id)">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+                    <div v-for="(article, index) in articles.articles" :key="index" class="flex my-1 mx-10">
+                        <ArticleComp :article="article"></ArticleComp>
+                        <!-- Bouton de modification -->
+                        <label for="modal_modif" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            </svg>
+                        </label>
+                        
+
+                        <!-- Bouton de suppression -->
+                        <button class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-300" @click="removeArticle(article.art_id)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div v-else>
+                    <p>Aucun article trouvé.</p>
                 </div>
             </div>
             <div v-else class="flex items-center justify-center my-20">
