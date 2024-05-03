@@ -101,59 +101,67 @@
         <!-- Partie liste des accords -->
         <div>
             <p class="font-bold">Liste des accords:</p>
-            <div v-if="accords && accords.length > 0" v-for="(accord, indexAccord) in accords" :key="indexAccord" class="m-5 p-3 flex">
-                <div class="w-full bg-base-300 p-2">
+            <div v-if="accords && accords.agreements">
+                <div v-if="accords.count > 0">
 
-                    <p>({{ accord.partnercountry.parco_name }}) {{accord.university.univ_name}} ({{ accord.university.univ_city }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
-                    <!-- Liste des départements d'un accord -->
-                    <p>Les départements: </p>
-                    <div class="flex items-center justify-start">
-                        <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
-                            <div class="w-fit p-2 flex items-center justify-center mx-1" :style="{backgroundColor: dept.dept_color}">
-                                <p>{{ dept.dept_shortname }} <span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? '(Non validé par le dep)' : '' }}</span></p>
-                                <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </button>
+                    <div v-for="(accord, indexAccord) in accords.agreements" :key="indexAccord" class="m-5 p-3 flex">
+                        <div class="w-full bg-base-300 p-2">
+    
+                            <p>({{ accord.partnercountry.parco_name }}) {{accord.university.univ_name}} ({{ accord.university.univ_city }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
+                            <!-- Liste des départements d'un accord -->
+                            <p>Les départements: </p>
+                            <div class="flex items-center justify-start">
+                                <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
+                                    <div class="w-fit p-2 flex items-center justify-center mx-1" :style="{backgroundColor: dept.dept_color}">
+                                        <p>{{ dept.dept_shortname }} <span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? '(Non validé par le dep)' : '' }}</span></p>
+                                        <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="bg-base-200 p-4 hover:cursor-pointer hover:opacity-60 select-none mx-1" @click="showForm(accord.agree_id)">Ajouter un département</p>
+                            </div>
+                            <!-- Formulaire pour ajouter un département -->
+                            <div v-if="showForms[accord.agree_id]">
+                                <form @submit.prevent="submitForm(accord.agree_id)">
+                                    <p>Ajouter un département</p>
+                                    <div class="flex items-center justify-start *:m-1">
+                                        <select class="select select-bordered w-full max-w-xs" :id="'form_dept_select_'+accord.agree_id" v-model="selectedDepartment[accord.agree_id]">
+                                            <option disabled selected>Selectionnez un département</option>
+                                            <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">{{ dept.dept_shortname }} ({{dept.component.comp_name}})</option>
+                                        </select>
+                                        <div class="flex items-center justify-center">
+                                            <button class="btn btn-primary" type="submit">Ajouter le département</button>
+                                        </div>
+                                        <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="showForm(accord.agree_id)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <p class="bg-base-200 p-4 hover:cursor-pointer hover:opacity-60 select-none mx-1" @click="showForm(accord.agree_id)">Ajouter un département</p>
-                    </div>
-                    <!-- Formulaire pour ajouter un département -->
-                    <div v-if="showForms[accord.agree_id]">
-                        <form @submit.prevent="submitForm(accord.agree_id)">
-                            <p>Ajouter un département</p>
-                            <div class="flex items-center justify-start *:m-1">
-                                <select class="select select-bordered w-full max-w-xs" :id="'form_dept_select_'+accord.agree_id" v-model="selectedDepartment[accord.agree_id]">
-                                    <option disabled selected>Selectionnez un département</option>
-                                    <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">{{ dept.dept_shortname }} ({{dept.component.comp_name}})</option>
-                                </select>
-                                <div class="flex items-center justify-center">
-                                    <button class="btn btn-primary" type="submit">Ajouter le département</button>
-                                </div>
-                                <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="showForm(accord.agree_id)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </button>
-                            </div>
-                        </form>
+                        <!-- Bouton de modification -->
+                        <label :for="'my_modal_'+ accord.agree_id" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            </svg>
+                        </label>
+    
+                        <!-- Modal de modification d'accord -->
+                        <ModifAccordComp :accord="accord" :accords="accords" :isceds="isceds" :composantes="composantes" :universites="universites" :departments="departments" :partnercountrys="partnercountrys"></ModifAccordComp>
+    
+                        <!-- Bouton de suppression -->
+                        <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.agree_id)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
                     </div>
                 </div>
-                <!-- Bouton de modification -->
-                <label :for="'my_modal_'+ accord.agree_id" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                        <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                    </svg>
-                </label>
-
-                <!-- Modal de modification d'accord -->
-                <ModifAccordComp :accord="accord" :accords="accords" :isceds="isceds" :composantes="composantes" :universites="universites" :departments="departments" :partnercountrys="partnercountrys"></ModifAccordComp>
-
-                <!-- Bouton de suppression -->
-                <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.agree_id)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+            
+                <div v-else>
+                    <p>Aucun accord trouvé.</p>
+                </div>
             </div>
-
             <div v-else class="flex items-center justify-center my-20">
                 <span class="loading loading-dots loading-lg"></span>
             </div>
@@ -238,17 +246,17 @@
         }
 
 
-        await request("POST", response, config.apiUrl+'api/agreement', requestData);
+        await request("POST",true, response, config.apiUrl+'api/agreement', requestData);
         await fetchAll();
     }
 
     async function fetchAll(){
-        await request('GET', accords, config.apiUrl+'api/agreement');
-        await request('GET', isceds, config.apiUrl+'api/isced');
-        await request('GET', composantes, config.apiUrl+'api/component');
-        await request('GET', universites, config.apiUrl+'api/university');
-        await request('GET', departments, config.apiUrl+'api/department');
-        await request('GET', partnercountrys, config.apiUrl+'api/partnercountry');
+        await request('GET', false, accords, config.apiUrl+'api/agreement');
+        await request('GET', false, isceds, config.apiUrl+'api/isced');
+        await request('GET', false, composantes, config.apiUrl+'api/component');
+        await request('GET', false, universites, config.apiUrl+'api/university');
+        await request('GET', false, departments, config.apiUrl+'api/department');
+        await request('GET', false, partnercountrys, config.apiUrl+'api/partnercountry');
 
         //On cache tous les formulaires
         showForms.value = Array(accords.value.length).fill(false);
@@ -256,11 +264,11 @@
         resetInput();
     }
     async function removeDeptFromAgreement(agree_id, dept_id){
-        await request('DELETE', response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
+        await request('DELETE', true, response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
         fetchAll();
     }
     async function deleteAgreement(agree_id){
-        await request('DELETE', response, config.apiUrl+'api/agreement/deletebyid/'+agree_id);
+        await request('DELETE', true, response, config.apiUrl+'api/agreement/deletebyid/'+agree_id);
         fetchAll();
     }
     function filteredDepartments(accord) {
@@ -293,7 +301,7 @@
             dept_id: selectedDepartment.value[agree_id],
             deptagree_valide: true
         }
-        await request('POST', response, config.apiUrl+'api/departmentagreement', requestData);
+        await request('POST', true, response, config.apiUrl+'api/departmentagreement', requestData);
         fetchAll();
     }
 
