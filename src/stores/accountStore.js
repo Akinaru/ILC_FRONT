@@ -32,5 +32,9 @@ export const useAccountStore = defineStore("account", {
     isLogged() {
       return this.logged;
     },
+
+    getAccessLevel(){
+      return this.access;
+    }
   },
 });
