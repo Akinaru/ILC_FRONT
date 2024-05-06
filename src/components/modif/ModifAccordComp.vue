@@ -133,17 +133,5 @@
         console.log("modification apportée à l'accord",agree_id)
     }
 
-    function getVal(elementId, val){
-        var selectElement = document.querySelector(elementId);
-        var selectedOption = null;
-
-        for (var i = 0; i < selectElement.options.length; i++) {
-            if (selectElement.options[i].value === val) {
-                selectedOption = selectElement.options[i];
-                break;
-            }
-        }
-        return selectedOption;
-    }
 
 </script>

@@ -32,7 +32,7 @@
                         </div>
                         <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
                             <option disabled selected>Selectionnez une composante</option>
-                            <option v-if="composantes && composantes.length > 0" v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
+                            <option v-if="composantes && composantes.components" v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
                             <option value="addNew">Créer une composante</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.compo === 'addNew'">

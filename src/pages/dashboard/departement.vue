@@ -1,6 +1,7 @@
 <template>
     <div>
         <p class="text-xl font-bold">Departement</p>
+        <!-- Ajout de département -->
         <div class="m-5">
             <div class="m-5 flex justify-center items-center flex-col">
                 <p class="text-lg font-bold">Ajout département</p>
@@ -33,9 +34,7 @@
             </div>
         </div>
 
-
-
-
+        <!-- Liste de département -->
         <div>
             <p class="text-lg font-bold">Liste département</p>
             <div v-if="composantes && composantes.components">
@@ -49,6 +48,15 @@
                                 <div class="h-10 w-10 mx-5" :style="{backgroundColor: dept.dept_color}"></div>
                                 <p class="w-full">{{ dept.dept_name }} ({{ dept.dept_shortname }})</p>
                             </div>
+                            <!-- Bouton de modification -->
+                            <label for="modal_modif" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifDept(dept)">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </label>
+
+
                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeDepartment(dept.dept_id)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
@@ -66,6 +74,42 @@
             </div>
         </div>
     </div>
+    <!-- Modal de modification de departement -->
+    <input type="checkbox" id="modal_modif" class="modal-toggle" />
+    <div class="modal modal-bottom sm:modal-middle" role="dialog">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Modification du département n° {{ currentDeptModif.dept_id }}</h3>
+            <form @submit.prevent="confirmModifDept" class="w-full">
+                <!-- Nom -->
+                <label class="form-control w-full">
+                    <div class="label">
+                        <span class="label-text">Nom</span>
+                    </div>
+                    <input type="text"  class="input input-bordered w-full" v-model="currentDeptModif.dept_name"/>
+                </label>
+                <!-- Nom raccourci -->
+                <label class="form-control w-full">
+                    <div class="label">
+                        <span class="label-text">Nom raccourci</span>
+                    </div>
+                    <input type="text"  class="input input-bordered w-full" v-model="currentDeptModif.dept_shortname"/>
+                </label>
+                <!-- Couleur -->
+                <label class="form-control w-full">
+                    <div class="label">
+                        <span class="label-text">Couleur</span>
+                    </div>
+                    <input type="color" id="colorPicker" v-model="currentDeptModif.dept_color">
+                </label>
+                <div class="modal-action">
+                    <label for="modal_modif" class="btn ">Annuler</label>
+                    <button type="submit">
+                        <label for="modal_modif" class="btn btn-success">Enregistrer</label>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -74,8 +118,10 @@
     import { request } from '../../composables/httpRequest';
     import config from '../../config';
 
+
     const composantes = ref([]);
     const response = ref([]);
+    const currentDeptModif = ref([]);
 
     const newDep = ref({ 
         name: '', 
@@ -108,6 +154,28 @@
         await fetchAll();
         resetInput();
 
+    }
+
+    // Gestion de la modification de departement
+    // Modifie la ref par departement qu'on veut modifier
+    // pour afficher les bonnes informations dans le form de modif
+    function modifDept(dept){
+        currentDeptModif.value.dept_id = dept.dept_id;
+        currentDeptModif.value.dept_name = dept.dept_name;
+        currentDeptModif.value.dept_shortname = dept.dept_shortname;
+        currentDeptModif.value.dept_color = dept.dept_color;
+    }
+
+    // Confirmer la modification
+    async function confirmModifDept(){
+        const requestData = { 
+            art_id: currentArticleModif.value.art_id,
+            art_title: currentArticleModif.value.art_title,
+            art_description: currentArticleModif.value.art_description,
+            art_pin: currentArticleModif.value.art_pin,
+        };
+        await request('PUT', true, response, config.apiUrl+'api/article', requestData);
+        fetchAll();
     }
 
     async function removeDepartment(id){
