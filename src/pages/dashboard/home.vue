@@ -1,14 +1,6 @@
 <template>
-    <p>Bienvenue {{ fullname }} sur votre dashboard !</p>
-    {{ accountStore }}
-    <div>
-        <div v-if="access && access.acs_accounttype">
-            <p>Access de niveau: {{ access.acs_accounttype }}</p>
-        </div>
-        <div v-else>
-            <p>Aucun accès particulier, portail étudiant.</p>
-        </div>
-        
+    <div class="m-5">
+        <p>Bienvenue sur votre accès personnel. Veuillez remplie les informations ci-dessous pour compléter votre dossier étudiant lié aux relations internationales.</p>
     </div>
 
 

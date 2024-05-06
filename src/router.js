@@ -70,12 +70,6 @@ const routes = [
                 component: () => import('./pages/dashboard/access.vue'),
                 beforeEnter: requireAccess(1) 
             },
-            { 
-                path: 'hoeetu', 
-                name: 'HomeEtuDash', 
-                component: () => import('./pages/dashboard/homeetu.vue'),
-                beforeEnter: requireAccess(0) 
-            },
         ]
     },
 ];
