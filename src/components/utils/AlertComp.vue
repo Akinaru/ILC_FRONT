@@ -44,7 +44,6 @@
     }
   
     function startTimer() {
-      console.log(props.response.value);
       setTimeout(() => {
         dismissAlert();
       }, config.alertTimeBeforeRemove * 1000);

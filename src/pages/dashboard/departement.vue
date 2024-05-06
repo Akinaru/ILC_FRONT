@@ -169,12 +169,12 @@
     // Confirmer la modification
     async function confirmModifDept(){
         const requestData = { 
-            art_id: currentArticleModif.value.art_id,
-            art_title: currentArticleModif.value.art_title,
-            art_description: currentArticleModif.value.art_description,
-            art_pin: currentArticleModif.value.art_pin,
+            dept_id: currentDeptModif.value.dept_id,
+            dept_name: currentDeptModif.value.dept_name,
+            dept_shortname: currentDeptModif.value.dept_shortname,
+            dept_color: currentDeptModif.value.dept_color,
         };
-        await request('PUT', true, response, config.apiUrl+'api/article', requestData);
+        await request('PUT', true, response, config.apiUrl+'api/department', requestData);
         fetchAll();
     }
 
