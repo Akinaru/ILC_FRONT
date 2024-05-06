@@ -104,7 +104,6 @@
                 comp_shortname: newDep.value.newcompo.shortname.toUpperCase()
             };
         }
-        console.log(requestData)
         await request("POST", true, response, config.apiUrl+'api/department', requestData);
         await fetchAll();
         resetInput();
