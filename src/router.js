@@ -10,7 +10,11 @@ const requireAuth = (to, from, next) => {
         next();
     } else {
         next({ name: 'Login' });
-        addAlert({error: 'Vous devez être connecté pour accéder à cette page.'})
+        addAlert(true, {
+            data: { 
+                error: 'Vous devez être connecté pour accéder à cette page.'
+            }
+        })
     }
 };
 
@@ -20,8 +24,8 @@ const requireAccess = (accessLevel) => (to, from, next) => {
     if (accountStore.isLogged() && accountStore.getAccessLevel() >= accessLevel) {
         next();
     } else {
-        next({ name: 'Accueil' });
-        addAlert({error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'})
+        next({ name: 'Dashboard' });
+        addAlert(true, {data: {error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'}})
     }
 };
 
@@ -65,6 +69,12 @@ const routes = [
                 name: 'AccessDash', 
                 component: () => import('./pages/dashboard/access.vue'),
                 beforeEnter: requireAccess(1) 
+            },
+            { 
+                path: 'hoeetu', 
+                name: 'HomeEtuDash', 
+                component: () => import('./pages/dashboard/homeetu.vue'),
+                beforeEnter: requireAccess(0) 
             },
         ]
     },

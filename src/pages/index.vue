@@ -5,7 +5,7 @@
             <div class="m-5">
                 <div v-if="accords && accords.agreements">
 
-                    <ul v-if="accords && accords.count > 0" v-for="(accord, index) in accords" :key="index" class="bg-base-300 m-2 *:list-disc">
+                    <ul v-if="accords && accords.count > 0" v-for="(accord, index) in accords.agreements" :key="index" class="bg-base-300 m-2 *:list-disc">
                         <li>{{ accord.university.univ_name }} ({{ accord.university.univ_city }})</li>
                         <li>{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}</li>
                         <li>{{ accord.component.comp_name }}</li>
