@@ -272,8 +272,13 @@
         fetchAll();
     }
     function filteredDepartments(accord) {
-        const accordDepartmentIds = accord.departments.map(dept => dept.dept_id);
-        return departments.value.filter(dept => !accordDepartmentIds.includes(dept.dept_id));
+        if(accord.departments.length > 0){
+
+            const accordDepartmentIds = accord.departments.map(dept => dept.dept_id);
+            return departments.value.departments.filter(dept => !accordDepartmentIds.includes(dept.dept_id));
+        }else{
+            return departments.value.departments;
+        }
     }
     function resetInput(){
         newAgreement.value.isced = document.querySelector('#isced_select').options[0].value;
