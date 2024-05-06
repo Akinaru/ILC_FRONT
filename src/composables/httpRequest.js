@@ -17,10 +17,9 @@ export async function request(method, sendAlert, object, url, data = null) {
             addAlert(false, responseData);
         }
     } catch (error) {
-        console.error('Error:', error);
         object.value = error;
         if (sendAlert){
-            addAlert(true, error);
+            addAlert(true, error.response);
         }
     }
 }

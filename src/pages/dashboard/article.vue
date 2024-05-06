@@ -146,14 +146,16 @@
         await request("POST", true, rep, config.apiUrl+'api/article', requestData);
         await fetchAll();
 
+        if(rep.value.article){
 
-        const formData = new FormData();
-        formData.append('image', newArticle.value.image);
-        formData.append('fileName', 'img_art_' + rep.value.article.art_id);
-        formData.append('filePath', 'private/images/articles');
-        formData.append('articleId', rep.value.article.art_id);
-
-        const responseImage = await axios.post(config.apiUrl + 'api/image/upload', formData);
+            const formData = new FormData();
+            formData.append('image', newArticle.value.image);
+            formData.append('fileName', 'img_art_' + rep.value.article.art_id);
+            formData.append('filePath', 'private/images/articles');
+            formData.append('articleId', rep.value.article.art_id);
+            
+            await axios.post(config.apiUrl + 'api/image/upload', formData);
+        }
 
 
 
