@@ -6,16 +6,14 @@ export const useAccountStore = defineStore("account", {
     fullname: null,
     logged: false,
     last_login: null,
-    access: 0
+    access: 0,
   }),
   actions: {
-    loginAccount(login, fullname) {
-      this.login = login;
-      this.fullname = fullname;
+    loginAccount(data) {
+      this.login = data.acc_id;
+      this.fullname = data.acc_fullname;
+      this.last_login = data.acc_lastlogin;
       this.logged = true;
-      var currentDate = new Date();
-      currentDate.setUTCHours(currentDate.getUTCHours() + 2);
-      this.last_login = currentDate.toUTCString();
     },
     setAccess(level){
       this.access = level;

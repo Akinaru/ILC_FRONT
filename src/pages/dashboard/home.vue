@@ -1,6 +1,7 @@
 <template>
     <div class="m-5">
-        <p>Bienvenue sur votre accès personnel. Veuillez remplie les informations ci-dessous pour compléter votre dossier étudiant lié aux relations internationales.</p>
+        <p>Bienvenue sur votre accès personnel. Veuillez remplir les informations ci-dessous pour compléter votre dossier étudiant lié aux relations internationales.</p>
+        {{ accountStore }}
     </div>
 
 
@@ -20,7 +21,7 @@
 
     const router = useRouter();
     const accountStore = useAccountStore();
-    const { fullname, login } = storeToRefs(accountStore)
+    const { login } = storeToRefs(accountStore)
     const response = ref([]);
     const access = ref([]);
     

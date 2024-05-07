@@ -11,9 +11,12 @@ export async function authLogAccount(login, router) {
         await authRegisterAccount(login, router);
         router.push({ name: 'Dashboard' });
     } else {
+        await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
+        console.log(response.value)
         const requestData = {
             acc_id: response.value.acc_id,
-            acc_fullname: response.value.acc_fullname
+            acc_fullname: response.value.acc_fullname,
+            acc_lastlogin: response.value.acc_lastlogin
         };
         authStoreUser(requestData);
         router.push({ name: 'Dashboard' });
@@ -38,5 +41,5 @@ async function authRegisterAccount(login, router) {
 
 function authStoreUser(data) {
     const accountStore = useAccountStore();
-    accountStore.loginAccount(data.acc_id, data.acc_fullname);
+    accountStore.loginAccount(data);
 }
