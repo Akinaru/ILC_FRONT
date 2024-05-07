@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="md:w-1/2 w-full flex items-center flex-col">
-            <p class="text-lg font-bold">Ajouter un utilisateur</p>
+            <p class="text-lg font-bold">Ajouter/modifier un utilisateur</p>
             <form @submit.prevent="addAccess" class="w-2/5 *:my-2">
                 <input type="text" placeholder="Login" v-model="newAccess.login" class="input input-bordered w-full " />
                 <select class="select select-bordered w-full" v-model="newAccess.access">

@@ -36,19 +36,34 @@
 
         <!-- Liste de département -->
         <div>
-            <p class="text-lg font-bold">Liste département</p>
-            <div v-if="composantes && composantes.components">
+            <p class="text-lg font-bold">Liste des composantes (et de leurs départements)</p>
+            <div v-if="composantes && composantes.components" class="my-5">
                 <div v-if="composantes.count > 0">
                     
                     <div v-for="(compo, index) in composantes.components" :key="index">
-                        <li class="list-disc">{{ compo.comp_name }}</li>
+                        <div class="flex">
+
+                            <p class="p-5 bg-base-300 w-full"><span class="font-bold">{{ compo.comp_name }}</span> ({{ compo.comp_shortname }})</p>
+                            <!-- Bouton de modification composante -->
+                            <label for="modal_modif_comp" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifComp(compo)">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </label>
+                            
+                            <!-- Bouton de suppression composante -->
+                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeComp(compo.comp_id)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
                         <div v-for="(dept, index) in compo.departments" :key="index" class="mx-10 flex m-1">
                             
                             <div class="bg-base-300 w-full p-5 flex items-center justify-center">
                                 <div class="h-10 w-10 mx-5" :style="{backgroundColor: dept.dept_color}"></div>
                                 <p class="w-full">{{ dept.dept_name }} ({{ dept.dept_shortname }})</p>
                             </div>
-                            <!-- Bouton de modification -->
+                            <!-- Bouton de modification departement -->
                             <label for="modal_modif" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifDept(dept)">
                                 <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -56,7 +71,7 @@
                                 </svg>
                             </label>
 
-
+                            <!-- Bouton de suppression departement -->
                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeDepartment(dept.dept_id)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
@@ -74,40 +89,74 @@
             </div>
         </div>
     </div>
-    <!-- Modal de modification de departement -->
-    <input type="checkbox" id="modal_modif" class="modal-toggle" />
-    <div class="modal modal-bottom sm:modal-middle" role="dialog">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg">Modification du département n° {{ currentDeptModif.dept_id }}</h3>
-            <form @submit.prevent="confirmModifDept" class="w-full">
-                <!-- Nom -->
-                <label class="form-control w-full">
-                    <div class="label">
-                        <span class="label-text">Nom</span>
+
+    <!-- Modals de modifications -->
+    <div>
+        <!-- Modal de modification de departement -->
+        <input type="checkbox" id="modal_modif" class="modal-toggle" />
+        <div class="modal modal-bottom sm:modal-middle" role="dialog">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg">Modification du département n° {{ currentDeptModif.dept_id }}</h3>
+                <form @submit.prevent="confirmModifDept" class="w-full">
+                    <!-- Nom -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Nom</span>
+                        </div>
+                        <input type="text"  class="input input-bordered w-full" v-model="currentDeptModif.dept_name"/>
+                    </label>
+                    <!-- Nom raccourci -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Nom raccourci</span>
+                        </div>
+                        <input type="text"  class="input input-bordered w-full" v-model="currentDeptModif.dept_shortname"/>
+                    </label>
+                    <!-- Couleur -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Couleur</span>
+                        </div>
+                        <input type="color" id="colorPicker" v-model="currentDeptModif.dept_color">
+                    </label>
+                    <div class="modal-action">
+                        <label for="modal_modif" class="btn ">Annuler</label>
+                        <button type="submit">
+                            <label for="modal_modif" class="btn btn-success">Enregistrer</label>
+                        </button>
                     </div>
-                    <input type="text"  class="input input-bordered w-full" v-model="currentDeptModif.dept_name"/>
-                </label>
-                <!-- Nom raccourci -->
-                <label class="form-control w-full">
-                    <div class="label">
-                        <span class="label-text">Nom raccourci</span>
+                </form>
+            </div>
+        </div>
+        <!-- Modal de modification de componant -->
+        <input type="checkbox" id="modal_modif_comp" class="modal-toggle" />
+        <div class="modal modal-bottom sm:modal-middle" role="dialog">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg">Modification de la composante n° {{ currentCompModif.comp_id }}</h3>
+                <form @submit.prevent="confirmModifComp" class="w-full">
+                    <!-- Nom -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Nom</span>
+                        </div>
+                        <input type="text"  class="input input-bordered w-full" v-model="currentCompModif.comp_name"/>
+                    </label>
+                    <!-- Nom raccourci -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Nom raccourci</span>
+                        </div>
+                        <input type="text"  class="input input-bordered w-full" v-model="currentCompModif.comp_shortname"/>
+                    </label>
+
+                    <div class="modal-action">
+                        <label for="modal_modif_comp" class="btn ">Annuler</label>
+                        <button type="submit">
+                            <label for="modal_modif_comp" class="btn btn-success">Enregistrer</label>
+                        </button>
                     </div>
-                    <input type="text"  class="input input-bordered w-full" v-model="currentDeptModif.dept_shortname"/>
-                </label>
-                <!-- Couleur -->
-                <label class="form-control w-full">
-                    <div class="label">
-                        <span class="label-text">Couleur</span>
-                    </div>
-                    <input type="color" id="colorPicker" v-model="currentDeptModif.dept_color">
-                </label>
-                <div class="modal-action">
-                    <label for="modal_modif" class="btn ">Annuler</label>
-                    <button type="submit">
-                        <label for="modal_modif" class="btn btn-success">Enregistrer</label>
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </template>
@@ -122,6 +171,7 @@
     const composantes = ref([]);
     const response = ref([]);
     const currentDeptModif = ref([]);
+    const currentCompModif = ref([]);
 
     const newDep = ref({ 
         name: '', 
@@ -134,7 +184,7 @@
         } 
     });
 
-
+    // Ajouter un département
     async function addDepartment(){
         const requestData = { 
             dept_name: newDep.value.name,
@@ -165,6 +215,11 @@
         currentDeptModif.value.dept_shortname = dept.dept_shortname;
         currentDeptModif.value.dept_color = dept.dept_color;
     }
+    function modifComp(comp){
+        currentCompModif.value.comp_id = comp.comp_id;
+        currentCompModif.value.comp_name = comp.comp_name;
+        currentCompModif.value.comp_shortname = comp.comp_shortname;
+    }
 
     // Confirmer la modification
     async function confirmModifDept(){
@@ -177,11 +232,28 @@
         await request('PUT', true, response, config.apiUrl+'api/department', requestData);
         fetchAll();
     }
+    // Confirmer la modification
+    async function confirmModifComp(){
+        const requestData = { 
+            comp_id: currentCompModif.value.comp_id,
+            comp_name: currentCompModif.value.comp_name,
+            comp_shortname: currentCompModif.value.comp_shortname,
+        };
+        await request('PUT', true, response, config.apiUrl+'api/component', requestData);
+        fetchAll();
+    }
 
+    // Supprimer un département
     async function removeDepartment(id){
         await request('DELETE', true, response, config.apiUrl+'api/department/deletebyid/'+id);
         fetchAll();
     }
+    // Supprimer une composante
+    async function removeComp(id){
+        await request('DELETE', true, response, config.apiUrl+'api/component/deletebyid/'+id);
+        fetchAll();
+    }
+
 
     async function fetchAll(){
         await request('GET',false, composantes, config.apiUrl+'api/component');
