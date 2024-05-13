@@ -41,7 +41,7 @@
     const name = ref("");
     const decomposedInfo = ref(null);
 
-    const validLogin = ['gallottm', 'ldama', 'martmate'];
+    const validLogin = ['gallottm', 'ldama', 'martmate', 'vcout'];
 
     async function login() {
         if (newLogin.value.login !== null && validLogin.includes(newLogin.value.login)) {

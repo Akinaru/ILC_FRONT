@@ -13,7 +13,7 @@ export async function authLogAccount(login, router) {
     } else {
         await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
         
-        const requestData = {
+        var requestData = {
             acc_id: response.value.acc_id,
             acc_fullname: response.value.acc_fullname,
             acc_lastlogin: response.value.acc_lastlogin,
@@ -33,7 +33,7 @@ async function authRegisterAccount(login, router) {
     const response = ref([]);
     await request('GET', true, response, 'http://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
     decomposedInfo.value = decomposeDN(login, response.value[0].dn);
-    const requestData = {
+    var requestData = {
         acc_id: decomposedInfo.value.login,
         acc_fullname: decomposedInfo.value.fullname,
     };
