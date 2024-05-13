@@ -7,7 +7,15 @@ const requireAuth = (to, from, next) => {
     const accountStore = useAccountStore();
     
     if (accountStore.isLogged()) {
-        next();
+        if(accountStore.getAccessLevel() > 0){
+            next();
+        }else{
+            if(accountStore.getAccountValidate()){
+                next();
+            }else{
+                next({name: 'ComplDossier'})
+            }
+        }
     } else {
         next({ name: 'Login' });
         addAlert(true, {
@@ -29,10 +37,22 @@ const requireAccess = (accessLevel) => (to, from, next) => {
     }
 };
 
+const isAlreadyLogin = (to, from, next) => {
+    const accountStore = useAccountStore();
+    if(accountStore.isLogged()){
+        next({name: 'Dashboard'})
+    }else{
+        next();
+    }
+}
+
 const routes = [
     { path: '/', name: 'Accueil', component: Index },
+    { path: '/not-found', name: 'NotFound', component: () => import('./pages/notfound.vue') },
+    { path: '/:pathMatch(.*)*', redirect: '/not-found' },
     { path: '/convert', name: 'Convert', component: () => import('./pages/convert.vue') },
-    { path: '/login', name: 'Login', component: () => import('./pages/login.vue') },
+    { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin },
+    { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue') },
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue') },
     { 
         path: '/dashboard', 

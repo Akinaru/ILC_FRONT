@@ -7,6 +7,7 @@ export const useAccountStore = defineStore("account", {
     logged: false,
     last_login: null,
     access: 0,
+    acc_validateacc: false
   }),
   actions: {
     loginAccount(data) {
@@ -14,6 +15,8 @@ export const useAccountStore = defineStore("account", {
       this.fullname = data.acc_fullname;
       this.last_login = data.acc_lastlogin;
       this.logged = true;
+      this.acc_validateacc = data.acc_validateacc;
+      this.access = data.acc_access;
     },
     setAccess(level){
       this.access = level;
@@ -24,6 +27,7 @@ export const useAccountStore = defineStore("account", {
       this.fullname = null;
       this.last_login = null;
       this.logged = false;
+      this.acc_validateacc = false;
       this.access = 0;
     },
 
@@ -33,6 +37,10 @@ export const useAccountStore = defineStore("account", {
 
     getAccessLevel(){
       return this.access;
+    },
+
+    getAccountValidate(){
+      return this.acc_validateacc;
     }
   },
 });

@@ -12,12 +12,17 @@ export async function authLogAccount(login, router) {
         router.push({ name: 'Dashboard' });
     } else {
         await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
-        console.log(response.value)
+        
         const requestData = {
             acc_id: response.value.acc_id,
             acc_fullname: response.value.acc_fullname,
-            acc_lastlogin: response.value.acc_lastlogin
+            acc_lastlogin: response.value.acc_lastlogin,
+            acc_validateacc: response.value.acc_validateacc
         };
+        await request('GET', false, response, config.apiUrl+'api/access/getbylogin/'+login);
+        if(response.value.count == 1){
+            requestData.acc_access = response.value.access.acs_accounttype;
+        }
         authStoreUser(requestData);
         router.push({ name: 'Dashboard' });
     }
@@ -30,11 +35,18 @@ async function authRegisterAccount(login, router) {
     decomposedInfo.value = decomposeDN(login, response.value[0].dn);
     const requestData = {
         acc_id: decomposedInfo.value.login,
-        acc_fullname: decomposedInfo.value.fullname
+        acc_fullname: decomposedInfo.value.fullname,
     };
 
     await request('POST', true, response, config.apiUrl + 'api/account', requestData);
     if (response.value.status && response.value.status == 201) {
+        requestData = {
+            acc_id: response.value.account.acc_id,
+            acc_fullname: response.value.account.acc_fullname,
+            acc_lastlogin: response.value.account.acc_lastlogin,
+            acc_validateacc: response.value.account.acc_validateacc
+        };
+
         authStoreUser(requestData);
     }
 }
