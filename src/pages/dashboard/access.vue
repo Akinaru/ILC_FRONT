@@ -26,7 +26,7 @@
                                     <div v-if="acc.account.department && acc.account.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
                                         <span class="p-2 mx-2 flex items-center justify-center" :style="{backgroundColor: acc.account.department.dept_color}">
                                             <p class="mx-1">{{ acc.account.department.dept_shortname}}</p>
-                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-3" @click="removeDept(acc.acc_id)">
+                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1" @click="removeDept(acc.acc_id)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                             </button>
                                         </span>
