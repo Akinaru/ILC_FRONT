@@ -23,9 +23,9 @@
                                 <div class="bg-base-300 p-2 w-full flex items-center">
                                     <span class="font-bold mr-1">{{ acc.acc_id }}</span>
                                     <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
-                                    <div v-if="acc.department && acc.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
-                                        <span class="p-2 mx-2 flex items-center justify-center" :style="{backgroundColor: acc.department.dept_color}">
-                                            <p class="mx-1">{{ acc.department.dept_shortname}}</p>
+                                    <div v-if="acc.account.department && acc.account.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
+                                        <span class="p-2 mx-2 flex items-center justify-center" :style="{backgroundColor: acc.account.department.dept_color}">
+                                            <p class="mx-1">{{ acc.account.department.dept_shortname}}</p>
                                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-3" @click="removeDept(acc.acc_id)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                             </button>
@@ -129,7 +129,7 @@
         newAccess.value.access = document.querySelector('.select').options[0].value;
     }
     async function removeDept(acc_id){
-        await request('DELETE', true, response, config.apiUrl+'api/access/removedept/'+acc_id);
+        await request('DELETE', true, response, config.apiUrl+'api/account/removedept/'+acc_id);
         fetch();
     }
 
@@ -139,7 +139,7 @@
     
     async function submitForm(acc_id) {
         showForms.value[acc_id] = false;
-        await request('put', true, response, config.apiUrl+'api/access/changedept/'+acc_id+'/'+selectedDepartment.value[acc_id]);
+        await request('put', true, response, config.apiUrl+'api/account/changedept/'+acc_id+'/'+selectedDepartment.value[acc_id]);
         fetch();
     }
 

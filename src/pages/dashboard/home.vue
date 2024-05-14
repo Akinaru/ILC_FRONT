@@ -1,8 +1,7 @@
 <template>
     <div class="m-5">
-         {{ accountStore }}
-         <div v-if="accountStore.access == 2 && account && account.access">
-            <p>Vous êtes le résponsable du département: {{ account.access.department.dept_shortname }}</p>
+         <div v-if="accountStore.access == 2 && account && account.department">
+            <p>Bienvenue {{ account.acc_fullname }}. Vous êtes le résponsable du département: {{ account.department.dept_shortname }}</p>
             <p>Liste des étudiants:</p>
          </div>
     </div>
@@ -23,7 +22,7 @@
     const account = ref([]);
 
     async function fetch(){
-        await request('GET', false, account, config.apiUrl+'api/access/getbylogin/'+accountStore.login);
+        await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+accountStore.login);
     }
 
     onMounted(fetch)
