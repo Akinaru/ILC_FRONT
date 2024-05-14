@@ -294,7 +294,7 @@
      * Pour les deux:
      * agree_id: valeur
      */
-     const showForms = ref([]);
+    const showForms = ref([]);
     const selectedDepartment = ref([]);
     async function showForm(agree_id) {
         showForms.value[agree_id] = !showForms.value[agree_id];
