@@ -166,6 +166,7 @@
     import { onMounted, ref } from 'vue';
     import { request } from '../../composables/httpRequest';
     import config from '../../config';
+    import { addAlert } from '../../composables/addAlert';
 
 
     const composantes = ref([]);
@@ -186,20 +187,39 @@
 
     // Ajouter un département
     async function addDepartment(){
+
         const requestData = { 
             dept_name: newDep.value.name,
             dept_shortname: newDep.value.shortname.toUpperCase(),
             dept_color: newDep.value.color,
         };
+
         // Gestion de la nouvelle composante
         if (newDep.value.compo !== 'addNew') {
             requestData.comp_id = newDep.value.compo;
         } else {
+            if(!newDep.value.newcompo.name || newDep.value.newcompo.name === ''){
+                addAlert(true,{data: {error: 'Veuillez renseigner le nom de la nouvelle composante.'}});
+            }
+            else if(!newDep.value.newcompo.shortname || newDep.value.newcompo.shortname === ''){
+                addAlert(true,{data: {error: 'Veuillez renseigner le nom raccourci de la nouvelle composante.'}});
+            }
             requestData.newcompo = {
                 comp_name: newDep.value.newcompo.name,
                 comp_shortname: newDep.value.newcompo.shortname.toUpperCase()
             };
         }
+        
+        if(!newDep.value.name || newDep.value.name === ''){
+            addAlert(true,{data: {error: 'Veuillez renseigner un nom de département.'}});
+        }else if(!newDep.value.shortname || newDep.value.shortname === ''){
+            addAlert(true,{data: {error: 'Veuillez renseigner un nom de département raccourci.'}});
+        }else if(!newDep.value.compo || newDep.value.compo === ''){
+            addAlert(true,{data: {error: 'Veuillez renseigner une composante.'}});
+        }
+
+
+        
         await request("POST", true, response, config.apiUrl+'api/department', requestData);
         await fetchAll();
         resetInput();
@@ -265,6 +285,9 @@
         newDep.value.shortname = '';
         newDep.value.color = '#9e9e9e';
         newDep.value.comp = document.querySelector('.select').options[0].value;
+
+        newDep.value.newcompo.shortname = '';
+        newDep.value.newcompo.name = '';
     }
 
     onMounted(fetchAll);
