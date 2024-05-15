@@ -28,7 +28,6 @@
                     <input type="text" placeholder="Nom raccourci" v-model="newDep.shortname" class="input input-bordered w-full" />
                     <div class="flex items-center justify-center">
                         <button class="btn btn-primary" type="submit">Ajouter le département</button>
-
                     </div>
                 </form>
             </div>
@@ -200,9 +199,11 @@
         } else {
             if(!newDep.value.newcompo.name || newDep.value.newcompo.name === ''){
                 addAlert(true,{data: {error: 'Veuillez renseigner le nom de la nouvelle composante.'}});
+                return;
             }
             else if(!newDep.value.newcompo.shortname || newDep.value.newcompo.shortname === ''){
                 addAlert(true,{data: {error: 'Veuillez renseigner le nom raccourci de la nouvelle composante.'}});
+                return;
             }
             requestData.newcompo = {
                 comp_name: newDep.value.newcompo.name,
@@ -212,10 +213,13 @@
         
         if(!newDep.value.name || newDep.value.name === ''){
             addAlert(true,{data: {error: 'Veuillez renseigner un nom de département.'}});
+            return;
         }else if(!newDep.value.shortname || newDep.value.shortname === ''){
             addAlert(true,{data: {error: 'Veuillez renseigner un nom de département raccourci.'}});
+            return;
         }else if(!newDep.value.compo || newDep.value.compo === ''){
             addAlert(true,{data: {error: 'Veuillez renseigner une composante.'}});
+            return;
         }
 
 

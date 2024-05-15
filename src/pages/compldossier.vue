@@ -23,8 +23,21 @@
                         </optgroup>
                     </template>
                 </select>
-
-
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">Avez-vous des aménagements aux examens ?</span> 
+                        <input type="checkbox" class="checkbox" />
+                    </label>
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">Consentez-vous à l'utilisation de votre image selon notre politique de confidentialité et de protection des données ?</span> 
+                        <input type="checkbox" class="checkbox" />
+                    </label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <button class="btn btn-primary" type="submit">Valider</button>
+                </div>
             </label>
         </form>
     </div>
