@@ -38,7 +38,7 @@ async function authRegisterAccount(login, router) {
         acc_fullname: decomposedInfo.value.fullname,
     };
 
-    await request('POST', true, response, config.apiUrl + 'api/account', requestData);
+    await request('POST', false, response, config.apiUrl + 'api/account', requestData);
     if (response.value.status && response.value.status == 201) {
         requestData = {
             acc_id: response.value.account.acc_id,

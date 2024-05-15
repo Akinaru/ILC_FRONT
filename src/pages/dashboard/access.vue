@@ -49,9 +49,15 @@
                                         <div class="label">
                                             <span class="label-text">Séléctionnez un département</span>
                                         </div>
+
+
                                         <select class="select select-bordered" v-model="selectedDepartment[acc.account.acc_id]">
-                                            <option disabled selected>Séléctionnez un Département</option>
-                                            <option v-for="(dept, index) in departments.departments" :key="index" :value="dept.dept_id">{{ dept.dept_shortname }}</option>
+                                            <option disabled selected>Séléctionnez un département</option>
+                                            <template v-for="(compo, index) in components.components" :key="index">
+                                                <optgroup :label="compo.comp_name">
+                                                    <option v-for="(dept, index) in compo.departments" :value="dept.dept_id" :key="index">{{ dept.dept_name }} ({{ dept.dept_shortname }})</option>
+                                                </optgroup>
+                                            </template>
                                         </select>
                                     </label>
                                     <div class="flex items-center justify-start">
@@ -102,7 +108,7 @@
     const access = ref([]);
     const newAccess = ref({ login: '', access: ''});
     const response = ref([]);
-    const departments = ref([]);
+    const components = ref([]);
     
     const showForms = ref([]);
     const selectedDepartment = ref([]);
@@ -145,9 +151,11 @@
 
     async function fetch(){
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
-        await request('GET', false, departments, config.apiUrl+'api/department');
-        showForms.value = Array(access.value.access[2].length).fill(false);
-        selectedDepartment.value = Array(access.value.access[2].length).fill('');
+        await request('GET', false, components, config.apiUrl+'api/component');
+        if(access.value.access[2]){
+            showForms.value = Array(access.value.access[2].length).fill(false);
+            selectedDepartment.value = Array(access.value.access[2].length).fill('');
+        }
 
         resetInput();
     }

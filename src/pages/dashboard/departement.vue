@@ -6,11 +6,16 @@
             <div class="m-5 flex justify-center items-center flex-col">
                 <p class="text-lg font-bold">Ajout département</p>
                 <form @submit.prevent="addDepartment" class="w-2/5 *:my-2 flex flex-col justify-center items-center">
-                    <select class="select select-bordered w-full" v-model="newDep.compo">
-                        <option disabled selected>Selectionnez une composante</option>
-                        <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }}</option>
-                        <option value="addNew">Créer une composante</option>
-                    </select>
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Composante</span>
+                        </div>
+                        <select class="select select-bordered w-full" v-model="newDep.compo">
+                            <option disabled selected>Selectionnez une composante</option>
+                            <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }}</option>
+                            <option value="addNew">Créer une composante</option>
+                        </select>
+                    </label>
                     <label class="form-control w-5/6 my-1 flex flex-col justify-center items-center" v-if="newDep.compo === 'addNew'">
                         <div class="label">
                             <span class="label-text">Créer une composante</span>
@@ -288,7 +293,7 @@
         newDep.value.name = '';
         newDep.value.shortname = '';
         newDep.value.color = '#9e9e9e';
-        newDep.value.comp = document.querySelector('.select').options[0].value;
+        newDep.value.compo = document.querySelector('.select').options[0].value;
 
         newDep.value.newcompo.shortname = '';
         newDep.value.newcompo.name = '';
