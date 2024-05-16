@@ -46,20 +46,41 @@ const isAlreadyLogin = (to, from, next) => {
     }
 }
 
+const isAlreadyComplete = (to, from, next) => {
+    const accountStore = useAccountStore();
+    if(accountStore.getAccountValidate()){
+        next({name: 'Dashboard'})
+    }else{
+        next();
+    }    
+}
+
 const routes = [
     { path: '/', name: 'Accueil', component: Index },
     { path: '/not-found', name: 'NotFound', component: () => import('./pages/notfound.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/not-found' },
     { path: '/convert', name: 'Convert', component: () => import('./pages/convert.vue') },
     { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin },
-    { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue') },
+    { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete },
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue') },
+    
+
+
     { 
         path: '/dashboard', 
         component: () => import('./pages/dashboard.vue'), 
         beforeEnter: requireAuth,
         children: [
-            { path: '', name: 'Dashboard', component: () => import('./pages/dashboard/home.vue')},
+            { path: '', name: 'Dashboard', beforeEnter: (to, from, next) => {
+                const accountStore = useAccountStore();
+                if (accountStore.getAccessLevel() && accountStore.getAccessLevel() === 1) {
+                    next({ name: 'HomeRI' });
+                } else if (accountStore.getAccessLevel() && accountStore.getAccessLevel() === 2) {
+                    next({ name: 'HomeDept' });
+                } else {
+                    next({ name: 'Home' });
+                }
+            }},
             { 
                 path: 'article', 
                 name: 'ArticleDash', 
@@ -89,6 +110,24 @@ const routes = [
                 name: 'AccessDash', 
                 component: () => import('./pages/dashboard/access.vue'),
                 beforeEnter: requireAccess(1) 
+            },
+            { 
+                path: 'home-ri', 
+                name: 'HomeRI', 
+                component: () => import('./pages/dashboard/home-ri.vue'),
+                beforeEnter: requireAccess(1) 
+            },
+            { 
+                path: 'home-dept', 
+                name: 'HomeDept', 
+                component: () => import('./pages/dashboard/home-dept.vue'),
+                beforeEnter: requireAccess(2) 
+            },
+            { 
+                path: 'home', 
+                name: 'Home', 
+                component: () => import('./pages/dashboard/home.vue'),
+                beforeEnter: requireAccess(0) 
             },
         ]
     },

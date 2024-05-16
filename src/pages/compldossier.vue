@@ -18,10 +18,10 @@
                     <span class="label-text">Département</span>
                 </div>
                 <select class="select select-bordered" v-model="complDossier.department">
-                    <option disabled selected>Séléctionnez un département</option>
+                    <option disabled selected value="">Séléctionnez un département</option>
                     <template v-for="(compo, index) in components.components" :key="index">
                         <optgroup :label="compo.comp_name">
-                            <option v-for="(dept, index) in compo.departments" :key="index">{{ dept.dept_name }} ({{ dept.dept_shortname }})</option>
+                            <option v-for="(dept, index) in compo.departments" :key="index" :value="dept.dept_id">{{ dept.dept_name }} ({{ dept.dept_shortname }})</option>
                         </optgroup>
                     </template>
                 </select>
@@ -51,12 +51,16 @@
     import { request } from '../composables/httpRequest';
     import config from '../config';
     import { addAlert } from '../composables/addAlert';
+    import { useAccountStore } from '../stores/accountStore';
+    import { useRouter } from 'vue-router';
 
-
+    const router = useRouter();
+    const accountStore = useAccountStore();
     const components = ref([]);
+    const response = ref([]);
     const complDossier = ref({ 
         ine: '', 
-        department: null,
+        department: '',
         amenagement: false,
         consent: false
     });
@@ -65,7 +69,29 @@
         if(!complDossier.value.ine || complDossier.value.ine === ''){
             addAlert(true,{data: {error: 'Veuillez renseigner le numéro étudiant (INE).'}});
             return;
-            
+        }
+        else if(!complDossier.value.department || complDossier.value.department === ''){
+            addAlert(true,{data: {error: 'Veuillez renseigner votre département.'}});
+            return;
+        }
+        else if(!complDossier.value.consent){
+            addAlert(true,{data: {error: 'Votre consentement au droit à l\'image est obligatoire.'}});
+            return;
+        }
+        const requestData = {
+            acc_id: accountStore.login,
+            acc_studentnum: complDossier.value.ine,
+            dept_id: complDossier.value.department,
+            acc_amenagement: complDossier.value.amenagement,
+            acc_consent: complDossier.value.consent,
+        }
+
+        await request('PUT', true, response, config.apiUrl+'api/account/compldossier', requestData);
+
+
+        if(!response.value.response){
+            accountStore.setValidate(true);
+            router.push({ name: 'Dashboard' });
         }
     }
 
@@ -79,7 +105,6 @@
         complDossier.value.amenagement = false;
         complDossier.value.consent = false;
         complDossier.value.department = document.querySelector('.select').options[0].value;
-
     }
 
     onMounted(fetch)

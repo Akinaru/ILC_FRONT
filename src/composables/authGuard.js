@@ -23,6 +23,9 @@ export async function authLogAccount(login, router) {
         if(response.value.count == 1){
             requestData.acc_access = response.value.access.acs_accounttype;
         }
+        else{
+            requestData.acc_access = 0;
+        }
         authStoreUser(requestData);
         router.push({ name: 'Dashboard' });
     }

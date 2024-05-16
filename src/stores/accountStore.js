@@ -21,6 +21,9 @@ export const useAccountStore = defineStore("account", {
     setAccess(level){
       this.access = level;
     },
+    setValidate(val){
+      this.acc_validateacc = val;
+    },
 
     logoutAccount() {
       this.login = null;
