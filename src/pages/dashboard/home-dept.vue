@@ -4,7 +4,7 @@
             <p>Bienvenue {{ account.acc_fullname }}. Vous êtes le résponsable du département: {{ account.department.dept_shortname }}</p>
             <p>Liste des étudiants ({{ students.count }}):</p>
             <div v-for="(stud, index) in students.accounts" :key="index">
-                <p>{{ stud.acc_fullname }} ({{ stud.acc_id }})</p>
+                <RouterLink :to="{name: 'Profile', params: {acc_id: stud.acc_id}}"><p>{{ stud.acc_fullname }} ({{ stud.acc_id }})</p></RouterLink>
             </div>
          </div>
     </div>

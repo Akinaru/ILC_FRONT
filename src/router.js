@@ -129,6 +129,12 @@ const routes = [
                 component: () => import('./pages/dashboard/home.vue'),
                 beforeEnter: requireAccess(0) 
             },
+            { 
+                path: 'profile/:acc_id', 
+                name: 'Profile', 
+                component: () => import('./pages/dashboard/profile.vue'),
+                beforeEnter: requireAccess(1) 
+            },
         ]
     },
 ];

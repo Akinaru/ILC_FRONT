@@ -1,6 +1,5 @@
 <template>
     <div>
-        <p class="text-2xl font-bold">Dashboard</p>
         <div class="m-5 flex ">
             <span v-if="access == 1" class="flex md:flex-row flex-col">
                 <RouterLink :to="{name: 'ArticleDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'ArticleDash' }">Article</RouterLink>
@@ -10,10 +9,10 @@
                 <RouterLink :to="{name: 'ModifBaseDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'ModifBaseDash' }">Modif Base</RouterLink>
             </span>
             <span v-else-if="access == 2">
-                Departement
+                <!-- Departement -->
             </span>
             <span v-else>
-                Etu
+                <!-- Etu -->
             </span>
         </div>
         <RouterView></RouterView>

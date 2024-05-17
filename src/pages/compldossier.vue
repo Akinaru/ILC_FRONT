@@ -86,7 +86,7 @@
             acc_consent: complDossier.value.consent,
         }
 
-        await request('PUT', true, response, config.apiUrl+'api/account/compldossier', requestData);
+        await request('PUT', false, response, config.apiUrl+'api/account/compldossier', requestData);
 
 
         if(!response.value.response){
