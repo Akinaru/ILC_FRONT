@@ -130,6 +130,7 @@
                                             <option disabled selected>Selectionnez un département</option>
                                             <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">{{ dept.dept_shortname }} ({{dept.component.comp_name}})</option>
                                         </select>
+
                                         <div class="flex items-center justify-center">
                                             <button class="btn btn-primary" type="submit">Ajouter le département</button>
                                         </div>
@@ -244,7 +245,6 @@
                 requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry
             }
         }
-
 
         await request("POST",true, response, config.apiUrl+'api/agreement', requestData);
         await fetchAll();
