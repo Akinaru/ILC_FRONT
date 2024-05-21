@@ -4,18 +4,20 @@
             <p class="text-2xl font-bold">Les accords</p>
             <div class="m-5">
                 <div v-if="accords && accords.agreements">
+                    <div v-if="accords && accords.count > 0">
 
-                    <ul v-if="accords && accords.count > 0" v-for="(accord, index) in accords.agreements" :key="index" class="bg-base-300 m-2 *:list-disc">
-                        <li>{{ accord.university.univ_name }} ({{ accord.university.univ_city }})</li>
-                        <li>{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}</li>
-                        <li>{{ accord.component.comp_name }}</li>
-                        <li>
-                            <ul>
-                                <p>Les departements:</p>
-                                <li v-for="(dept,index) in accord.departments" class="list-disc mx-6" :key="index" :style="{ color: dept.pivot.deptagree_valide === 0 ? 'red' : '' }">{{ dept.dept_name }} ({{ dept.dept_shortname }}) - Validé par dep: {{ dept.pivot.deptagree_valide === 1 ? 'Oui' : 'Non' }}</li>
-                            </ul>
-                        </li>
-                    </ul>
+                        <div v-for="(accord, index) in accords.agreements" :key="index" class="bg-base-300 m-2 *:list-disc flex justify-between items-center ">
+                            <p>
+                                <span class="tooltip" :data-tip="accord.partnercountry.parco_name" v-html="getCountryFlag(accord.partnercountry.parco_name)"></span> 
+                                {{ accord.university.univ_name }} ({{ accord.university.univ_city }}) [0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}
+                            </p>
+                            <div class="flex">
+                                <div v-for="(dept,index) in accord.departments" :key="index" >
+                                    <p class="p-3 m-1 tooltip" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div v-else>
                         <p>Aucun accord n'a été trouvé.</p>
                     </div>
@@ -63,6 +65,7 @@
     import { ref } from 'vue';
     import { request } from '../composables/httpRequest';
     import config from '../config';
+    import {getCountryFlag} from '../composables/getFlag'
 
     import ArticleComp from '../components/index/ArticleComp.vue';
 
