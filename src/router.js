@@ -29,7 +29,7 @@ const requireAuth = (to, from, next) => {
 const requireAccess = (accessLevel) => (to, from, next) => {
     const accountStore = useAccountStore();
     
-    if (accountStore.isLogged() && accountStore.getAccessLevel() >= accessLevel) {
+    if (accountStore.isLogged() && accountStore.getAccessLevel() == accessLevel) {
         next();
     } else {
         next({ name: 'Dashboard' });
@@ -109,6 +109,12 @@ const routes = [
                 path: 'access', 
                 name: 'AccessDash', 
                 component: () => import('./pages/dashboard/access.vue'),
+                beforeEnter: requireAccess(1) 
+            },
+            { 
+                path: 'etudiants', 
+                name: 'EtudiantsDash', 
+                component: () => import('./pages/dashboard/etudiants.vue'),
                 beforeEnter: requireAccess(1) 
             },
             { 
