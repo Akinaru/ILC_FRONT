@@ -40,10 +40,12 @@
                     <div v-if="accords && accords.agreements">
                         <div v-if="filteredAccords && filteredAccords.length > 0">
                             <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-2 mx-2 *:list-disc flex justify-between items-center ">
-                                <p>
-                                    <span class="tooltip" :data-tip="accord.partnercountry.parco_name" v-html="getCountryFlag(accord.partnercountry.parco_name)"></span> 
-                                    {{ accord.university.univ_name }} ({{ accord.university.univ_city }}) [0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}
-                                </p>
+                                <div class="flex justify-between items-center w-full">
+
+                                    <p>
+                                        <span class="tooltip" :data-tip="accord.partnercountry.parco_name" v-html="getCountryFlag(accord.partnercountry.parco_name)"></span> 
+                                        {{ accord.university.univ_name }} ({{ accord.university.univ_city }}) [0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}
+                                    </p>
                                     <div v-if="accord.departments.length > 0" class="flex">
                                         <div v-for="(dept,index) in accord.departments" :key="index">
                                             <p class="p-3 m-1 tooltip" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
@@ -52,7 +54,12 @@
                                     <div v-else>
                                         <p class="p-3 m-1 tooltip" :data-tip="'Aucun département pour cet accord.'">Aucun département</p>
                                     </div>
+                                </div>
+                                <div class="p-5 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
+                                    {{ index }}
+                                </div>
                             </div>
+
                         </div>
                         <div v-else class="flex items-center justify-center">
                             <p>Aucun accord n'a été trouvé.</p>
