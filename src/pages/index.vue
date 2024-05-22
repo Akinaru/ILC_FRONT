@@ -7,10 +7,10 @@
                 <!-- Partie filtre -->
                 <div class="bg-base-200 w-96 drop-shadow-lg hidden lg:block" v-if="accords && accords.agreements">
                     <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
-                    <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length }} filtres)</p>
+                    <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length }} filtre{{ selectedCountries.length + selectedDepartment.length > 1 ? 's' : '' }})</p>
                     <!-- Pays -->
                     <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
-                        <p>Pays</p>
+                        <p>Pays ({{ selectedCountries.length }})</p>
                         <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                     </div>
                     <div class="p-1" v-show="isOpen.pays">
@@ -21,7 +21,7 @@
                     </div>
                     <!-- Départements -->
                     <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
-                        <p>Départements</p>
+                        <p>Départements ({{ selectedDepartment.length }})</p>
                         <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.departments">
@@ -99,9 +99,9 @@
                         <p class="font-bold text-lg">Liste des prochains évenements</p>
                         <div v-for="n in 5" class="flex items-center justify-center">
                             <p class="p-5">22/05</p>
-                            <div class="bg-base-300 p-7 my-3 drop-shadow-lg flex">
-                                <p>Ici le titre de l'evenement</p>
+                            <div class="bg-base-300 p-6 w-96 my-3 drop-shadow-lg flex flex-col">
                                 <p class="badge">Thématique</p>
+                                <p>Ici le titre de l'evenement</p>
                             </div>
                         </div>
                     </div>
