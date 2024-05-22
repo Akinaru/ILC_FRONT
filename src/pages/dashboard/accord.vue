@@ -14,7 +14,7 @@
                         </div>
                         <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
                             <option disabled selected>Selectionnez un isced</option>
-                            <option v-if="isceds && isceds.length > 0" v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
+                            <option     v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
                             <option value="addNew">Créer un isced</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.isced === 'addNew'">
@@ -285,6 +285,9 @@
         newAgreement.value.compo = document.querySelector('#compo_select').options[0].value;
         newAgreement.value.univ = document.querySelector('#univ_select').options[0].value;
         newAgreement.value.typeaccord = document.querySelector('#typeaccord_select').options[0].value;  
+        newAgreement.value.newuniv.name = '';
+        newAgreement.value.newuniv.city = '';
+        newAgreement.value.newuniv.newpartnercountry = '';
     }
 
 
