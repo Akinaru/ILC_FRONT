@@ -22,7 +22,7 @@
                     <!-- Départements -->
                     <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
                         <p>Départements</p>
-                        <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                        <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.departments">
                         <div v-for="(comp, index) in components.components" :key="index">
