@@ -2,12 +2,12 @@
     <div>
         <div>
             <p class="text-2xl font-bold">Les accords</p>
-            <div class="flex my-5">
+            <div class="block lg:flex my-5">
  
                 <!-- Partie filtre -->
-                <div class="bg-base-200 w-96">
-                    <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg">Filtres</p>
-
+                <div class="bg-base-200 w-96 drop-shadow-lg hidden lg:block" v-if="accords && accords.agreements">
+                    <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
+                    <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length }} filtres)</p>
                     <!-- Pays -->
                     <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
                         <p>Pays</p>
@@ -39,7 +39,7 @@
 
                     <div v-if="accords && accords.agreements">
                         <div v-if="filteredAccords && filteredAccords.length > 0">
-                            <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-2 mx-2 *:list-disc flex justify-between items-center ">
+                            <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 *:list-disc flex justify-between items-center drop-shadow-lg">
                                 <div class="flex justify-between items-center w-full">
 
                                     <p>
@@ -48,7 +48,7 @@
                                     </p>
                                     <div v-if="accord.departments.length > 0" class="flex">
                                         <div v-for="(dept,index) in accord.departments" :key="index">
-                                            <p class="p-3 m-1 tooltip" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+                                            <p class="p-3 m-1 tooltip font-bold" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -75,9 +75,7 @@
 
         <div>
             <p class="text-2xl font-bold">Espace communication</p>
-            <div class="m-5">
                 <p class="text-xl font-bold">Articles</p>
-                <div class="m-5">
 
                     <div v-if="articles && articles.articles">
                         <div class="flex flex-col" v-if="articles.count > 0">
@@ -85,22 +83,29 @@
                                 <ArticleComp :article="article" class="my-1"></ArticleComp>
                             </RouterLink>
                         </div>
-                        <div v-else>
+                        <div v-else class="m-5">
+
                             <p>Aucun article n'a été trouvé.</p>
                         </div>
                     </div>
                     <div v-else class="flex items-center justify-center my-20">
                         <span class="loading loading-dots loading-lg"></span>
                     </div>
-                </div>
 
                 <p class="text-xl font-bold">Agenda</p>
-                <div class="m-5">
-                    <div>
-                        <p>Aucun agenda n'a été trouvé.</p>
+                <div class="m-5 flex items-start justify-center">
+                    <CalendarComp></CalendarComp>
+                    <div class="p-5">
+                        <p class="font-bold text-lg">Liste des prochains évenements</p>
+                        <div v-for="n in 5" class="flex items-center justify-center">
+                            <p class="p-5">22/05</p>
+                            <div class="bg-base-300 p-7 my-3 drop-shadow-lg flex">
+                                <p>Ici le titre de l'evenement</p>
+                                <p class="badge">Thématique</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 </template>
@@ -113,6 +118,7 @@
     import {getCountryFlag} from '../composables/getFlag'
 
     import ArticleComp from '../components/index/ArticleComp.vue';
+    import CalendarComp from '../components/utils/CalendarComp.vue';
 
     const articles = ref([]);
     const accords = ref([]);

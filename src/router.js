@@ -63,6 +63,7 @@ const routes = [
     { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin },
     { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete },
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue') },
+    { path: '/calendar', name: 'Calendar', component: () => import('./pages/calendar.vue') },
     
 
 

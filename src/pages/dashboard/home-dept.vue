@@ -1,7 +1,7 @@
 <template>
     <div class="m-5">
          <div v-if="accountStore.access == 2 && account && account.department">
-            <p>Bienvenue {{ account.acc_fullname }}. Vous êtes le résponsable du département: {{ account.department.dept_shortname }}</p>
+            <p>Bienvenue {{ account.acc_fullname }}. Vous êtes le responsable du département: {{ account.department.dept_shortname }}</p>
             <p>Liste des étudiants ({{ students.count }}):</p>
             <div class="flex flex-col w-96">
                 <RouterLink v-for="(stud, index) in students.accounts" :key="index" class="btn my-1" :to="{name: 'Profile', params: {acc_id: stud.acc_id}}">
