@@ -105,14 +105,14 @@
                 <div v-if="accords.count > 0">
 
                     <div v-for="(accord, indexAccord) in accords.agreements" :key="indexAccord" class="m-5 p-3 flex">
-                        <div class="w-full bg-base-300 p-2">
+                        <div class="w-full bg-base-300 p-2 drop-shadow-lg">
     
                             <p>({{ accord.partnercountry.parco_name }}) {{accord.university.univ_name}} ({{ accord.university.univ_city }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
                             <!-- Liste des départements d'un accord -->
                             <p>Les départements: </p>
                             <div class="flex items-center justify-start">
                                 <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
-                                    <div class="w-fit p-2 flex items-center justify-center mx-1" :style="{backgroundColor: dept.dept_color}">
+                                    <div class="w-fit p-2 flex drop-shadow-lg items-center justify-center mx-1 tooltip select-none font-bold" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">
                                         <p>{{ dept.dept_shortname }} <span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? '(Non validé par le dep)' : '' }}</span></p>
                                         <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -153,7 +153,7 @@
                         <ModifAccordComp :accord="accord" :accords="accords" :isceds="isceds" :composantes="composantes" :universites="universites" :departments="departments" :partnercountrys="partnercountrys"></ModifAccordComp>
     
                         <!-- Bouton de suppression -->
-                        <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.agree_id)">
+                        <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.university.univ_name, accord.agree_id)">
                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
@@ -175,19 +175,17 @@
     import { ref, onMounted } from 'vue';
     import config from '../../config'
     import { request } from '../../composables/httpRequest';
-
     import ModifAccordComp from '../../components/modif/ModifAccordComp.vue';
+    import { useAccountStore } from '../../stores/accountStore';
 
+    const accountStore = useAccountStore();
     const response = ref([]);
-
     const accords = ref([]);
     const isceds = ref([]);
     const composantes = ref([]);
     const universites = ref([]);
     const departments = ref([]);
     const partnercountrys = ref([]);
-
-
     const newAgreement = ref({ 
         isced: '', //Si addNew = nouveau isced
         compo: '', //Si addNew = nouveau composante
@@ -247,6 +245,14 @@
         }
 
         await request("POST",true, response, config.apiUrl+'api/agreement', requestData);
+        if(response.value.status == 201){
+            const requestDataAction = {
+                act_description: 'Ajout de l\'accord avec '+response.value.agreement.university.univ_name+'.',
+                acc_id: accountStore.login,
+                agree_id: response.value.agreement.agree_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         await fetchAll();
     }
 
@@ -267,8 +273,16 @@
         await request('DELETE', true, response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
         fetchAll();
     }
-    async function deleteAgreement(agree_id){
+    async function deleteAgreement(univ_name, agree_id){
         await request('DELETE', true, response, config.apiUrl+'api/agreement/deletebyid/'+agree_id);
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression de l\'accord avec '+univ_name+'.',
+                acc_id: accountStore.login,
+                agree_id: agree_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetchAll();
     }
     function filteredDepartments(accord) {
@@ -289,8 +303,6 @@
         newAgreement.value.newuniv.city = '';
         newAgreement.value.newuniv.newpartnercountry = '';
     }
-
-
 
 
         /**

@@ -118,7 +118,6 @@
     import { onMounted, ref } from 'vue';
     import config from '../../config';
     import axios from 'axios';
-    
     import ArticleComp from '../../components/index/ArticleComp.vue';
     import { useAccountStore } from '../../stores/accountStore';
 

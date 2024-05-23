@@ -1,14 +1,16 @@
 <template>
     <div>
-        <div class="m-5 flex ">
-            <span v-if="access == 1" class="flex md:flex-row flex-col">
-                <RouterLink :to="{name: 'ArticleDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'ArticleDash' }">Article</RouterLink>
-                <RouterLink :to="{name: 'DepartementDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'DepartementDash' }">Departement</RouterLink>
-                <RouterLink :to="{name: 'AccordDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'AccordDash' }">Accord</RouterLink>
-                <RouterLink :to="{name: 'AccessDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'AccessDash' }">Access</RouterLink>
-                <RouterLink :to="{name: 'HistoriqueDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'HistoriqueDash' }">Historique</RouterLink>
-                <RouterLink :to="{name: 'EtudiantsDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'EtudiantsDash' }">Etudiants</RouterLink>
-                <RouterLink :to="{name: 'ModifBaseDash'}" class="md:m-3 m-1 md:p-3 bg-base-300" :class="{ 'current-link': $route.name === 'ModifBaseDash' }">Modif Base</RouterLink>
+        <div class="flex py-3">
+            <span v-if="access == 1" class="flex md:flex-row flex-col ">
+                <span class="*:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg">
+                    <RouterLink :to="{name: 'ArticleDash'}" :class="{ 'text-[#3f2ab4]': $route.name === 'ArticleDash' }">Article</RouterLink>
+                    <RouterLink :to="{name: 'DepartementDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'DepartementDash' }">Departement</RouterLink>
+                    <RouterLink :to="{name: 'AccordDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'AccordDash' }">Accord</RouterLink>
+                    <RouterLink :to="{name: 'AccessDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'AccessDash' }">Access</RouterLink>
+                    <RouterLink :to="{name: 'HistoriqueDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'HistoriqueDash' }">Historique</RouterLink>
+                    <RouterLink :to="{name: 'EtudiantsDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'EtudiantsDash' }">Etudiants</RouterLink>
+                    <RouterLink :to="{name: 'ModifBaseDash'}" :class="{ 'text-[#3f2ab4]': $route.name === 'ModifBaseDash' }">Modif Base</RouterLink>
+                </span>
             </span>
             <span v-else-if="access == 2">
                 <!-- Departement -->
@@ -17,6 +19,7 @@
                 <!-- Etu -->
             </span>
         </div>
+        <!-- Affichage du contenu du dashboard -->
         <RouterView></RouterView>
     </div>
 </template>
@@ -24,13 +27,8 @@
 <script setup>
     import { useAccountStore } from '../stores/accountStore';
     import { storeToRefs } from 'pinia'
+
     const accountStore = useAccountStore();
-    const { fullname, login, access } = storeToRefs(accountStore)
+    const { access } = storeToRefs(accountStore)
 
 </script>
-
-<style scoped>
-    .current-link {
-        color: rgb(63, 42, 180);
-    }
-</style>

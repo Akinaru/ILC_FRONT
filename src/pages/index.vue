@@ -48,7 +48,7 @@
                                     </p>
                                     <div v-if="accord.departments.length > 0" class="flex">
                                         <div v-for="(dept,index) in accord.departments" :key="index">
-                                            <p class="p-3 m-1 tooltip font-bold drop-shadow-lg" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+                                            <p class="p-3 m-1 tooltip font-bold drop-shadow-lg select-none hover:opacity-90" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                         </div>
                                     </div>
                                     <div v-else>
