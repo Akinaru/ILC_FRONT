@@ -22,8 +22,13 @@
 
                                 <div class="bg-base-300 p-2 w-full flex items-center">
                                     <span class="font-bold mr-1">{{ acc.acc_id }}</span>
-                                    <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
-                                    <div v-if="acc.account.department && acc.account.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
+                                    <span v-if="acc.account">
+                                        ({{ acc.account.acc_fullname }})
+                                    </span>
+                                    <span v-else>
+                                        (Inconnu ou non enregistré)
+                                    </span>
+                                    <div v-if="acc.account && acc.account.department && acc.account.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
                                         <span class="p-2 mx-2 flex items-center justify-center" :style="{backgroundColor: acc.account.department.dept_color}">
                                             <p class="mx-1">{{ acc.account.department.dept_shortname}}</p>
                                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1" @click="removeDept(acc.acc_id)">
@@ -31,8 +36,8 @@
                                             </button>
                                         </span>
                                     </div>
-                                    <div v-else>
-                                        <button class="btn  mx-2" v-if="!showForms[acc.account.acc_id]" @click="showForm(acc.account.acc_id)">Séléctionner un département</button>
+                                    <div v-else-if="acc.account">
+                                        <button  class="btn  mx-2" v-if="!showForms[acc.acc_id]" @click="showForm(acc.account.acc_id)">Séléctionner un département</button>
                                     </div>
 
                                     
@@ -43,7 +48,7 @@
                                 </button>
                             </div>
                             <!-- Formulaire pour ajouter un département -->
-                            <div v-if="showForms[acc.account.acc_id]">
+                            <div v-if="showForms[acc.acc_id]">
                                 <form @submit.prevent="submitForm(acc.account.acc_id)" class="my-1">
                                     <label class="form-control w-full max-w-xs">
                                         <div class="label">
@@ -104,7 +109,9 @@
     import { ref, onMounted } from 'vue';
     import { request } from '../../composables/httpRequest.js'
     import config from '../../config'
+    import { useAccountStore } from '../../stores/accountStore';
 
+    const accountStore = useAccountStore();
     const access = ref([]);
     const newAccess = ref({ login: '', access: ''});
     const response = ref([]);
@@ -120,6 +127,14 @@
             acs_accounttype: newAccess.value.access,
         };
         await request("POST", true, response, config.apiUrl+'api/access', requestData);
+        if(response.value.status == 201){
+            const requestDataAction = {
+                act_description: 'Ajout de l\'access pour '+newAccess.value.login+'. (Accès de niveau '+ newAccess.value.access +')',
+                acc_id: accountStore.login,
+                access: 1
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         await fetch();
         resetInput();
 
@@ -127,6 +142,14 @@
 
     async function removeAccess(acc_id){
         await request('DELETE', true, response, config.apiUrl+'api/access/deletebylogin/'+acc_id);
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression de l\'access pour '+acc_id+'.',
+                acc_id: accountStore.login,
+                access: 1
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetch();
     }
 
@@ -136,6 +159,14 @@
     }
     async function removeDept(acc_id){
         await request('DELETE', true, response, config.apiUrl+'api/account/removedept/'+acc_id);
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression du département pour l\'access de '+acc_id+'.',
+                acc_id: accountStore.login,
+                access: 1
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetch();
     }
 
@@ -146,13 +177,21 @@
     async function submitForm(acc_id) {
         showForms.value[acc_id] = false;
         await request('put', true, response, config.apiUrl+'api/account/changedept/'+acc_id+'/'+selectedDepartment.value[acc_id]);
+        if(response.value.status == 200){
+            const requestDataAction = {
+                act_description: 'Changement du département dans l\'access pour '+acc_id+' (Nouveau: '+ selectedDepartment.value[acc_id] +').',
+                acc_id: accountStore.login,
+                access: 1
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetch();
     }
 
     async function fetch(){
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
         await request('GET', false, components, config.apiUrl+'api/component');
-        if(access.value.access[2]){
+        if(access.value.access && access.value.access[2]){
             showForms.value = Array(access.value.access[2].length).fill(false);
             selectedDepartment.value = Array(access.value.access[2].length).fill('');
         }

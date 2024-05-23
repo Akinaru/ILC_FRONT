@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-between items-center bg-base-300 p-10 drop-shadow-lg">
-    <RouterLink :to="{name: 'Accueil'}" class="hover:opacity-60 transition-all hover:scale-105">
-      <img :src="config.apiUrl+'images/LOGOS/Logo_ILC_couleur_complet.png'" alt="ILC" class="w-36">
+    <RouterLink :to="{name: 'Accueil'}" class="hover:opacity-60 transition-all hover:scale-105 ">
+      <img :src="config.apiUrl+'images/LOGOS/Logo_ILC_couleur_complet.png'" alt="ILC" class="w-36 ">
     </RouterLink>
 
     <div class="flex items-center justify-center">

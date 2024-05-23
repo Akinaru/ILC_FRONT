@@ -74,7 +74,7 @@
     <input type="checkbox" id="modal_modif" class="modal-toggle" />
     <div class="modal modal-bottom sm:modal-middle" role="dialog">
         <div class="modal-box">
-            <h3 class="font-bold text-lg">Modification de l'article n° {{ currentArticleModif.art_id }}</h3>
+            <h3 class="font-bold text-lg">Modification de l'article {{ currentArticleModif.art_id }}</h3>
             <form @submit.prevent="confirmModifArticle" class="w-full">
                 <!-- Titre -->
                 <label class="form-control w-full">
@@ -161,7 +161,7 @@
                 console.log("Erreur ajout image: "+error)
             }
             const requestDataAction = {
-                act_description: 'Ajout de l\'article n°'+rep.value.article.art_title+'.',
+                act_description: 'Ajout de l\'article '+rep.value.article.art_title+'.',
                 acc_id: accountStore.login,
                 art_id: rep.value.article.art_id
             }
@@ -183,7 +183,7 @@
         await request('DELETE', true, response, config.apiUrl+'api/article/deletebyid/'+id);
         if(response.value.status == 202){
             const requestDataAction = {
-                act_description: 'Suppression de l\'article n°'+title+'.',
+                act_description: 'Suppression de l\'article '+title+'.',
                 acc_id: accountStore.login,
                 art_id: id
             }
@@ -213,7 +213,7 @@
         await request('PUT', true, response, config.apiUrl+'api/article', requestData);
         if(response.value.status == 200){
             const requestDataAction = {
-                act_description: 'Modification de l\'article n°'+currentArticleModif.value.art_title+'.',
+                act_description: 'Modification de l\'article '+currentArticleModif.value.art_title+'.',
                 acc_id: accountStore.login,
                 art_id: currentArticleModif.value.art_id
             }
