@@ -48,7 +48,7 @@
                                     </p>
                                     <div v-if="accord.departments.length > 0" class="flex">
                                         <div v-for="(dept,index) in accord.departments" :key="index">
-                                            <p class="p-3 m-1 tooltip font-bold" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+                                            <p class="p-3 m-1 tooltip font-bold drop-shadow-lg" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -73,8 +73,10 @@
             </div>
         </div>
 
+        <!-- Espace communication -->
         <div>
             <p class="text-2xl font-bold">Espace communication</p>
+            <!-- Articles -->
                 <p class="text-xl font-bold">Articles</p>
 
                     <div v-if="articles && articles.articles">
@@ -92,6 +94,7 @@
                         <span class="loading loading-dots loading-lg"></span>
                     </div>
 
+            <!-- Agenda -->
                 <p class="text-xl font-bold">Agenda</p>
                 <div class="m-5 flex items-start justify-center">
                     <CalendarComp></CalendarComp>
