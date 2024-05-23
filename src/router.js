@@ -56,23 +56,23 @@ const isAlreadyComplete = (to, from, next) => {
 }
 
 const routes = [
-    { path: '/', name: 'Accueil', component: Index },
-    { path: '/not-found', name: 'NotFound', component: () => import('./pages/notfound.vue') },
+    { path: '/', name: 'Accueil', component: Index, meta: { title: 'Accueil' } },
+    { path: '/not-found', name: 'NotFound', component: () => import('./pages/notfound.vue'), meta: { title: 'Not Found' } },
     { path: '/:pathMatch(.*)*', redirect: '/not-found' },
-    { path: '/convert', name: 'Convert', component: () => import('./pages/convert.vue') },
-    { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin },
-    { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete },
-    { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue') },
-    { path: '/calendar', name: 'Calendar', component: () => import('./pages/calendar.vue') },
-    
-
+    { path: '/convert', name: 'Convert', component: () => import('./pages/convert.vue'), meta: { title: 'Convert' } },
+    { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin, meta: { title: 'Login' } },
+    { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete, meta: { title: 'Compléter Dossier' } },
+    { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: {
+        title: route => `Dashboard - Article n° ${route.params.art_id}`
+    } },
+    { path: '/calendar', name: 'Calendar', component: () => import('./pages/calendar.vue'), meta: { title: 'Calendar' } },
 
     { 
         path: '/dashboard', 
         component: () => import('./pages/dashboard.vue'), 
         beforeEnter: requireAuth,
         children: [
-            { path: '', name: 'Dashboard', beforeEnter: (to, from, next) => {
+            { path: '', name: 'Dashboard', meta: { title: 'Dashboard' }, beforeEnter: (to, from, next) => {
                 const accountStore = useAccountStore();
                 if (accountStore.getAccessLevel() && accountStore.getAccessLevel() === 1) {
                     next({ name: 'HomeRI' });
@@ -86,67 +86,79 @@ const routes = [
                 path: 'article', 
                 name: 'ArticleDash', 
                 component: () => import('./pages/dashboard/article.vue'),
-                beforeEnter: requireAccess(1)
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Article' }
             },
             { 
                 path: 'departement', 
                 name: 'DepartementDash', 
                 component: () => import('./pages/dashboard/departement.vue'),
-                beforeEnter: requireAccess(1)
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Departement' }
             },
             { 
                 path: 'modifbase', 
                 name: 'ModifBaseDash', 
                 component: () => import('./pages/dashboard/modifbase.vue'),
-                beforeEnter: requireAccess(1) 
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - ModifBase' } 
             },
             { 
                 path: 'accord', 
                 name: 'AccordDash', 
                 component: () => import('./pages/dashboard/accord.vue'),
-                beforeEnter: requireAccess(1)
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Accord' }
             },
             { 
                 path: 'access', 
                 name: 'AccessDash', 
                 component: () => import('./pages/dashboard/access.vue'),
-                beforeEnter: requireAccess(1) 
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Access' }
             },
             { 
                 path: 'etudiants', 
                 name: 'EtudiantsDash', 
                 component: () => import('./pages/dashboard/etudiants.vue'),
-                beforeEnter: requireAccess(1) 
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Etudiants' }
             },
             { 
                 path: 'home-ri', 
                 name: 'HomeRI', 
                 component: () => import('./pages/dashboard/home-ri.vue'),
-                beforeEnter: requireAccess(1) 
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Home RI' }
             },
             { 
                 path: 'home-dept', 
                 name: 'HomeDept', 
                 component: () => import('./pages/dashboard/home-dept.vue'),
-                beforeEnter: requireAccess(2) 
+                beforeEnter: requireAccess(2),
+                meta: { title: 'Dashboard - Home Dept' }
             },
             { 
                 path: 'home', 
                 name: 'Home', 
                 component: () => import('./pages/dashboard/home.vue'),
-                beforeEnter: requireAccess(0) 
+                beforeEnter: requireAccess(0),
+                meta: { title: 'Dashboard - Home' }
             },
             { 
                 path: 'profile/:acc_id', 
                 name: 'Profile', 
                 component: () => import('./pages/dashboard/profile.vue'),
-                beforeEnter: requireAccess(1) 
+                beforeEnter: requireAccess(1),
+                meta: {
+                    title: route => `Dashboard - Profile de ${route.params.acc_id}`
+                }
             },
         ]
     },
 ];
 
-export default createRouter({
+const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
     scrollBehavior(to, from, savedPosition) {
@@ -154,3 +166,10 @@ export default createRouter({
     },
 });
 
+router.beforeEach((to, from, next) => {
+    const title = typeof to.meta.title === 'function' ? to.meta.title(to) : to.meta.title;
+    document.title = `ILC - ${title || to.name}`;
+    next();
+});
+
+export default router;
