@@ -56,7 +56,7 @@
                         
 
                         <!-- Bouton de suppression -->
-                        <button class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-300" @click="removeArticle(article.art_id)">
+                        <button class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-300" @click="removeArticle(article.art_title, article.art_id)">
                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
@@ -120,7 +120,9 @@
     import axios from 'axios';
     
     import ArticleComp from '../../components/index/ArticleComp.vue';
+    import { useAccountStore } from '../../stores/accountStore';
 
+    const accountStore = useAccountStore();
     const response = ref([]);
     const articles = ref([]);
     const newArticle = ref({ title: '', description: '', pinned: false, image: null });
@@ -146,15 +148,25 @@
         await request("POST", true, rep, config.apiUrl+'api/article', requestData);
         await fetchAll();
 
-        if(rep.value.article){
+        if(rep.value.status == 201){
+            try{
 
-            const formData = new FormData();
-            formData.append('image', newArticle.value.image);
-            formData.append('fileName', 'img_art_' + rep.value.article.art_id);
-            formData.append('filePath', 'private/images/articles');
-            formData.append('articleId', rep.value.article.art_id);
-            
-            await axios.post(config.apiUrl + 'api/image/upload', formData);
+                const formData = new FormData();
+                formData.append('image', newArticle.value.image);
+                formData.append('fileName', 'img_art_' + rep.value.article.art_id);
+                formData.append('filePath', 'private/images/articles');
+                formData.append('articleId', rep.value.article.art_id);
+                
+                await axios.post(config.apiUrl + 'api/image/upload', formData);
+            } catch (error){
+                console.log("Erreur ajout image: "+error)
+            }
+            const requestDataAction = {
+                act_description: 'Ajout de l\'article n°'+rep.value.article.art_title+'.',
+                acc_id: accountStore.login,
+                art_id: rep.value.article.art_id
+            }
+            await request('POST', false, rep, config.apiUrl+'api/action', requestDataAction)
         }
 
 
@@ -168,8 +180,16 @@
     }
 
     // Suppression d'article
-    async function removeArticle(id){
+    async function removeArticle(title, id){
         await request('DELETE', true, response, config.apiUrl+'api/article/deletebyid/'+id);
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression de l\'article n°'+title+'.',
+                acc_id: accountStore.login,
+                art_id: id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         await fetchAll();
     }
 
@@ -192,6 +212,14 @@
             art_pin: currentArticleModif.value.art_pin,
         };
         await request('PUT', true, response, config.apiUrl+'api/article', requestData);
+        if(response.value.status == 200){
+            const requestDataAction = {
+                act_description: 'Modification de l\'article n°'+currentArticleModif.value.art_title+'.',
+                acc_id: accountStore.login,
+                art_id: currentArticleModif.value.art_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetchAll();
     }
     

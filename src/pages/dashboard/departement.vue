@@ -76,7 +76,7 @@
                             </label>
 
                             <!-- Bouton de suppression departement -->
-                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeDepartment(dept.dept_id)">
+                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeDepartment(dept.dept_shortname, dept.dept_id)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -171,7 +171,9 @@
     import { request } from '../../composables/httpRequest';
     import config from '../../config';
     import { addAlert } from '../../composables/addAlert';
+    import { useAccountStore } from '../../stores/accountStore';
 
+    const accountStore = useAccountStore();
 
     const composantes = ref([]);
     const response = ref([]);
@@ -230,6 +232,14 @@
 
         
         await request("POST", true, response, config.apiUrl+'api/department', requestData);
+        if(response.value.status == 201){
+            const requestDataAction = {
+                act_description: 'Ajout du département '+newDep.value.shortname+'.',
+                acc_id: accountStore.login,
+                dept_id: response.value.department.dept_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         await fetchAll();
         resetInput();
 
@@ -259,6 +269,14 @@
             dept_color: currentDeptModif.value.dept_color,
         };
         await request('PUT', true, response, config.apiUrl+'api/department', requestData);
+        if(response.value.status == 200){
+            const requestDataAction = {
+                act_description: 'Modification du département '+requestData.dept_shortname+'.',
+                acc_id: accountStore.login,
+                dept_id: response.value.department.dept_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetchAll();
     }
     // Confirmer la modification
@@ -273,8 +291,16 @@
     }
 
     // Supprimer un département
-    async function removeDepartment(id){
+    async function removeDepartment(shortname, id){
         await request('DELETE', true, response, config.apiUrl+'api/department/deletebyid/'+id);
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression du département '+shortname+'.',
+                acc_id: accountStore.login,
+                dept_id: id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetchAll();
     }
     // Supprimer une composante
