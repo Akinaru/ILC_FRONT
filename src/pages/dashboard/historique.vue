@@ -1,5 +1,5 @@
 <template>
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto min-h-screen">
         <div class="py-4">
             <p>Filtres: <span>{{ filteredActions.length }} résultat{{ filteredActions.length > 1 ? 's' : '' }} 
                 avec {{ selectedTypes.length + (searchQuery !== '' ? 1 : 0) }} 
@@ -44,6 +44,9 @@
                 </tr>
             </tbody>
         </table>
+        <div v-else class="flex items-center justify-center p-44">
+            <p>Aucune action n'a été trouvée.</p>
+        </div>
     </div>
 </template>
 
