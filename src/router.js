@@ -167,14 +167,10 @@ const routes = [
                 path: 'profile/:acc_id', 
                 name: 'Profile', 
                 component: () => import('./pages/dashboard/profile.vue'),
-<<<<<<< HEAD
                 beforeEnter: requireAccess(1),
                 meta: {
                     title: route => `Dashboard - Profile de ${route.params.acc_id}`
                 }
-=======
-                beforeEnter: checkMultipleAccess(1, 2)  
->>>>>>> 574c4cdb2df03d12db7b2ad32d0752bfe8a41066
             },
         ]
     },
