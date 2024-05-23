@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="flex py-3">
-            <span v-if="access == 1" class="flex md:flex-row flex-col ">
-                <span class="*:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg">
+            <span v-if="access == 1" class=" ">
+                <span class="flex md:flex-row flex-col *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg">
                     <RouterLink :to="{name: 'ArticleDash'}" :class="{ 'text-[#3f2ab4]': $route.name === 'ArticleDash' }">Article</RouterLink>
                     <RouterLink :to="{name: 'DepartementDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'DepartementDash' }">Departement</RouterLink>
                     <RouterLink :to="{name: 'AccordDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'AccordDash' }">Accord</RouterLink>
