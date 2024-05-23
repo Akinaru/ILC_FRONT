@@ -36,6 +36,18 @@ const requireAccess = (accessLevel) => (to, from, next) => {
         addAlert(true, {data: {error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'}})
     }
 };
+function checkMultipleAccess(...levels) {
+    return (to, from, next) => {
+        const accountStore = useAccountStore();
+  
+      if (levels.some(level => accountStore.getAccessLevel() >= level)) {
+        next();
+      } else {
+        next({ name: 'Dashboard' });
+        addAlert(true, {data: {error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'}})
+      }
+    };
+  }
 
 const isAlreadyLogin = (to, from, next) => {
     const accountStore = useAccountStore();
@@ -119,6 +131,12 @@ const routes = [
                 beforeEnter: requireAccess(1) 
             },
             { 
+                path: 'historique', 
+                name: 'HistoriqueDash', 
+                component: () => import('./pages/dashboard/historique.vue'),
+                beforeEnter: requireAccess(1) 
+            },
+            { 
                 path: 'home-ri', 
                 name: 'HomeRI', 
                 component: () => import('./pages/dashboard/home-ri.vue'),
@@ -140,7 +158,7 @@ const routes = [
                 path: 'profile/:acc_id', 
                 name: 'Profile', 
                 component: () => import('./pages/dashboard/profile.vue'),
-                beforeEnter: requireAccess(1) 
+                beforeEnter: checkMultipleAccess(1, 2)  
             },
         ]
     },
