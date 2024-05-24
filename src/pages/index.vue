@@ -7,32 +7,51 @@
                 <!-- Partie filtre -->
                 <div class="bg-base-200 w-96 drop-shadow-lg hidden lg:block" v-if="accords && accords.agreements">
                     <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
-                    <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length }} filtre{{ selectedCountries.length + selectedDepartment.length > 1 ? 's' : '' }})</p>
+                    <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length + selectedComponent.length }} filtre{{ selectedCountries.length + selectedDepartment.length + selectedComponent.length > 1 ? 's' : '' }})</p>
                     <!-- Pays -->
-                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
-                        <p>Pays ({{ selectedCountries.length }})</p>
-                        <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
-                    </div>
-                    <div class="p-1" v-show="isOpen.pays">
-                        <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1">
-                            <input :id="'filt_pays_'+index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
-                            <label :for="'filt_pays_'+index" class="select-none">{{ country.parco_name }}</label>
+                    <div>
+                        <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
+                            <p>Pays ({{ selectedCountries.length }})</p>
+                            <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
-                    </div>
-                    <!-- Départements -->
-                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
-                        <p>Départements ({{ selectedDepartment.length }})</p>
-                        <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
-                    </div>
-                    <div class="p-1" v-show="isOpen.departments">
-                        <div v-for="(comp, index) in components.components" :key="index">
-                            <p>{{ comp.comp_name }}</p>
-                            <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1">
-                                <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
-                                <label :for="'filt_dept_'+index" class="select-none">{{ dept.dept_shortname }}</label>
+                        <div class="p-1" v-show="isOpen.pays">
+                            <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1">
+                                <input :id="'filt_pays_'+index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
+                                <label :for="'filt_pays_'+index" class="select-none">{{ country.parco_name }}</label>
                             </div>
                         </div>
                     </div>
+                    <!-- Départements -->
+                    <div>
+                        <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
+                            <p>Départements ({{ selectedDepartment.length }})</p>
+                            <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                        </div>
+                        <div class="p-1" v-show="isOpen.departments">
+                            <div v-for="(comp, index) in components.components" :key="index">
+                                <p>{{ comp.comp_name }}</p>
+                                <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1">
+                                    <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
+                                    <label :for="'filt_dept_'+index" class="select-none">{{ dept.dept_shortname }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Component -->
+                    <div>
+                        <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('component')">
+                            <p>Composante ({{ selectedComponent.length }})</p>
+                            <span :class="isOpen.component ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
+                        </div>
+                        <div class="p-1" v-show="isOpen.component">
+                            <div v-for="(compo,index) in components.components" :key="index" class="flex items-center hover:opacity-60 my-1">
+                                <input :id="'filt_compo_'+index" type="checkbox" class="checkbox mx-2" :value="compo.comp_name" v-model="selectedComponent">
+                                <label :for="'filt_compo_'+index" class="select-none">{{ compo.comp_name }}</label>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- Partie rendu des accord -->
                 <div class="w-full">
@@ -136,12 +155,12 @@
 
     const selectedDepartment = ref([]);
     const selectedComponent = ref([]);
-    const selectedUniversity = ref([]);
     const selectedCountries = ref([]);
 
     const isOpen = ref({
         pays: true,
         departments: true,
+        component: true,
     });
 
     function toggleCollapse(section) {
