@@ -77,7 +77,8 @@ const routes = [
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: {
         title: route => `Dashboard - Article n° ${route.params.art_id}`
     } },
-    { path: '/calendar', name: 'Calendar', component: () => import('./pages/calendar.vue'), meta: { title: 'Calendar' } },
+    { path: '/evenement', name: 'Evenement', component: () => import('./pages/evenementliste.vue'), meta: { title: 'Liste des évènement' } },
+    { path: '/evenement/:evt_id', name: 'EvenementDetail', component: () => import('./pages/evenementdetail.vue'), meta: { title: route => `Évènement ${route.params.evt_id}` }},
 
     { 
         path: '/dashboard', 

@@ -119,12 +119,17 @@
                     <CalendarComp :events="events"></CalendarComp>
                     <div class="p-5">
                         <p class="font-bold text-lg">Liste des prochains évenements</p>
+
                         <div v-if="events && events.count > 0" v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center">
                             <p class="p-5">{{ formatDate(event.evt_datetime) }}</p>
                             <div class="bg-base-300 p-6 w-96 my-3 drop-shadow-lg flex flex-col">
                                 <p class="badge">{{ event.theme.evthm_name }}</p>
                                 <p>{{ event.evt_name }}</p>
                             </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-center p-5">
+                            <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full">Voir tous les évènements</RouterLink>
                         </div>
                     </div>
                 </div>
