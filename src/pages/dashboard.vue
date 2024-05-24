@@ -7,6 +7,7 @@
                     <RouterLink :to="{name: 'DepartementDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'DepartementDash' }">Departement</RouterLink>
                     <RouterLink :to="{name: 'AccordDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'AccordDash' }">Accord</RouterLink>
                     <RouterLink :to="{name: 'AccessDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'AccessDash' }">Access</RouterLink>
+                    <RouterLink :to="{name: 'EvenementDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'EvenementDash' }">Evenements</RouterLink>
                     <RouterLink :to="{name: 'HistoriqueDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'HistoriqueDash' }">Historique</RouterLink>
                     <RouterLink :to="{name: 'EtudiantsDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'EtudiantsDash' }">Etudiants</RouterLink>
                     <RouterLink :to="{name: 'ModifBaseDash'}" :class="{ 'text-[#3f2ab4]': $route.name === 'ModifBaseDash' }">Modif Base</RouterLink>

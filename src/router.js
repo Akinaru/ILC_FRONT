@@ -140,7 +140,15 @@ const routes = [
                 path: 'historique', 
                 name: 'HistoriqueDash', 
                 component: () => import('./pages/dashboard/historique.vue'),
-                beforeEnter: requireAccess(1) 
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Historique' }
+            },
+            { 
+                path: 'evenement', 
+                name: 'EvenementDash', 
+                component: () => import('./pages/dashboard/evenement.vue'),
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Evenements' }
             },
             { 
                 path: 'home-ri', 

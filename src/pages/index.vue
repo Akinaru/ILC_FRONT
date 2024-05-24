@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="isLoaded">
         <div>
             <p class="text-2xl font-bold">Les accords</p>
             <div class="block lg:flex my-5">
@@ -97,19 +97,22 @@
             <!-- Agenda -->
                 <p class="text-xl font-bold">Agenda</p>
                 <div class="m-5 flex items-start justify-center">
-                    <CalendarComp></CalendarComp>
+                    <CalendarComp :events="events"></CalendarComp>
                     <div class="p-5">
                         <p class="font-bold text-lg">Liste des prochains évenements</p>
-                        <div v-for="n in 5" class="flex items-center justify-center">
-                            <p class="p-5">22/05</p>
+                        <div v-if="events && events.count > 0" v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center">
+                            <p class="p-5">{{ formatDate(event.evt_datetime) }}</p>
                             <div class="bg-base-300 p-6 w-96 my-3 drop-shadow-lg flex flex-col">
-                                <p class="badge">Thématique</p>
-                                <p>Ici le titre de l'evenement</p>
+                                <p class="badge">{{ event.theme.evthm_name }}</p>
+                                <p>{{ event.evt_name }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
         </div>
+    </div>
+    <div v-else class="flex items-center justify-center my-20 py-72">
+        <span class="loading loading-dots loading-lg"></span>
     </div>
 </template>
 
@@ -127,6 +130,9 @@
     const accords = ref([]);
     const partnercountry = ref([]);
     const components = ref([]);
+    const events = ref([]);
+
+    const isLoaded = ref(false);
 
     const selectedDepartment = ref([]);
     const selectedComponent = ref([]);
@@ -147,6 +153,13 @@
         await request('GET', false, accords, config.apiUrl+'api/agreement')
         await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry')
         await request('GET', false, components, config.apiUrl+'api/component')
+        await request('GET', false, events, config.apiUrl+'api/event')
+        isLoaded.value = true;
+    }
+
+    function formatDate(date) {
+      const options = { day: '2-digit', month: '2-digit' };
+      return new Date(date).toLocaleDateString('fr-FR', options);
     }
 
     const filteredAccords = computed(() => {

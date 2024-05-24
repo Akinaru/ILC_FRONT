@@ -23,12 +23,13 @@
         <tbody>
           <tr v-for="week in calendar" :key="week">
             <td 
-              class="p-3 lg:p-5 font-bold hover:cursor-pointer transition-opacity  select-none hover:opacity-60 hover:bg-base-200 " 
+              class="p-3 lg:p-6 font-bold hover:cursor-pointer transition-opacity  select-none hover:opacity-60 hover:bg-base-200 relative" 
               v-for="day in week" 
               :key="day.date" 
               :class="{ 'font-normal opacity-60 ': day.isNotMonth, 'bg-base-100 drop-shadow-lg': day.isToday }"
             >
               {{ day.date }}
+              <span class="badge badge-accent absolute top-0 right-0 mt-1 mr-1" v-if="dayHasEvent(day)">1</span>
             </td>
           </tr>
         </tbody>
@@ -36,16 +37,20 @@
     </div>
   </template>
   
-  <script>
-  import { ref, computed } from 'vue';
-  
-  export default {
-    setup() {
+<script setup>
+    import { createPinia } from 'pinia';
+import { ref, computed } from 'vue';
+    const props = defineProps({
+      events: Object,
+    });
+
       const months = ref([
         'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
         'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
       ]);
   
+
+      
       const days = ref(['L', 'M', 'M', 'J', 'V', 'S', 'D']);
       
       const currentYear = new Date().getFullYear();
@@ -100,17 +105,27 @@
   
         return weeks;
       });
-  
-      return {
-        months,
-        days,
-        years,
-        selectedMonth,
-        selectedYear,
-        calendar
+
+      const dayHasEvent = (day) => {
+        // Vérifie s'il y a des événements pour le jour donné
+        const year = selectedYear.value;
+        const month = selectedMonth.value + 1; // Ajoute 1 car les mois dans JavaScript sont indexés à partir de 0
+        const eventDate = `${year}-${month.toString().padStart(2, '0')}-${day.date.toString().padStart(2, '0')}`;
+
+        return props.events.events.some(event => {
+          const eventDateTime = event.evt_datetime.split(' ')[0];
+          return eventDateTime === eventDate;
+        });
       };
-    }
-  };
-  </script>
+
+const nbEventOnDay = (day) => {
+  // Retourne le nombre d'événements pour le jour donné
+  const eventDate = day.date.toString().padStart(2, '0'); // Convertit la date du jour en string
+  return props.events.events.filter(event => {
+    const eventDateTime = event.evt_datetime.split(' ')[0]; // Extrait la date de evt_datetime
+    return eventDateTime === eventDate;
+  }).length;
+};
+</script>
 
   
