@@ -37,7 +37,15 @@
                 <div v-if="evenements.count > 0">
 
                     <div v-for="(event, index) in evenements.events" :key="index" class="flex my-1 mx-10">
-                        {{event}}
+                        <div class="bg-base-300 w-full p-2 transition-opacity drop-shadow-lg">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center justify-center">
+                                    <p class="text-lg font-bold"><span :class="getBadgeClass(event.evt_datetime)" class="badge mr-2">{{ formatDate(event.evt_datetime) }}</span>{{ event.evt_name }}</p>
+                                </div>
+
+                            </div>
+                            <pre class="overflow-hidden whitespace-nowrap text-ellipsis">{{ event.evt_description }}</pre>
+                        </div>
                         <!-- Bouton de modification -->
                         <label for="modal_modif" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifEvent(event)">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -83,6 +91,13 @@
                     <textarea class="textarea w-full textarea-bordered h-96" v-model="currentEventModif.evt_description"></textarea>
                 </label>
                 <!-- Datetime -->
+                <label class="form-control w-full">
+                    <div class="label">
+                        <span class="label-text">Date</span>
+                    </div>
+                    <input type="date" class="input input-bordered w-full" v-model="currentEventModif.evt_datetime"/>
+                </label>                
+                <!-- Save -->
                 <div class="modal-action">
                     <label for="modal_modif" class="btn ">Annuler</label>
                     <button type="submit">
@@ -98,7 +113,6 @@
     import { request } from '../../composables/httpRequest';
     import { onMounted, ref } from 'vue';
     import config from '../../config';
-    import axios from 'axios';
     import { useAccountStore } from '../../stores/accountStore';
 
     const accountStore = useAccountStore();
@@ -142,10 +156,6 @@
             }
             await request('POST', false, rep, config.apiUrl+'api/action', requestDataAction)
         }
-
-
-
-        // Reset du formulaire
         resetInput()
 
     }
@@ -171,7 +181,15 @@
         currentEventModif.value.evt_id = event.evt_id;
         currentEventModif.value.evt_name = event.evt_name;
         currentEventModif.value.evt_description = event.evt_description;
-        currentEventModif.value.evt_datetime = event.evt_datetime;
+        currentEventModif.value.evt_datetime = formatDateModif(event.evt_datetime);
+    }
+    // On format la date car la valeur entrée de input et sortie de l'api ne sont pas compatible 
+    function formatDateModif(dateTime) {
+        const date = new Date(dateTime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
     // Confirmer la modification
@@ -197,7 +215,21 @@
     function resetInput(){
         newEvent.value.name = '';
         newEvent.value.description = '';
+        newEvent.value.datetime = '';
         newEvent.value.thematique = document.querySelector('.select').options[0].value;
+    }
+
+    function formatDate(dateTime) {
+        const date = new Date(dateTime);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont de 0 à 11
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+    function getBadgeClass(dateTime) {
+        const eventDate = new Date(dateTime);
+        const now = new Date();
+        return eventDate < now ? 'badge-error' : 'badge-success';
     }
     
     async function fetchAll(){
