@@ -1,5 +1,5 @@
 <template>
-    <div class="text-sm breadcrumbs">
+    <div class="text-sm breadcrumbs font-bold">
         <ul>
             <li><a>Accueil</a></li> 
             <li>Évènement</li> 

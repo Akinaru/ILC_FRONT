@@ -67,7 +67,7 @@
                                     </p>
                                     <div v-if="accord.departments.length > 0" class="flex">
                                         <div v-for="(dept,index) in accord.departments" :key="index">
-                                            <p class="p-3 m-1 tooltip font-bold drop-shadow-lg select-none hover:opacity-90" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+                                            <p v-if="dept.pivot.deptagree_valide" class="p-3 m-1 tooltip font-bold drop-shadow-lg select-none hover:opacity-90" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -93,7 +93,7 @@
         </div>
 
         <!-- Espace communication -->
-        <div>
+        <div class="w-full">
             <p class="text-2xl font-bold">Espace communication</p>
             <!-- Articles -->
                 <p class="text-xl font-bold">Articles</p>
@@ -115,27 +115,33 @@
 
             <!-- Agenda -->
                 <p class="text-xl font-bold">Agenda</p>
-                <div class="m-5 flex items-start justify-center">
-                    <CalendarComp :events="events"></CalendarComp>
-                    <div class="p-5">
-                        <p class="font-bold text-lg">Liste des prochains évenements</p>
-
-                        <div v-if="events && events.count > 0" v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center">
-                            <p class="p-5">{{ formatDate(event.evt_datetime) }}</p>
-                            <div class="bg-base-300 p-6 w-96 my-3 drop-shadow-lg flex flex-col">
-                                <p class="badge">{{ event.theme.evthm_name }}</p>
-                                <p>{{ event.evt_name }}</p>
+                <div class="m-5 flex items-center justify-center flex-col">
+                    <p class="font-bold text-xl p-5">Prochains évenements</p>
+                    <div class="flex h-full items-center justify-center md:flex-row flex-col">
+                        <CalendarComp :events="events"></CalendarComp>
+                        <div class="p-5 flex-1 flex flex-col">
+                            <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
+                                <div v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1">
+                                    <p class="p-5">{{ formatDate(event.evt_datetime) }}</p>
+                                    <div class="bg-base-300 p-6 md:w-120 w-96 my-3 drop-shadow-lg flex flex-col">
+                                        <div class="flex justify-between">
+                                            <p class="font-bold  truncate">{{ event.evt_name }}</p>
+                                            <span class="badge">{{ event.theme.evthm_name }}</span>
+                                        </div>  
+                                        <p class="truncate">{{ event.evt_description }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="flex items-center justify-center p-5">
-                            <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full">Voir tous les évènements</RouterLink>
-                        </div>
                     </div>
+                    <div class="flex items-center justify-center p-5">
+                                <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full">Voir tous les évènements</RouterLink>
+                            </div>
                 </div>
         </div>
     </div>
-    <div v-else class="flex items-center justify-center my-20 py-72">
+    <div v-else class="flex items-center justify-center my-20 py-72 flex-col">
+        <p class="p-5 font-bold select-none">Chargement des données en cours...</p>
         <span class="loading loading-dots loading-lg"></span>
     </div>
 </template>

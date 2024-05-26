@@ -45,7 +45,9 @@
                 <div v-if="articles.count > 0">
 
                     <div v-for="(article, index) in articles.articles" :key="index" class="flex my-1 mx-10">
-                        <ArticleComp :article="article"></ArticleComp>
+                        <RouterLink :to="{name: 'Article', params: {art_id: article.art_id}}" class="w-full">
+                            <ArticleComp :article="article"></ArticleComp>
+                        </RouterLink>
                         <!-- Bouton de modification -->
                         <label for="modal_modif" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
