@@ -76,11 +76,11 @@
                                 </div>
                                 <span v-if="accountStore.isLogged && accountStore.isStudent()" :data-tip="(isFavorited(accord.agree_id) ? 'Enlever des favoris' : 'Ajouter aux favoris')" class="tooltip">
                                     <div @click="toggleFavoris(accord.agree_id)" class="p-5 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
-                                        <svg v-if="isFavorited(accord.agree_id)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="black" stroke="black" stroke-width="2"/>
+                                        <svg v-if="isFavorited(accord.agree_id)" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill="#000000" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
                                         </svg>
-                                        <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="black" stroke-width="2"/>
+                                        <svg v-else width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill="none" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
                                         </svg>
                                     </div>
                                 </span>
@@ -218,7 +218,7 @@
     });
 
     function isFavorited(agree_id) {
-      return favoris.value.some(
+      return favoris.value.favoris.some(
         favori => favori.acc_id === accountStore.login && favori.agree_id === agree_id
       );
     }
@@ -231,7 +231,7 @@
             }
             await request('post', true, response, config.apiUrl+'api/favoris', requestData);
             if(response.value.status == 201){
-                favoris.value.push({
+                favoris.value.favoris.push({
                     acc_id: accountStore.login,
                     agree_id: agree_id
                 });
@@ -239,7 +239,7 @@
         }
         else{
             await request('delete', true, response, config.apiUrl+'api/favoris/delete/'+accountStore.login+'/'+agree_id);
-            favoris.value = favoris.value.filter(favori => !(favori.acc_id === accountStore.login && favori.agree_id === agree_id));
+            favoris.value.favoris = favoris.value.favoris.filter(favori => !(favori.acc_id === accountStore.login && favori.agree_id === agree_id));
             
         }
     }
