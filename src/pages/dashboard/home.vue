@@ -18,10 +18,15 @@
             </form>
         </div>
         <div>
-            <p>Vous avez {{ favoris.count }} favoris.</p>
+            <p>Vous avez {{ favoris.count }} favoris et {{ nbVoeux(account.wishes) }} voeux</p>
             <div class="flex *:mr-5">
-                <div id="left" class="flex flex-col max-w-xs bg-base-300 p-5">
-                    <div v-for="(accord, index) in filteredAccords" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="btn btn-warning elementDrag w-full">{{accord.university.univ_city}} - {{ accord.university.univ_name }} ({{ accord.isced.isc_code }})</div>
+                <div id="left" class="flex flex-col bg-base-300 min-w-96 p-5">
+                    <div v-for="(accord, index) in filteredAccords" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="bg-base-200 flex justify-between items-center elementDrag w-96">
+                        <p class="w-full p-5">{{accord.university.univ_city}} - {{ accord.university.univ_name }} ({{ accord.isced.isc_code }})</p>
+                        <button v-if="isVoeux(accord.agree_id)" class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-200" @click="removeVoeu(accord.agree_id)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
                 </div>
                 <div id="right" class="bg-base-300 h-96 flex flex-col *:m-3">
                     <span class="flex h-full items-center">
@@ -93,38 +98,60 @@ async function fetch(){
             let id = e.dataTransfer.getData("text/plain");
             let selected = document.getElementById(id);
             if (selected) {
+                e.preventDefault();
                 dropZone.appendChild(selected);
-                const accord = filteredAccords.value.find(accord => accord.agree_id == selected.id);
-                console.log(accord);
+                const accordId = selected.id.replace('accord_wish_', '');
+                const accord = filteredAccords.value.find(accord => accord.agree_id == accordId);
+                console.log("Déplacement de " + accord.agree_id + " vers " + dropZone.id)
             }
         });
     }
 
     const wishes = account.value.wishes;
     const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
+    const addedAccordIds = new Set();
 
     wishKeys.forEach((wishKey, index) => {
         const accordId = wishes[wishKey];
-        if (accordId) {
+        if (accordId && !addedAccordIds.has(accordId)) {
             const accordElement = document.getElementById('accord_wish_' + accordId);
             if (accordElement) {
                 const dropZone = document.getElementById(`voeu${index + 1}`);
-                if (dropZone) {
+                if (dropZone && !dropZone.contains(accordElement)) {
+                    dropZone.innerHTML = '';
                     dropZone.appendChild(accordElement);
+                    addedAccordIds.add(accordId);
                 }
             }
         }
     });
 }
 
-const filteredAccords = computed(() => {
-    const wishIds = account.value.wishes ? Object.values(account.value.wishes) : [];
-    return accords.value.agreements.filter(accord => {
-        const estFavori = favoris.value.favoris.some(favori => favori.agree_id === accord.agree_id && favori.acc_id === accountStore.login);
-        const estVoeu = wishIds.includes(accord.agree_id);
-        return estFavori || estVoeu;
-    });
-});
+    function nbVoeux(account){
+        const one = account.wsha_one == null ? 0 : 1;
+        const two = account.wsha_two == null ? 0 : 1;
+        const three = account.wsha_three == null ? 0 : 1;
+        const four = account.wsha_four == null ? 0 : 1;
+        const five = account.wsha_five == null ? 0 : 1;
+        return one + two + three + four + five
+    }
 
-onMounted(fetch);
+    const filteredAccords = computed(() => {
+        return accords.value.agreements.filter(accord => {
+            const estFavori = favoris.value.favoris.some(favori => favori.agree_id === accord.agree_id && favori.acc_id === accountStore.login);
+            return estFavori || isVoeux(accord.agree_id);
+        });
+    });
+
+    function isVoeux(agree_id){
+        const wishIds = account.value.wishes ? Object.values(account.value.wishes) : [];
+        return wishIds.includes(agree_id)
+    }
+
+    function removeVoeu(agree_id){
+        console.log("suppression voeu " + agree_id);
+        
+    }
+
+    onMounted(fetch);
 </script>
