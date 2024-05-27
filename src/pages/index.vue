@@ -74,9 +74,16 @@
                                         <p class="p-3 m-1 tooltip" :data-tip="'Aucun département pour cet accord.'">Aucun département</p>
                                     </div>
                                 </div>
-                                <div class="p-5 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
-                                    {{ index }}
-                                </div>
+                                <span v-if="accountStore.isLogged && accountStore.isStudent()" :data-tip="(isFavorited(accord.agree_id) ? 'Enlever des favoris' : 'Ajouter aux favoris')" class="tooltip">
+                                    <div @click="toggleFavoris(accord.agree_id)" class="p-5 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
+                                        <svg v-if="isFavorited(accord.agree_id)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="black" stroke="black" stroke-width="2"/>
+                                        </svg>
+                                        <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="black" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                </span>
                             </div>
 
                         </div>
@@ -155,12 +162,19 @@
 
     import ArticleComp from '../components/index/ArticleComp.vue';
     import CalendarComp from '../components/utils/CalendarComp.vue';
+    import { useAccountStore } from '../stores/accountStore';
 
+    const accountStore = useAccountStore();
+
+
+    const response = ref([]);
     const articles = ref([]);
     const accords = ref([]);
     const partnercountry = ref([]);
     const components = ref([]);
     const events = ref([]);
+    const favoris = ref([]);
+
 
     const isLoaded = ref(false);
 
@@ -184,6 +198,8 @@
         await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry')
         await request('GET', false, components, config.apiUrl+'api/component')
         await request('GET', false, events, config.apiUrl+'api/event')
+        if(accountStore.isLogged)
+            await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         isLoaded.value = true;
     }
 
@@ -200,6 +216,33 @@
             return matchesDepartments && matchesCountries;
         });
     });
+
+    function isFavorited(agree_id) {
+      return favoris.value.some(
+        favori => favori.acc_id === accountStore.login && favori.agree_id === agree_id
+      );
+    }
+
+    async function toggleFavoris(agree_id) {
+        if(!isFavorited(agree_id)){
+            const requestData = {
+                acc_id: accountStore.login,
+                agree_id: agree_id
+            }
+            await request('post', true, response, config.apiUrl+'api/favoris', requestData);
+            if(response.value.status == 201){
+                favoris.value.push({
+                    acc_id: accountStore.login,
+                    agree_id: agree_id
+                });
+            }
+        }
+        else{
+            await request('delete', true, response, config.apiUrl+'api/favoris/delete/'+accountStore.login+'/'+agree_id);
+            favoris.value = favoris.value.filter(favori => !(favori.acc_id === accountStore.login && favori.agree_id === agree_id));
+            
+        }
+    }
     
     onMounted(fetchAll)
 
