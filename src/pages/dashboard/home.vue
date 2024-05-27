@@ -1,5 +1,6 @@
 <template>
     <div class="m-5">
+        {{ account }}
         <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
         <div v-if="account && account.acc_id">
             <form>
@@ -18,57 +19,96 @@
             </form>
         </div>
         <p>Vous avez {{ accords.count }} favoris.</p>
-        <div class="flex">
-            <!-- Conteneur des accords favoris -->
-            <div class="flex-1 border-r pr-4">
-                <h2 class="text-lg font-semibold mb-4">Accords Favoris</h2>
-                <div class="bg-gray-200 p-4 rounded-lg" @dragover.prevent>
-                    <div v-for="(accord, index) in accords.agreements" :key="index" class="bg-white shadow-sm rounded-lg mb-2 cursor-pointer" @dragstart="dragStart(accord)" draggable>
-                        <span class="p-2">{{ accord.university.univ_name }}</span>
-                    </div>
-                </div>
+        <div class="flex *:mr-5">
+            <div id="left" class="flex flex-col max-w-xs bg-base-300 p-5">
+                <div v-for="(accord, index) in accords.agreements" :key="index" :draggable="true" :id="accord.agree_id" class="btn btn-warning elementDrag w-full">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</div>
             </div>
-            <!-- Conteneur des nouveaux favoris à glisser et déposer -->
-            <div class="flex-1 pl-4">
-                <h2 class="text-lg font-semibold mb-4">Nouveaux Favoris</h2>
-                <div class="bg-gray-200 p-4 rounded-lg" @dragover.prevent @drop="drop">
-                    <p class="text-center text-gray-600" v-if="nouveauxFavoris.length === 0">Glissez vos nouveaux favoris ici</p>
-                    <div v-for="(nouveauFavori, index) in nouveauxFavoris" :key="'nouveauFavori_' + index" class="bg-white shadow-sm rounded-lg mb-2" @dragstart="dragStart(nouveauFavori)" draggable>
-                        <span class="p-2">{{ nouveauFavori.name }}</span>
-                    </div>
-                </div>
+            <div id="right" class="bg-base-300 h-96 flex flex-col *:m-3">
+                <span class="flex h-full items-center">
+                    <p>Voeux 1</p>
+                    <div id="voeux1" class="voeuxDrop bg-base-200 h-full w-96 flex items-center justify-center"></div>
+                </span>
+                <span class="flex h-full items-center">
+                    <p>Voeux 2</p>
+                    <div id="voeux2" class="voeuxDrop bg-base-200 h-full w-96"></div>
+                </span>
+                <span class="flex h-full items-center">
+                    <p>Voeux 3</p>
+                    <div id="voeux3" class="voeuxDrop bg-base-200 h-full w-96"></div>
+                </span>
+                <span class="flex h-full items-center">
+                    <p>Voeux 4</p>
+                    <div id="voeux4" class="voeuxDrop bg-base-200 h-full w-96"></div>
+                </span>
+                <span class="flex h-full items-center">
+                    <p>Voeux 5</p>
+                    <div id="voeux5" class="voeuxDrop bg-base-200 h-full w-96"></div>
+                </span>
             </div>
         </div>
     </div>
 </template>
 
+
 <script setup>
-    import { onMounted, ref } from 'vue'
-    import { request } from '../../composables/httpRequest';
-    import config from '../../config';
-    import { useAccountStore } from '../../stores/accountStore';
+import { onMounted, ref } from 'vue'
+import { request } from '../../composables/httpRequest';
+import config from '../../config';
+import { useAccountStore } from '../../stores/accountStore';
 
-    const account = ref([])
-    const accords = ref([])
-    const nouveauxFavoris = ref([]) // Référence pour les nouveaux favoris à glisser et déposer
-    const accountStore = useAccountStore();
+const account = ref([])
+const accords = ref([])
+const accountStore = useAccountStore();
 
-    async function fetch(){
-        await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+accountStore.login)
-        await request('GET', false, accords, config.apiUrl+'api/favoris/getfavbylogin/'+accountStore.login)
+async function fetch(){
+    await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+accountStore.login)
+    await request('GET', false, accords, config.apiUrl+'api/favoris/getfavbylogin/'+accountStore.login)
+    
+    let lists = document.getElementsByClassName("elementDrag");
+    let dropZones = document.getElementsByClassName('voeuxDrop');
+
+    for (let list of lists) {
+        list.setAttribute("draggable", true);
+        list.addEventListener("dragstart", function(e) {
+            e.dataTransfer.setData("text/plain", e.target.id);
+        });
     }
 
-    onMounted(fetch)
+    for (let dropZone of dropZones) {
+        dropZone.addEventListener("dragover", function(e) {
+            e.preventDefault();
+        });
 
-    let draggedItem = null;
-
-    function dragStart(nouveauFavori) {
-        draggedItem = nouveauFavori;
+        dropZone.addEventListener("drop", function(e) {
+            e.preventDefault();
+            let id = e.dataTransfer.getData("text/plain");
+            let selected = document.getElementById(id);
+            if (selected) {
+                dropZone.appendChild(selected);
+                const accord = accords.value.agreements.find(accord => accord.agree_id == selected.id)
+                console.log(accord)
+            }
+        });
     }
+    const wishes = account.value.wishes;
+    const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
+    
+    wishKeys.forEach((wishKey, index) => {
+        const accordId = wishes[wishKey];
+        console.log(wishes)
+        if (accordId) {
+            const accordElement = document.getElementById(accordId);
+            if (accordElement) {
+                const dropZone = document.getElementById(`voeux${index + 1}`);
+                if (dropZone) {
+                    dropZone.appendChild(accordElement);
+                }
+            }
+        }
+    });
 
-    function drop() {
-        // Ajouter le nouvel accord aux favoris
-        nouveauxFavoris.value.push(draggedItem);
-        draggedItem = null;
-    }
+}
+
+onMounted(fetch)
 </script>
+
