@@ -20,7 +20,7 @@
         </div>
         <p>Vous avez {{ accords.count }} favoris.</p>
         <div class="flex *:mr-5">
-            <div id="left" class="flex flex-col max-w-xs bg-base-300 p-5">
+            <div id="left" class="flex flex-col max-w-xs bg-base-300 p-5 voeuxDrop">
                 <div v-for="(accord, index) in accords.agreements" :key="index" :draggable="true" :id="accord.agree_id" class="btn btn-warning elementDrag w-full">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</div>
             </div>
             <div id="right" class="bg-base-300 h-96 flex flex-col *:m-3">
@@ -48,7 +48,6 @@
         </div>
     </div>
 </template>
-
 
 <script setup>
 import { onMounted, ref } from 'vue'
@@ -90,12 +89,12 @@ async function fetch(){
             }
         });
     }
+    
     const wishes = account.value.wishes;
     const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
     
     wishKeys.forEach((wishKey, index) => {
         const accordId = wishes[wishKey];
-        console.log(wishes)
         if (accordId) {
             const accordElement = document.getElementById(accordId);
             if (accordElement) {
@@ -111,4 +110,3 @@ async function fetch(){
 
 onMounted(fetch)
 </script>
-
