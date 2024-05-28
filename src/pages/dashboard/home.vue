@@ -18,12 +18,12 @@
             </form>
         </div>
         <div>
-            <p>Vous avez {{ favoris.count }} favoris et {{ nbVoeux(account.wishes) }} voeux</p>
+            <p>Vous avez {{ favoris.count }} favoris et {{ nbVoeux }} voeux</p>
             <div class="flex *:mr-5">
                 <div id="left" class="flex flex-col bg-base-300 min-w-96 p-5">
-                    <div v-for="(accord, index) in filteredAccords" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="bg-base-200 flex justify-between items-center elementDrag w-96">
+                    <div v-for="(accord, index) in filteredAccords" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="bg-warning flex justify-between items-center elementDrag w-96">
                         <p class="w-full p-5">{{accord.university.univ_city}} - {{ accord.university.univ_name }} ({{ accord.isced.isc_code }})</p>
-                        <button v-if="isVoeux(accord.agree_id)" class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-200" @click="removeVoeu(accord.agree_id)">
+                        <button v-if="isVoeuxLocal(accord.agree_id)" class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-200" @click="removeVoeu(accord.agree_id)">
                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
@@ -51,6 +51,7 @@
                     </span>
                 </div>
             </div>
+            <button class="btn btn-primary mt-5" @click="saveWishes">Sauvegarder</button>
         </div>
     </div>
     <div v-else class="flex items-center justify-center my-20 py-72 flex-col">
@@ -59,16 +60,21 @@
     </div>
 </template>
 
+
+
+
 <script setup>
 import { onMounted, ref, computed, nextTick } from 'vue'
 import { request } from '../../composables/httpRequest';
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
 
+const response = ref([]);
 const account = ref([]);
 const favoris = ref([]);
 const accords = ref([]);
 const isLoaded = ref(false);
+const updatedWishes = ref({});
 const accountStore = useAccountStore();
 
 async function fetch(){
@@ -77,10 +83,13 @@ async function fetch(){
     await request('GET', false, favoris, config.apiUrl + 'api/favoris/getbylogin/' + accountStore.login);
     isLoaded.value = true;
 
+    updatedWishes.value = { ...account.value.wishes };
+
     await nextTick();
 
     let lists = document.getElementsByClassName("elementDrag");
     let dropZones = document.getElementsByClassName('voeuxDrop');
+
 
     for (let list of lists) {
         list.setAttribute("draggable", true);
@@ -90,6 +99,7 @@ async function fetch(){
     }
 
     for (let dropZone of dropZones) {
+        dropZone.innerHTML = '';
         dropZone.addEventListener("dragover", function(e) {
             e.preventDefault();
         });
@@ -102,7 +112,7 @@ async function fetch(){
                 dropZone.appendChild(selected);
                 const accordId = selected.id.replace('accord_wish_', '');
                 const accord = filteredAccords.value.find(accord => accord.agree_id == accordId);
-                console.log("Déplacement de " + accord.agree_id + " vers " + dropZone.id)
+                updateLocalWishes(accord.agree_id, dropZone.id);
             }
         });
     }
@@ -127,31 +137,55 @@ async function fetch(){
     });
 }
 
-    function nbVoeux(account){
-        const one = account.wsha_one == null ? 0 : 1;
-        const two = account.wsha_two == null ? 0 : 1;
-        const three = account.wsha_three == null ? 0 : 1;
-        const four = account.wsha_four == null ? 0 : 1;
-        const five = account.wsha_five == null ? 0 : 1;
-        return one + two + three + four + five
-    }
+const nbVoeux = computed(() => {
+    const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
+    return wishKeys.reduce((count, key) => count + (updatedWishes.value[key] ? 1 : 0), 0);
+});
 
-    const filteredAccords = computed(() => {
-        return accords.value.agreements.filter(accord => {
-            const estFavori = favoris.value.favoris.some(favori => favori.agree_id === accord.agree_id && favori.acc_id === accountStore.login);
-            return estFavori || isVoeux(accord.agree_id);
-        });
+const filteredAccords = computed(() => {
+    return accords.value.agreements.filter(accord => {
+        const estFavori = favoris.value.favoris.some(favori => favori.agree_id === accord.agree_id && favori.acc_id === accountStore.login);
+        return estFavori || isVoeuxLocal(accord.agree_id);
     });
+});
 
-    function isVoeux(agree_id){
-        const wishIds = account.value.wishes ? Object.values(account.value.wishes) : [];
-        return wishIds.includes(agree_id)
+function isVoeuxLocal(agree_id){
+    const wishIds = updatedWishes.value ? Object.values(updatedWishes.value) : [];
+    return wishIds.includes(agree_id);
+}
+
+function updateLocalWishes(agree_id, dropZoneId) {
+    const voeuNumber = parseInt(dropZoneId.replace('voeu', ''));
+    const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
+    updatedWishes.value[wishKeys[voeuNumber - 1]] = agree_id;
+}
+
+function removeVoeu(agree_id){
+    const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
+    for (let i = 0; i < wishKeys.length; i++) {
+        if (updatedWishes.value[wishKeys[i]] === agree_id) {
+            updatedWishes.value[wishKeys[i]] = null;
+            break;
+        }
     }
 
-    function removeVoeu(agree_id){
-        console.log("suppression voeu " + agree_id);
-        
+    const accordElement = document.getElementById('accord_wish_' + agree_id);
+    if (accordElement) {
+        const isFavori = favoris.value.favoris.some(favori => favori.agree_id === agree_id && favori.acc_id === accountStore.login);
+        if (isFavori) {
+            const leftContainer = document.getElementById('left');
+            if (!leftContainer.contains(accordElement)) {
+                leftContainer.appendChild(accordElement);
+            }
+        } else {
+            accordElement.remove();
+        }
     }
+}
 
-    onMounted(fetch);
+async function saveWishes() {
+    await request('POST', true, response, config.apiUrl+'api/wishagreement', updatedWishes.value);
+}
+
+onMounted(fetch);
 </script>
