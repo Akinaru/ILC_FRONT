@@ -147,9 +147,8 @@
                 </div>
         </div>
     </div>
-    <div v-else class="flex items-center justify-center my-20 py-72 flex-col">
-        <p class="p-5 font-bold select-none">Chargement des données en cours...</p>
-        <span class="loading loading-dots loading-lg"></span>
+    <div v-else>
+        <LoadingComp></LoadingComp>
     </div>
 </template>
 
@@ -163,6 +162,7 @@
     import ArticleComp from '../components/index/ArticleComp.vue';
     import CalendarComp from '../components/utils/CalendarComp.vue';
     import { useAccountStore } from '../stores/accountStore';
+    import LoadingComp from '../components/utils/LoadingComp.vue';
 
     const accountStore = useAccountStore();
 

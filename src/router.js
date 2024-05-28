@@ -176,7 +176,7 @@ const routes = [
                 path: 'profile/:acc_id', 
                 name: 'Profile', 
                 component: () => import('./pages/dashboard/profile.vue'),
-                beforeEnter: requireAccess(1),
+                beforeEnter: checkMultipleAccess(1, 2),
                 meta: {
                     title: route => `Dashboard - Profile de ${route.params.acc_id}`
                 }

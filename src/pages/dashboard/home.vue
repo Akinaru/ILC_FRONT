@@ -54,9 +54,8 @@
             <button class="btn btn-primary mt-5" @click="saveWishes">Sauvegarder</button>
         </div>
     </div>
-    <div v-else class="flex items-center justify-center my-20 py-72 flex-col">
-        <p class="p-5 font-bold select-none">Chargement des données en cours...</p>
-        <span class="loading loading-dots loading-lg"></span>
+    <div v-else>
+        <LoadingComp></LoadingComp>
     </div>
 </template>
 
@@ -68,6 +67,7 @@ import { onMounted, ref, computed, nextTick } from 'vue'
 import { request } from '../../composables/httpRequest';
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
+import  LoadingComp  from '../../components/utils/LoadingComp.vue'
 
 const response = ref([]);
 const account = ref([]);
