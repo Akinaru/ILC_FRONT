@@ -17,7 +17,10 @@
                         <div class="p-1" v-show="isOpen.pays">
                             <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1">
                                 <input :id="'filt_pays_'+index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
-                                <label :for="'filt_pays_'+index" class="select-none">{{ country.parco_name }}</label>
+                                <div class="flex">
+                                    <span class="fi mr-1" :class="'fi-'+country.parco_code"></span>
+                                    <label :for="'filt_pays_'+index" class="select-none">{{ country.parco_name }}</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -61,11 +64,17 @@
                             <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 *:list-disc flex justify-between items-center drop-shadow-lg">
                                 <div class="flex justify-between items-center w-full">
 
-                                    <p>
-                                        <span class="tooltip" :data-tip="accord.partnercountry.parco_name" v-html="getCountryFlag(accord.partnercountry.parco_name)"></span> 
-                                        {{ accord.university.univ_name }} ({{ accord.university.univ_city }}) [0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}
-                                    </p>
-                                    <div v-if="accord.departments.length > 0" class="flex">
+                                    <div class="flex">
+                                        <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
+                                            <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code "></span>
+                                        </span>
+                                        <div class="flex flex-col">
+                                            <p><span class="font-bold">{{ accord.university.univ_name }}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
+                                            <p>[0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}</p>
+                                        </div>
+                                          
+                                    </div>
+                                    <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center">
                                         <div v-for="(dept,index) in accord.departments" :key="index">
                                             <p v-if="dept.pivot.deptagree_valide" class="p-3 m-1 tooltip font-bold drop-shadow-lg select-none hover:opacity-90" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                         </div>
@@ -157,12 +166,13 @@
     import { ref, computed } from 'vue';
     import { request } from '../composables/httpRequest';
     import config from '../config';
-    import {getCountryFlag} from '../composables/getFlag'
 
     import ArticleComp from '../components/index/ArticleComp.vue';
     import CalendarComp from '../components/utils/CalendarComp.vue';
     import { useAccountStore } from '../stores/accountStore';
     import LoadingComp from '../components/utils/LoadingComp.vue';
+
+    import "/node_modules/flag-icons/css/flag-icons.min.css";
 
     const accountStore = useAccountStore();
 

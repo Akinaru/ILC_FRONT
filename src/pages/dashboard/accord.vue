@@ -14,8 +14,8 @@
                         </div>
                         <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
                             <option disabled selected>Selectionnez un isced</option>
-                            <option     v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
-                            <option value="addNew">Créer un isced</option>
+                            <option value="addNew"> + Créer un isced</option>
+                            <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.isced === 'addNew'">
                             <div class="label">
@@ -32,8 +32,8 @@
                         </div>
                         <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
                             <option disabled selected>Selectionnez une composante</option>
+                            <option value="addNew"> + Créer une composante</option>
                             <option v-if="composantes && composantes.components" v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
-                            <option value="addNew">Créer une composante</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.compo === 'addNew'">
                             <div class="label">
@@ -50,8 +50,8 @@
                         </div>
                         <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
                             <option disabled selected>Selectionnez une université</option>
+                            <option value="addNew"> + Créer une université</option>
                             <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
-                            <option value="addNew">Créer une université</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
                             <div class="label">
@@ -63,12 +63,13 @@
                             </span>
                             <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
                                 <option disabled selected>Selectionnez un pays</option>
+                                <option value="addNew"> + Créer un pays</option>
                                 <option v-for="(parco, index) in partnercountrys" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
-                                <option value="addNew">Créer un pays</option>
                             </select>
                             <span class="flex items-center justify-center">
 
                                 <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.newpartnercountry" class="input input-bordered w-5/6 my-1" />
+                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Code pays (ex: fr)" v-model="newAgreement.newuniv.newpartnercountrycode" class="input input-bordered w-5/6 my-1" />
                             </span>
 
                         </label>
@@ -106,8 +107,17 @@
 
                     <div v-for="(accord, indexAccord) in accords.agreements" :key="indexAccord" class="m-5 p-3 flex">
                         <div class="w-full bg-base-300 p-2 drop-shadow-lg">
-    
-                            <p>({{ accord.partnercountry.parco_name }}) {{accord.university.univ_name}} ({{ accord.university.univ_city }}): [{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
+                            <div class="flex">
+
+                                <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
+                                    <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code"></span>
+                                </span>
+                                <div>
+                                    <p><span class="font-bold">{{accord.university.univ_name}}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
+                                    <p>[{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
+                                    
+                                </div>
+                            </div>
                             <!-- Liste des départements d'un accord -->
                             <p>Les départements: </p>
                             <div class="flex items-center justify-start">
@@ -224,7 +234,8 @@
             partnercountry: '', //Si addNew = nouveau pays partenaire
             name: '', 
             city: '', 
-            newpartnercountry: ''
+            newpartnercountry: '',
+            newpartnercountrycode: ''
         },
     });
 
@@ -266,6 +277,7 @@
                 requestData.newuniv.parco_id = newAgreement.value.newuniv.partnercountry;
             }else{
                 requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry
+                requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountrycode
             }
         }
 
