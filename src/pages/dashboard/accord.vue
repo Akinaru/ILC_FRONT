@@ -284,7 +284,7 @@
         await request("POST",true, response, config.apiUrl+'api/agreement', requestData);
         if(response.value.status == 201){
             const requestDataAction = {
-                act_description: 'Ajout de l\'accord avec '+response.value.agreement.university.univ_name+'.',
+                act_description: 'Ajout de l\'accord avec '+response.value.agreement.university.univ_name+' ('+response.value.agreement.partnercountry.parco_name+').',
                 acc_id: accountStore.login,
                 agree_id: response.value.agreement.agree_id
             }
@@ -376,6 +376,14 @@
             deptagree_valide: true
         }
         await request('POST', true, response, config.apiUrl+'api/departmentagreement', requestData);
+        if(response.value.status == 201){
+            const requestDataAction = {
+                act_description: 'Ajout du département '+response.value.department.dept_shortname+' à l\'accord '+response.value.agreement.university.univ_name + ' ('+response.value.agreement.partnercountry.parco_name+').',
+                acc_id: accountStore.login,
+                agree_id: response.value.agreement.agree_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetchAll();
     }
 
