@@ -18,7 +18,7 @@
     import { useRouter } from 'vue-router';
 
     const router = useRouter();
-    const newLogin = ref({ login: 'sbouc'});
+    const newLogin = ref({ login: ''});
 
     const validLogin = ['gallottm', 'ldama', 'martmate', 'vcout', 'sbouc'];
 
