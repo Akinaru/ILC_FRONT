@@ -28,12 +28,12 @@
                         </svg>
                     </p>
                     <div id="left" class="flex flex-col bg-base-200 min-w-96 p-5 *:my-1 h-full">
-                        <div v-for="(accord, index) in filteredAccords" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="flex justify-between items-center elementDrag w-96 h-20 hover:cursor-move hover:opacity-80">
-                            <div class="bg-base-300 flex items-center justify-center h-20">
+                        <div v-for="(accord, index) in filteredAccords" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center elementDrag w-96 h-20 hover:cursor-move hover:opacity-80">
+                            <div class="bg-base-300 flex items-center justify-center h-20 select-none">
                                 <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
                                     <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code "></span>
                                 </span>
-                                <p class="w-full">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
+                                <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
                             </div>
                             <button v-if="isVoeuxLocal(accord.agree_id)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer" @click="removeVoeu(accord.agree_id)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -77,7 +77,7 @@
                             <p class="font-bold p-5 text-lg">Voeu n°5</p>
                             <div id="voeu5" class="voeuxDrop bg-base-100 h-full w-96 flex items-center justify-center"></div>
                         </span>
-            <button class="btn btn-primary mt-5" @click="saveWishes">Sauvegarder</button>
+                        <button class="btn btn-primary mt-5" @click="saveWishes">Sauvegarder</button>
 
                     </div>
                 </div>

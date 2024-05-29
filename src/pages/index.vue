@@ -11,7 +11,7 @@
                     <!-- Pays -->
                     <div>
                         <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
-                            <p>Pays ({{ selectedCountries.length }})</p>
+                            <p>Pays ({{ selectedCountries.length }} séléctionné{{ selectedCountries.length > 1 ? 's' : '' }})</p>
                             <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.pays">
@@ -27,7 +27,7 @@
                     <!-- Départements -->
                     <div>
                         <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
-                            <p>Départements ({{ selectedDepartment.length }})</p>
+                            <p>Départements ({{ selectedDepartment.length }} séléctionné{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
                             <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                         </div>
                         <div class="p-1" v-show="isOpen.departments">
@@ -44,7 +44,7 @@
                     <!-- Component -->
                     <div>
                         <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('component')">
-                            <p>Composante ({{ selectedComponent.length }})</p>
+                            <p>Composante ({{ selectedComponent.length }} séléctionné{{ selectedComponent.length > 1 ? 's' : '' }})</p>
                             <span :class="isOpen.component ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.component">
