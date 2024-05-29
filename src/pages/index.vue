@@ -138,7 +138,7 @@
                         <div class="p-5 flex-1 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
                                 <div v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1">
-                                    <p class="p-5">{{ formatDate(event.evt_datetime) }}</p>
+                                    <p class="p-6 text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
                                     <div class="bg-base-300 p-6 md:w-120 w-96 my-3 drop-shadow-lg flex flex-col">
                                         <div class="flex justify-between">
                                             <p class="font-bold  truncate">{{ event.evt_name }}</p>

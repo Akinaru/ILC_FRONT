@@ -19,39 +19,69 @@
         </div>
         <div>
             <p>Vous avez {{ favoris.count }} favoris et {{ nbVoeux }} voeux</p>
-            <div class="flex *:mr-5">
-                <div id="left" class="flex flex-col bg-base-300 min-w-96 p-5">
-                    <div v-for="(accord, index) in filteredAccords" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="bg-warning flex justify-between items-center elementDrag w-96">
-                        <p class="w-full p-5">{{accord.university.univ_city}} - {{ accord.university.univ_name }} ({{ accord.isced.isc_code }})</p>
-                        <button v-if="isVoeuxLocal(accord.agree_id)" class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-200" @click="removeVoeu(accord.agree_id)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
+            <div class="flex *:mr-5 py-5">
+                <div class="flex flex-col justify-center items-center">
+                    <p class="font-bold text-xl flex *:mx-1 py-2  items-center">
+                        <span>Vos favoris</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#000000" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
+                        </svg>
+                    </p>
+                    <div id="left" class="flex flex-col bg-base-200 min-w-96 p-5 *:my-1 h-full">
+                        <div v-for="(accord, index) in filteredAccords" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="flex justify-between items-center elementDrag w-96 h-20 hover:cursor-move hover:opacity-80">
+                            <div class="bg-base-300 flex items-center justify-center h-20">
+                                <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
+                                    <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code "></span>
+                                </span>
+                                <p class="w-full">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
+                            </div>
+                            <button v-if="isVoeuxLocal(accord.agree_id)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer" @click="removeVoeu(accord.agree_id)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div id="right" class="bg-base-300 h-96 flex flex-col *:m-3">
-                    <span class="flex h-full items-center">
-                        <p>Voeu 1</p>
-                        <div id="voeu1" class="voeuxDrop bg-base-200 h-full w-96 flex items-center justify-center"></div>
-                    </span>
-                    <span class="flex h-full items-center">
-                        <p>Voeu 2</p>
-                        <div id="voeu2" class="voeuxDrop bg-base-200 h-full w-96 flex items-center justify-center"></div>
-                    </span>
-                    <span class="flex h-full items-center">
-                        <p>Voeu 3</p>
-                        <div id="voeu3" class="voeuxDrop bg-base-200 h-full w-96 flex items-center justify-center"></div>
-                    </span>
-                    <span class="flex h-full items-center">
-                        <p>Voeu 4</p>
-                        <div id="voeu4" class="voeuxDrop bg-base-200 h-full w-96 flex items-center justify-center"></div>
-                    </span>
-                    <span class="flex h-full items-center">
-                        <p>Voeu 5</p>
-                        <div id="voeu5" class="voeuxDrop bg-base-200 h-full w-96 flex items-center justify-center"></div>
-                    </span>
+                <div class="flex items-center">
+                    
+                        
+
+                </div>
+                <div class="flex flex-col items-center justify-center">
+                    <p class="font-bold text-xl flex *:mx-1 py-2 items-center">
+                        <span>Vos voeux</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#000000" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+
+
+
+                    </p>
+                    <div id="right" class="bg-base-200 flex flex-col *:m-3">
+                        <span class="flex items-center min-h-20">
+                            <p class="font-bold p-5 text-lg">Voeu n°1</p>
+                            <div id="voeu1" class="voeuxDrop bg-base-100 h-full w-96 flex items-center justify-center"></div>
+                        </span>
+                        <span class="flex items-center min-h-20">
+                            <p class="font-bold p-5 text-lg">Voeu n°2</p>
+                            <div id="voeu2" class="voeuxDrop bg-base-100 h-full w-96 flex items-center justify-center"></div>
+                        </span>
+                        <span class="flex items-center min-h-20">
+                            <p class="font-bold p-5 text-lg">Voeu n°3</p>
+                            <div id="voeu3" class="voeuxDrop bg-base-100 h-full w-96 flex items-center justify-center"></div>
+                        </span>
+                        <span class="flex items-center min-h-20">
+                            <p class="font-bold p-5 text-lg">Voeu n°4</p>
+                            <div id="voeu4" class="voeuxDrop bg-base-100 h-full w-96 flex items-center justify-center"></div>
+                        </span>
+                        <span class="flex items-center min-h-20">
+                            <p class="font-bold p-5 text-lg">Voeu n°5</p>
+                            <div id="voeu5" class="voeuxDrop bg-base-100 h-full w-96 flex items-center justify-center"></div>
+                        </span>
+            <button class="btn btn-primary mt-5" @click="saveWishes">Sauvegarder</button>
+
+                    </div>
                 </div>
             </div>
-            <button class="btn btn-primary mt-5" @click="saveWishes">Sauvegarder</button>
         </div>
     </div>
     <div v-else>
@@ -108,11 +138,55 @@ async function fetch(){
             let id = e.dataTransfer.getData("text/plain");
             let selected = document.getElementById(id);
             if (selected) {
-                e.preventDefault();
-                dropZone.appendChild(selected);
                 const accordId = selected.id.replace('accord_wish_', '');
-                const accord = filteredAccords.value.find(accord => accord.agree_id == accordId);
-                updateLocalWishes(accord.agree_id, dropZone.id);
+                if (dropZone.innerHTML == '') {
+    e.preventDefault();
+    dropZone.appendChild(selected);
+    const accord = filteredAccords.value.find(accord => accord.agree_id == accordId);
+    updateLocalWishes(accord.agree_id, dropZone.id);
+} else {
+    console.log("case déjà remplie");
+    const existingAccordElement = dropZone.firstChild;
+    const existingAccordId = existingAccordElement.id.replace('accord_wish_', '');
+
+    // L'accord qu'on glisse est deja un voeu
+    if (isVoeuxLocal(accordId)) {
+        // Trouver la zone de voeu actuelle de l'accord glissé
+        const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
+        let currentDropZoneId;
+        for (let i = 0; i < wishKeys.length; i++) {
+            if (updatedWishes.value[wishKeys[i]] == accordId) {
+                currentDropZoneId = `voeu${i + 1}`;
+                break;
+            }
+        }
+
+        const currentDropZone = document.getElementById(currentDropZoneId);
+
+        // Permuter les accords
+        dropZone.appendChild(selected);
+        currentDropZone.appendChild(existingAccordElement);
+
+        // Mettre à jour les voeux locaux
+        updateLocalWishes(accordId, dropZone.id);
+        updateLocalWishes(existingAccordId, currentDropZone.id);
+    } else {
+        // L'accord qu'on glisse n'est pas un voeu
+        const leftContainer = document.getElementById('left');
+        
+        // Si l'accord existant est un favori, le remettre à gauche
+        if (favoris.value.favoris.some(favori => favori.agree_id == existingAccordId && favori.acc_id == accountStore.login)) {
+            leftContainer.appendChild(existingAccordElement);
+        } else {
+            existingAccordElement.remove();
+        }
+
+        // Ajouter le nouvel accord dans la drop zone et mettre à jour les voeux locaux
+        dropZone.appendChild(selected);
+        updateLocalWishes(accordId, dropZone.id);
+    }
+}
+
             }
         });
     }
@@ -149,16 +223,26 @@ const filteredAccords = computed(() => {
     });
 });
 
-function isVoeuxLocal(agree_id){
+function isVoeuxLocal(agree_id) {
     const wishIds = updatedWishes.value ? Object.values(updatedWishes.value) : [];
-    return wishIds.includes(agree_id);
+    const agreeIdStr = agree_id.toString();
+    return wishIds.map(id => id?.toString()).includes(agreeIdStr);
 }
 
 function updateLocalWishes(agree_id, dropZoneId) {
     const voeuNumber = parseInt(dropZoneId.replace('voeu', ''));
     const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
+
+    for (let i = 0; i < wishKeys.length; i++) {
+        if (updatedWishes.value[wishKeys[i]] === agree_id) {
+            updatedWishes.value[wishKeys[i]] = null;
+            break;
+        }
+    }
+
     updatedWishes.value[wishKeys[voeuNumber - 1]] = agree_id;
 }
+
 
 function removeVoeu(agree_id){
     const wishKeys = ['wsha_one', 'wsha_two', 'wsha_three', 'wsha_four', 'wsha_five'];
