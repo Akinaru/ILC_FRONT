@@ -1,29 +1,27 @@
 <template>
-    <div class="m-5" v-if="isLoaded">
-        <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
-        <div v-if="account && account.acc_id">
-            <form>
-                <label class="form-control w-full max-w-xs">
-                    <div class="label">
-                        <span class="label-text">Numéro étudiant (INE)</span>
-                    </div>
-                    <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full max-w-xs" disabled />
-                </label>
-                <label class="form-control w-full max-w-xs">
-                    <div class="label">
-                        <span class="label-text">Département</span>
-                    </div>
-                    <input type="text" :value="account.department.dept_shortname" class="input input-bordered w-full max-w-xs" disabled />
-                </label>
-            </form>
+    <div class="m-5 flex justify-between" v-if="isLoaded">
+        <div>
+            <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
+            <div v-if="account && account.acc_id">
+                <form>
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Numéro étudiant (INE)</span>
+                        </div>
+                        <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full max-w-xs" disabled />
+                    </label>
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Département</span>
+                        </div>
+                        <input type="text" :value="account.department.dept_shortname" class="input input-bordered w-full max-w-xs" disabled />
+                    </label>
+                </form>
+            </div>
         </div>
+
         <div>
             <p>Vous avez x favoris et x voeux</p>
-            <p class="py-5">1 {{ localVoeux[1] }}</p>
-            <p class="py-5">2 {{ localVoeux[2] }}</p>
-            <p class="py-5">3 {{ localVoeux[3] }}</p>
-            <p class="py-5">4 {{ localVoeux[4] }}</p>
-            <p class="py-5">5 {{ localVoeux[5] }}</p>
             <div class="flex *:mr-5 py-5">
                 <!-- Partie de gauche avec liste des favoris -->
                 <div class="flex flex-col justify-center items-center">
@@ -66,13 +64,14 @@
                                         <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                             <span class="fi text-5xl" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                         </span>
-                                        <p class="w-full select-none">id:{{localVoeux[i].agree_id}}({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
+                                        <p class="w-full select-none">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
                                         
                                     </div>
-                                    <button class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer">
+                                    <button @click="removeVoeu(localVoeux[i].agree_id, i)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
+                                <p v-else class="opacity-45 select-none">Emplacement voeu n°{{ i }}</p>
                             </div>
                         </span>
 
@@ -112,7 +111,7 @@
 
     async function initPage(){
         localFavoris.value = favoris.value
-            .filter(favori => favori.acc_id === accountStore.login)
+            .filter(favori => favori.acc_id === accountStore.login && !estVoeu(favori.agree_id))
             .map(favori => {
                 return accords.value.agreements.find(accord => accord.agree_id === favori.agree_id);
             });
@@ -147,45 +146,45 @@
                 let id = e.dataTransfer.getData("text/plain");
                 let selected = document.getElementById(id);
                 if (selected) {
-                    console.log("1")
                     const accordId = selected.id.replace('accord_wish_', '');
                     const dropZoneId = dropZone.id.replace('voeu', '');
-                    if (estVoeu(accordId)) {
-                        console.log("2")
+                    if (estVoeuLocal(accordId)) {
+                        // Cas 1: Accord est deja un voeu
                         const currentVoeuNum = getCurrentVoeuNum(accordId);
-                        if (currentVoeuNum !== null) {
-                            console.log("3")
-                            const currentDropZone = document.getElementById(`voeu${currentVoeuNum}`);
-                            if (currentDropZone.id !== dropZone.id) {
-                                console.log("4")
-                                if(VoeuExist(dropZoneId)){
-                                    // Il y a deja un voeu dans l'emplacement souhaité
-
-                                }
-                                else{
-                                    console.log("5")
-                                    // Pas de voeu dans l'emplacement
-                                    localVoeux.value[getCurrentVoeuNum(accordId)] = null;
-                                    localVoeux.value[dropZoneId] = getAccord(accordId); 
-                                    refreshDrag();
-                                }
+                        const currentDropZone = document.getElementById(`voeu${currentVoeuNum}`);
+                        if (currentVoeuNum !== null && currentDropZone.id !== dropZone.id) {
+                            if(VoeuExist(dropZoneId)){
+                                // Il y a deja un voeu dans l'emplacement souhaité
+                                const existingAccord = getAccord(localVoeux.value[dropZoneId].agree_id);
+                                const currentDropZoneId = currentDropZone.id.replace('voeu', '');
+                                localVoeux.value[dropZoneId] = getAccord(accordId);
+                                localVoeux.value[currentDropZoneId] = existingAccord;
+                                refreshDrag();
+                            }
+                            else{
+                                // Pas de voeu dans l'emplacement
+                                localVoeux.value[getCurrentVoeuNum(accordId)] = null;
+                                localVoeux.value[dropZoneId] = getAccord(accordId); 
+                                refreshDrag();
                             }
                         }
                     } else {
                         // Cas 2: Accord est uniquement un favori
-                        const selectedVoeu = localVoeux.value[dropZoneId];
-                        if (selectedVoeu) {
-                            // S'il y a déjà un accord dans la dropZone, le remettre dans les favoris si nécessaire
-                            if (estFavoris(selectedVoeu.agree_id)) {
-                                // Remettre l'accord dans les favoris
-                                // Ajouter la logique pour remettre l'accord dans les favoris si nécessaire
+                        if(VoeuExist(dropZoneId)){
+                            // Il y a un deja un voeu dans l'emplacement souhaité
+                            if(estFavoris(localVoeux.value[dropZoneId].agree_id)){
+                                addFavoris(localVoeux.value[dropZoneId].agree_id)
                             }
+                            removeFavoris(accordId)
+                            localVoeux.value[dropZoneId] = getAccord(accordId);
+                            refreshDrag();
+
+                        }else{
+                            // Pas de voeu dans l'emplacement
+                            removeFavoris(accordId)
+                            localVoeux.value[dropZoneId] = getAccord(accordId); 
+                            refreshDrag();
                         }
-                        // Mettre l'accord dans la dropZone
-                        localVoeux.value[dropZoneId] = selected; // Déplacer l'accord dans la nouvelle dropZone
-                        // Échanger les ID pour que les éléments HTML soient à la bonne place dans le DOM
-                        selected.id = `accord_wish_${dropZoneId}`;
-                        dropZone.appendChild(selected);
                     }
 
                 }
@@ -193,13 +192,12 @@
         }
     }
 
-    function refreshDrag() {
+    async function refreshDrag() {
+        await nextTick();
         let elementsDraggable = document.getElementsByClassName("elementDrag");
         
         // Parcourir tous les éléments
         for (let element of elementsDraggable) {
-            console.log(element.id)
-            element.innerHTML = 'd' + element.innerHTML;
             if (!element.hasListener) {
                 element.addEventListener("dragstart", dragStartHandler);
                 element.hasListener = true;
@@ -209,7 +207,6 @@
 
     function dragStartHandler(e) {
         e.dataTransfer.setData("text/plain", e.target.id);
-        console.log("d")
     }
 
     async function fetch() {
@@ -226,13 +223,23 @@
         return favoris.value.some(favori => favori.agree_id === agree_id && favori.acc_id === accountStore.login);
     }
 
-    function estVoeu(agree_id) {
+    // Renvoi un boolean true si l'accord est un voeu 
+    function estVoeuLocal(agree_id) {
         const voeuIds = Object.values(localVoeux.value)
             .map(accord => accord ? accord.agree_id.toString() : null);
         const agreeIdStr = agree_id.toString();
         return voeuIds.includes(agreeIdStr);
     }
 
+    // Renvoi un boolean true si l'accord est un voeu 
+    // Utilisé uniquement au chargement des données
+    function estVoeu(agree_id) {
+        const wishKeys = Object.keys(account.value.wishes).filter(key => key.startsWith('wsha_'));
+        const wishValues = wishKeys.map(key => account.value.wishes[key]);
+        return wishValues.includes(agree_id);
+    }
+
+    // Renvoie le numéro du voeu de l'accord
     function getCurrentVoeuNum(agree_id) {
         for (const [num, accord] of Object.entries(localVoeux.value)) {
             if (accord && accord.agree_id == agree_id) {
@@ -242,6 +249,7 @@
         return null;
     }
 
+    // Renvoie un booleen true si a la position donné il y a un voeu
     function VoeuExist(position) {
         if (position >= 1 && position <= Object.keys(localVoeux.value).length) {
             return localVoeux.value[position.toString()] !== null;
@@ -250,6 +258,24 @@
         }
     }
 
+    // Supprime de la liste des favoris l'accord passé en param
+    function removeFavoris(agree_id) {
+        const index = localFavoris.value.findIndex(accord => accord.agree_id == agree_id);
+        if (index !== -1) {
+            localFavoris.value.splice(index, 1);
+        } 
+    }
+
+    // Ajoute a la liste des favoris l'accord passé en param
+    function addFavoris(agree_id) {
+        const accord = accords.value.agreements.find(accord => accord.agree_id === agree_id);
+        
+        if (accord) {
+            localFavoris.value.push(accord);
+        }
+    }
+
+    // Renvoi l'accord qui correspond à l'id
     function getAccord(agree_id) {
         for (const accord of Object.values(accords.value.agreements)) {
             if (accord && accord.agree_id == agree_id) {
@@ -257,6 +283,26 @@
             }
         }
         return null;
+    }
+
+    function removeVoeu(agree_id, position){
+        localVoeux.value[position] = null;
+        if(estFavoris(agree_id)){
+            addFavoris(agree_id);
+            refreshDrag();
+        }
+    }
+
+    async function saveWishes() {
+        const requestData = {
+            acc_id: accountStore.login,
+            wsha_one: localVoeux.value[1] != null ? localVoeux.value[1].agree_id : null,
+            wsha_two: localVoeux.value[2] != null ? localVoeux.value[2].agree_id : null,
+            wsha_three: localVoeux.value[3] != null ? localVoeux.value[3].agree_id : null,
+            wsha_four: localVoeux.value[4] != null ? localVoeux.value[4].agree_id : null,
+            wsha_five: localVoeux.value[5] != null ? localVoeux.value[5].agree_id : null,
+        }
+        await request('POST', true, response, config.apiUrl + 'api/wishagreement', requestData);
     }
 
 
