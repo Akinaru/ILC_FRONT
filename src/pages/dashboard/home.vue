@@ -71,7 +71,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
-                                <p v-else class="opacity-45 select-none">Emplacement voeu n°{{ i }}</p>
+                                <p v-else class="opacity-45 select-none w-96 flex items-center justify-center">Emplacement voeu n°{{ i }}</p>
                             </div>
                         </span>
 
