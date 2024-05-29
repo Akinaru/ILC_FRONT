@@ -1,29 +1,32 @@
 <template>
     <div v-if="account && account.acc_id">
-        <p class="text-xl font-bold py-5 bg-red-600 flex items-center justify-center">{{ account.acc_fullname }}</p>
-        <div v-if="wishes.count > 0 ">
-            <p>{{ account.acc_fullname }} possède {{ wishes.count }} voeux.</p>
-            <p>Voeu 1: 
-                <span class="font-bold" v-if="wishes.wishes && wishes.wishes.agree_one">{{ wishes.wishes.agree_one.university.univ_name }} {{ wishes.wishes.agree_one.isced.isc_code }} - {{ wishes.wishes.agree_one.partnercountry.parco_name }}</span>
-                <span v-else>Pas de voeu</span> 
-            </p>
-            <p>
-                Voeu 2: <span class="font-bold" v-if="wishes.wishes && wishes.wishes.agree_two">{{ wishes.wishes.agree_two.university.univ_name }} {{ wishes.wishes.agree_two.isced.isc_code }} - {{ wishes.wishes.agree_two.partnercountry.parco_name }}</span>
-                <span v-else>Pas de voeu</span> 
-            </p>
-            <p>
-                Voeu 3: <span class="font-bold" v-if="wishes.wishes && wishes.wishes.agree_three">{{ wishes.wishes.agree_three.university.univ_name }} {{ wishes.wishes.agree_three.isced.isc_code }} - {{ wishes.wishes.agree_three.partnercountry.parco_name }}</span>
-                <span v-else>Pas de voeu</span> 
-            </p>
-            <p>
-                Voeu 4: <span class="font-bold" v-if="wishes.wishes && wishes.wishes.agree_four">{{ wishes.wishes.agree_four.university.univ_name }} {{ wishes.wishes.agree_four.isced.isc_code }} - {{ wishes.wishes.agree_four.partnercountry.parco_name }}</span>
-                <span v-else>Pas de voeu</span> 
-            </p>
-            <p>
-                Voeu 5: <span class="font-bold" v-if="wishes.wishes && wishes.wishes.agree_five">{{ wishes.wishes.agree_five.university.univ_name }} {{ wishes.wishes.agree_five.isced.isc_code }} - {{ wishes.wishes.agree_five.partnercountry.parco_name }}</span>
-                <span v-else>Pas de voeu</span> 
-            </p>
+        <div class="text-sm breadcrumbs py-5">
+            <ul>
+                <li class="font-bold text-sm"><RouterLink :to="{name: 'HomeDept'}">Dashboard</RouterLink></li> 
+                <li class="font-bold text-sm">{{ account.acc_fullname }}</li> 
+            </ul>
+        </div>
 
+        <p class="text-xl font-bold py-5 bg-base-300 flex items-center justify-center">{{ account.acc_fullname }}</p>
+        <div>
+            <p>Liste des voeux:</p>
+            <div v-for="(label, index) in labels" :key="index">
+                <div  class="bg-base-300 w-fit flex items-center justify-start my-1">
+                    <p class="font-bold text-lg p-5">Voeu n° {{ index+1 }}</p>
+                    <div v-if="wishes && wishes.count > 0 && wishes.wishes[label]" class=" select-none flex justify-between items-center elementDrag w-96 h-20">
+                        <div class="bg-base-300 flex items-center justify-center h-20 select-none">
+                            <span class="tooltip mr-2" :data-tip="wishes.wishes[label].partnercountry.parco_name">
+                                <span class="fi text-5xl" :class="'fi-'+wishes.wishes[label].partnercountry.parco_code "></span>
+                            </span>
+                            <p class="w-full select-none">({{ wishes.wishes[label].partnercountry.parco_name }}) <span class="font-bold">{{wishes.wishes[label].university.univ_city}} - {{ wishes.wishes[label].university.univ_name }}</span> ({{ wishes.wishes[label].isced.isc_code }})</p>
+                            
+                        </div>
+                    </div>
+                    <div v-else class="w-96 flex items-center justify-center">
+                        <p class="select-none">Pas de voeu séléctionné</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -38,6 +41,7 @@
     const acc_id = route.params.acc_id;
     const account = ref([]);
     const wishes = ref([])
+    const labels = ref(['agree_one', 'agree_two', 'agree_three', 'agree_four', 'agree_five']);
 
     async function fetchAll(){
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);

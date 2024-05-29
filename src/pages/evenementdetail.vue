@@ -5,9 +5,9 @@
             <li><a>Évènement</a></li> 
             <li>{{ event.evt_name }}</li> 
         </ul>
-        <p>Détail de l'evenement x</p>
-        {{ event }}
     </div>
+    <p>Détail de l'evenement x</p>
+    {{ event }}
 </template>
 
 <script setup>

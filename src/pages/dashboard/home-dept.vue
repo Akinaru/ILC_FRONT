@@ -1,5 +1,10 @@
 <template>
-    <div class="m-5">
+    <div class="">
+        <div class="text-sm breadcrumbs py-5">
+            <ul>
+                <li class="font-bold text-sm ">Dashboard</li> 
+            </ul>
+        </div>
          <div v-if="accountStore.access == 2 && account && account.department">
             <p>Bienvenue {{ account.acc_fullname }}. Vous êtes le responsable du département: {{ account.department.dept_shortname }}</p>
             <p>Liste des étudiants ({{ students.count }}):</p>
