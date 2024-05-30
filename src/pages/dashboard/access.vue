@@ -141,7 +141,11 @@
     }
 
     async function removeAccess(acc_id){
-        await request('DELETE', true, response, config.apiUrl+'api/access/deletebylogin/'+acc_id);
+        const requestData = {
+            acc_id: acc_id,
+            acc_id_action: accountStore.login
+        }
+        await request('DELETE', true, response, config.apiUrl+'api/access/delete', requestData);
         if(response.value.status == 202){
             const requestDataAction = {
                 act_description: 'Suppression de l\'access pour '+acc_id+'.',
