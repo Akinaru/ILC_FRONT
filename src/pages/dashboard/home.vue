@@ -21,7 +21,7 @@
         </div>
 
         <div>
-            <p>Vous avez x favoris et x voeux</p>
+            <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
             <div class="flex *:mr-5 py-5">
                 <!-- Partie de gauche avec liste des favoris -->
                 <div class="flex flex-col justify-center items-center">
@@ -60,7 +60,7 @@
                             <p class="font-bold p-5 text-lg">Voeu n°{{ i }}</p>
                             <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-full w-96 flex items-center justify-center">
                                 <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class=" select-none flex justify-between items-center elementDrag w-96 h-20 hover:cursor-move hover:opacity-80">
-                                    <div class="bg-base-300 flex items-center justify-center h-20 select-none">
+                                    <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
                                         <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                             <span class="fi text-5xl" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                         </span>
@@ -117,18 +117,21 @@
             });
 
         let index = 1;
-        Object.keys(account.value.wishes).forEach(key => {
-            if(key != 'acc_id'){
-                const accordId = account.value.wishes[key];
-                if(accordId != null){
-                    const accord = accords.value.agreements.find(accord => accord.agree_id === accordId);
-                    if(accord){
-                        localVoeux.value[index] = accord;
-                    }   
+        if(nbVoeu() > 0){
+
+            Object.keys(account.value.wishes).forEach(key => {
+                if(key != 'acc_id'){
+                    const accordId = account.value.wishes[key];
+                    if(accordId != null){
+                        const accord = accords.value.agreements.find(accord => accord.agree_id === accordId);
+                        if(accord){
+                            localVoeux.value[index] = accord;
+                        }   
+                    }
+                    index++;
                 }
-                index++;
-            }
-        });
+            });
+        }
 
         await nextTick();
 
@@ -231,12 +234,42 @@
         return voeuIds.includes(agreeIdStr);
     }
 
+    // Nombre de voeu en base
+    function nbVoeu(){
+        if(account.value.wishes && 
+        account.value.wishes["1"] != null && 
+        account.value.wishes["2"] != null && 
+        account.value.wishes["3"] != null && 
+        account.value.wishes["4"] != null && 
+        account.value.wishes["5"] != null ){
+            const one = account.value.wishes["1"] != null ? 1 : 0;
+            const two = account.value.wishes["2"] != null ? 1 : 0;
+            const three = account.value.wishes["3"] != null ? 1 : 0;
+            const four = account.value.wishes["4"] != null ? 1 : 0;
+            const five = account.value.wishes["5"] != null ? 1 : 0;
+            return one + two + three + four + five;
+        }
+        return 0;
+    }
+
+    // Nombre de voeu en local
+    function nbVoeuLocal(){
+        const one = localVoeux.value["1"] != null ? 1 : 0;
+        const two = localVoeux.value["2"] != null ? 1 : 0;
+        const three = localVoeux.value["3"] != null ? 1 : 0;
+        const four = localVoeux.value["4"] != null ? 1 : 0;
+        const five = localVoeux.value["5"] != null ? 1 : 0;
+        return one + two + three + four + five;
+    }
+
     // Renvoi un boolean true si l'accord est un voeu 
     // Utilisé uniquement au chargement des données
     function estVoeu(agree_id) {
-        const wishKeys = Object.keys(account.value.wishes).filter(key => key.startsWith('wsha_'));
-        const wishValues = wishKeys.map(key => account.value.wishes[key]);
-        return wishValues.includes(agree_id);
+        if(nbVoeu() > 0 ){
+            const wishKeys = Object.keys(account.value.wishes).filter(key => key.startsWith('wsha_'));
+            const wishValues = wishKeys.map(key => account.value.wishes[key]);
+            return wishValues.includes(agree_id);
+        }
     }
 
     // Renvoie le numéro du voeu de l'accord

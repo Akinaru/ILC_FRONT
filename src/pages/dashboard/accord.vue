@@ -277,7 +277,7 @@
                 requestData.newuniv.parco_id = newAgreement.value.newuniv.partnercountry;
             }else{
                 requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry
-                requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountrycode
+                requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode
             }
         }
 
@@ -339,6 +339,7 @@
         newAgreement.value.newuniv.name = '';
         newAgreement.value.newuniv.city = '';
         newAgreement.value.newuniv.newpartnercountry = '';
+        newAgreement.value.newuniv.newpartnercountrycode = '';
     }
 
     async function changeVisibility(accordId, deptId, deptagree_valide) {
