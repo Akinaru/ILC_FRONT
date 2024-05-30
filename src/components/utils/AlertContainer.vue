@@ -1,6 +1,6 @@
 <template>
-    <div id="alert-container" class="fixed bottom-0 right-0 w-3/7 flex flex-col items-end">
-      <AlertComp v-for="alert in alerts" :key="alert.id" :response="alert" />
+    <div id="alert-container" class="fixed bottom-0 right-0 lg:w-2/6 md:w-1/2 w-full flex flex-col items-end ">
+      <AlertComp v-for="alert in alerts" :key="alert.id" :response="alert" class="w-full" />
     </div>
 </template>
   

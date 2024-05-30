@@ -83,7 +83,7 @@
                                         <p class="p-3 m-1 tooltip" :data-tip="'Aucun département pour cet accord.'">Aucun département</p>
                                     </div>
                                 </div>
-                                <span v-if="accountStore.isLogged && accountStore.isStudent()" :data-tip="(isFavorited(accord.agree_id) ? 'Enlever des favoris' : 'Ajouter aux favoris')" class="tooltip">
+                                <span v-if="accountStore.isLogged() && accountStore.isStudent()" :data-tip="(isFavorited(accord.agree_id) ? 'Enlever des favoris' : 'Ajouter aux favoris')" class="tooltip">
                                     <div @click="toggleFavoris(accord.agree_id)" class="p-5 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
                                         <svg v-if="isFavorited(accord.agree_id)" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path fill="#000000" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
@@ -173,6 +173,7 @@
     import LoadingComp from '../components/utils/LoadingComp.vue';
 
     import "/node_modules/flag-icons/css/flag-icons.min.css";
+import { addAlert } from '../composables/addAlert';
 
     const accountStore = useAccountStore();
 
@@ -211,6 +212,8 @@
         if(accountStore.isLogged)
             await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         isLoaded.value = true;
+        addAlert(false, {message: 'message de test'})
+        addAlert(true, {data: {message: 'message de testmessage de testmessage de testmessage de testmessage de testmessage '}})
     }
 
     function formatDate(date) {
