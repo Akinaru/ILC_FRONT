@@ -237,16 +237,12 @@
     // Nombre de voeu en base
     function nbVoeu(){
         if(account.value.wishes && 
-        account.value.wishes["1"] != null && 
-        account.value.wishes["2"] != null && 
-        account.value.wishes["3"] != null && 
-        account.value.wishes["4"] != null && 
-        account.value.wishes["5"] != null ){
-            const one = account.value.wishes["1"] != null ? 1 : 0;
-            const two = account.value.wishes["2"] != null ? 1 : 0;
-            const three = account.value.wishes["3"] != null ? 1 : 0;
-            const four = account.value.wishes["4"] != null ? 1 : 0;
-            const five = account.value.wishes["5"] != null ? 1 : 0;
+        !(account.value.wishes.wsha_one != null && account.value.wishes.wsha_two != null && account.value.wishes.wsha_three != null && account.value.wishes.wsha_four != null && account.value.wishes.wsha_five != null) ){
+            const one = account.value.wishes.wsha_one != null ? 1 : 0;
+            const two = account.value.wishes.wsha_two != null ? 1 : 0;
+            const three = account.value.wishes.wsha_three != null ? 1 : 0;
+            const four = account.value.wishes.wsha_four != null ? 1 : 0;
+            const five = account.value.wishes.wsha_five != null ? 1 : 0;
             return one + two + three + four + five;
         }
         return 0;

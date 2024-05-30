@@ -133,7 +133,7 @@
                 <p class="text-xl font-bold">Agenda</p>
                 <div class="m-5 flex items-center justify-center flex-col">
                     <p class="font-bold text-xl p-5">Prochains évenements</p>
-                    <div class="flex h-full items-center justify-center md:flex-row flex-col">
+                    <div class="flex h-full items-center justify-center md:flex-row flex-col" v-if="events && events.count > 0">
                         <CalendarComp :events="events"></CalendarComp>
                         <div class="p-5 flex-1 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
@@ -173,7 +173,6 @@
     import LoadingComp from '../components/utils/LoadingComp.vue';
 
     import "/node_modules/flag-icons/css/flag-icons.min.css";
-import { addAlert } from '../composables/addAlert';
 
     const accountStore = useAccountStore();
 
@@ -212,8 +211,6 @@ import { addAlert } from '../composables/addAlert';
         if(accountStore.isLogged)
             await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         isLoaded.value = true;
-        addAlert(false, {message: 'message de test'})
-        addAlert(true, {data: {message: 'message de testmessage de testmessage de testmessage de testmessage de testmessage '}})
     }
 
     function formatDate(date) {

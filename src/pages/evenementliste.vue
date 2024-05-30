@@ -5,9 +5,15 @@
             <li>Évènement</li> 
         </ul>
     </div>
-    Liste des events
-    <div v-if="events && events.count > 0" v-for="(event, index) in events.events" :key="index">
-        <RouterLink class="btn btn-error" :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}">{{ event.evt_name }}</RouterLink>
+    <div v-if="events && events.count > 0" class="flex">
+        <div class="w-3/5">
+            <div v-if="events && events.count > 0" v-for="(event, index) in events.events" :key="index">
+                <RouterLink class="btn btn-error" :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}">{{ event.evt_name }}</RouterLink>
+            </div>
+        </div>
+        <div class="flex justify-center  w-2/5">
+            <CalendarComp :events="events"></CalendarComp>
+        </div>
     </div>
 </template>
 
@@ -15,6 +21,7 @@
     import { ref, onMounted } from 'vue'
     import { request } from '../composables/httpRequest';
     import config from '../config';
+    import CalendarComp from '../components/utils/CalendarComp.vue';
 
     const events = ref([])
 
