@@ -1,11 +1,13 @@
 <template>
+    <div class="text-sm breadcrumbs font-bold">
+        <ul>
+            <li><RouterLink :to="{name: 'Dashboard'}">Dashboard</RouterLink></li> 
+            <li><RouterLink :to="{name: 'EtudiantsDash'}">Étudiants</RouterLink></li> 
+            <li v-if="account && account.acc_id">{{ account.acc_fullname }}</li>
+            <li v-else>?</li>
+        </ul>
+    </div>
     <div v-if="account && account.acc_id">
-        <div class="text-sm breadcrumbs py-5">
-            <ul>
-                <li class="font-bold text-sm"><RouterLink :to="{name: 'HomeDept'}">Dashboard</RouterLink></li> 
-                <li class="font-bold text-sm">{{ account.acc_fullname }}</li> 
-            </ul>
-        </div>
 
         <p class="text-xl font-bold py-5 bg-base-300 flex items-center justify-center">{{ account.acc_fullname }}</p>
         <div>
@@ -28,6 +30,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div v-else>
+        <p class="flex font-bold items-center justify-center p-52">Étudiant introuvable...</p>
     </div>
 </template>
 

@@ -1,5 +1,10 @@
 <template>
-
+    <div class="text-sm breadcrumbs font-bold">
+        <ul>
+            <li><RouterLink :to="{name: 'Dashboard'}">Dashboard</RouterLink></li> 
+            <li><RouterLink :to="{name: 'EtudiantsDash'}">Étudiants</RouterLink></li> 
+        </ul>
+    </div>
     <div class="m-5">
         <p>Liste des étudiants:</p>
         <div v-if="etudiants && etudiants.accounts">

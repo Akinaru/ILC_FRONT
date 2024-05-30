@@ -1,13 +1,20 @@
 <template>
-    <div class="text-sm breadcrumbs" v-if="event">
+    <div class="text-sm breadcrumbs font-bold">
         <ul>
-            <li><a>Accueil</a></li> 
-            <li><a>Évènement</a></li> 
-            <li>{{ event.evt_name }}</li> 
+            <li><RouterLink :to="{name: 'Accueil'}">Accueil</RouterLink></li> 
+            <li><RouterLink :to="{name: 'Evenement'}">Évènements</RouterLink></li> 
+            <li v-if="event && event.evt_id">{{ event.evt_name }}</li>
+            <li v-else>?</li>
         </ul>
     </div>
-    <p>Détail de l'evenement x</p>
-    {{ event }}
+    <div v-if="event && event.evt_id">
+        <p>Détail de l'evenement x</p>
+        {{ event }}
+    </div>
+    <div v-else>
+        <p class="flex font-bold items-center justify-center p-52">Évènement introuvable...</p>
+    </div>
+
 </template>
 
 <script setup>

@@ -2,15 +2,9 @@
     <div>
         <div class="flex py-3">
             <span v-if="access == 1" class=" ">
-                <span class="flex md:flex-row flex-col *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg">
-                    <RouterLink :to="{name: 'ArticleDash'}" :class="{ 'text-[#3f2ab4]': $route.name === 'ArticleDash' }">Article</RouterLink>
-                    <RouterLink :to="{name: 'DepartementDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'DepartementDash' }">Departement</RouterLink>
-                    <RouterLink :to="{name: 'AccordDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'AccordDash' }">Accord</RouterLink>
-                    <RouterLink :to="{name: 'AccessDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'AccessDash' }">Access</RouterLink>
-                    <RouterLink :to="{name: 'EvenementDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'EvenementDash' }">Evenements</RouterLink>
-                    <RouterLink :to="{name: 'HistoriqueDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'HistoriqueDash' }">Historique</RouterLink>
-                    <RouterLink :to="{name: 'EtudiantsDash'}"  :class="{ 'text-[#3f2ab4]': $route.name === 'EtudiantsDash' }">Etudiants</RouterLink>
-                    <RouterLink :to="{name: 'ModifBaseDash'}" :class="{ 'text-[#3f2ab4]': $route.name === 'ModifBaseDash' }">Modif Base</RouterLink>
+                <span class="flex md:flex-row flex-col *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg mb-4">
+                    <RouterLink v-for="route in routes" :to="{name: route.routeName}" :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" class="hover:opacity-60 transition-opacity">{{ route.name }}</RouterLink>
+                    
                 </span>
             </span>
             <span v-else-if="access == 2">
@@ -28,6 +22,18 @@
 <script setup>
     import { useAccountStore } from '../stores/accountStore';
     import { storeToRefs } from 'pinia'
+
+    const routes = [
+        {routeName: 'HomeRI', name: '🏠Accueil'},
+        {routeName: 'ArticleDash', name: '📄Article'},
+        {routeName: 'DepartementDash', name: '📍Departement'},
+        {routeName: 'AccordDash', name: '🔗Accord'},
+        {routeName: 'AccessDash', name: '🛡️Access'},
+        {routeName: 'EvenementDash', name: '📆Evenements'},
+        {routeName: 'HistoriqueDash', name: '🕵️‍♀️Historique'},
+        {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
+        {routeName: 'ModifBaseDash', name: '⚙️Modif base'},
+    ]
 
     const accountStore = useAccountStore();
     const { access } = storeToRefs(accountStore)

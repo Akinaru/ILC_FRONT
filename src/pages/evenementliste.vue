@@ -1,24 +1,25 @@
 <template>
     <div class="text-sm breadcrumbs font-bold">
         <ul>
-            <li><a>Accueil</a></li> 
-            <li>Évènement</li> 
+            <li><RouterLink :to="{name: 'Accueil'}">Accueil</RouterLink></li> 
+            <li>Évènements</li> 
         </ul>
     </div>
-    <div v-if="events && events.count > 0" class="w-150 flex flex-col justify-center items-center bg-green-500">
-        <RouterLink class="hover:opacity-65 flex my-2" v-for="(event, index) in events.events" :key="index" :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}">
-            <p class="p-5 flex items-center justify-center font-bold">{{ formatDate(event.evt_datetime) }}</p>
-            <div class="flex flex-col items-start justify-between bg-base-300 p-2">
-                <div class="flex items-center justify-between w-full">
-                    <p class="font-bold">{{ event.evt_name }}</p>
+    <p class="font-bold text-xl py-10 flex items-center justify-center">Liste des évènements</p>
+    <div v-if="events && events.count > 0" class="flex flex-col justify-center items-center">
+        <RouterLink v-for="event in events.events" class="hover:opacity-60 w-2/3 bg-base-300 my-2 flex overflow-hidden" :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}">
+            <p class="font-bold text-xl flex items-center justify-center p-5">{{ formatDate(event.evt_datetime) }}</p>
+            <div class="flex flex-col w-5/6 items-start justify-center">
+                <div class="flex items-center justify-start w-full">
                     <span class="badge min-w-fit">{{ event.theme.evthm_name }}</span>
+                    <p class="font-bold mx-3">{{ event.evt_name }}</p>
                 </div>
-                <p class="bg-base-300 w-full truncate">{{ event.evt_description }}</p>
+                <p class="truncate overflow-hidden w-full whitespace-nowrap">{{ event.evt_description }}</p>
             </div>
         </RouterLink>
     </div>
-    <div v-else>
-        <p>Aucun évenements enregistrés.</p>
+    <div v-else class="flex items-center justify-center p-52">
+        <p class="text-lg">Aucun évènements...</p>
     </div>
 </template>
 
