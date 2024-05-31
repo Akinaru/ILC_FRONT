@@ -12,7 +12,7 @@
         {{ event }}
     </div>
     <div v-else>
-        <p class="flex font-bold items-center justify-center p-52">Évènement introuvable...</p>
+        <p class="flex font-bold items-center justify-center py-52">Évènement introuvable...</p>
     </div>
 
 </template>

@@ -33,13 +33,13 @@
         <tbody>
           <tr v-for="week in calendar" :key="week">
             <td 
-              class="p-3 lg:p-6 font-bold hover:cursor-pointer transition-opacity select-none hover:bg-base-200 relative hover:drop-shadow-lg" 
+              class="p-3 lg:p-6 font-bold hover:cursor-pointer select-none hover:bg-base-200 relative hover:drop-shadow-lg transition-all duration-200 ease-in-out" 
               v-for="day in week" 
               :key="day.date"
               :class="{ 'font-normal  ': day.isNotMonth, 'bg-error drop-shadow-lg': day.isToday, 'bg-base-200 drop-shadow-lg' : dayHasEvent(day) }"
             >
               {{ day.date }}
-              <span class="badge badge-accent absolute top-0 right-0 mt-1 mr-1 font-bold" v-if="dayHasEvent(day)">{{ countEventsOnDay(day) }}</span>
+              <span class="badge badge-accent absolute top-0 right-0 mt-1 mr-1 md:opacity-100 opacity-70" v-if="dayHasEvent(day)">{{ countEventsOnDay(day) }}</span>
             </td>
           </tr>
         </tbody>

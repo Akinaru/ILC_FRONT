@@ -20,7 +20,8 @@
             </div>
         </div>
 
-        <div>
+        <!-- Partie voeux -->
+        <div class="hidden xl:block">
             <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
             <div class="flex *:mr-5 py-5">
                 <!-- Partie de gauche avec liste des favoris -->

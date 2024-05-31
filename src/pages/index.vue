@@ -65,8 +65,8 @@
                                 <div class="flex justify-between items-center w-full">
 
                                     <div class="flex">
-                                        <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
-                                            <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code "></span>
+                                        <span class="tooltip mr-2 flex items-center justify-center " :data-tip="accord.partnercountry.parco_name">
+                                            <span class="fi md:text-5xl text-3xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
                                         </span>
                                         <div class="flex flex-col">
                                             <p><span class="font-bold">{{ accord.university.univ_name }}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
@@ -74,9 +74,9 @@
                                         </div>
                                           
                                     </div>
-                                    <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center">
+                                    <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out">
                                         <div v-for="(dept,index) in accord.departments" :key="index">
-                                            <p v-if="dept.pivot.deptagree_valide" class="p-3 m-1 tooltip font-bold drop-shadow-lg select-none hover:opacity-90" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+                                            <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 tooltip font-bold drop-shadow-lg select-none hover:opacity-90" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -84,11 +84,11 @@
                                     </div>
                                 </div>
                                 <span v-if="accountStore.isLogged() && accountStore.isStudent()" :data-tip="(isFavorited(accord.agree_id) ? 'Enlever des favoris' : 'Ajouter aux favoris')" class="tooltip">
-                                    <div @click="toggleFavoris(accord.agree_id)" class="p-5 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
-                                        <svg v-if="isFavorited(accord.agree_id)" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <div @click="toggleFavoris(accord.agree_id)" class="md:p-5 p-2 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
+                                        <svg v-if="isFavorited(accord.agree_id)" class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path fill="#000000" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
                                         </svg>
-                                        <svg v-else width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg v-else class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path fill="none" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
                                         </svg>
                                     </div>
@@ -133,16 +133,16 @@
                 <p class="text-xl font-bold">Agenda</p>
                 <div class="m-5 flex items-center justify-center flex-col">
                     <p class="font-bold text-xl p-5">Prochains évenements</p>
-                    <div class="flex h-full items-center justify-center md:flex-row flex-col" v-if="events && events.count > 0">
+                    <div class="flex h-full items-center justify-center md:flex-row flex-col " v-if="events && events.count > 0">
                         <CalendarComp :events="events"></CalendarComp>
                         <div class="p-5 flex-1 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
                                 <div v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1">
-                                    <p class="p-6 text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
-                                    <div class="bg-base-300 p-6 md:w-120 w-96 my-3 drop-shadow-lg flex flex-col">
+                                    <p class="md:p-6 p-2 md:text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
+                                    <div class="bg-base-300 p-6 md:w-120 w-80 my-3 drop-shadow-lg flex flex-col">
                                         <div class="flex justify-between">
                                             <p class="font-bold  truncate">{{ event.evt_name }}</p>
-                                            <span class="badge">{{ event.theme.evthm_name }}</span>
+                                            <span class="badge badge-warning">{{ event.theme.evthm_name }}</span>
                                         </div>  
                                         <p class="truncate">{{ event.evt_description }}</p>
                                     </div>
