@@ -13,7 +13,10 @@ export default {
         '115': '34rem',
         '120': '36rem',
         '150': '50rem',
-      }
+      },
+      scale: {
+        '70': '0.7',
+      },
     },
   },
   plugins: [require("daisyui")],

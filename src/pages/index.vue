@@ -114,8 +114,8 @@
             <!-- Articles -->
                 <p class="text-xl font-bold">Articles</p>
 
-                    <div v-if="articles && articles.articles">
-                        <div class="flex flex-col" v-if="articles.count > 0">
+                    <div v-if="articles && articles.articles" class="flex justify-center">
+                        <div class="flex flex-col w-4/5" v-if="articles.count > 0">
                             <RouterLink  v-for="(article, index) in articles.articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
                                 <ArticleComp :article="article" class="my-1"></ArticleComp>
                             </RouterLink>
