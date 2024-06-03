@@ -64,7 +64,7 @@
                         <div v-for="(dept, index) in compo.departments" :key="index" class="mx-10 flex m-1">
                             
                             <div class="bg-base-300 w-full p-5 flex items-center justify-center">
-                                <div class="h-10 w-10 mx-5" :style="{backgroundColor: dept.dept_color}"></div>
+                                <div class="h-10 w-10 mx-5 tooltip hover:opacity-80 hover:cursor-pointer" :data-tip="`${dept.dept_color} Cliquez pour copier`" @click="copyColor(dept.dept_color)" :style="{backgroundColor: dept.dept_color}"></div>
                                 <p class="w-full">{{ dept.dept_name }} ({{ dept.dept_shortname }})</p>
                             </div>
                             <!-- Bouton de modification departement -->
@@ -323,6 +323,10 @@
 
         newDep.value.newcompo.shortname = '';
         newDep.value.newcompo.name = '';
+    }
+
+    function copyColor(color){
+        navigator.clipboard.writeText(color);
     }
 
     onMounted(fetchAll);

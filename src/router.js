@@ -74,9 +74,9 @@ const routes = [
     { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin, meta: { title: 'Login' } },
     { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete, meta: { title: 'Compléter Dossier' } },
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: {
-        title: route => `Dashboard - Article n° ${route.params.art_id}`
+        title: route => `Article n° ${route.params.art_id}`
     } },
-    { path: '/evenement', name: 'Evenement', component: () => import('./pages/evenementliste.vue'), meta: { title: 'Liste des évènement' } },
+    { path: '/evenement', name: 'Evenement', component: () => import('./pages/evenementliste.vue'), meta: { title: 'Liste des évènements' } },
     { path: '/evenement/:evt_id', name: 'EvenementDetail', component: () => import('./pages/evenementdetail.vue'), meta: { title: route => `Évènement ${route.params.evt_id}` }},
 
     { 

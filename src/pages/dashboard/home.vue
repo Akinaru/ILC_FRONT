@@ -1,20 +1,30 @@
 <template>
     <div class="m-5 flex justify-between flex-col 2xl:flex-row" v-if="isLoaded">
+        <!-- Partie informations -->
         <div>
             <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
             <div v-if="account && account.acc_id">
                 <form>
                     <label class="form-control w-full max-w-xs">
                         <div class="label">
-                            <span class="label-text">Numéro étudiant (INE)</span>
+                            <span class="label-text">Information</span>
                         </div>
-                        <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full max-w-xs" disabled />
+                        <input type="text" :value="account.acc_fullname" class="input input-bordered w-full max-w-xs" disabled />
                     </label>
                     <label class="form-control w-full max-w-xs">
                         <div class="label">
+                            <span class="label-text">Numéro étudiant</span>
+                        </div>
+                        <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full max-w-xs" disabled />
+                    </label>
+                    <label class="form-control w-full max-w-xs" >
+                        <div class="label">
                             <span class="label-text">Département</span>
                         </div>
-                        <input type="text" :value="account.department.dept_shortname" class="input input-bordered w-full max-w-xs" disabled />
+                        <span class="tooltip" :data-tip="account.department.dept_name">
+                            <input type="text" :value="account.department.dept_shortname" class="input input-bordered w-full max-w-xs" disabled/>
+                        </span>
+                        
                     </label>
                 </form>
             </div>
