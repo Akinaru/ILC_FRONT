@@ -20,7 +20,7 @@
     const router = useRouter();
     const newLogin = ref({ login: ''});
 
-    const validLogin = ['gallottm', 'ldama', 'martmate', 'vcout', 'sbouc'];
+    const validLogin = ['gallottm', 'ldama', 'martmate', 'vcout', 'sbouc', 'guiradoh', 'boucelis', 'rochae'];
 
     async function login() {
         if (newLogin.value.login !== null && validLogin.includes(newLogin.value.login)) {

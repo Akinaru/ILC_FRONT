@@ -10,7 +10,6 @@ export async function authLogAccount(login, router) {
     await request('GET', false, response, config.apiUrl + 'api/account/getbylogin/' + login);
     if (response.value.response && response.value.response.status == 404) {
         await authRegisterAccount(login, router);
-        router.push({ name: 'Dashboard' });
     } else {
         await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
         
@@ -52,6 +51,7 @@ async function authRegisterAccount(login, router) {
         };
 
         authStoreUser(requestData);
+        router.push({ name: 'Dashboard' });
     }
 }
 

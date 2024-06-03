@@ -91,7 +91,8 @@
 
         if(!response.value.response){
             accountStore.setValidate(true);
-            router.push({ name: 'Dashboard' });
+            console.log("compte enregistré, renvoie vers dashboard")
+            router.push({ name: 'Home' });
         }
     }
 
