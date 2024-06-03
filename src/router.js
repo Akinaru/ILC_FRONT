@@ -28,7 +28,6 @@ const requireAuth = (to, from, next) => {
 
 const requireAccess = (accessLevel) => (to, from, next) => {
     const accountStore = useAccountStore();
-    
     if (accountStore.isLogged() && accountStore.getAccessLevel() == accessLevel) {
         next();
     } else {

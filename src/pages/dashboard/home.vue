@@ -60,7 +60,7 @@
                     </p>
                     <div id="right" class="bg-base-200 flex flex-col *:m-3">
 
-                        <span class="flex items-center min-h-20" v-for="i in 5">
+                        <span class="flex items-center min-h-20" v-for="(i, index) in 5" :key="index">
                             <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
                             <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 xl:w-96 w-72 flex items-center justify-center transition-all duration-100 ease-in-out">
                                 <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class=" select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">

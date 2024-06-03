@@ -47,7 +47,8 @@ async function authRegisterAccount(login, router) {
             acc_id: response.value.account.acc_id,
             acc_fullname: response.value.account.acc_fullname,
             acc_lastlogin: response.value.account.acc_lastlogin,
-            acc_validateacc: response.value.account.acc_validateacc
+            acc_validateacc: response.value.account.acc_validateacc,
+            acc_access: 0
         };
 
         authStoreUser(requestData);
