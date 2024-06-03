@@ -44,10 +44,15 @@
   import { storeToRefs } from 'pinia'
   import config from '../../config';
   import { useRouter } from 'vue-router';
+  import { request } from '../../composables/httpRequest';
+  import { onMounted, ref } from 'vue';
+
 
   const router = useRouter();
   const accountStore = useAccountStore();
   const { fullname } = storeToRefs(accountStore)
+  const account = ref([]) 
+
 
   function logout(){
       accountStore.logoutAccount();
