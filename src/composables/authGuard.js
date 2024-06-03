@@ -3,6 +3,7 @@ import { decomposeDN } from '../composables/destructLDAP';
 import { ref } from 'vue';
 import { useAccountStore } from "../stores/accountStore";
 import config from '../config';
+import { addAlert } from "./addAlert";
 
 export async function authLogAccount(login, router) {
     const response = ref([]);

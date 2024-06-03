@@ -1,5 +1,5 @@
 <template>
-    <div class="m-5 flex justify-between" v-if="isLoaded">
+    <div class="m-5 flex justify-between flex-col 2xl:flex-row" v-if="isLoaded">
         <div>
             <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
             <div v-if="account && account.acc_id">
@@ -21,7 +21,7 @@
         </div>
 
         <!-- Partie voeux -->
-        <div class="hidden xl:block">
+        <div class="md:block hidden">
             <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
             <div class="flex *:mr-5 py-5">
                 <!-- Partie de gauche avec liste des favoris -->
@@ -32,16 +32,19 @@
                             <path fill="#000000" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
                         </svg>
                     </p>
-                    <div id="left" class="flex flex-col bg-base-200 min-w-96 p-5 *:my-1 h-full">
+                    <div id="left" class="flex flex-col bg-base-200 p-5 *:my-1 h-full">
                         <!-- Liste des favoris -->
-                        <div v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center elementDrag w-105 h-20 hover:cursor-move hover:opacity-80">
+                        <div v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center elementDrag xl:w-105 w-96 h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
                             <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
                                 <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
-                                    <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code "></span>
+                                    <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
                                 </span>
                                 <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
                                 
                             </div>
+                        </div>
+                        <div v-else>
+                            <p class="w-105 flex items-center justify-center">Aucun favoris dans la liste</p>
                         </div>
                     </div>
                 </div>
@@ -58,12 +61,12 @@
                     <div id="right" class="bg-base-200 flex flex-col *:m-3">
 
                         <span class="flex items-center min-h-20" v-for="i in 5">
-                            <p class="font-bold p-5 text-lg">Voeu n°{{ i }}</p>
-                            <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-full w-96 flex items-center justify-center">
-                                <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class=" select-none flex justify-between items-center elementDrag w-96 h-20 hover:cursor-move hover:opacity-80">
+                            <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
+                            <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 xl:w-96 w-72 flex items-center justify-center transition-all duration-100 ease-in-out">
+                                <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class=" select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
                                     <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
                                         <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
-                                            <span class="fi text-5xl" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
+                                            <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                         </span>
                                         <p class="w-full select-none">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
                                         
@@ -237,8 +240,7 @@
 
     // Nombre de voeu en base
     function nbVoeu(){
-        if(account.value.wishes && 
-        !(account.value.wishes.wsha_one != null && account.value.wishes.wsha_two != null && account.value.wishes.wsha_three != null && account.value.wishes.wsha_four != null && account.value.wishes.wsha_five != null) ){
+        if(account.value.wishes && account.value.wishes.acc_id){
             const one = account.value.wishes.wsha_one != null ? 1 : 0;
             const two = account.value.wishes.wsha_two != null ? 1 : 0;
             const three = account.value.wishes.wsha_three != null ? 1 : 0;
@@ -246,7 +248,6 @@
             const five = account.value.wishes.wsha_five != null ? 1 : 0;
             return one + two + three + four + five;
         }
-        return 0;
     }
 
     // Nombre de voeu en local

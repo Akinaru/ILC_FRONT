@@ -133,9 +133,15 @@
                 <p class="text-xl font-bold">Agenda</p>
                 <div class="m-5 flex items-center justify-center flex-col">
                     <p class="font-bold text-xl p-5">Prochains évenements</p>
-                    <div class="flex h-full items-center justify-center md:flex-row flex-col " v-if="events && events.count > 0">
-                        <CalendarComp :events="events"></CalendarComp>
-                        <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex h-full items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
+                        <div class="flex flex-col items-center justify-center">
+                            <CalendarComp :events="events"></CalendarComp>
+                            <div class="flex items-center justify-center p-5 w-full">
+                                <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full">Voir tous les évènements</RouterLink>
+                            </div>
+                        </div>
+
+                        <div class="p-5 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
                                 <div v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1">
                                     <p class="md:p-6 p-2 md:text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
@@ -150,9 +156,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-center p-5">
-                                <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full">Voir tous les évènements</RouterLink>
-                            </div>
+
                 </div>
         </div>
     </div>
