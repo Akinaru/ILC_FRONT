@@ -8,8 +8,7 @@
         </ul>
     </div>
     <div v-if="account && account.acc_id">
-
-        <p class="text-xl font-bold py-5 bg-base-300 flex items-center justify-center">{{ account.acc_fullname }}</p>
+        <p class="text-xl font-bold py-5 bg-base-300 flex items-center justify-center">{{ account.acc_fullname }}<span v-if="account.department != null" :style="{backgroundColor: account.department.dept_color}" class="p-3 mx-3">{{ account.department.dept_shortname }}</span> </p>
         <div>
             <p>Liste des voeux:</p>
             <div v-for="(label, index) in labels" :key="index">

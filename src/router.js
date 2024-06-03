@@ -134,7 +134,7 @@ const routes = [
                 path: 'etudiants', 
                 name: 'EtudiantsDash', 
                 component: () => import('./pages/dashboard/etudiants.vue'),
-                beforeEnter: requireAccess(1),
+                beforeEnter: checkMultipleAccess(1, 2),
                 meta: { title: 'Dashboard - Etudiants' }
             },
             { 

@@ -3,12 +3,13 @@
         <div class="flex py-3">
             <span v-if="access == 1" class=" ">
                 <span class="flex md:flex-row flex-col *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg mb-4">
-                    <RouterLink v-for="route in routes" :to="{name: route.routeName}" :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" class="hover:opacity-60 transition-opacity">{{ route.name }}</RouterLink>
-                    
+                    <RouterLink v-for="route in routesRi" :to="{name: route.routeName}" :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" class="hover:opacity-60 transition-opacity">{{ route.name }}</RouterLink>
                 </span>
             </span>
             <span v-else-if="access == 2">
-                <!-- Departement -->
+                <span class="flex md:flex-row flex-col *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg mb-4">
+                    <RouterLink v-for="route in routesDept" :to="{name: route.routeName}" :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" class="hover:opacity-60 transition-opacity">{{ route.name }}</RouterLink>
+                </span>
             </span>
             <span v-else>
                 <!-- Etu -->
@@ -23,7 +24,7 @@
     import { useAccountStore } from '../stores/accountStore';
     import { storeToRefs } from 'pinia'
 
-    const routes = [
+    const routesRi = [
         {routeName: 'HomeRI', name: '🏠Accueil'},
         {routeName: 'ArticleDash', name: '📄Article'},
         {routeName: 'DepartementDash', name: '📍Departement'},
@@ -33,6 +34,11 @@
         {routeName: 'HistoriqueDash', name: '🕵️‍♀️Historique'},
         {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
         {routeName: 'ModifBaseDash', name: '⚙️Modif base'},
+    ]
+
+    const routesDept = [
+        {routeName: 'HomeDept', name: '🏠Accueil'},
+        {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
     ]
 
     const accountStore = useAccountStore();
