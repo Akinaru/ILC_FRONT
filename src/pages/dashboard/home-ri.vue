@@ -4,12 +4,12 @@
       <div class="px-3">
         <p>Vos 5 dernières actions:</p>
         <div v-if="limitedActions.length > 0" v-for="(action, index) in limitedActions" :key="index" class="flex py-2">
-          <span v-for="(type, typeIndex) in types" :key="typeIndex" class="flex items-center justify-center mr-1">
+          <span v-for="(type, typeIndex) in types" :key="typeIndex" class="flex items-center justify-center">
             <template v-if="type && type.condition && checkCondition(type.condition, action)">
               <span :class="['badge', type.color]">{{ type.name }}</span>
             </template>
           </span>
-          <p>{{ action.act_description }}</p>
+          <p class="ml-2">{{ action.act_description }}</p>
         </div>
         <div v-else>
             <p>Aucune action.</p>
