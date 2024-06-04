@@ -1,5 +1,6 @@
 <template>
     <div v-if="isLoaded">
+        <!-- Partie accord -->
         <div>
             <p class="text-2xl font-bold">Les accords</p>
             <div class="block lg:flex my-5">
@@ -57,13 +58,15 @@
                     </div>
 
                 </div>
+
+                
                 <!-- Partie rendu des accord -->
                 <div class="w-full">
 
                     <div v-if="accords && accords.agreements">
                         <div v-if="filteredAccords && filteredAccords.length > 0">
                             <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 *:list-disc flex justify-between items-center drop-shadow-lg">
-                                <div class="flex justify-between items-center w-full">
+                                <div class="w-full flex justify-between items-center">
 
                                     <div class="flex">
                                         <span class="tooltip mr-2 flex items-center justify-center " :data-tip="accord.partnercountry.parco_name">
@@ -110,7 +113,7 @@
         </div>
 
         <!-- Espace communication -->
-        <div class="w-full">
+        <div class="w-full ">
             <p class="text-2xl font-bold">Espace communication</p>
             <!-- Articles -->
                 <p class="text-xl font-bold">Articles</p>
@@ -145,8 +148,8 @@
                         <div class="p-5 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
                                 <div v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1">
-                                    <p class="md:p-6 p-2 md:text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
-                                    <div class="bg-base-300 p-6 md:w-120 w-80 my-3 drop-shadow-lg flex flex-col">
+                                    <p class="md:p-4 p-1 md:text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
+                                    <div class="bg-base-300 p-6 xl:w-110 md:w-100 w-80 my-3 drop-shadow-lg flex flex-col transition-all duration-100 ease-in-out">
                                         <div class="flex justify-between">
                                             <p class="font-bold  truncate">{{ event.evt_name }}</p>
                                             <span class="badge badge-warning">{{ event.theme.evthm_name }}</span>
