@@ -38,7 +38,7 @@
               :key="day.date"
               :class="{ 'font-normal  ': day.isNotMonth, 'bg-error drop-shadow-lg': day.isToday, 'bg-base-200 drop-shadow-lg' : dayHasEvent(day) }"
             >
-              {{ day.date }}
+              <span class="flex items-center justify-center">{{ day.date }}</span>
               <span class="scale-70 badge badge-accent absolute top-0 right-0 md:opacity-100 opacity-70" v-if="dayHasEvent(day)">{{ countEventsOnDay(day) }}</span>
             </td>
           </tr>
