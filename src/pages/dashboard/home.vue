@@ -3,13 +3,22 @@
         <!-- Partie informations -->
         <div>
             <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
+            <p>Vos informations:</p>
             <div v-if="account && account.acc_id">
                 <form>
                     <label class="form-control w-full max-w-xs">
                         <div class="label">
-                            <span class="label-text">Information</span>
+                            <span class="label-text">Identitée</span>
                         </div>
                         <input type="text" :value="account.acc_fullname" class="input input-bordered w-full max-w-xs" disabled />
+                    </label>
+                    <label class="form-control w-full max-w-xs" >
+                        <div class="label">
+                            <span class="label-text">Email</span>
+                        </div>
+                        <span class="tooltip" :data-tip="mail">
+                            <input type="text" :value="'mail'" class="input input-bordered w-full max-w-xs" disabled/>
+                        </span>
                     </label>
                     <label class="form-control w-full max-w-xs">
                         <div class="label">
@@ -24,7 +33,14 @@
                         <span class="tooltip" :data-tip="account.department.dept_name">
                             <input type="text" :value="account.department.dept_shortname" class="input input-bordered w-full max-w-xs" disabled/>
                         </span>
-                        
+                    </label>
+                    <label class="form-control w-full max-w-xs" >
+                        <div class="label">
+                            <span class="label-text">Score TOEIC</span>
+                        </div>
+                        <span class="tooltip" :data-tip="toeic">
+                            <input type="text" :value="'0'" class="input input-bordered w-full max-w-xs" disabled/>
+                        </span>
                     </label>
                 </form>
             </div>
@@ -33,6 +49,8 @@
         <!-- Partie voeux -->
         <div class="md:block hidden">
             <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
+            <p>Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
+            <p>Pensez à bien sauvegarder vos modifications.</p>
             <div class="flex *:mr-5 py-5">
                 <!-- Partie de gauche avec liste des favoris -->
                 <div class="flex flex-col justify-center items-center">
@@ -70,7 +88,7 @@
                     </p>
                     <div id="right" class="bg-base-200 flex flex-col *:m-3">
 
-                        <span class="flex items-center min-h-20" v-for="(i, index) in 5" :key="index">
+                        <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
                             <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
                             <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 xl:w-96 w-72 flex items-center justify-center transition-all duration-100 ease-in-out">
                                 <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class=" select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
@@ -120,6 +138,7 @@
         3: null,
         4: null,
         5: null,
+        6: null,
     })
 
 
@@ -256,7 +275,8 @@
             const three = account.value.wishes.wsha_three != null ? 1 : 0;
             const four = account.value.wishes.wsha_four != null ? 1 : 0;
             const five = account.value.wishes.wsha_five != null ? 1 : 0;
-            return one + two + three + four + five;
+            const six = account.value.wishes.wsha_six != null ? 1 : 0;
+            return one + two + three + four + five + six;
         }
     }
 
@@ -267,7 +287,8 @@
         const three = localVoeux.value["3"] != null ? 1 : 0;
         const four = localVoeux.value["4"] != null ? 1 : 0;
         const five = localVoeux.value["5"] != null ? 1 : 0;
-        return one + two + three + four + five;
+        const six = localVoeux.value["6"] != null ? 1 : 0;
+        return one + two + three + four + five + six;
     }
 
     // Renvoi un boolean true si l'accord est un voeu 
@@ -342,6 +363,7 @@
             wsha_three: localVoeux.value[3] != null ? localVoeux.value[3].agree_id : null,
             wsha_four: localVoeux.value[4] != null ? localVoeux.value[4].agree_id : null,
             wsha_five: localVoeux.value[5] != null ? localVoeux.value[5].agree_id : null,
+            wsha_six: localVoeux.value[6] != null ? localVoeux.value[6].agree_id : null,
         }
         await request('POST', true, response, config.apiUrl + 'api/wishagreement', requestData);
     }

@@ -31,6 +31,12 @@
                         <input type="checkbox" class="checkbox" v-model="complDossier.amenagement"/>
                     </label>
                 </div>
+                <label class="form-control w-full max-w-xs" v-if="complDossier.amenagement">
+                    <div class="label">
+                        <span class="label-text">Description (facultatif)</span>
+                    </div>
+                    <input type="text" placeholder="Description de l'aménagement" class="input input-bordered w-full max-w-xs" v-model="complDossier.amenagementdesc"/>
+                </label>
                 <div class="form-control">
                     <label class="label cursor-pointer">
                         <span class="label-text">Consentez-vous à l'utilisation de votre image selon notre politique de confidentialité et de protection des données ?</span> 
@@ -62,7 +68,8 @@
         ine: '', 
         department: '',
         amenagement: false,
-        consent: false
+        consent: false,
+        amenagementdesc: ''
     });
 
     async function confirmCompl(){
@@ -86,9 +93,10 @@
             acc_consent: complDossier.value.consent,
         }
 
+        if(complDossier.value.amenagement){
+            requestData.acc_amenagementdesc = complDossier.value.amenagementdesc;
+        }
         await request('PUT', false, response, config.apiUrl+'api/account/compldossier', requestData);
-
-
         if(!response.value.response){
             accountStore.setValidate(true);
             router.push({ name: 'Dashboard' });

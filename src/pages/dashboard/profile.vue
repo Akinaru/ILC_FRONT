@@ -45,7 +45,7 @@
     const acc_id = route.params.acc_id;
     const account = ref([]);
     const wishes = ref([])
-    const labels = ref(['agree_one', 'agree_two', 'agree_three', 'agree_four', 'agree_five']);
+    const labels = ref(['agree_one', 'agree_two', 'agree_three', 'agree_four', 'agree_five', 'agree_six']);
 
     async function fetchAll(){
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
