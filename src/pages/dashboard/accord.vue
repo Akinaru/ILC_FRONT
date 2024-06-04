@@ -51,7 +51,7 @@
                         <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
                             <option disabled selected>Selectionnez une université</option>
                             <option value="addNew"> + Créer une université</option>
-                            <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
+                            <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - <span v-if="univ.partnercountry && univ.partnercountry.parco_id">{{ univ.partnercountry.parco_name }}</span>)</option>
                         </select>
                         <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
                             <div class="label">
@@ -69,7 +69,7 @@
                             <span class="flex items-center justify-center">
 
                                 <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.newpartnercountry" class="input input-bordered w-5/6 my-1" />
-                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Code pays (ex: fr)" v-model="newAgreement.newuniv.newpartnercountrycode" class="input input-bordered w-5/6 my-1" />
+                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Code pays (ex: fr, de, it)" v-model="newAgreement.newuniv.newpartnercountrycode" class="input input-bordered w-5/6 my-1" />
                             </span>
 
                         </label>

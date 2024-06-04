@@ -35,10 +35,10 @@
                 <tr v-for="(act, actIndex) in filteredActions" :key="actIndex">
                     <th>{{ act.act_id }}</th>
                     <td>{{ act.acc_id }}</td>
-                    <td>{{ act.act_description }}</td>
-                    <td>{{ act.act_date }}</td>
+                    <td class="w-full">{{ act.act_description }}</td>
+                    <td class="min-w-32">{{ act.act_date }}</td>
                     <td>
-                        <span v-for="(type, typeIndex) in types" :key="typeIndex" class="flex items-center justify-center">
+                        <span v-for="(type, typeIndex) in types" :key="typeIndex" class="flex items-center justify-center min-w-36">
                             <template v-if="type && type.condition && checkCondition(type.condition, act)">
                                 <span :class="['badge', type.color]">{{ type.name }}</span>
                             </template>
