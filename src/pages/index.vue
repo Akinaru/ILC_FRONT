@@ -18,9 +18,9 @@
                         <div class="p-1" v-show="isOpen.pays">
                             <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1">
                                 <input :id="'filt_pays_'+index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
-                                <div class="flex">
+                                <div class="flex  w-full">
                                     <span class="fi mr-1" :class="'fi-'+country.parco_code"></span>
-                                    <label :for="'filt_pays_'+index" class="select-none">{{ country.parco_name }}</label>
+                                    <label :for="'filt_pays_'+index" class="select-none w-full">{{ country.parco_name }}</label>
                                 </div>
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                                 <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1">
                                     <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
                                     <div class="w-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
-                                    <label :for="'filt_dept_'+index" class="select-none">{{ dept.dept_shortname }}</label>
+                                    <label :for="'filt_dept_'+index" class="select-none w-full">{{ dept.dept_shortname }}</label>
                                 </div>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                         <div class="p-1" v-show="isOpen.component">
                             <div v-for="(compo,index) in components.components" :key="index" class="flex items-center hover:opacity-60 my-1">
                                 <input :id="'filt_compo_'+index" type="checkbox" class="checkbox mx-2" :value="compo.comp_name" v-model="selectedComponent">
-                                <label :for="'filt_compo_'+index" class="select-none">{{ compo.comp_name }}</label>
+                                <label :for="'filt_compo_'+index" class="select-none w-full">{{ compo.comp_name }}</label>
                             </div>
                         </div>
                     </div>
