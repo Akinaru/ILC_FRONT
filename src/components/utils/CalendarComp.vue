@@ -33,15 +33,27 @@
         <tbody>
           <tr v-for="week in calendar" :key="week">
             <td 
-              class="p-3 lg:p-6 font-bold hover:cursor-pointer select-none hover:bg-base-200 relative hover:drop-shadow-lg transition-all duration-200 ease-in-out" 
-              v-for="day in week" 
-              :key="day.date"
-              :class="{ 'font-normal  ': day.isNotMonth, 'bg-error drop-shadow-lg': day.isToday, 'bg-base-200 drop-shadow-lg' : dayHasEvent(day) }"
+                class=" font-bold hover:cursor-pointer select-none hover:bg-base-200 hover:opacity-80 relative hover:drop-shadow-lg " 
+                v-for="day in week" 
+                :key="day.date"
+                :class="{ 'font-normal  ': day.isNotMonth, 'bg-error drop-shadow-lg': day.isToday, 'bg-base-200 drop-shadow-lg' : dayHasEvent(day) }"
             >
-              <span class="flex items-center justify-center">{{ day.date }}</span>
-              <span class="scale-70 badge badge-accent absolute top-0 right-0 md:opacity-100 opacity-70" v-if="dayHasEvent(day)">{{ countEventsOnDay(day) }}</span>
+              <RouterLink 
+              :to="{ 
+                  name: 'EvenementParJour', 
+                  params: { 
+                      year: day.monthBefore ? selectedYear - 1 : (day.monthAfter ? selectedYear + 1 : selectedYear), 
+                      month: day.monthBefore ? (selectedMonth === 0 ? 12 : selectedMonth) : (day.monthAfter ? (selectedMonth === 11 ? 1 : selectedMonth + 2) : selectedMonth + 1), 
+                      day: day.date 
+                  } 
+              }"
+                  class="flex items-center justify-center p-3 lg:p-6 transition-all duration-200 ease-in-out"
+              >
+                  {{ day.date }}
+              </RouterLink>
+                <span class="scale-70 badge badge-accent absolute top-0 right-0 md:opacity-100 opacity-70" v-if="dayHasEvent(day)">{{ countEventsOnDay(day) }}</span>
             </td>
-          </tr>
+        </tr>
         </tbody>
       </table>
     </div>
