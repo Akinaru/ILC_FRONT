@@ -63,6 +63,7 @@ import { useAccountStore } from '../../stores/accountStore';
 import { checkCondition } from '../../composables/actionType';
 import { types } from '../../composables/actionType';
 import LoadingComp from '../../components/utils/LoadingComp.vue';
+import { addAlert } from '../../composables/addAlert';
 
 const accountStore = useAccountStore();
 const events = ref([]);
@@ -104,6 +105,14 @@ function formatDate(dateString) {
 }
 
 async function confirmModifDate(){
+  const selectedDate = new Date(modifDate.value);
+  const currentDate = new Date();
+  
+  if (selectedDate < currentDate) {
+    addAlert(true, { data: {error: 'Le jour que vous avez choisi est déjà passé. Action annulée.'} });
+    modifDate.value = formatDateModif(admin.value.adm_datelimite);
+    return;
+  }
   const requestData = { 
     adm_datelimite: modifDate.value,
   };

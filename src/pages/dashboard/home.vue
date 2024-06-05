@@ -51,6 +51,7 @@
             <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
             <p>Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
             <p>Pensez à bien sauvegarder vos modifications.</p>
+            <p>Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
             <div class="flex *:mr-5 py-5">
                 <!-- Partie de gauche avec liste des favoris -->
                 <div class="flex flex-col justify-center items-center">
@@ -129,6 +130,7 @@
     const account = ref([]);
     const favoris = ref([]);
     const accords = ref([]);
+    const admin = ref([]);
     const isLoaded = ref(false);
     const accountStore = useAccountStore();
     const localFavoris = ref([]);
@@ -249,6 +251,7 @@
         await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
         await request('GET', false, accords, config.apiUrl + 'api/agreement');
         await request('GET', false, favoris, config.apiUrl + 'api/favoris');
+        await request('GET', false, admin, config.apiUrl + 'api/admin');
         isLoaded.value = true;
 
         initPage();
@@ -353,6 +356,22 @@
             addFavoris(agree_id);
             refreshDrag();
         }
+    }
+
+    function joursRestants(date) {
+        const dateLimite = new Date(date);
+        const currentDate = new Date();
+        const timeDifference = dateLimite - currentDate;
+        const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+        return daysRemaining;
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Les mois commencent à 0
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
     }
 
     async function saveWishes() {
