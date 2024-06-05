@@ -33,27 +33,28 @@
         <tbody>
           <tr v-for="week in calendar" :key="week">
             <td 
-                class=" font-bold hover:cursor-pointer select-none hover:bg-base-200 hover:opacity-80 relative hover:drop-shadow-lg " 
+                class="font-bold hover:cursor-pointer select-none hover:bg-base-200 hover:opacity-80 relative hover:drop-shadow-lg" 
                 v-for="day in week" 
                 :key="day.date"
-                :class="{ 'font-normal  ': day.isNotMonth, 'bg-error drop-shadow-lg': day.isToday, 'bg-base-200 drop-shadow-lg' : dayHasEvent(day) }"
+                :class="{ 'font-normal': day.isNotMonth, 'bg-error drop-shadow-lg': day.isToday, 'bg-base-200 drop-shadow-lg': dayHasEvent(day) }"
             >
-              <RouterLink 
-              :to="{ 
-                  name: 'EvenementParJour', 
-                  params: { 
-                      year: day.monthBefore ? selectedYear - 1 : (day.monthAfter ? selectedYear + 1 : selectedYear), 
-                      month: day.monthBefore ? (selectedMonth === 0 ? 12 : selectedMonth) : (day.monthAfter ? (selectedMonth === 11 ? 1 : selectedMonth + 2) : selectedMonth + 1), 
-                      day: day.date 
-                  } 
-              }"
-                  class="flex items-center justify-center p-3 lg:p-6 transition-all duration-200 ease-in-out"
-              >
-                  {{ day.date }}
-              </RouterLink>
-                <span class="scale-70 badge badge-accent absolute top-0 right-0 md:opacity-100 opacity-70" v-if="dayHasEvent(day)">{{ countEventsOnDay(day) }}</span>
+                <RouterLink 
+                    :to="{ 
+                        name: 'Evenement', 
+                        query: { 
+                            date: formatDayQuery(day) 
+                        } 
+                    }"
+                    class="flex items-center justify-center p-3 lg:p-6 transition-all duration-200 ease-in-out"
+                >
+                    {{ day.date }}
+                </RouterLink>
+                <span class="scale-70 badge badge-accent absolute top-0 right-0 md:opacity-100 opacity-70" v-if="dayHasEvent(day)">
+                    {{ countEventsOnDay(day) }}
+                </span>
             </td>
         </tr>
+
         </tbody>
       </table>
     </div>
@@ -87,6 +88,30 @@
   const firstDayOfMonth = (year, month) => {
     return (new Date(year, month, 1).getDay() + 6) % 7;
   };
+
+  function formatDayQuery(day) {
+    let year = selectedYear.value;
+    let month = selectedMonth.value + 1; // Les mois sont de 0 à 11, donc ajoutez 1 pour obtenir 1 à 12
+
+    if (day.monthBefore) {
+        month -= 1;
+        if (month < 1) {
+            month = 12;
+            year -= 1;
+        }
+    } else if (day.monthAfter) {
+        month += 1;
+        if (month > 12) {
+            month = 1;
+            year += 1;
+        }
+    }
+
+    const dayOfMonth = String(day.date).padStart(2, '0');
+    const monthFormatted = String(month).padStart(2, '0');
+    return `${dayOfMonth}/${monthFormatted}/${year}`;
+}
+
   
   // Retourne la liste correspondante au calendrier avec le mois et l"année séléctionné
   const calendar = computed(() => {
