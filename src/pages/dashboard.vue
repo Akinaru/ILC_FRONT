@@ -29,7 +29,7 @@
         {routeName: 'ArticleDash', name: '📄Article'},
         {routeName: 'DepartementDash', name: '📍Departement'},
         {routeName: 'AccordDash', name: '🔗Accord'},
-        {routeName: 'AccessDash', name: '🛡️Access'},
+        {routeName: 'AccessDash', name: '🛡️Accès'},
         {routeName: 'EvenementDash', name: '📆Evenements'},
         {routeName: 'HistoriqueDash', name: '🕵️‍♀️Historique'},
         {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
