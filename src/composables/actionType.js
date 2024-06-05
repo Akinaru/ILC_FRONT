@@ -3,7 +3,8 @@ export const types = [
     { name: 'Accord', color: 'badge-neutral', condition: 'agree_id' },
     { name: 'Article', color: 'badge-accent', condition: 'art_id' },
     { name: 'Access', color: 'badge-info', condition: 'access' },
-    { name: 'Evenement', color: 'badge-error', condition: 'evt_id' }
+    { name: 'Evenement', color: 'badge-error', condition: 'evt_id' },
+    { name: 'Admin', color: 'badge-secondary', condition: 'admin' },
 ];
 
 export function checkCondition(condition, act) {
