@@ -4,7 +4,9 @@
             <div class="text-sm breadcrumbs font-bold">
                 <ul>
                     <li><RouterLink :to="{name: 'Accueil'}">Accueil</RouterLink></li>
-                    <li>Évènements</li>
+                    <li v-if="displayMode == 'all'">Évènements</li>
+                    <li v-else><RouterLink :to="{name: 'Evenement'}">Évènements</RouterLink></li>
+                    <li v-if="displayMode != 'all'">{{  formatDate(selectedDate) }}</li>
                 </ul>
             </div>
 
@@ -17,26 +19,33 @@
             <div class="w-full flex justify-center items-center flex-col">
                 <!-- Barre de recherche -->
                 <label class="input input-bordered flex items-center gap-2 w-2/3">
-                    <input type="text" class="grow " placeholder="Rechercher" />
+                    <input type="text" class="grow" placeholder="Rechercher" v-model="searchQuery" />
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>
                 </label>
-                <div>
-                    {{ thematiques }}
+
+                <!-- Filtre sur les thematiques -->
+                <div class="flex w-2/3" >
+                    <div v-for="(them, index) in thematiques" class="flex items-center justify-center py-1">
+                        <input :id="'filt_them_'+index" type="checkbox" class="checkbox" :value="them.evthm_id" v-model="selectedThematique">
+                        <label :for="'filt_them_'+index" class="select-none w-full mx-2">
+                            <span class="badge badge-warning">{{ them.evthm_name }}</span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
 
             <div v-if="pastEvents && pastEvents.length > 0 || todayEvents && todayEvents.length > 0 || futureEvents && futureEvents.length > 0">
                 <!-- Événements passés -->
-                <div class="flex flex-col justify-center items-center py-10">
+                <div v-if="pastEvents.length > 0 && displayMode !== 'day'" class="flex flex-col justify-center items-center py-10">
                     <h2 class="font-bold text-lg">Événements passés</h2>
-                    <div v-if="pastEvents.length > 0" class="w-full flex flex-col justify-center items-center py-5">
-
+                    <div class="w-full flex flex-col justify-center items-center py-5">
+                        <!-- Afficher les événements passés -->
                         <RouterLink
-                        v-for="event in visiblePastEvents"
-                        :key="event.evt_id"
-                        class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden opacity-50 scale-100 hover:scale-105 transition-all duration-200 ease-in-out"
-                        :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}"
+                            v-for="event in visiblePastEvents"
+                            :key="event.evt_id"
+                            class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden opacity-50 scale-100 hover:scale-105 transition-all duration-200 ease-in-out"
+                            :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}"
                         >
                             <p class="font-bold md:text-xl flex items-center justify-center md:p-5 p-2 transition-all duration-200 ease-in-out">{{ formatDate(event.evt_datetime) }}</p>
                             <div class="flex flex-col w-5/6 items-start justify-center md:py-5 p-3">
@@ -49,15 +58,19 @@
                         </RouterLink>
                         <button v-if="!showAllPastEvents && pastEvents.length > 2" @click="showAllPastEvents = true" class="btn btn-primary mt-2">Voir plus d'événements passés</button>
                     </div>
-                    <div v-else>
-                        <p>Aucun événement passés.</p>
-                    </div>
                 </div>
+                <!-- Condition pour cacher la section si aucun événement passé ou si mode affichage par jour -->
+                <div v-else-if="pastEvents.length === 0 && displayMode === 'all'" class="flex flex-col justify-center items-center py-10">
+                    <h2 class="font-bold text-lg">Événements passés</h2>
+                    <p>Aucun événement passé.</p>
+                </div>
+
                 
                 <!-- Événements d'aujourd'hui -->
-                <div  class="flex flex-col justify-center items-center py-10">
-                    <h2 class="font-bold text-lg">Événements d'aujourd'hui</h2>
+                <div class="flex flex-col justify-center items-center py-10">
+                    <h2 v-if="displayMode === 'all'" class="font-bold text-lg">Événements d'aujourd'hui</h2>
                     <div v-if="todayEvents.length > 0" class="w-full flex flex-col justify-center items-center py-5">
+                        <!-- Afficher les événements d'aujourd'hui -->
                         <RouterLink
                             v-for="event in todayEvents"
                             :key="event.evt_id"
@@ -80,15 +93,14 @@
                 </div>
                 
                 <!-- Événements à venir -->
-                <div class="flex flex-col justify-center items-center py-10">
+                <div v-if="displayMode !== 'day'" class="flex flex-col justify-center items-center py-10">
                     <h2 class="font-bold text-lg">Événements à venir</h2>
                     <div v-if="futureEvents && futureEvents.length" class="w-full flex flex-col justify-center items-center py-5">
-
                         <RouterLink
-                        v-for="event in visibleFutureEvents"
-                        :key="event.evt_id"
-                        class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden scale-100 hover:scale-105 transition-all duration-200 ease-in-out"
-                        :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}"
+                            v-for="event in visibleFutureEvents"
+                            :key="event.evt_id"
+                            class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden scale-100 hover:scale-105 transition-all duration-200 ease-in-out"
+                            :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}"
                         >
                             <p class="font-bold md:text-xl flex items-center justify-center md:p-5 p-2 transition-all duration-200 ease-in-out">{{ formatDate(event.evt_datetime) }}</p>
                             <div class="flex flex-col w-5/6 items-start justify-center md:py-5 p-3">
@@ -105,6 +117,12 @@
                         <p>Aucun événement à venir.</p>
                     </div>
                 </div>
+
+
+
+            </div>
+            <div v-else class="flex items-center justify-center py-20">
+                <p>Aucun événement n'a été trouvé.</p>
             </div>
 
             <div v-if="displayMode != 'all'" class="flex items-center justify-center p-10 w-full">
@@ -138,6 +156,9 @@ const showAllPastEvents = ref(false);
 const showAllFutureEvents = ref(false);
 const thematiques = ref([])
 
+const selectedThematique = ref([]);
+const searchQuery = ref('');
+
 function formatDate(date) {
     if (!date) return '';
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -165,15 +186,18 @@ async function fetchEvents() {
     await request('GET', false, thematiques, config.apiUrl + 'api/eventtheme');
     filteredEvents.value = events.value.events;
     isLoaded.value = true;
+    applyFilters();
 }
 
 async function fetchEventsByDay(date) {
     isLoaded.value = false;
     await request('GET', false, events, config.apiUrl + 'api/event');
     await request('GET', false, thematiques, config.apiUrl + 'api/eventtheme');
-    filteredEvents.value = events.value.events.filter(event => formatDate(event.evt_datetime) === formatDate(date));
+    const formattedDate = formatDate(date);
+    filteredEvents.value = events.value.events.filter(event => formatDate(event.evt_datetime) === formattedDate);
     isLoaded.value = true;
 }
+
 
 watch(() => route.query, async (newQuery, oldQuery) => {
     const { date } = newQuery;
@@ -211,6 +235,23 @@ onMounted(async () => {
     isValidDate.value = true;
 });
 
+
+function applyFilters() {
+    filteredEvents.value = events.value.events.filter(event => {
+        // Filtre par texte de recherche
+        const searchRegex = new RegExp(searchQuery.value, 'i');
+        const matchesSearch = searchQuery.value ? searchRegex.test(event.evt_name) || searchRegex.test(event.evt_description) : true;
+
+        // Filtre par thématique
+        const matchesThematique = selectedThematique.value.length === 0 || selectedThematique.value.includes(event.theme.evthm_id);
+
+        return matchesSearch && matchesThematique;
+    });
+}
+
+watch(selectedThematique, applyFilters);
+watch(searchQuery, applyFilters);
+
 const pastEvents = computed(() => {
     return filteredEvents.value ? filteredEvents.value.filter(event => {
         const eventDate = new Date(event.evt_datetime);
@@ -218,7 +259,6 @@ const pastEvents = computed(() => {
         return eventDate < today && !isToday(formatDate(event.evt_datetime));
     }) : [];
 });
-
 
 const todayEvents = computed(() => {
     return filteredEvents.value ? filteredEvents.value.filter(event => isToday(formatDate(event.evt_datetime))) : [];
