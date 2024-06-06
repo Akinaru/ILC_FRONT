@@ -7,11 +7,26 @@
                     <li>Évènements</li>
                 </ul>
             </div>
+
+            <!-- Titre de la page -->
             <p class="font-bold text-2xl py-10 flex items-center justify-center">
                 {{ displayMode === 'all' ? 'Liste des évènements' : 'Évènements du ' + formatDate(selectedDate) }}
             </p>
-            <div v-if="pastEvents && pastEvents.length > 0 || todayEvents && todayEvents.length > 0 || futureEvents && futureEvents.length > 0">
 
+            <!-- Filtes -->
+            <div class="w-full flex justify-center items-center flex-col">
+                <!-- Barre de recherche -->
+                <label class="input input-bordered flex items-center gap-2 w-2/3">
+                    <input type="text" class="grow " placeholder="Rechercher" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>
+                </label>
+                <div>
+                    {{ thematiques }}
+                </div>
+            </div>
+
+
+            <div v-if="pastEvents && pastEvents.length > 0 || todayEvents && todayEvents.length > 0 || futureEvents && futureEvents.length > 0">
                 <!-- Événements passés -->
                 <div class="flex flex-col justify-center items-center py-10">
                     <h2 class="font-bold text-lg">Événements passés</h2>
@@ -121,6 +136,7 @@ const displayMode = ref('all');
 const isValidDate = ref(true);
 const showAllPastEvents = ref(false);
 const showAllFutureEvents = ref(false);
+const thematiques = ref([])
 
 function formatDate(date) {
     if (!date) return '';
@@ -146,6 +162,7 @@ function isToday(dateStr) {
 async function fetchEvents() {
     isLoaded.value = false;
     await request('GET', false, events, config.apiUrl + 'api/event');
+    await request('GET', false, thematiques, config.apiUrl + 'api/eventtheme');
     filteredEvents.value = events.value.events;
     isLoaded.value = true;
 }
@@ -153,6 +170,7 @@ async function fetchEvents() {
 async function fetchEventsByDay(date) {
     isLoaded.value = false;
     await request('GET', false, events, config.apiUrl + 'api/event');
+    await request('GET', false, thematiques, config.apiUrl + 'api/eventtheme');
     filteredEvents.value = events.value.events.filter(event => formatDate(event.evt_datetime) === formatDate(date));
     isLoaded.value = true;
 }
