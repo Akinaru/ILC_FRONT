@@ -36,16 +36,20 @@
             <div v-if="evenements && evenements.events" class="flex flex-col py-5">
                 <div v-if="evenements.count > 0">
 
-                    <RouterLink v-for="(event, index) in evenements.events" :key="index" class="hover:opacity-60 transition-opacity flex my-1 mx-10" :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}">
-                        <div class="bg-base-300 w-full p-2 transition-opacity drop-shadow-lg">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center justify-center">
-                                    <p class="text-lg font-bold"><span :class="getBadgeClass(event.evt_datetime)" class="badge mr-2">{{ formatDate(event.evt_datetime) }}</span>{{ event.evt_name }}</p>
-                                </div>
+                    <div v-for="(event, index) in evenements.events" :key="index" class="flex bg-base-300 my-1"> 
 
+                        <RouterLink class="hover:opacity-60 transition-opacity flex my-1  w-full" :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}">
+                            <div class=" w-full p-2 transition-opacity drop-shadow-lg">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center justify-center">
+                                        <p class="text-lg font-bold"><span :class="getBadgeClass(event.evt_datetime)" class="badge mr-2">{{ formatDate(event.evt_datetime) }}</span>{{ event.evt_name }}</p>
+                                    </div>
+                                    
+                                </div>
+                                <pre class="overflow-hidden whitespace-nowrap text-ellipsis">{{ event.evt_description }}</pre>
                             </div>
-                            <pre class="overflow-hidden whitespace-nowrap text-ellipsis">{{ event.evt_description }}</pre>
-                        </div>
+                        </RouterLink>
+
                         <!-- Bouton de modification -->
                         <label for="modal_modif" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifEvent(event)">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -54,12 +58,12 @@
                             </svg>
                         </label>
                         
-
+                        
                         <!-- Bouton de suppression -->
                         <button class="hover:opacity-60 p-5 hover:cursor-pointer bg-base-300" @click="removeEvent(event.evt_name, event.evt_id)">
                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
-                    </RouterLink>
+                    </div>
                 </div>
                 <div v-else>
                     <p>Aucun évènement trouvé.</p>
@@ -229,7 +233,11 @@
     function getBadgeClass(dateTime) {
         const eventDate = new Date(dateTime);
         const now = new Date();
-        return eventDate < now ? 'badge-error' : 'badge-success';
+        if (eventDate.toDateString() === now.toDateString()) {
+            return 'badge-primary'; // Si c'est aujourd'hui
+        } else {
+            return eventDate >= now ? 'badge-success' : 'badge-error'; // Sinon, comme avant
+        }
     }
     
     async function fetchAll(){
