@@ -1,213 +1,239 @@
 <template>
     <div>
+        <div v-if="isLoaded">
 
-        <p class="font-bold text-xl">Accord</p>
-        <!-- Partie ajout d'un accord -->
-        <div class="m-5">
-            <div class="m-5 flex justify-center items-center flex-col" >
-                <p class="text-lg font-bold">Ajout accord</p>
-                <form @submit.prevent="addAgreement" class="w-2/5 *:my-2">
-                    <!-- Formulaire Isced -->
-                    <label class="form-control w-full items-center justify-center">
-                        <div class="label">
-                            <span class="label-text">Isced</span>
-                        </div>
-                        <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
-                            <option disabled selected>Selectionnez un isced</option>
-                            <option value="addNew"> + Créer un isced</option>
-                            <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
-                        </select>
-                        <label class="form-control w-5/6 my-1" v-if="newAgreement.isced === 'addNew'">
+            <p class="font-bold text-xl">Accord</p>
+            <!-- Partie ajout d'un accord -->
+            <div class="m-5">
+                <div class="m-5 flex justify-center items-center flex-col" >
+                    <p class="text-lg font-bold">Ajout accord</p>
+                    <form @submit.prevent="addAgreement" class="w-2/5 *:my-2">
+                        <!-- Formulaire Isced -->
+                        <label class="form-control w-full items-center justify-center">
                             <div class="label">
-                                <span class="label-text">Créer un Isced</span>
+                                <span class="label-text">Isced</span>
                             </div>
-                            <input type="number" placeholder="Code (ex: 061)" v-model="newAgreement.newisced.code" class="input input-bordered w-full" />
-                            <input type="text" placeholder="Nom (ex: Information and Communication Technologies)" v-model="newAgreement.newisced.name" class="input input-bordered w-full " />
-                        </label>
-                    </label>
-                    <!-- Formualire composante -->
-                    <label class="form-control w-full items-center justify-center">
-                        <div class="label">
-                            <span class="label-text">Composante</span>
-                        </div>
-                        <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
-                            <option disabled selected>Selectionnez une composante</option>
-                            <option value="addNew"> + Créer une composante</option>
-                            <option v-if="composantes && composantes.components" v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
-                        </select>
-                        <label class="form-control w-5/6 my-1" v-if="newAgreement.compo === 'addNew'">
-                            <div class="label">
-                                <span class="label-text">Créer une composante</span>
-                            </div>
-                            <input type="text" placeholder="Nom (ex: IUT Annecy)" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
-                            <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full " />
-                        </label>
-                    </label>
-                    <!-- Formulaire université -->
-                    <label class="form-control w-full items-center justify-center">
-                        <div class="label">
-                            <span class="label-text">Université</span>
-                        </div>
-                        <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
-                            <option disabled selected>Selectionnez une université</option>
-                            <option value="addNew"> + Créer une université</option>
-                            <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - <span v-if="univ.partnercountry && univ.partnercountry.parco_id">{{ univ.partnercountry.parco_name }}</span>)</option>
-                        </select>
-                        <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
-                            <div class="label">
-                                <span class="label-text">Créer une université</span>
-                            </div>
-                            <span class="my-1">
-                                <input type="text" placeholder="Nom (ex: Université Savoie Mont Blanc)" v-model="newAgreement.newuniv.name" class="input input-bordered w-full " />
-                                <input type="text" placeholder="Ville (ex: Annecy)" v-model="newAgreement.newuniv.city" class="input input-bordered w-full " />
-                            </span>
-                            <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
-                                <option disabled selected>Selectionnez un pays</option>
-                                <option value="addNew"> + Créer un pays</option>
-                                <option v-for="(parco, index) in partnercountrys" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
+                            <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
+                                <option disabled selected>Selectionnez un isced</option>
+                                <option value="addNew"> + Créer un isced</option>
+                                <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
                             </select>
-                            <span class="flex items-center justify-center">
-
-                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.newpartnercountry" class="input input-bordered w-5/6 my-1" />
-                                <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Code pays (ex: fr, de, it)" v-model="newAgreement.newuniv.newpartnercountrycode" class="input input-bordered w-5/6 my-1" />
-                            </span>
-
+                            <label class="form-control w-5/6 my-1" v-if="newAgreement.isced === 'addNew'">
+                                <div class="label">
+                                    <span class="label-text">Créer un Isced</span>
+                                </div>
+                                <input type="number" placeholder="Code (ex: 061)" v-model="newAgreement.newisced.code" class="input input-bordered w-full" />
+                                <input type="text" placeholder="Nom (ex: Information and Communication Technologies)" v-model="newAgreement.newisced.name" class="input input-bordered w-full " />
+                            </label>
                         </label>
-                    </label>
-                    <!-- Formulaire Typeaccord -->
-                    <label class="form-control w-full items-center justify-center">
-                        <div class="label">
-                            <span class="label-text">Type accord</span>
-                        </div>
-                        <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="newAgreement.typeaccord">
-                            <option disabled selected>Selectionnez un type d'accord</option>
-                            <option>Bilatéral</option>
-                            <option>Erasmus</option>
-                        </select>
-                    </label>
-                    <!-- Formulaire Nombre de place -->
-                    <label class="form-control w-full items-center justify-center">
-                        <div class="label">
-                            <span class="label-text">Nombre de place</span>
-                        </div>
-                        <input type="number" class="input input-bordered w-full" v-model="newAgreement.nbplace"/>
-                    </label>
-                    <div class="flex items-center justify-center">
-                        <button class="btn btn-primary" type="submit">Ajouter l'accord</button>
-                    </div>
-                </form>
-            </div>
-
-        </div>
-        <!-- Partie liste des accords -->
-        <div>
-            <p class="font-bold">Liste des accords:</p>
-            <div v-if="accords && accords.agreements">
-                <div v-if="accords.count > 0">
-
-                    <div v-for="(accord, indexAccord) in accords.agreements" :key="indexAccord" class="m-5 p-3 flex">
-                        <div class="w-full bg-base-300 p-2 drop-shadow-lg">
-                            <div class="flex">
-
-                                <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
-                                    <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code"></span>
+                        <!-- Formualire composante -->
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label">
+                                <span class="label-text">Composante</span>
+                            </div>
+                            <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
+                                <option disabled selected>Selectionnez une composante</option>
+                                <option value="addNew"> + Créer une composante</option>
+                                <option v-if="composantes && composantes.components" v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
+                            </select>
+                            <label class="form-control w-5/6 my-1" v-if="newAgreement.compo === 'addNew'">
+                                <div class="label">
+                                    <span class="label-text">Créer une composante</span>
+                                </div>
+                                <input type="text" placeholder="Nom (ex: IUT Annecy)" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
+                                <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full " />
+                            </label>
+                        </label>
+                        <!-- Formulaire université -->
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label">
+                                <span class="label-text">Université</span>
+                            </div>
+                            <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
+                                <option disabled selected>Selectionnez une université</option>
+                                <option value="addNew"> + Créer une université</option>
+                                <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - <span v-if="univ.partnercountry && univ.partnercountry.parco_id">{{ univ.partnercountry.parco_name }}</span>)</option>
+                            </select>
+                            <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
+                                <div class="label">
+                                    <span class="label-text">Créer une université</span>
+                                </div>
+                                <span class="my-1">
+                                    <input type="text" placeholder="Nom (ex: Université Savoie Mont Blanc)" v-model="newAgreement.newuniv.name" class="input input-bordered w-full " />
+                                    <input type="text" placeholder="Ville (ex: Annecy)" v-model="newAgreement.newuniv.city" class="input input-bordered w-full " />
                                 </span>
-                                <div>
-                                    <p><span class="font-bold">{{accord.university.univ_name}}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
-                                    <p>[{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
-                                    
+                                <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
+                                    <option disabled selected>Selectionnez un pays</option>
+                                    <option value="addNew"> + Créer un pays</option>
+                                    <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
+                                </select>
+                                <span class="flex items-center justify-center">
+
+                                    <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.newpartnercountry" class="input input-bordered w-5/6 my-1" />
+                                    <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Code pays (ex: fr, de, it)" v-model="newAgreement.newuniv.newpartnercountrycode" class="input input-bordered w-5/6 my-1" />
+                                </span>
+
+                            </label>
+                        </label>
+                        <!-- Formulaire Typeaccord -->
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label">
+                                <span class="label-text">Type accord</span>
+                            </div>
+                            <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="newAgreement.typeaccord">
+                                <option disabled selected>Selectionnez un type d'accord</option>
+                                <option>Bilatéral</option>
+                                <option>Erasmus</option>
+                            </select>
+                        </label>
+                        <!-- Formulaire Nombre de place -->
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label">
+                                <span class="label-text">Nombre de place</span>
+                            </div>
+                            <input type="number" class="input input-bordered w-full" v-model="newAgreement.nbplace"/>
+                        </label>
+                        <div class="flex items-center justify-center">
+                            <button class="btn btn-primary" type="submit">Ajouter l'accord</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <!-- Partie liste des accords -->
+            <div>
+                <p class="font-bold">Liste des accords:</p>
+
+                <!-- Partie filtre -->
+                <div class="bg-base-200 w-full drop-shadow-lg block" v-if="accords && accords.agreements">
+                    <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
+                    <p>{{ filteredAccords.length }} résultats ({{ selectedCountries.length }} filtre{{ selectedCountries.length > 1 ? 's' : '' }})</p>
+                    <!-- Pays -->
+                    <div>
+                        <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
+                            <p>Pays ({{ selectedCountries.length }} séléctionné{{ selectedCountries.length > 1 ? 's' : '' }})</p>
+                            <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
+                        </div>
+                        <div class="p-1" v-show="isOpen.pays">
+                            <div class="flex flex-wrap">
+                                <div v-for="(country, index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 w-1/2 sm:w-1/3 lg:w-1/4 xl:w-1/5">
+                                    <input :id="'filt_pays_' + index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
+                                    <div class="flex w-full items-center">
+                                        <span class="fi mr-1" :class="'fi-' + country.parco_code"></span>
+                                        <label :for="'filt_pays_' + index" class="select-none w-full">{{ country.parco_name }}</label>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- Liste des départements d'un accord -->
-                            <p>Les départements: </p>
-                            <div class="flex items-center justify-start">
-                                <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
-                                    <div class="w-fit p-2 flex drop-shadow-lg items-center justify-center mx-1 tooltip select-none font-bold" :data-tip="(dept.pivot.deptagree_valide == 0 ? '(INVISIBLE) ' : '')+'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}" >
-                                        <p>{{ dept.dept_shortname }}<span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span></p>
-                                        <button  class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot.deptagree_valide)">
-                                            <svg v-if="dept.pivot.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="#000000" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                                                    viewBox="0 0 488.85 488.85" xml:space="preserve">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div v-if="filteredAccords.length > 0">
+
+                        <div v-for="(accord, indexAccord) in filteredAccords" :key="indexAccord" class="m-5 p-3 flex">
+                            <div class="w-full bg-base-300 p-2 drop-shadow-lg">
+                                <div class="flex">
+
+                                    <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
+                                        <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code"></span>
+                                    </span>
+                                    <div>
+                                        <p><span class="font-bold">{{accord.university.univ_name}}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
+                                        <p>[{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
+                                        
+                                    </div>
+                                </div>
+                                <!-- Liste des départements d'un accord -->
+                                <p>Les départements: </p>
+                                <div class="flex items-center justify-start">
+                                    <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
+                                        <div class="w-fit p-2 flex drop-shadow-lg items-center justify-center mx-1 tooltip select-none font-bold" :data-tip="(dept.pivot.deptagree_valide == 0 ? '(INVISIBLE) ' : '')+'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}" >
+                                            <p>{{ dept.dept_shortname }}<span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span></p>
+                                            <button  class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot.deptagree_valide)">
+                                                <svg v-if="dept.pivot.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="#000000" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                        viewBox="0 0 488.85 488.85" xml:space="preserve">
+                                                    <g>
+                                                        <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
+                                                            s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
+                                                            c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
+                                                            C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
+                                                            c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                                    </g>
+                                                </svg>
+                                                <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="#ff0000" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
                                                 <g>
+                                                    <!-- Contour de l'œil -->
                                                     <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
                                                         s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
                                                         c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
                                                         C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
                                                         c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                                    <!-- Ligne de barre de l'œil -->
+                                                    <line x1="100" y1="100" x2="400" y2="400" style="stroke:red;stroke-width:40"/>
                                                 </g>
                                             </svg>
-                                            <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="#ff0000" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
-                                            <g>
-                                                <!-- Contour de l'œil -->
-                                                <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
-                                                    s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
-                                                    c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
-                                                    C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
-                                                    c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
-                                                <!-- Ligne de barre de l'œil -->
-                                                <line x1="100" y1="100" x2="400" y2="400" style="stroke:red;stroke-width:40"/>
-                                            </g>
-                                        </svg>
 
-                                        </button>
-                                        <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <p class="bg-base-200 p-4 hover:cursor-pointer hover:opacity-60 select-none mx-1" @click="showForm(accord.agree_id)">Ajouter un département</p>
-                            </div>
-                            <!-- Formulaire pour ajouter un département -->
-                            <div v-if="showForms[accord.agree_id]">
-                                <form @submit.prevent="submitForm(accord.agree_id)">
-                                    <p>Ajouter un département</p>
-                                    <div class="flex items-center justify-start *:m-1">
-                                        <select class="select select-bordered w-full max-w-xs" :id="'form_dept_select_'+accord.agree_id" v-model="selectedDepartment[accord.agree_id]">
-                                            <option disabled selected>Selectionnez un département</option>
-                                            <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">{{ dept.dept_shortname }} ({{dept.component.comp_name}})</option>
-                                        </select>
-
-                                        <div class="flex items-center justify-center">
-                                            <button class="btn btn-primary" type="submit">Ajouter le département</button>
+                                            </button>
+                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            </button>
                                         </div>
-                                        <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="showForm(accord.agree_id)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                        </button>
                                     </div>
-                                </form>
+                                    <p class="bg-base-200 p-4 hover:cursor-pointer hover:opacity-60 select-none mx-1" @click="showForm(accord.agree_id)">Ajouter un département</p>
+                                </div>
+                                <!-- Formulaire pour ajouter un département -->
+                                <div v-if="showForms[accord.agree_id]">
+                                    <form @submit.prevent="submitForm(accord.agree_id)">
+                                        <p>Ajouter un département</p>
+                                        <div class="flex items-center justify-start *:m-1">
+                                            <select class="select select-bordered w-full max-w-xs" :id="'form_dept_select_'+accord.agree_id" v-model="selectedDepartment[accord.agree_id]">
+                                                <option disabled selected>Selectionnez un département</option>
+                                                <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">{{ dept.dept_shortname }} ({{dept.component.comp_name}})</option>
+                                            </select>
+
+                                            <div class="flex items-center justify-center">
+                                                <button class="btn btn-primary" type="submit">Ajouter le département</button>
+                                            </div>
+                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="showForm(accord.agree_id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
+                            <!-- Bouton de modification -->
+                            <label :for="'my_modal_'+ accord.agree_id" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </label>
+        
+                            <!-- Modal de modification d'accord -->
+                            <ModifAccordComp :accord="accord" :accords="accords" :isceds="isceds" :composantes="composantes" :universites="universites" :departments="departments" :partnercountrys="partnercountry"></ModifAccordComp>
+        
+                            <!-- Bouton de suppression -->
+                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.university.univ_name, accord.agree_id)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
                         </div>
-                        <!-- Bouton de modification -->
-                        <label :for="'my_modal_'+ accord.agree_id" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                            </svg>
-                        </label>
-    
-                        <!-- Modal de modification d'accord -->
-                        <ModifAccordComp :accord="accord" :accords="accords" :isceds="isceds" :composantes="composantes" :universites="universites" :departments="departments" :partnercountrys="partnercountrys"></ModifAccordComp>
-    
-                        <!-- Bouton de suppression -->
-                        <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.university.univ_name, accord.agree_id)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
+                    </div>
+                
+                    <div v-else>
+                        <p>Aucun accord trouvé.</p>
                     </div>
                 </div>
-            
-                <div v-else>
-                    <p>Aucun accord trouvé.</p>
-                </div>
-            </div>
-            <div v-else class="flex items-center justify-center my-20">
-                <span class="loading loading-dots loading-lg"></span>
             </div>
         </div>
+        <div v-else class="flex items-center justify-center my-20">
+            <span class="loading loading-dots loading-lg"></span>
+        </div>
     </div>
-
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, computed, nextTick } from 'vue';
     import config from '../../config'
     import { request } from '../../composables/httpRequest';
     import ModifAccordComp from '../../components/modif/ModifAccordComp.vue';
@@ -215,12 +241,16 @@
 
     const accountStore = useAccountStore();
     const response = ref([]);
+
     const accords = ref([]);
+    const selectedCountries = ref([]);
+    
+    const isLoaded = ref(false)
     const isceds = ref([]);
     const composantes = ref([]);
     const universites = ref([]);
     const departments = ref([]);
-    const partnercountrys = ref([]);
+    const partnercountry = ref([]);
     const newAgreement = ref({ 
         isced: '', //Si addNew = nouveau isced
         compo: '', //Si addNew = nouveau composante
@@ -238,8 +268,21 @@
             newpartnercountrycode: ''
         },
     });
+    const isOpen = ref({
+        pays: false,
+    });
 
+    function toggleCollapse(section) {
+        isOpen.value[section] = !isOpen.value[section];
+    }
 
+    const filteredAccords = computed(() => {
+        return accords.value.agreements.filter(accord => {
+            const matchesCountries = selectedCountries.value.length === 0 || selectedCountries.value.includes(accord.partnercountry.parco_name);
+            
+            return matchesCountries;
+        });
+    });
 
     async function addAgreement(){
 
@@ -294,13 +337,16 @@
     }
 
     async function fetchAll(){
+        isLoaded.value = false;
         await request('GET', false, accords, config.apiUrl+'api/agreement');
         await request('GET', false, isceds, config.apiUrl+'api/isced');
         await request('GET', false, composantes, config.apiUrl+'api/component');
         await request('GET', false, universites, config.apiUrl+'api/university');
         await request('GET', false, departments, config.apiUrl+'api/department');
-        await request('GET', false, partnercountrys, config.apiUrl+'api/partnercountry');
+        await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry');
+        isLoaded.value = true;
 
+        await nextTick()
         //On cache tous les formulaires
         showForms.value = Array(accords.value.length).fill(false);
         selectedDepartment.value = Array(accords.value.length).fill('');
