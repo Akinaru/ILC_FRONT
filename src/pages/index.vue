@@ -147,7 +147,7 @@
 
                         <div class="p-5 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
-                                <div v-for="(event, index) in events.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1">
+                                <div v-for="(event, index) in eventspf.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1">
                                     <p class="md:p-4 p-1 md:text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
                                     <div class="bg-base-300 p-6 xl:w-110 md:w-100 w-80 my-3 drop-shadow-lg flex flex-col transition-all duration-100 ease-in-out">
                                         <div class="flex justify-between">
@@ -191,6 +191,7 @@
     const partnercountry = ref([]);
     const components = ref([]);
     const events = ref([]);
+    const eventspf = ref([]);
     const favoris = ref([]);
 
 
@@ -216,6 +217,7 @@
         await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry')
         await request('GET', false, components, config.apiUrl+'api/component')
         await request('GET', false, events, config.apiUrl+'api/event')
+        await request('GET', false, eventspf, config.apiUrl+'api/event/pfonly')
         if(accountStore.isLogged)
             await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         isLoaded.value = true;
