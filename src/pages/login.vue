@@ -13,20 +13,40 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     import { authLogAccount } from '../composables/authGuard'
     import { useRouter } from 'vue-router';
+    import { request } from '../composables/httpRequest';
+    import config from '../config';
+import { addAlert } from '../composables/addAlert';
 
     const router = useRouter();
     const newLogin = ref({ login: ''});
+    const accepted = ref([]);
+    const access = ref([]);
+    const tryToLogin = ref(false);
 
-    const validLogin = ['gallottm', 'ldama', 'martmate', 'vcout', 'sbouc', 'guiradoh', 'boucelis', 'rochae', 'combema'];
+    async function fetch(){
+        await request('GET', false, accepted, config.apiUrl+'api/acceptedaccount');
+        await request('GET', false, access, config.apiUrl+'api/access');
+    }
 
     async function login() {
-        if (newLogin.value.login !== null && validLogin.includes(newLogin.value.login)) {
-            await authLogAccount(newLogin.value.login, router);
+        tryToLogin.value = true;
+        if (accepted.value.count > 0 && newLogin.value.login !== null) {
+            const isLoginAccepted = accepted.value.accounts.some(account => account.acc_id === newLogin.value.login);
+            const isLoginAcceptedAccess = access.value.access.some(account => account.acc_id === newLogin.value.login);
+            
+            if (isLoginAccepted || isLoginAcceptedAccess) {
+                await authLogAccount(newLogin.value.login, router);
+            } else {
+                addAlert(true, {data: {error: 'Vous n\'êtes pas autorisé à accéder à la partie connectée.', message: 'Veuillez vous renseigner auprès du service ILC.'}});
+            }
         } else {
-            console.log("Le login n'est pas valide.");
+            addAlert(true, {data: {error: 'Vous n\'êtes pas autorisé à accéder à la partie connectée.', message: 'Veuillez vous renseigner auprès du service ILC.'}});
         }
+        tryToLogin.value = false;
     }
+
+    onMounted(fetch)
 </script>

@@ -110,11 +110,13 @@
                     <div v-if="accepted && accepted.count > 0">
                         <p>Utilisateurs autorisés</p>
                         <div class="md:m-5 m-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            <div v-for="(acc, index) in accepted.accounts" :key="index" class="bg-base-300 p-2 flex items-center justify-between rounded-lg shadow-md">
-                                <div class="flex items-center">
-                                    <span class="font-bold mr-1">{{ acc.acc_id }}</span>
-                                    <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
-                                </div>
+                            <div v-for="(acc, index) in accepted.accounts" :key="index" class="flex bg-base-300 rounded-lg justify-between">
+                                <RouterLink :to="{name: 'Profile', params: {acc_id: acc.acc_id}}" class="w-full hover:opacity-60 hover:bg-base-200 p-2 flex items-center justify-between rounded-lg shadow-md">
+                                    <div class="flex items-center">
+                                        <span class="font-bold mr-1">{{ acc.acc_id }}</span>
+                                        <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
+                                    </div>
+                                </RouterLink>
                                 <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 p-2 rounded-full" @click="removeAccepted(acc.acc_id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-5 w-5" fill="none" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
