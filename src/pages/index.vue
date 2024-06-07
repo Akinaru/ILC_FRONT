@@ -60,34 +60,32 @@
                 </div>
 
                 
-                <!-- Partie rendu des accord -->
-                <div class="w-full">
+                <!-- Partie rendu des accords -->
+                <div class="w-full overflow-x-hidden">
 
-                    <div v-if="accords && accords.agreements">
-                        <div v-if="filteredAccords && filteredAccords.length > 0">
-                            <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 *:list-disc flex justify-between items-center drop-shadow-lg">
-                                <div class="w-full flex justify-between items-center">
-
-                                    <div class="flex">
-                                        <span class="tooltip mr-2 flex items-center justify-center " :data-tip="accord.partnercountry.parco_name">
-                                            <span class="fi md:text-5xl text-3xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
-                                        </span>
-                                        <div class="flex flex-col">
-                                            <p><span class="font-bold">{{ accord.university.univ_name }}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
-                                            <p>[0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}</p>
-                                        </div>
-                                          
-                                    </div>
-                                    <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out">
-                                        <div v-for="(dept,index) in accord.departments" :key="index">
-                                            <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 tooltip font-bold drop-shadow-lg select-none hover:opacity-90" :data-tip="'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
-                                        </div>
-                                    </div>
-                                    <div v-else>
-                                        <p class="p-3 m-1 tooltip" :data-tip="'Aucun département pour cet accord.'">Aucun département</p>
+                <div>
+                    <!-- Si il y a des accords -->
+                    <div v-if="filteredAccords && filteredAccords.length > 0">
+                        <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 *:list-disc flex justify-between items-center drop-shadow-lg overflow-hidden">
+                            <div class="flex items-center flex-wrap">
+                                <span class="mr-2 flex items-center justify-center">
+                                    <span class="fi md:text-5xl text-3xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
+                                </span>
+                                <div class="flex flex-col">
+                                    <p><span class="font-bold">{{ accord.university.univ_name }}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
+                                    <p>[0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center flex-wrap">
+                                <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out">
+                                    <div v-for="(dept, index) in accord.departments" :key="index">
+                                        <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 font-bold drop-shadow-lg select-none" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                     </div>
                                 </div>
-                                <span v-if="accountStore.isLogged() && accountStore.isStudent()" :data-tip="(isFavorited(accord.agree_id) ? 'Enlever des favoris' : 'Ajouter aux favoris')" class="tooltip">
+                                <div v-else>
+                                    <p class="p-3 m-1">Aucun département</p>
+                                </div>
+                                <span v-if="accountStore.isLogged() && accountStore.isStudent()">
                                     <div @click="toggleFavoris(accord.agree_id)" class="md:p-5 p-2 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
                                         <svg v-if="isFavorited(accord.agree_id)" class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path fill="#000000" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
@@ -98,16 +96,15 @@
                                     </div>
                                 </span>
                             </div>
-
-                        </div>
-                        <div v-else class="flex items-center justify-center">
-                            <p>Aucun accord n'a été trouvé.</p>
                         </div>
                     </div>
-                    <div v-else class="flex items-center justify-center my-20">
-                        <span class="loading loading-dots loading-lg"></span>
+                    <!-- Sil y n'y a pas d'accords -->
+                    <div v-else class="flex items-center justify-center">
+                        <p>Aucun accord n'a été trouvé.</p>
                     </div>
                 </div>
+                </div>
+
 
             </div>
         </div>

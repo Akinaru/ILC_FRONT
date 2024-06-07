@@ -8,6 +8,7 @@
                         <button class="btn btn-primary" type="submit">Se connecter</button>
                     </div>
                 </form>
+
             </div>
         </div>
 </template>
@@ -18,7 +19,7 @@
     import { useRouter } from 'vue-router';
     import { request } from '../composables/httpRequest';
     import config from '../config';
-import { addAlert } from '../composables/addAlert';
+    import { addAlert } from '../composables/addAlert';
 
     const router = useRouter();
     const newLogin = ref({ login: ''});
