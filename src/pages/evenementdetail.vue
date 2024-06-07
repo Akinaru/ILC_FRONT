@@ -7,9 +7,13 @@
             <li v-else>?</li>
         </ul>
     </div>
-    <div v-if="event && event.evt_id">
-        <p>Détail de l'evenement x</p>
-        {{ event }}
+    <div v-if="event && event.evt_id" class="py-10">
+        <p>{{ formatDate(event.evt_datetime) }}</p>
+        <div class="flex items-center justify-start">
+            <span class="badge badge-warning">{{ event.theme.evthm_name }}</span>
+            <p class="font-bold text-3xl mx-3">{{ event.evt_name }}</p>
+        </div>
+        <p class="text-xl py-5">{{ event.evt_description }}</p>
     </div>
     <div v-else>
         <p class="flex font-bold items-center justify-center py-52">Évènement introuvable...</p>
@@ -30,6 +34,12 @@
 
     async function fetch(){
         await request('GET', false, event, config.apiUrl+'api/event/getbyid/'+evt_id)
+    }
+
+    function formatDate(date) {
+        if (!date) return '';
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(date).toLocaleDateString('fr-FR', options);
     }
 
     onMounted(fetch)
