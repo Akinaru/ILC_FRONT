@@ -114,13 +114,52 @@
             <p class="text-2xl font-bold">Espace communication</p>
             <!-- Articles -->
                 <p class="text-xl font-bold">Articles</p>
-
                     <div v-if="articles && articles.articles" class="flex justify-center">
-                        <div class="flex flex-col w-4/5" v-if="articles.count > 0">
-                            <RouterLink  v-for="(article, index) in articles.articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
-                                <ArticleComp :article="article" class="my-1"></ArticleComp>
-                            </RouterLink>
-                        </div>
+
+                        <div class="flex flex-wrap justify-center w-full" v-if="articles.count > 0">
+    <RouterLink v-for="(article, index) in articles.articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}">
+        <div class="bg-base-300 p-4 hover:opacity-80 drop-shadow-lg hover:scale-105 scale-100 transition-all duration-100 ease-in-out max-w-sm w-full sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-2 mb-4 flex h-full">
+
+            <div class="w-1/3 mr-4 flex items-center justify-center max-h-full overflow-hidden" style="min-width: 200px;">
+                <img :src="article.art_image ? config.apiUrl+'api/article/image/'+article.art_id : 'https://envie-sante.fr/img/p/fr-default-large_default.jpg'" alt="Image" class="object-cover h-full w-full" style="max-height: 200px;">
+            </div>
+            
+            <div class="flex flex-col justify-start w-2/3">
+                <div style="min-width: 0;">
+                    <div class="flex items-center">
+                        <span v-if="article.art_pin" class="badge badge-primary mx-2">Épinglé</span>
+                        <p class="text-lg font-bold">{{ article.art_title }}</p>
+                    </div>
+                    <p>Dernière modif: {{ article.art_lastmodif }}</p>
+                </div>
+                <div class="overflow-hidden max-h-36 min-h-36 my-2">
+                    <p class="overflow-hidden max-h-full">{{ article.art_description }}</p>
+                </div>
+            </div>
+        </div>
+    </RouterLink>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                         <div v-else class="m-5">
 
                             <p>Aucun article n'a été trouvé.</p>

@@ -44,7 +44,7 @@
             <div v-if="articles && articles.articles" class="flex flex-col py-5">
                 <div v-if="articles.count > 0">
 
-                    <div v-for="(article, index) in articles.articles" :key="index" class="flex my-1 mx-10">
+                    <div v-for="(article, index) in articles.articles" :key="index" class="flex py-1 mx-10 ">
                         <RouterLink :to="{name: 'Article', params: {art_id: article.art_id}}" class="w-full">
                             <ArticleComp :article="article"></ArticleComp>
                         </RouterLink>
@@ -85,10 +85,6 @@
                     </div>
                     <input type="text"  class="input input-bordered w-full" v-model="currentArticleModif.art_title"/>
                 </label>
-                <div class="*:mr-2 my-2">
-                    <label class="btn" @click="addElem(currentArticleModif, 'link')">Ajouter lien</label>
-                    <label class="btn" @click="addElem(currentArticleModif, 'image')">Ajouter Image</label>
-                </div>
                 <!-- Description -->
                 <label class="form-control w-full">
                     <div class="label">
@@ -98,9 +94,9 @@
                 </label>
                 <!-- Epingle -->
                 <div class="form-control">
-                    <label class="label cursor-pointer">
-                        <span class="label-text">Épinglé ?</span> 
+                    <label class="flex items-center justify-startcursor-pointer py-2">
                         <input type="checkbox" class="checkbox" v-model="currentArticleModif.art_pin" />
+                        <span class="label-text mx-2">Épinglé ?</span> 
 
                     </label>
                 </div>
