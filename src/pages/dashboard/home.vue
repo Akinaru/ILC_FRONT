@@ -3,9 +3,9 @@
         <!-- Partie informations -->
         <div>
             <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
-            <div v-if="account && account.acc_id" class="flex w-full pt-10">
+            <div v-if="account && account.acc_id" class="block md:flex w-full pt-10">
                 <!-- Informations -->
-                 <div class="w-1/2">
+                 <div class="w-full md:w-1/2">
                     <p>Vos informations:</p>
                     <div>
                         <label class="form-control w-full">
@@ -42,9 +42,9 @@
                 </div>
 
                 <!-- Documents -->
-                 <div class="w-1/2">
+                 <div class="w-fyll md:w-1/2">
                     <p>Vos documents:</p>
-                    <div class="">
+                    <div>
                         <div class="form-control w-full py-3 max-w-xl">
                             <div class="label">
                                 <span class="label-text">Choix de cours</span>

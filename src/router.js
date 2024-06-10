@@ -76,6 +76,9 @@ const routes = [
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: {
         title: route => `Article n° ${route.params.art_id}`
     } },
+    { path: '/accord/:agree_id', name: 'Accord', component: () => import('./pages/accord.vue'), meta: {
+        title: route => `Accord n° ${route.params.agree_id}`
+    } },
     { path: '/evenement', name: 'Evenement', component: () => import('./pages/evenementliste.vue'), meta: { title: 'Liste des évènements' } },
     { path: '/evenement/:evt_id', name: 'EvenementDetail', component: () => import('./pages/evenementdetail.vue'), meta: { title: route => `Évènement ${route.params.evt_id}` }},
 

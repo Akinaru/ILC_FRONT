@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-base-300 w-fit p-5 drop-shadow-lg">
+    <div class="bg-base-300 w-fit p-5 drop-shadow-lg rounded-lg">
       <div class="py-3 w-4/5 flex w-full">
         
         <div class="flex items-center justify-center font-bold  w-full *:mx-2">
@@ -8,13 +8,13 @@
           </svg>
         </div>
 
-        <select id="month" v-model="selectedMonth" class="hover:opacity-60 hover:cursor-pointer select-none p-2 mx-1 w-full font-bold drop-shadow-lg">
+        <select id="month" v-model="selectedMonth" class="rounded-lg hover:opacity-60 hover:cursor-pointer select-none p-2 mx-1 w-full font-bold drop-shadow-lg">
           <option v-for="(month, index) in months" :key="index" :value="index">
             {{ month }}
           </option>
         </select>
   
-        <select id="year" v-model="selectedYear" class="hover:opacity-60 hover:cursor-pointer select-none p-2 mx-1 w-full font-bold drop-shadow-lg">
+        <select id="year" v-model="selectedYear" class="rounded-lg hover:opacity-60 hover:cursor-pointer select-none p-2 mx-1 w-full font-bold drop-shadow-lg">
           <option v-for="year in years" :key="year" :value="year">
             {{ year }}
           </option>
@@ -39,7 +39,7 @@
                 class="font-bold hover:cursor-pointer select-none hover:bg-base-200 hover:opacity-80 relative hover:drop-shadow-lg" 
                 v-for="day in week" 
                 :key="day.date"
-                :class="{ 'font-normal': day.isNotMonth, 'bg-error drop-shadow-lg': day.isToday, 'bg-base-200 drop-shadow-lg': dayHasEvent(day) }"
+                :class="{ 'font-normal': day.isNotMonth, 'bg-error': day.isToday, 'bg-base-200': dayHasEvent(day) }"
             >
                 <RouterLink 
                     :to="{ 
@@ -64,7 +64,6 @@
   </template>
   
 <script setup>
-  import { createPinia } from 'pinia';
   import { ref, computed } from 'vue';
   const props = defineProps({
     events: Object,

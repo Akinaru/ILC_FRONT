@@ -62,29 +62,38 @@
                 
                 <!-- Partie rendu des accords -->
                 <div class="w-full overflow-x-hidden">
+                    <div>
+                        <!-- Si il y a des accords -->
+                        <div v-if="filteredAccords && filteredAccords.length > 0">
 
-                <div>
-                    <!-- Si il y a des accords -->
-                    <div v-if="filteredAccords && filteredAccords.length > 0">
-                        <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 *:list-disc flex justify-between items-center drop-shadow-lg overflow-hidden">
-                            <div class="flex items-center flex-wrap">
-                                <span class="mr-2 flex items-center justify-center">
-                                    <span class="fi md:text-5xl text-3xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
-                                </span>
-                                <div class="flex flex-col">
-                                    <p><span class="font-bold">{{ accord.university.univ_name }}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
-                                    <p>[0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center flex-wrap">
-                                <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out">
-                                    <div v-for="(dept, index) in accord.departments" :key="index">
-                                        <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 font-bold drop-shadow-lg select-none" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+
+
+                            <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center drop-shadow-lg overflow-hidden">
+                                <RouterLink :to="{name: 'Accord', params: {agree_id: accord.agree_id}}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
+
+                                    <div class="flex items-center flex-wrap">
+                                        <span class="mr-2 flex items-center justify-center">
+                                            <span class="fi md:text-5xl text-3xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code"></span>
+                                        </span>
+                                        <div class="flex flex-col">
+                                            <p><span class="font-bold">{{ accord.university.univ_name }}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
+                                            <p>[0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div v-else>
-                                    <p class="p-3 m-1">Aucun département</p>
-                                </div>
+                                    <div class="flex items-center flex-wrap">
+                                        <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out">
+                                            <div v-for="(dept, index) in accord.departments" :key="index">
+                                                <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 font-bold drop-shadow-lg select-none" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <p class="p-3 m-1">Aucun département</p>
+                                        </div>
+                                    </div>
+
+                                    <span class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
+                                </RouterLink>
+
                                 <span v-if="accountStore.isLogged() && accountStore.isStudent()">
                                     <div @click="toggleFavoris(accord.agree_id)" class="md:p-5 p-2 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
                                         <svg v-if="isFavorited(accord.agree_id)" class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -96,13 +105,15 @@
                                     </div>
                                 </span>
                             </div>
+
+
+
+                        </div>
+                        <!-- Sil y n'y a pas d'accords -->
+                        <div v-else class="flex items-center justify-center">
+                            <p>Aucun accord n'a été trouvé.</p>
                         </div>
                     </div>
-                    <!-- Sil y n'y a pas d'accords -->
-                    <div v-else class="flex items-center justify-center">
-                        <p>Aucun accord n'a été trouvé.</p>
-                    </div>
-                </div>
                 </div>
 
 
@@ -117,7 +128,7 @@
                     <div v-if="articles && articles.articles" class="flex justify-center">
 
                         <div class="flex flex-wrap justify-center w-full bg-red-105 gap-5" v-if="articles.count > 0">
-                            <RouterLink v-for="(article, index) in articles.articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}" class="relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
+                            <RouterLink v-for="(article, index) in articles.articles" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}" class="rounded-lg relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
                                 <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
                                 <span v-if="article.art_pin" class="badge badge-primary absolute top-1 left-1">📌Épinglé</span>
                                 <div class="p-4 flex flex-col justify-start h-52">
@@ -154,9 +165,9 @@
 
                         <div class="p-5 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
-                                <div v-for="(event, index) in eventspf.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1">
+                                <div v-for="(event, index) in eventspf.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1 ">
                                     <p class="md:p-4 p-1 md:text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
-                                    <div class="bg-base-300 p-6 xl:w-110 md:w-100 w-80 my-3 drop-shadow-lg flex flex-col transition-all duration-100 ease-in-out">
+                                    <div class="bg-base-300 p-6 xl:w-110 md:w-100 w-80 my-3 drop-shadow-lg flex flex-col transition-all duration-100 ease-in-out rounded-lg">
                                         <div class="flex justify-between">
                                             <p class="font-bold  truncate">{{ event.evt_name }}</p>
                                             <span class="badge badge-warning">{{ event.theme.evthm_name }}</span>
