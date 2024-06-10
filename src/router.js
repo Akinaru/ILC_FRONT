@@ -151,6 +151,13 @@ const routes = [
                 meta: { title: 'Dashboard - Evenements' }
             },
             { 
+                path: 'documents', 
+                name: 'DocumentsDash', 
+                component: () => import('./pages/dashboard/documents.vue'),
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Documents' }
+            },
+            { 
                 path: 'home-ri', 
                 name: 'HomeRI', 
                 component: () => import('./pages/dashboard/home-ri.vue'),

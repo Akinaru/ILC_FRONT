@@ -1,48 +1,97 @@
 <template>
-    <div class="m-5 flex justify-between flex-col 2xl:flex-row" v-if="isLoaded">
+    <div class="m-5 flex flex-col" v-if="isLoaded">
         <!-- Partie informations -->
         <div>
             <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
-            <p>Vos informations:</p>
-            <div v-if="account && account.acc_id">
-                <form>
-                    <label class="form-control w-full max-w-xs">
-                        <div class="label">
-                            <span class="label-text">Identitée</span>
+            <div v-if="account && account.acc_id" class="flex w-full pt-10">
+                <!-- Informations -->
+                 <div class="w-1/2">
+                    <p>Vos informations:</p>
+                    <div>
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Identitée</span>
+                            </div>
+                            <input type="text" :value="account.acc_fullname" class="input input-bordered w-full max-w-xl" disabled />
+                        </label>
+                        <label class="form-control w-full" >
+                            <div class="label">
+                                <span class="label-text">Email</span>
+                            </div>
+                            <input type="text" :value="'mail'" class="input input-bordered w-full max-w-xl" disabled/>
+                        </label>
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Numéro étudiant</span>
+                            </div>
+                            <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full max-w-xl" disabled />
+                        </label>
+                        <label class="form-control w-full " >
+                            <div class="label">
+                                <span class="label-text">Département</span>
+                            </div>
+                            <input type="text" :value="account.department.dept_shortname" class="input input-bordered w-full max-w-xl" disabled/>
+                        </label>
+                        <label class="form-control w-full" >
+                            <div class="label">
+                                <span class="label-text">Score TOEIC</span>
+                            </div>
+                            <input type="text" :value="'0'" class="input input-bordered w-full max-w-xl" disabled/>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                 <div class="w-1/2">
+                    <p>Vos documents:</p>
+                    <div class="">
+                        <div class="form-control w-full py-3 max-w-xl">
+                            <div class="label">
+                                <span class="label-text">Choix de cours</span>
+                            </div>
+                                <div class="btn btn-success">
+                                    <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    </svg>
+                                    Telecharger le fichier
+                                </div>
+                                <input type="file" class="file-input file-input-bordered w-full" />
+                                <div class="btn btn-primary">
+                                    Telecharger le fichier
+                                </div>
+                            </div>
+                        <div class="form-control w-full py-3 max-w-xl">
+                            <div class="label">
+                                <span class="label-text">Contrat pédagogique</span>
+                            </div>
+                                <div class="btn" disabled>
+                                    <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    </svg>                                
+                                    Aucun fichié disponible
+                                </div>
+                                <input type="file" class="file-input file-input-bordered w-full" />
                         </div>
-                        <input type="text" :value="account.acc_fullname" class="input input-bordered w-full max-w-xs" disabled />
-                    </label>
-                    <label class="form-control w-full max-w-xs" >
-                        <div class="label">
-                            <span class="label-text">Email</span>
+                        <div class="form-control w-full py-3 max-w-xl">
+                            <div class="label">
+                                <span class="label-text">Relevés de notes avant départ</span>
+                            </div>
+                                <div class="btn" disabled>
+                                    <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    </svg>
+                                    Aucun fichié disponible
+                                </div>
+                                <input type="file" class="file-input file-input-bordered w-full" />
                         </div>
-                        <span class="tooltip" :data-tip="mail">
-                            <input type="text" :value="'mail'" class="input input-bordered w-full max-w-xs" disabled/>
-                        </span>
-                    </label>
-                    <label class="form-control w-full max-w-xs">
-                        <div class="label">
-                            <span class="label-text">Numéro étudiant</span>
-                        </div>
-                        <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full max-w-xs" disabled />
-                    </label>
-                    <label class="form-control w-full max-w-xs" >
-                        <div class="label">
-                            <span class="label-text">Département</span>
-                        </div>
-                        <span class="tooltip" :data-tip="account.department.dept_name">
-                            <input type="text" :value="account.department.dept_shortname" class="input input-bordered w-full max-w-xs" disabled/>
-                        </span>
-                    </label>
-                    <label class="form-control w-full max-w-xs" >
-                        <div class="label">
-                            <span class="label-text">Score TOEIC</span>
-                        </div>
-                        <span class="tooltip" :data-tip="toeic">
-                            <input type="text" :value="'0'" class="input input-bordered w-full max-w-xs" disabled/>
-                        </span>
-                    </label>
-                </form>
+                    </div>
+                </div>
             </div>
         </div>
 

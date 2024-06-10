@@ -33,6 +33,7 @@
         {routeName: 'EvenementDash', name: '📆Evenements'},
         {routeName: 'HistoriqueDash', name: '🕵️‍♀️Historique'},
         {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
+        {routeName: 'DocumentsDash', name: '📜Documents'},
         {routeName: 'ModifBaseDash', name: '⚙️Modif base'},
     ]
 
