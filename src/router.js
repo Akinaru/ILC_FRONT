@@ -73,6 +73,7 @@ const routes = [
     { path: '/convert', name: 'Convert', component: () => import('./pages/convert.vue'), meta: { title: 'Convert' } },
     { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin, meta: { title: 'Login' } },
     { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete, meta: { title: 'Compléter Dossier' } },
+    { path: '/articles', name: 'Articles', component: () => import('./pages/articles.vue'), meta: { title: 'Liste des articles' } },
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: {
         title: route => `Article n° ${route.params.art_id}`
     } },

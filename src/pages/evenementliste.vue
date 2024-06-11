@@ -41,7 +41,7 @@
                         </label>
 
                         <!-- Filtre sur les thematiques -->
-                        <div class="flex w-2/3" >
+                        <div class="flex w-2/3 flex-wrap justify-center pt-1">
                             <div v-for="(them, index) in thematiques" class="flex items-center justify-center py-1 min-w-fit">
                                 <input :id="'filt_them_'+index" type="checkbox" class="checkbox" :value="them.evthm_id" v-model="selectedThematique">
                                 <label :for="'filt_them_'+index" class="select-none w-full mx-2">
