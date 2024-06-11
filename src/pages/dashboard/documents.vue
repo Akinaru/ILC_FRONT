@@ -23,6 +23,9 @@
     import { request } from '../../composables/httpRequest';
     import config from '../../config';
 
+    import { useAccountStore } from '../../stores/accountStore';
+    const accountStore = useAccountStore();
+
     const response = ref([]);
     
     const files = ref({
@@ -49,7 +52,15 @@
         formData.append('title', title);
         formData.append('folder', folder);
 
-        await request('POST', true, response, config.apiUrl+'api/documents', formData)
+        await request('POST', true, response, config.apiUrl+'api/documents', formData);
+        if(response.value.status == 200){
+            const requestDataAction = {
+                act_description: 'Modification du document: '+folder+'/'+title+'.',
+                acc_id: accountStore.login,
+                admin: 1
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
         fetch();
     }
 
