@@ -77,7 +77,7 @@
                                         </span>
                                         <div class="flex flex-col">
                                             <p><span class="font-bold">{{ accord.university.univ_name }}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
-                                            <p>[0{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}</p>
+                                            <p>[{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center flex-wrap">

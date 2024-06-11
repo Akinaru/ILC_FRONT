@@ -295,7 +295,7 @@
             requestData.isc_id = newAgreement.value.isced;
         } else {
             requestData.newisced = {
-                isc_code: newAgreement.value.newisced.code.toString(),
+                isc_code: '0' + newAgreement.value.newisced.code.toString(),
                 isc_name: newAgreement.value.newisced.name
             };
         }
@@ -323,7 +323,6 @@
                 requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode
             }
         }
-
         await request("POST",true, response, config.apiUrl+'api/agreement', requestData);
         if(response.value.status == 201){
             const requestDataAction = {
