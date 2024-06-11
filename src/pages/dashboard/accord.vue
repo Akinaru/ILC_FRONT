@@ -93,6 +93,20 @@
                             </div>
                             <input type="number" class="input input-bordered w-full" v-model="newAgreement.nbplace"/>
                         </label>
+                        <!-- Formulaire lien -->
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label">
+                                <span class="label-text">Lien (facultatif)</span>
+                            </div>
+                            <input type="text" placeholder="Lien vers le site correspondant à l'accord" class="input input-bordered w-full" v-model="newAgreement.lien"/>
+                        </label>
+                        <!-- Formulaire description -->
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label">
+                                <span class="label-text">Description (facultatif)</span>
+                            </div>
+                            <input type="text" placeholder="Description de l'accord" class="input input-bordered w-full" v-model="newAgreement.description"/>
+                        </label>
                         <div class="flex items-center justify-center">
                             <button class="btn btn-primary" type="submit">Ajouter l'accord</button>
                         </div>
@@ -131,6 +145,7 @@
                 <div>
                     <div v-if="filteredAccords.length > 0">
 
+                        <!-- Affichage des accords -->
                         <div v-for="(accord, indexAccord) in filteredAccords" :key="indexAccord" class="m-5 p-3 flex">
                             <div class="w-full bg-base-300 p-2 drop-shadow-lg">
                                 <div class="flex">
@@ -144,6 +159,12 @@
                                         
                                     </div>
                                 </div>
+                                <a v-if="accord.agree_lien" :href="accord.agree_lien" class="pt-5 hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">Cliquez ici pour acceder au site de l'université</a>
+                                <div v-if="accord.agree_description">
+                                    <p>Description:</p>
+                                    <pre>{{ accord.agree_description }}</pre>
+                                </div>
+                                
                                 <!-- Liste des départements d'un accord -->
                                 <p>Les départements: </p>
                                 <div class="flex items-center justify-start">
@@ -257,6 +278,8 @@
         univ: '', //Si addNew = nouveau univiserte
         typeaccord: '',
         nbplace: 0,
+        lien: null,
+        description: null,
 
         newisced: {code: 0, name: ''},
         newcompo: {name: '', shortname: ''},
@@ -288,8 +311,16 @@
 
         const requestData = { 
             typeaccord: newAgreement.value.typeaccord,
-            nbplace: newAgreement.value.nbplace 
+            nbplace: newAgreement.value.nbplace,
+
         };
+        if(newAgreement.value.lien != null){
+            requestData.agree_lien = newAgreement.value.lien;
+        }
+        if(newAgreement.value.description != null){
+            requestData.agree_description = newAgreement.value.description;
+        }
+
         // Gestion du nouveau isced
         if (newAgreement.value.isced !== 'addNew') {
             requestData.isc_id = newAgreement.value.isced;
@@ -385,6 +416,8 @@
         newAgreement.value.newuniv.city = '';
         newAgreement.value.newuniv.newpartnercountry = '';
         newAgreement.value.newuniv.newpartnercountrycode = '';
+        newAgreement.value.description = null;
+        newAgreement.value.lien = null;
     }
 
     async function changeVisibility(accordId, deptId, deptagree_valide) {

@@ -25,6 +25,7 @@
                     </div>
 
                     <p class="pt-5">{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}</p>
+                    <a v-if="accord.agree_lien" :href="accord.agree_lien" class="pt-5 hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">Cliquez ici pour acceder au site de l'université</a>
                 </div>
 
                 <!-- Autres accords -->

@@ -89,6 +89,20 @@
                         </div>
                         <input type="number" class="input input-bordered w-full" v-model="newAgreement.nbplace"/>
                     </label>
+                    <!-- Formulaire Lien -->
+                    <label class="form-control w-full items-center justify-center">
+                        <div class="label">
+                            <span class="label-text">Lien (facultatif)</span>
+                        </div>
+                        <input type="text" class="input input-bordered w-full" v-model="newAgreement.lien"/>
+                    </label>
+                    <!-- Formulaire Description -->
+                    <label class="form-control w-full items-center justify-center">
+                        <div class="label">
+                            <span class="label-text">Description (facultatif)</span>
+                        </div>
+                        <input type="text" class="input input-bordered w-full" v-model="newAgreement.description"/>
+                    </label>
                 </form>
 
 
@@ -119,6 +133,8 @@
         univ: '', //Si addNew = nouveau univiserte
         typeaccord: '',
         nbplace: 0,
+        lien: null,
+        description: null,
 
         newisced: {code: 0, name: ''},
         newcompo: {name: '', shortname: ''},
