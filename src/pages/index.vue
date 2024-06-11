@@ -6,7 +6,7 @@
             <div class="block lg:flex my-5">
  
                 <!-- Partie filtre -->
-                <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full my-5" v-if="accords && accords.agreements">
+                <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5" v-if="accords && accords.agreements">
                     <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
                     <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length + selectedComponent.length }} filtre{{ selectedCountries.length + selectedDepartment.length + selectedComponent.length > 1 ? 's' : '' }})</p>
                     <!-- Pays -->
