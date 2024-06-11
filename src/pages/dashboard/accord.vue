@@ -144,9 +144,9 @@
 
                 <div>
                     <div v-if="filteredAccords.length > 0">
-
+                        <a class="btn btn-success mt-5" :href="config.apiUrl+'api/agreement/export'">Telecharger le csv</a>
                         <!-- Affichage des accords -->
-                        <div v-for="(accord, indexAccord) in filteredAccords" :key="indexAccord" class="m-5 p-3 flex">
+                        <div href="" v-for="(accord, indexAccord) in filteredAccords" :key="indexAccord" class="m-5 p-3 flex">
                             <div class="w-full bg-base-300 p-2 drop-shadow-lg">
                                 <div class="flex">
 
