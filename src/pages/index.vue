@@ -6,7 +6,7 @@
             <div class="block lg:flex my-5">
  
                 <!-- Partie filtre -->
-                <div class="bg-base-200 w-96 drop-shadow-lg hidden lg:block" v-if="accords && accords.agreements">
+                <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full my-5" v-if="accords && accords.agreements">
                     <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
                     <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length + selectedComponent.length }} filtre{{ selectedCountries.length + selectedDepartment.length + selectedComponent.length > 1 ? 's' : '' }})</p>
                     <!-- Pays -->
@@ -16,13 +16,17 @@
                             <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.pays">
-                            <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1">
-                                <input :id="'filt_pays_'+index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
-                                <div class="flex  w-full">
-                                    <span class="fi mr-1" :class="'fi-'+country.parco_code"></span>
-                                    <label :for="'filt_pays_'+index" class="select-none w-full">{{ country.parco_name }}</label>
+                            <div class="lg:block flex flex-wrap">
+
+                                <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 w-1/2 sm:w-1/3 lg:w-full">
+                                    <input :id="'filt_pays_'+index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
+                                    <div class="flex  w-full">
+                                        <span class="fi mr-1" :class="'fi-'+country.parco_code"></span>
+                                        <label :for="'filt_pays_'+index" class="select-none w-full">{{ country.parco_name }}</label>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                     <!-- Départements -->
@@ -33,11 +37,13 @@
                         </div>
                         <div class="p-1" v-show="isOpen.departments">
                             <div v-for="(comp, index) in components.components" :key="index">
-                                <p>{{ comp.comp_name }}</p>
-                                <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1">
-                                    <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
-                                    <div class="w-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
-                                    <label :for="'filt_dept_'+index" class="select-none w-full">{{ dept.dept_shortname }}</label>
+                                <div class="lg:block flex flex-wrap">
+                                    <p>{{ comp.comp_name }}</p>
+                                    <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1 ">
+                                        <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
+                                        <div class="lg:w-3 w-6 lg:h-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
+                                        <label :for="'filt_dept_'+index" class="select-none w-full">{{ dept.dept_shortname }}</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -50,9 +56,12 @@
                             <span :class="isOpen.component ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.component">
-                            <div v-for="(compo,index) in components.components" :key="index" class="flex items-center hover:opacity-60 my-1">
-                                <input :id="'filt_compo_'+index" type="checkbox" class="checkbox mx-2" :value="compo.comp_name" v-model="selectedComponent">
-                                <label :for="'filt_compo_'+index" class="select-none w-full">{{ compo.comp_name }}</label>
+                            <div class="lg:block flex flex-wrap">
+                                <div v-for="(compo,index) in components.components" :key="index" class="flex items-center hover:opacity-60 my-1 w-fit">
+                                    <input :id="'filt_compo_'+index" type="checkbox" class="checkbox mx-2" :value="compo.comp_name" v-model="selectedComponent">
+                                    <label :for="'filt_compo_'+index" class="select-none w-full">{{ compo.comp_name }}</label>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -196,7 +205,6 @@
     import { request } from '../composables/httpRequest';
     import config from '../config';
 
-    import ArticleComp from '../components/index/ArticleComp.vue';
     import CalendarComp from '../components/utils/CalendarComp.vue';
     import { useAccountStore } from '../stores/accountStore';
     import LoadingComp from '../components/utils/LoadingComp.vue';
@@ -223,9 +231,9 @@
     const selectedCountries = ref([]);
 
     const isOpen = ref({
-        pays: true,
-        departments: true,
-        component: true,
+        pays: false,
+        departments: false,
+        component: false,
     });
 
     function toggleCollapse(section) {
@@ -285,6 +293,22 @@
         }
     }
     
-    onMounted(fetchAll)
+    // Ouvrir les filtres ou les fermer en fonction de la taille de l'écran
+    function updateIsOpenState() {
+        if (window.innerWidth >= 1024) {
+            isOpen.value.pays = true;
+            isOpen.value.departments = true;
+            isOpen.value.component = true;
+        } else {
+            isOpen.value.pays = false;
+            isOpen.value.departments = false;
+            isOpen.value.component = false;
+        }
+    }
+
+    onMounted(() => {
+        fetchAll();
+        updateIsOpenState();
+    });
 
 </script>
