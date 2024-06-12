@@ -1,5 +1,6 @@
 <template>
     <div class="overflow-x-auto min-h-screen">
+        <p class="font-bold text-xl">Historique</p>
         <div class="py-4">
             <p>Filtres: <span>{{ filteredActions.length }} résultat{{ filteredActions.length > 1 ? 's' : '' }} 
                 avec {{ selectedTypes.length + (searchQuery !== '' ? 1 : 0) }} 

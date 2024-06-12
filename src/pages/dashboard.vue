@@ -1,20 +1,34 @@
 <template>
     <div>
         <div class="flex py-3">
-            <span v-if="access == 1" class=" ">
-                <span class="flex md:flex-row flex-col *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg mb-4">
-                    <RouterLink v-for="route in routesRi" :to="{name: route.routeName}" :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" class="hover:opacity-60 transition-opacity">{{ route.name }}</RouterLink>
-                </span>
-            </span>
-            <span v-else-if="access == 2">
-                <span class="flex md:flex-row flex-col *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg mb-4">
-                    <RouterLink v-for="route in routesDept" :to="{name: route.routeName}" :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" class="hover:opacity-60 transition-opacity">{{ route.name }}</RouterLink>
-                </span>
-            </span>
-            <span v-else>
-                <!-- Etu -->
-            </span>
-        </div>
+    <span v-if="access == 1">
+        <span class="flex flex-wrap *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg mb-4">
+            <RouterLink 
+                v-for="route in routesRi" 
+                :key="route.routeName" 
+                :to="{name: route.routeName}" 
+                :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" 
+                class="hover:opacity-60 transition-opacity m-1">
+                {{ route.name }}
+            </RouterLink>
+        </span>
+    </span>
+    <span v-else-if="access == 2">
+        <span class="flex flex-wrap md:flex-row flex-col *:p-2 *:mx-1 *:bg-base-300 *:drop-shadow-lg mb-4">
+            <RouterLink 
+                v-for="route in routesDept" 
+                :key="route.routeName" 
+                :to="{name: route.routeName}" 
+                :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" 
+                class="hover:opacity-60 transition-opacity">
+                {{ route.name }}
+            </RouterLink>
+        </span>
+    </span>
+    <span v-else>
+        <!-- Etu -->
+    </span>
+</div>
         <!-- Affichage du contenu du dashboard -->
         <RouterView></RouterView>
     </div>
@@ -34,6 +48,7 @@
         {routeName: 'HistoriqueDash', name: '🕵️‍♀️Historique'},
         {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
         {routeName: 'DocumentsDash', name: '📜Documents'},
+        {routeName: 'ImpExpDash', name: '📨Import/Export'},
         {routeName: 'ModifBaseDash', name: '⚙️Modif base'},
     ]
 
