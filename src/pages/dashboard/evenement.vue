@@ -16,6 +16,12 @@
                         <option v-for="(theme, index) in thematiques" :key="index" :value="theme.evthm_id">{{ theme.evthm_name }}</option>
                         <option value="addNew">Créer une thématique</option>
                     </select>
+                    <label class="form-control w-full " v-if="newEvent.thematique == 'addNew'">
+                        <div class="label">
+                            <span class="label-text">Nom thématique</span>
+                        </div>
+                        <input type="text" class="input input-bordered w-full" v-model="newEvent.newthem.name" placeholder="Nom de la thématique"/>
+                    </label>
                 </label>
                 <label class="form-control w-full ">
                     <div class="label">
@@ -118,6 +124,7 @@
     import { onMounted, ref } from 'vue';
     import config from '../../config';
     import { useAccountStore } from '../../stores/accountStore';
+    import { addAlert } from '../../composables/addAlert';
 
     const accountStore = useAccountStore();
     const response = ref([]);
@@ -130,7 +137,18 @@
 
     // Ajout d'evenement
     async function addEvent(){
-
+        if(newEvent.value.name == ''){
+            addAlert(true, {data:{error: 'Vous devez mettre un titre d\'événement.', message:'Ajout de l\'événement annulé.'}})
+            return;
+        }
+        if(newEvent.value.description == ''){
+            addAlert(true, {data:{error: 'Vous devez mettre une description.', message:'Ajout de l\'événement annulé.'}})
+            return;
+        }
+        if(newEvent.value.datetime == ''){
+            addAlert(true, {data:{error: 'Vous devez mettre une date.', message:'Ajout de l\'événement annulé.'}})
+            return;
+        }        
         const requestData = {
             evt_name: newEvent.value.name, 
             evt_description: newEvent.value.description, 
@@ -139,17 +157,22 @@
         if (newEvent.value.thematique !== 'addNew') {
             requestData.evthm_id = newEvent.value.thematique;
         } else {
-            if(!newEvent.value.newthem.name ){
-                addAlert(true,{data: {error: 'Veuillez renseigner le nom de la nouvelle composante.'}});
+            if(newEvent.value.newthem.name == ''){
+                addAlert(true, {data:{error: 'Vous devez choisir un nom de thématique.', message:'Ajout de l\'événement annulé.'}})
                 return;
             }
             requestData.newthem = {
                 evthm_name: newEvent.value.newthem.name,
             };
         }
+        if(requestData.evthm_id == 'Selectionnez une thématique'){
+            addAlert(true, {data:{error: 'Vous devez choisir une thématique.', message:'Ajout de l\'événement annulé.'}})
+            return;
+        }
 
+        console.log(requestData)
         var rep = ref();
-        await request("POST", true, rep, config.apiUrl+'api/event', requestData);
+        // await request("POST", true, rep, config.apiUrl+'api/event', requestData);
         await fetchAll();
 
         if(rep.value.status == 201){

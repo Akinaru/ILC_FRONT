@@ -186,14 +186,13 @@
         color: '#9e9e9e', 
         compo: '', 
         newcompo: {
-            name: '', 
-            shortname: ''
+            name: null, 
+            shortname: null
         } 
     });
 
     // Ajouter un département
     async function addDepartment(){
-
         const requestData = { 
             dept_name: newDep.value.name,
             dept_shortname: newDep.value.shortname.toUpperCase(),
@@ -201,15 +200,18 @@
         };
 
         // Gestion de la nouvelle composante
-        if (newDep.value.compo !== 'addNew') {
+        if (newDep.value.compo == 'Selectionnez une composante'){
+            addAlert(true, {data:{error: 'Vous devez choisir une composante.', message:'Ajout du département annulé.'}})
+            return;
+        }else if (newDep.value.compo !== 'addNew') {
             requestData.comp_id = newDep.value.compo;
         } else {
             if(!newDep.value.newcompo.name || newDep.value.newcompo.name === ''){
-                addAlert(true,{data: {error: 'Veuillez renseigner le nom de la nouvelle composante.'}});
+                addAlert(true, {data:{error: 'Vous devez mettre un nom à votre composante.', message:'Ajout du département annulé.'}})
                 return;
             }
             else if(!newDep.value.newcompo.shortname || newDep.value.newcompo.shortname === ''){
-                addAlert(true,{data: {error: 'Veuillez renseigner le nom raccourci de la nouvelle composante.'}});
+                addAlert(true, {data:{error: 'Vous devez mettre un nom raccourci à votre composante.', message:'Ajout du département annulé.'}})
                 return;
             }
             requestData.newcompo = {
@@ -218,18 +220,14 @@
             };
         }
         
-        if(!newDep.value.name || newDep.value.name === ''){
-            addAlert(true,{data: {error: 'Veuillez renseigner un nom de département.'}});
-            return;
-        }else if(!newDep.value.shortname || newDep.value.shortname === ''){
-            addAlert(true,{data: {error: 'Veuillez renseigner un nom de département raccourci.'}});
-            return;
-        }else if(!newDep.value.compo || newDep.value.compo === ''){
-            addAlert(true,{data: {error: 'Veuillez renseigner une composante.'}});
+        if(newDep.value.name == ''){
+            addAlert(true, {data:{error: 'Vous devez mettre un nom à votre département.', message:'Ajout du département annulé.'}})
             return;
         }
-
-
+        if(newDep.value.shortname == ''){
+            addAlert(true, {data:{error: 'Vous devez mettre un nom raccourci à votre département.', message:'Ajout du département annulé.'}})
+            return;
+        }
         
         await request("POST", true, response, config.apiUrl+'api/department', requestData);
         if(response.value.status == 201){

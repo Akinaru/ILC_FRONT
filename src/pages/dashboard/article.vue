@@ -131,11 +131,12 @@ import { onMounted, ref, computed } from 'vue';
 import config from '../../config';
 import axios from 'axios';
 import { useAccountStore } from '../../stores/accountStore';
+import { addAlert } from '../../composables/addAlert';
 
 const accountStore = useAccountStore();
 const response = ref([]);
 const articles = ref([]);
-const newArticle = ref({ title: '', description: '', pinned: false, image: null });
+const newArticle = ref({ title: null, description: null, pinned: false, image: null });
 
 const currentArticleModif = ref([]);
 const imagePreview = ref(null);
@@ -185,12 +186,19 @@ const handleFileInputChangeModif = (event) => {
 // Ajout d'article
 async function addArticle(){
 
+    if(newArticle.value.title == null){
+        addAlert(true, {data:{error: 'Vous devez mettre un titre à votre article.', message:'Ajout de l\'article annulé.'}})
+        return;
+    }
+    if(newArticle.value.art_description == null){
+        addAlert(true, {data:{error: 'Vous devez mettre une description à votre article.', message:'Ajout de l\'article annulé.'}})
+        return;
+    }
     const requestData = {
         art_title: newArticle.value.title, 
         art_description: newArticle.value.art_description, 
         art_pin: newArticle.value.pinned, 
     }
-
     var rep = ref();
     await request("POST", true, rep, config.apiUrl+'api/article', requestData);
 

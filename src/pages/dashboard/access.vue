@@ -110,8 +110,8 @@
                     <div v-if="accepted && accepted.count > 0">
                         <p>Utilisateurs autorisés</p>
                         <div class="md:m-5 m-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            <div v-for="(acc, index) in accepted.accounts" :key="index" class="flex bg-base-300 rounded-lg justify-between">
-                                <RouterLink :to="{name: 'Profile', params: {acc_id: acc.acc_id}}" class="w-full hover:opacity-60 hover:bg-base-200 p-2 flex items-center justify-between rounded-lg shadow-md">
+                            <div v-for="(acc, index) in accepted.accounts" :style="{borderBottomColor: acc.department ? acc.department.dept_color : '#777777'}" :key="index" class="border-b-2 flex bg-base-300 rounded-lg justify-between">
+                                <RouterLink :to="{name: 'Profile', params: {acc_id: acc.acc_id}}" class="w-full hover:opacity-60 hover:bg-base-200 p-2 flex items-center justify-between shadow-md">
                                     <div class="flex items-center">
                                         <span class="font-bold mr-1">{{ acc.acc_id }}</span>
                                         <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
@@ -119,9 +119,10 @@
                                 </RouterLink>
                                 <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 p-2 rounded-full" @click="removeAccepted(acc.acc_id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-5 w-5" fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
                                 </button>
+                                <!-- Ajoutez une bordure basse dynamique en utilisant la couleur du département -->
                             </div>
 
 
@@ -154,7 +155,8 @@
     import { request } from '../../composables/httpRequest.js'
     import config from '../../config'
     import { useAccountStore } from '../../stores/accountStore';
-import LoadingComp from '../../components/utils/LoadingComp.vue';
+    import LoadingComp from '../../components/utils/LoadingComp.vue';
+    import { addAlert } from '../../composables/addAlert';
 
     const accountStore = useAccountStore();
     const access = ref([]);
@@ -171,10 +173,18 @@ import LoadingComp from '../../components/utils/LoadingComp.vue';
 
 
     async function addAccess(){
+        if(newAccess.value.login == ''){
+            addAlert(true, {data:{error: 'Vous devez entrer un login.', message:'Ajout de l\'accès annulé.'}})
+            return;
+        }
+        if(newAccess.value.access == "Selectionnez un niveau d'accès"){
+            addAlert(true, {data:{error: 'Vous devez choisir un niveau d\'accès..', message:'Ajout de l\'accès annulé.'}})
+            return;
+        }
         const requestData = { 
             acc_id: newAccess.value.login,
             acs_accounttype: newAccess.value.access,
-        };
+            }; 
         await request("POST", true, response, config.apiUrl+'api/access', requestData);
         if(response.value.status == 201){
             const requestDataAction = {
@@ -189,6 +199,10 @@ import LoadingComp from '../../components/utils/LoadingComp.vue';
     }
 
     async function addAccepted(){
+        if(newAccepted.value.login == ''){
+            addAlert(true, {data:{error: 'Vous devez entrer un login.', message:'Ajout de l\'autorisation annulé.'}})
+            return;
+        }
         const requestData = { 
             acc_id: newAccepted.value.login,
         };
@@ -263,6 +277,7 @@ import LoadingComp from '../../components/utils/LoadingComp.vue';
         showForms.value[acc_id] = !showForms.value[acc_id];
     }
     
+    // Changer departement d'un utilisateur
     async function submitForm(acc_id) {
         showForms.value[acc_id] = false;
         await request('put', true, response, config.apiUrl+'api/account/changedept/'+acc_id+'/'+selectedDepartment.value[acc_id]);
