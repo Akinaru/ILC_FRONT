@@ -137,10 +137,10 @@
                     <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
 
                         <div class="flex flex-wrap justify-center w-full bg-red-105 gap-5" v-if="articles.count > 0">
-                            <RouterLink v-for="(article, index) in articles.articles.slice(0,6)" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}" class="rounded-lg relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
+                            <RouterLink v-for="(article, index) in articles.articles.slice(0,6)" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}" class="rounded-lg relative bg-base-300 w-80 pt-5 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
                                 <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
-                                <span v-if="article.art_pin" class="badge badge-primary absolute top-1 left-1">📌Épinglé</span>
-                                <div class="p-4 flex flex-col justify-start h-52">
+                                <span v-if="article.art_pin" class="badge badge-primary absolute top-6 left-1">📌Épinglé</span>
+                                <div class="p-3 flex flex-col justify-start h-52">
                                     <div class="mb-2">
                                         <p class="font-bold text-xl">{{ article.art_title }}</p>
                                         <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
@@ -167,7 +167,7 @@
                 <p class="text-xl font-bold">Agenda</p>
                 <div class="m-5 flex items-center justify-center flex-col">
                     <p class="font-bold text-xl p-5">Prochains évenements</p>
-                    <div class="flex h-full items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
+                    <div class="flex h-full items-center lg:items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
                         <div class="flex flex-col items-center justify-center">
                             <CalendarComp :events="events"></CalendarComp>
                             <div class="flex items-center justify-center p-5 w-full">

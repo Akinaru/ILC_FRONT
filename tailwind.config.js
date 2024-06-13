@@ -37,6 +37,9 @@ export default {
         '24xl': '24rem',
         '25xl': '25rem',
       },
+      margin: {
+        '37': '9.25rem',
+      }
     },
   },
   plugins: [require("daisyui")],

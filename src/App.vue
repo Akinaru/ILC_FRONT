@@ -1,8 +1,8 @@
 <template>
   <div >
     <HeaderComp/>
-    <div id="content" class="m-5">
-      <RouterView />
+    <div id="content" class="mt-37 m-5">
+      <RouterView  />
     </div>
     <AlertContainer />
   </div>
