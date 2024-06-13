@@ -150,10 +150,12 @@
                             <div v-for="(comp, index) in composantes.components" :key="index">
                                 <div class="lg:block flex flex-wrap">
                                     <p>{{ comp.comp_name }}</p>
-                                    <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1 ">
-                                        <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartments">
-                                        <div class="lg:w-3 w-6 lg:h-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
-                                        <label :for="'filt_dept_'+index" class="select-none w-full">{{ dept.dept_shortname }}</label>
+                                    <div class="flex flex-wrap">
+                                        <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1 ">
+                                            <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartments">
+                                            <div class="w-6 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
+                                            <label :for="'filt_dept_'+index" class="select-none w-full">{{ dept.dept_shortname }}</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
