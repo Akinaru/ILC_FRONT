@@ -100,7 +100,7 @@
                                         </div>
                                     </div>
 
-                                    <span class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
+                                    <span class="absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
                                 </RouterLink>
 
                                 <span v-if="accountStore.isLogged() && accountStore.isStudent()">

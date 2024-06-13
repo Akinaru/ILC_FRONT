@@ -121,10 +121,7 @@
     let month = selectedMonth.value;
     let numDays = daysInMonth(year, month);
     let startDay = firstDayOfMonth(year, month);
-
     let daysArray = [];
-    
-    // Days from previous month
     let prevMonthDays = startDay;
     let prevMonth = month === 0 ? 11 : month - 1;
     let prevMonthYear = month === 0 ? year - 1 : year;
@@ -132,24 +129,18 @@
     for (let i = prevMonthNumDays - prevMonthDays + 1; i <= prevMonthNumDays; i++) {
       daysArray.push({ date: i, isNotMonth: true, monthBefore: true, monthAfter: false, isToday: false });
     }
-
-    // Days of the current month
     for (let i = 1; i <= numDays; i++) {
       let isToday = year === currentYear && month === currentMonth && i === currentDate;
       daysArray.push({ date: i, isNotMonth: false, monthBefore: false, monthAfter: false, isToday });
     }
-
-    // Days from next month
     let nextMonthDays = (42 - daysArray.length);
     for (let i = 1; i <= nextMonthDays; i++) {
       daysArray.push({ date: i, isNotMonth: true, monthBefore: false, monthAfter: true, isToday: false });
     }
-
     let weeks = [];
     while (daysArray.length > 0) {
       weeks.push(daysArray.splice(0, 7));
     }
-
     return weeks;
   });
 
