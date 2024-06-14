@@ -14,7 +14,7 @@
                     <!-- Departement -->
                     <p class="pt-5">Les départements disponibles pour cet accord:</p>
                     <div class="flex items-center flex-wrap">
-                        <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out">
+                        <div v-if="accord.departments.length > 0" class="flex flex-row items-center transition-all duration-100 ease-in-out pt-3">
                             <div v-for="(dept, index) in accord.departments" :key="index">
                                 <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 ml-0 m-1 font-bold drop-shadow-lg select-none text-lg" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                             </div>
@@ -38,7 +38,7 @@
                             <p class="font-bold break-words whitespace-normal text-xl">{{ item.university.univ_name }}</p>
                             <p>{{ item.university.univ_city }} ({{ item.partnercountry.parco_name }})</p>
                         </div>
-                        <span class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
+                        <span class="absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
                     </RouterLink>
                 </div>
 
