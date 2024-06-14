@@ -1,11 +1,11 @@
 <template>
-    <div class="m-5 flex flex-col" v-if="isLoaded">
+    <div class="flex flex-col" v-if="isLoaded">
         <!-- Partie informations -->
         <div>
             <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
-            <div v-if="account && account.acc_id" class="block md:flex w-full pt-10">
+            <div v-if="account && account.acc_id" class="block md:flex w-full justify-center">
                 <!-- Informations -->
-                 <div class="w-full md:w-1/2">
+                 <div class="w-full md:w-1/2 pt-10">
                     <p>Vos informations:</p>
                     <div>
                         <label class="form-control w-full">
@@ -30,7 +30,7 @@
                             <div class="label">
                                 <span class="label-text">Département</span>
                             </div>
-                            <input type="text" :value="account.department.dept_shortname" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full max-w-xl" disabled/>
                         </label>
                         <label class="form-control w-full" >
                             <div class="label">
@@ -42,7 +42,7 @@
                 </div>
 
                 <!-- Documents -->
-                 <div class="w-fyll md:w-1/2">
+                 <div class="w-fyll md:w-1/2 pt-10">
                     <p>Vos documents:</p>
                     <div>
                         <div class="form-control w-full py-3 max-w-xl">
@@ -55,11 +55,11 @@
                                     <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     </svg>
-                                    Telecharger le fichier
+                                    Telecharger le fichier disponible
                                 </div>
                                 <input type="file" class="file-input file-input-bordered w-full" />
                                 <div class="btn btn-primary">
-                                    Telecharger le fichier
+                                    Envoyer votre fichier
                                 </div>
                             </div>
                         <div class="form-control w-full py-3 max-w-xl">
@@ -96,12 +96,12 @@
         </div>
 
         <!-- Partie voeux -->
-        <div class="md:block hidden">
+        <div class="md:block hidden ">
             <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
             <p>Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
             <p>Pensez à bien sauvegarder vos modifications.</p>
             <p>Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
-            <div class="flex *:mr-5 py-5">
+            <div class="flex *:mr-5 py-5 justify-center">
                 <!-- Partie de gauche avec liste des favoris -->
                 <div class="flex flex-col justify-center items-center">
                     <p class="font-bold text-xl flex *:mx-1 py-2  items-center">
@@ -162,6 +162,89 @@
                 </div>
             </div>
         </div>
+
+        <!-- Partie voeux téléphone -->
+         <div class="md:hidden btn-block pt-10">
+            <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
+            <p>Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
+            <p>Pensez à bien sauvegarder vos modifications.</p>
+            <p>Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>            
+            
+                <!-- Liste des accords -->
+                <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5" v-if="accords && accords.agreements">
+                    <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Favoris</p>
+                    <div>
+                        <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('favoris')">
+                            <p>Liste des accords ({{ localFavoris.length }})</p>
+                            <span :class="isOpen.favoris ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
+                        </div>
+                        <div class="p-1" v-show="isOpen.favoris">
+                            <div class="lg:block flex flex-wrap">
+                                <!-- Liste des favoris -->
+                                <div v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center w-full h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
+                                    <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
+                                        <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
+                                            <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
+                                        </span>
+                                        <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
+                                        
+                                    </div>
+                                </div>
+                                <div v-else class="w-full">
+                                    <p class="flex items-center justify-center">Aucun favoris dans la liste</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voeux -->
+                <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
+                    <div :id="'voeu'+i" class="rounded-lg voeuxDrop bg-base-100 h-20 w-full flex items-center justify-center transition-all duration-100 ease-in-out">
+                        <!-- Sil y a un accord -->
+                        <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 rounded-lg select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
+                            <div class="rounded-lg bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                                <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
+                                    <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
+                                </span>
+                                <p class="w-full select-none">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
+                            </div>
+                            <button @click="removeVoeu(localVoeux[i].agree_id, i)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                        <!-- Pas d'accord dans la case -->
+                        <label for="modal_ajout_accord" @click="changeVoeuLocal(i)" v-else class="hover:opacity-80 select-none w-full flex flex-col items-center justify-center bg-base-300 rounded-lg p-2">
+                            <p class="text-lg">Emplacement voeu n°{{ i }}</p>
+                            <p class="opacity-50">Cliquez pour ajouter un accord</p>
+                        </label>
+                    </div>
+                </span>
+                <button class="btn btn-primary mt-5 w-full" @click="saveWishes">Sauvegarder</button>
+
+                <input type="checkbox" id="modal_ajout_accord" class="modal-toggle" />
+                <div class="modal" role="dialog">
+                    <div class="modal-box">
+                        <h3 class="font-bold text-lg pb-3">Choisissez un accord pour le voeu n°{{ selectedChangeVoeu }}</h3>
+                        <!-- Liste des favoris -->
+                        <div @click="setAccordToVoeu(accord.agree_id)" v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="my-1 select-none flex justify-between items-center w-full h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
+                            <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
+                                <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
+                                    <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
+                                </span>
+                                <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
+                            </div>
+                        </div>
+                        <!-- Aucun favoris -->
+                        <div v-else class="w-full">
+                            <p class="flex items-center justify-center">Aucun favoris dans la liste</p>
+                        </div>
+                        <div class="modal-action">
+                            <label for="modal_ajout_accord" class="btn">Annuler</label>
+                        </div>
+                    </div>
+                </div>
+        </div>
     </div>
     <div v-else>
         <LoadingComp></LoadingComp>
@@ -191,6 +274,45 @@
         5: null,
         6: null,
     })
+    const isOpen = ref({
+        favoris: false,
+    });
+    const selectedChangeVoeu = ref(null);
+    
+    function toggleCollapse(section) {
+        isOpen.value[section] = !isOpen.value[section];
+    }
+
+    function changeVoeuLocal(voeu){
+        selectedChangeVoeu.value = voeu;
+    }
+
+    function setAccordToVoeu(agree_id) {
+    const dropZoneId = `voeu${selectedChangeVoeu.value}`;
+    const dropZone = document.getElementById(dropZoneId);
+
+    if (dropZone) {
+        // Supprimez l'accord existant s'il y en a un
+        if (localVoeux.value[selectedChangeVoeu.value]) {
+            removeFavoris(localVoeux.value[selectedChangeVoeu.value].agree_id);
+        }
+
+        // Ajoutez l'accord sélectionné au voeu spécifié
+        localVoeux.value[selectedChangeVoeu.value] = getAccord(agree_id);
+
+        // Supprimez l'accord des favoris
+        removeFavoris(agree_id);
+
+        // Rafraîchissez l'interface après avoir mis à jour les données
+        refreshDrag();
+
+        // Fermez le modal en désélectionnant le checkbox
+        const modalCheckbox = document.getElementById('modal_ajout_accord');
+        if (modalCheckbox) {
+            modalCheckbox.checked = false; // Désélectionne le checkbox pour fermer le modal
+        }
+    }
+}
 
 
     async function initPage(){
@@ -437,10 +559,6 @@
     }
 
 
-
-    //===================================================== 
-    //===================================================== HANDLER 
-    //===================================================== 
 
 
 
