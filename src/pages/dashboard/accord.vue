@@ -208,9 +208,8 @@
                                     <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
                                         <div class="w-fit p-2 flex drop-shadow-lg items-center justify-center mx-1 tooltip select-none font-bold" :data-tip="(dept.pivot.deptagree_valide == 0 ? '(INVISIBLE) ' : '')+'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}" >
                                             <p>{{ dept.dept_shortname }}<span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span></p>
-                                            <button  class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot.deptagree_valide)">
-                                                <svg v-if="dept.pivot.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="#000000" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                                                        viewBox="0 0 488.85 488.85" xml:space="preserve">
+                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot.deptagree_valide)">
+                                                <svg v-if="dept.pivot.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
                                                     <g>
                                                         <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
                                                             s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
@@ -219,20 +218,18 @@
                                                             c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
                                                     </g>
                                                 </svg>
-                                                <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="#ff0000" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
-                                                <g>
-                                                    <!-- Contour de l'œil -->
-                                                    <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
-                                                        s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
-                                                        c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
-                                                        C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
-                                                        c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
-                                                    <!-- Ligne de barre de l'œil -->
-                                                    <line x1="100" y1="100" x2="400" y2="400" style="stroke:red;stroke-width:40"/>
-                                                </g>
-                                            </svg>
-
+                                                <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
+                                                    <g>
+                                                        <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
+                                                            s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
+                                                            c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
+                                                            C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
+                                                            c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                                        <line x1="100" y1="100" x2="400" y2="400" style="stroke:currentColor;stroke-width:40"/>
+                                                    </g>
+                                                </svg>
                                             </button>
+
                                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                             </button>
@@ -296,7 +293,7 @@
     import { request } from '../../composables/httpRequest';
     import ModifAccordComp from '../../components/modif/ModifAccordComp.vue';
     import { useAccountStore } from '../../stores/accountStore';
-
+    import { addAlert } from '../../composables/addAlert';
     const accountStore = useAccountStore();
     const response = ref([]);
 
@@ -351,6 +348,7 @@
 
     async function addAgreement(){
 
+
         const requestData = { 
             typeaccord: newAgreement.value.typeaccord,
             nbplace: newAgreement.value.nbplace,
@@ -395,6 +393,59 @@
                 requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry
                 requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode
             }
+        }
+
+        // Partie vérification
+        if(requestData.isc_id == 'Selectionnez un isced'){
+            addAlert(true, {data:{error: 'Vous devez choisir un numéro ISCED.', message:'Ajout de l\'accord annulé.'}})
+            return;            
+        }
+        else if(requestData.newisced){
+            if (requestData.newisced.isc_code == '00'){
+                addAlert(true, {data:{error: 'Vous devez choisir un code ISCED.', message:'Ajout de l\'accord annulé.'}})
+                return;
+            } 
+            if (requestData.newisced.isc_name == ''){
+                addAlert(true, {data:{error: 'Vous devez choisir un nom ISCED.', message:'Ajout de l\'accord annulé.'}})
+                return;
+            } 
+        }
+        if(requestData.comp_id == 'Selectionnez une composante'){
+            addAlert(true, {data:{error: 'Vous devez choisir une composante.', message:'Ajout de l\'accord annulé.'}})
+            return;            
+        }
+        else if(requestData.newcompo){
+            if(requestData.newcompo.comp_name == ''){
+                addAlert(true, {data:{error: 'Vous devez choisir un nom de composante.', message:'Ajout de l\'accord annulé.'}})
+                return;                 
+            }
+            else if(requestData.newcompo.comp_shortname == ''){
+                addAlert(true, {data:{error: 'Vous devez choisir une abréviation composante.', message:'Ajout de l\'accord annulé.'}})
+                return;                 
+            }
+        }
+        if(requestData.univ_id == 'Selectionnez une université'){
+            addAlert(true, {data:{error: 'Vous devez choisir une université.', message:'Ajout de l\'accord annulé.'}})
+            return;            
+        }else if(requestData.newuniv){
+            console.log("a")
+            if(requestData.newuniv.univ_name == ''){
+                addAlert(true, {data:{error: 'Vous devez choisir un nom d\'université.', message:'Ajout de l\'accord annulé.'}})
+                return;                 
+            }
+            if(requestData.newuniv.univ_city == ''){
+                addAlert(true, {data:{error: 'Vous devez choisir une ville pour l\'université.', message:'Ajout de l\'accord annulé.'}})
+                return;                 
+            }
+            if(requestData.newuniv.parco_id == ''){
+                addAlert(true, {data:{error: 'Vous devez choisir un pays d\'université.', message:'Ajout de l\'accord annulé.'}})
+                return;                 
+            }          
+        }
+        
+        if(requestData.typeaccord == 'Selectionnez un type d\'accord'){
+            addAlert(true, {data:{error: 'Vous devez choisir un type d\'accord.', message:'Ajout de l\'accord annulé.'}})
+            return;            
         }
         await request("POST",true, response, config.apiUrl+'api/agreement', requestData);
         if(response.value.status == 201){

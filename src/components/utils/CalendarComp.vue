@@ -3,7 +3,7 @@
       <div class="py-3 w-4/5 flex w-full">
         
         <div class="flex items-center justify-center font-bold  w-full *:mx-2">
-          <svg @click="previousMonth()" class="select-none hover:opacity-60 hover:cursor-pointer " xmlns="http://www.w3.org/2000/svg" fill="black" width="36" height="36" viewBox="0 0 24 24">
+          <svg @click="previousMonth()" class="select-none hover:opacity-60 hover:cursor-pointer " xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="36" height="36" viewBox="0 0 24 24">
             <path d="M5 12l7-8v6h9v4h-9v6z"/>
           </svg>
         </div>
@@ -20,7 +20,7 @@
           </option>
         </select>
         <div class="flex items-center justify-center font-bold  w-full *:mx-2">
-          <svg @click="nextMonth()" class="select-none hover:opacity-60 hover:cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="black" width="36" height="36" viewBox="0 0 24 24">
+          <svg @click="nextMonth()" class="select-none hover:opacity-60 hover:cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="36" height="36" viewBox="0 0 24 24">
             <path d="M19 12l-7 8v-6H3v-4h9v-6z"/>
           </svg>  
         </div>

@@ -106,10 +106,10 @@
                                 <span v-if="accountStore.isLogged() && accountStore.isStudent()">
                                     <div @click="toggleFavoris(accord.agree_id)" class="md:p-5 p-2 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
                                         <svg v-if="isFavorited(accord.agree_id)" class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill="#000000" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
+                                            <path fill="currentColor" stroke="currentColor" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
                                         </svg>
                                         <svg v-else class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill="none" stroke="#000000" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
+                                            <path fill="none" stroke="currentColor" stroke-width="2" d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"/>
                                         </svg>
                                     </div>
                                 </span>
