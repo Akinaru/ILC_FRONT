@@ -49,6 +49,7 @@
         {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
         {routeName: 'DocumentsDash', name: '📜Documents'},
         {routeName: 'ImpExpDash', name: '📨Import/Export'},
+        {routeName: 'Arbitrage', name: '🖥️Arbitrage'},
         {routeName: 'ModifBaseDash', name: '⚙️Modif base'},
     ]
 

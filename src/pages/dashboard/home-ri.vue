@@ -25,7 +25,7 @@
           <div class="flex items-center justify-start bg-base-300 w-fit p-2">
             <div class="flex py-3 pr-3 ">
               <p class="font-bold">{{ formatDate(admin.adm_datelimite) }}</p>
-              <p class="mx-2">({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
+              <p class="mx-2">{{ getJoursRestants(admin.adm_datelimite) }}</p>
             </div>
             <label for="modal_date" class="btn btn-primary">Modifier</label>
             <!-- Modal modification date -->
@@ -87,6 +87,19 @@ onMounted(fetch);
 const limitedActions = computed(() => {
   return actions.value.slice(0, 5);
 });
+
+function getJoursRestants(date){
+  if(joursRestants(date) == 0){
+    return "ajourd'hui";
+  }
+  else if(joursRestants(date) == 1){
+    return 'demain';
+  }
+  else if(joursRestants(date) < 0){
+    return 'il y a '+(-joursRestants(date)) + ' jour' + (-joursRestants(date) > 1 ? 's' : '');
+  }
+  return '('+ joursRestants(date) +' jours restants)';
+}
 
 function joursRestants(date) {
   const dateLimite = new Date(date);

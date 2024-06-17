@@ -170,6 +170,13 @@ const routes = [
                 meta: { title: 'Dashboard - Imports/Exports' }
             },
             { 
+                path: 'arbitrage', 
+                name: 'Arbitrage', 
+                component: () => import('./pages/dashboard/arbitrage.vue'),
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Arbitrage' }
+            },
+            { 
                 path: 'home-ri', 
                 name: 'HomeRI', 
                 component: () => import('./pages/dashboard/home-ri.vue'),
