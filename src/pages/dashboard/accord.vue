@@ -288,9 +288,7 @@
                 </div>
             </div>
         </div>
-        <div v-else class="flex items-center justify-center my-20">
-            <span class="loading loading-dots loading-lg"></span>
-        </div>
+        <LoadingComp></LoadingComp>
     </div>
 </template>
 
@@ -301,6 +299,7 @@
     import ModifAccordComp from '../../components/modif/ModifAccordComp.vue';
     import { useAccountStore } from '../../stores/accountStore';
     import { addAlert } from '../../composables/addAlert';
+import LoadingComp from '../../components/utils/LoadingComp.vue';
     const accountStore = useAccountStore();
     const response = ref([]);
 

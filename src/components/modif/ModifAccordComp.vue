@@ -114,6 +114,8 @@ import { ref, onMounted, defineEmits } from 'vue';
 import { request } from '../../composables/httpRequest';
 import config from '../../config';
 
+import { addAlert } from '../../composables/addAlert';
+
 const emit = defineEmits(['agreementUpdated']);
 
 
@@ -162,6 +164,12 @@ async function editAgreement(agree_id) {
         agree_nbplace: newAgreement.value.nbplace,
     };
 
+    // Vérification du nombre de places
+    if (newAgreement.value.nbplace <= 0) {
+        addAlert(true, { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Modification de l\'accord annulée.' } });
+        return;
+    }
+
     if (newAgreement.value.lien != null) {
         requestData.agree_lien = newAgreement.value.lien;
     }
@@ -173,6 +181,14 @@ async function editAgreement(agree_id) {
     if (newAgreement.value.isced !== 'addNew') {
         requestData.isc_id = newAgreement.value.isced;
     } else {
+        if (newAgreement.value.newisced.code === 0 || newAgreement.value.newisced.code === '0') {
+            addAlert(true, { data: { error: 'Vous devez choisir un code ISCED.', message: 'Modification de l\'accord annulée.' } });
+            return;
+        }
+        if (newAgreement.value.newisced.name === '') {
+            addAlert(true, { data: { error: 'Vous devez choisir un nom ISCED.', message: 'Modification de l\'accord annulée.' } });
+            return;
+        }
         requestData.newisced = {
             isc_code: '0' + newAgreement.value.newisced.code.toString(),
             isc_name: newAgreement.value.newisced.name
@@ -183,6 +199,14 @@ async function editAgreement(agree_id) {
     if (newAgreement.value.compo !== 'addNew') {
         requestData.comp_id = newAgreement.value.compo;
     } else {
+        if (newAgreement.value.newcompo.name === '') {
+            addAlert(true, { data: { error: 'Vous devez choisir un nom de composante.', message: 'Modification de l\'accord annulée.' } });
+            return;
+        }
+        if (newAgreement.value.newcompo.shortname === '') {
+            addAlert(true, { data: { error: 'Vous devez choisir une abréviation de composante.', message: 'Modification de l\'accord annulée.' } });
+            return;
+        }
         requestData.newcompo = {
             comp_name: newAgreement.value.newcompo.name,
             comp_shortname: newAgreement.value.newcompo.shortname.toUpperCase()
@@ -193,20 +217,37 @@ async function editAgreement(agree_id) {
     if (newAgreement.value.univ !== 'addNew') {
         requestData.univ_id = newAgreement.value.univ;
     } else {
+        if (newAgreement.value.newuniv.name === '') {
+            addAlert(true, { data: { error: 'Vous devez choisir un nom d\'université.', message: 'Modification de l\'accord annulée.' } });
+            return;
+        }
+        if (newAgreement.value.newuniv.city === '') {
+            addAlert(true, { data: { error: 'Vous devez choisir une ville pour l\'université.', message: 'Modification de l\'accord annulée.' } });
+            return;
+        }
+        if (newAgreement.value.newuniv.partnercountry === '') {
+            addAlert(true, { data: { error: 'Vous devez choisir un pays d\'université.', message: 'Modification de l\'accord annulée.' } });
+            return;
+        }
         requestData.newuniv = {
             univ_name: newAgreement.value.newuniv.name,
             univ_city: newAgreement.value.newuniv.city,
+            parco_id: newAgreement.value.newuniv.partnercountry
         };
-        if (newAgreement.value.newuniv.partnercountry !== 'addNew') {
-            requestData.newuniv.parco_id = newAgreement.value.newuniv.partnercountry;
-        } else {
+        if (newAgreement.value.newuniv.partnercountry === 'addNew') {
             requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry;
             requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode;
         }
     }
+
+    // Effectuer la requête PUT pour mettre à jour l'accord
     await request('PUT', true, response, config.apiUrl + 'api/agreement/' + props.accord.agree_id, requestData);
+
+    // Émettre l'événement agreementUpdated pour rafraîchir les données
     emit('agreementUpdated');
 }
+
+
 
 onMounted(init);
 </script>
