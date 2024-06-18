@@ -184,7 +184,7 @@
                     <div v-if="filteredAccords.length > 0">
                         <!-- Affichage des accords -->
                         <div href="" v-for="(accord, indexAccord) in filteredAccords" :key="indexAccord" class="m-5 p-3 flex">
-                            <div class="w-full bg-base-300 p-2 drop-shadow-lg">
+                            <div class="w-full bg-base-300 p-2 ">
                                 <div class="flex">
 
                                     <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
@@ -193,20 +193,27 @@
                                     <div>
                                         <p><span class="font-bold">{{accord.university.univ_name}}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
                                         <p>[{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
-                                        
+                                        <div class="flex">
+                                            <p><span>Nombre de place: {{ accord.agree_nbplace }}</span>, <span>Type accord: {{ accord.agree_typeaccord }}</span></p>
+                                        </div>
+
                                     </div>
                                 </div>
-                                <a v-if="accord.agree_lien" :href="accord.agree_lien" class="pt-5 hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">Cliquez ici pour acceder au site de l'université</a>
-                                <div v-if="accord.agree_description">
-                                    <p>Description:</p>
-                                    <pre>{{ accord.agree_description }}</pre>
+                                <div class="flex">
+                                    <p >Lien: <span v-if='!accord.agree_lien'>Aucun</span></p>
+                                    <a v-if="accord.agree_lien" :href="accord.agree_lien" class="pt-5 hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">Cliquez ici pour acceder au site de l'université</a>
+                                    
+                                </div>
+                                <div>
+                                    <p>Description: <span v-if="!accord.agree_description">Aucune</span></p>
+                                    <pre v-if="accord.agree_description">{{ accord.agree_description }}</pre>
                                 </div>
                                 
                                 <!-- Liste des départements d'un accord -->
                                 <p>Les départements: </p>
                                 <div class="flex items-center justify-start">
                                     <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
-                                        <div class="w-fit p-2 flex drop-shadow-lg items-center justify-center mx-1 tooltip select-none font-bold" :data-tip="(dept.pivot.deptagree_valide == 0 ? '(INVISIBLE) ' : '')+'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}" >
+                                        <div class="w-fit p-2 flex  items-center justify-center mx-1 tooltip select-none font-bold" :data-tip="(dept.pivot.deptagree_valide == 0 ? '(INVISIBLE) ' : '')+'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}" >
                                             <p>{{ dept.dept_shortname }}<span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span></p>
                                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot.deptagree_valide)">
                                                 <svg v-if="dept.pivot.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
@@ -266,7 +273,7 @@
                             </label>
         
                             <!-- Modal de modification d'accord -->
-                            <ModifAccordComp :accord="accord" :accords="accords" :isceds="isceds" :composantes="composantes" :universites="universites" :departments="departments" :partnercountrys="partnercountry"></ModifAccordComp>
+                            <ModifAccordComp  @agreementUpdated="fetchAll" :accord="accord" :isceds="isceds" :composantes="composantes.components" :universites="universites" :partnercountrys="partnercountry"></ModifAccordComp>
         
                             <!-- Bouton de suppression -->
                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.university.univ_name, accord.agree_id)">
@@ -288,7 +295,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, computed, nextTick } from 'vue';
+    import { ref, onMounted, computed, nextTick, defineEmits  } from 'vue';
     import config from '../../config'
     import { request } from '../../composables/httpRequest';
     import ModifAccordComp from '../../components/modif/ModifAccordComp.vue';
@@ -297,6 +304,8 @@
     const accountStore = useAccountStore();
     const response = ref([]);
 
+    const emit = defineEmits(['agreementUpdated']);
+    
     const accords = ref([]);
     const selectedDepartments = ref([]);
     const selectedComponent = ref([]);

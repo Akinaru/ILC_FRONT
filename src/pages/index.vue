@@ -77,7 +77,7 @@
 
 
 
-                            <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center drop-shadow-lg overflow-hidden">
+                            <div v-for="(accord, index) in filteredAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center  overflow-hidden">
                                 <RouterLink :to="{name: 'Accord', params: {agree_id: accord.agree_id}}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
 
                                     <div class="flex items-center flex-wrap">
@@ -92,7 +92,7 @@
                                     <div class="flex items-center flex-wrap">
                                         <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out">
                                             <div v-for="(dept, index) in accord.departments" :key="index">
-                                                <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 font-bold drop-shadow-lg select-none" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
+                                                <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 font-bold  select-none" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                             </div>
                                         </div>
                                         <div v-else>
