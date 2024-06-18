@@ -191,12 +191,8 @@
                                         <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code"></span>
                                     </span>
                                     <div>
-                                        <p><span class="font-bold">{{accord.university.univ_name}}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})</p>
+                                        <p><span class="font-bold">{{accord.university.univ_name}}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }}) <span><span>Nombre de place: {{ accord.agree_nbplace }}</span>, <span>Type accord: {{ accord.agree_typeaccord }}</span></span></p>
                                         <p>[{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
-                                        <div class="flex">
-                                            <p><span>Nombre de place: {{ accord.agree_nbplace }}</span>, <span>Type accord: {{ accord.agree_typeaccord }}</span></p>
-                                        </div>
-
                                     </div>
                                 </div>
                                 <div class="flex">
@@ -288,7 +284,7 @@
                 </div>
             </div>
         </div>
-        <LoadingComp></LoadingComp>
+        <LoadingComp v-else></LoadingComp>
     </div>
 </template>
 
@@ -299,7 +295,7 @@
     import ModifAccordComp from '../../components/modif/ModifAccordComp.vue';
     import { useAccountStore } from '../../stores/accountStore';
     import { addAlert } from '../../composables/addAlert';
-import LoadingComp from '../../components/utils/LoadingComp.vue';
+    import LoadingComp from '../../components/utils/LoadingComp.vue';
     const accountStore = useAccountStore();
     const response = ref([]);
 
