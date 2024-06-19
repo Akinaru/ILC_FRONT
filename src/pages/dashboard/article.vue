@@ -41,7 +41,7 @@
             <div v-if="articles && articles.articles" class="flex flex-col py-5">
 
 
-                <div class="flex flex-wrap justify-center w-full bg-red-105 gap-5" v-if="articles.count > 0">
+                <div class="flex flex-wrap justify-start w-full bg-red-105 gap-5" v-if="articles.count > 0">
 
 
                     <div v-for="(article, index) in articles.articles" :key="index" class="relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
