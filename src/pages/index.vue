@@ -134,34 +134,31 @@
             <p class="text-2xl font-bold">Espace communication</p>
             <!-- Articles -->
                 <p class="text-xl font-bold">Articles</p>
-                    <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
-
-                        <div class="flex flex-wrap justify-center w-full bg-red-105 gap-5" v-if="articles.count > 0">
-                            <RouterLink v-for="(article, index) in articles.articles.slice(0,6)" :key="index" :to="{name: 'Article', params: {art_id: article.art_id}}" class="rounded-lg relative bg-base-300 w-80 pt-5 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
-                                <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
-                                <span v-if="article.art_pin" class="badge badge-primary absolute top-6 left-1">📌Épinglé</span>
-                                <div class="p-3 flex flex-col justify-start h-52">
-                                    <div class="mb-2">
-                                        <p class="font-bold text-xl">{{ article.art_title }}</p>
-                                        <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
-                                    </div>
-                                    <p class="overflow-hidden text-sm text-gray-700 max-h-24">{{ article.art_description }}{{ article.art_description }}</p>
+                <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
+                    <div v-if="articles.count > 0" class="flex flex-wrap justify-center xl:justify-start max-w-7xl gap-5 ">
+                        <RouterLink v-for="(article, index) in articles.articles.slice(0, 6)" :key="index" :to="{ name: 'Article', params: { art_id: article.art_id } }" class="rounded-lg relative bg-base-300 w-80 md:w-96 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105 mb-5">
+                            <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl + 'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
+                            <span v-if="article.art_pin" class="badge badge-primary absolute top-6 left-1">📌Épinglé</span>
+                            <div class="p-3 flex flex-col justify-start h-48">
+                                <div class="mb-2">
+                                    <p class="font-bold text-xl">{{ article.art_title }}</p>
+                                    <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
                                 </div>
-                            </RouterLink>
-
-                        </div>
-                        
-                        
-                        <div v-else class="m-5">
-                            <p>Aucun article n'a été trouvé.</p>
-                        </div>
-                        <RouterLink v-if="articles.count > 0" :to="{name: 'Articles'}" class=" py-12">
-                            <button  class="btn btn-primary w-96">Voir tous les articles</button>
+                                <p class="overflow-hidden text-sm text-gray-700 max-h-20">{{ article.art_description }}</p>
+                            </div>
                         </RouterLink>
                     </div>
-                    <div v-else class="flex items-center justify-center my-20">
-                        <span class="loading loading-dots loading-lg"></span>
+                    <div v-else class="m-5 text-center">
+                        <p>Aucun article n'a été trouvé.</p>
                     </div>
+                    <RouterLink v-if="articles.count > 0" :to="{ name: 'Articles' }" class="py-12 flex justify-center">
+                        <button class="btn btn-primary w-96">Voir tous les articles</button>
+                    </RouterLink>
+                </div>
+                <div v-else class="flex items-center justify-center my-20">
+                    <span class="loading loading-dots loading-lg"></span>
+                </div>
+
 
             <!-- Agenda -->
                 <p class="text-xl font-bold">Agenda</p>
