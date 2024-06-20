@@ -129,6 +129,7 @@
                             <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.pays">
+                            <button class="hover:opacity-70" @click="deselectAllCountry">Tout désélectionner</button>
                             <div class="flex flex-wrap">
                                 <div v-for="(country, index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 w-1/2 sm:w-1/3 lg:w-1/4 xl:w-1/5">
                                     <input :id="'filt_pays_' + index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
@@ -147,6 +148,7 @@
                             <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                         </div>
                         <div class="p-1" v-show="isOpen.departments">
+                            <button class="hover:opacity-70" @click="deselectAllDept">Tout désélectionner</button>
                             <div v-for="(comp, index) in composantes.components" :key="index">
                                 <div class="lg:block flex flex-wrap">
                                     <p>{{ comp.comp_name }}</p>
@@ -169,6 +171,7 @@
                             <span :class="isOpen.component ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.component">
+                            <button class="hover:opacity-70" @click="deselectAllComp">Tout désélectionner</button>
                             <div class="lg:block flex flex-wrap">
                                 <div v-for="(compo,index) in composantes.components" :key="index" class="flex items-center hover:opacity-60 my-1 w-fit">
                                     <input :id="'filt_compo_'+index" type="checkbox" class="checkbox mx-2" :value="compo.comp_name" v-model="selectedComponent">
@@ -526,6 +529,16 @@
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
         fetchAll();
+    }
+
+    function deselectAllDept() {
+        selectedDepartments.value = [];
+    }
+    function deselectAllCountry() {
+        selectedCountries.value = [];
+    }
+    function deselectAllComp() {
+        selectedComponent.value = [];
     }
 
     onMounted(fetchAll)

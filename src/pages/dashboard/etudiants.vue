@@ -18,6 +18,7 @@
                         <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.departments">
+                        <button class="hover:opacity-70" @click="deselectAllDept">Tout désélectionner</button>
                         <div v-for="(comp, index) in components.components" :key="index">
                             <p>{{ comp.comp_name }}</p>
                             <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1">
@@ -35,17 +36,14 @@
                         <span :class="isOpen.voeux ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.voeux">
+                        <button class="hover:opacity-70" @click="deselectAllVoeux">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
                             <input id="filt_voeux_1" type="checkbox" class="checkbox mx-2" value="Aucun" v-model="selectedVoeux">
-                            <label for="filt_voeux_1" class="select-none w-full">0</label>
+                            <label for="filt_voeux_1" class="select-none w-full">Aucun</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_voeux_2" type="checkbox" class="checkbox mx-2" value="Mid" v-model="selectedVoeux">
-                            <label for="filt_voeux_2" class="select-none w-full">&lt; 6 &gt; 0</label>
-                        </div>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_voeux_3" type="checkbox" class="checkbox mx-2" value="Tous" v-model="selectedVoeux">
-                            <label for="filt_voeux_3" class="select-none w-full">6</label>
+                            <input id="filt_voeux_2" type="checkbox" class="checkbox mx-2" value="AuMoinsUn" v-model="selectedVoeux">
+                            <label for="filt_voeux_2" class="select-none w-full">Au moins un</label>
                         </div>
                     </div>
                 </div>
@@ -136,8 +134,7 @@ const filteredEtudiants = computed(() => {
 
             const matchesVoeux = selectedVoeux.value.length === 0 || 
                 (selectedVoeux.value.includes('Aucun') && etu.wishes.count === 0) ||
-                (selectedVoeux.value.includes('Mid') && etu.wishes.count > 0 && etu.wishes.count < 6) ||
-                (selectedVoeux.value.includes('Tous') && etu.wishes.count === 6);
+                (selectedVoeux.value.includes('AuMoinsUn') && etu.wishes.count > 0);
 
             // Filtrer par nom d'étudiant s'il y a une recherche en cours
             const matchesSearchQuery = !searchQuery.value || etu.acc_fullname.toLowerCase().includes(searchQuery.value.toLowerCase());
@@ -163,4 +160,11 @@ async function fetch() {
 }
 
 onMounted(fetch);
+
+    function deselectAllDept() {
+        selectedDepartment.value = [];
+    }
+    function deselectAllVoeux() {
+        selectedVoeux.value = [];
+    }
 </script>
