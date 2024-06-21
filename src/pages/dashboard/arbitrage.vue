@@ -10,7 +10,7 @@
                 <div class="flex items-center justify-center py-5">
                     <div class="bg-base-200 drop-shadow-lg w-96" v-if="accords && accords.agreements">
                         <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg">Filtres</p>
-                        <p>0 résultats ({{ selectedDepartment.length }} filtre{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
+                        <p>{{ filteredEtus.length }} résultats ({{ selectedDepartment.length }} filtre{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
                         <!-- Départements -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
@@ -56,7 +56,7 @@
                 <div class="flex items-center justify-center py-5 w-full">
                     <div class="bg-base-200 drop-shadow-lg w-11/12" v-if="accords && accords.agreements">
                         <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg">Filtres</p>
-                        <p>0 résultats ({{ selectedCountries.length }} filtre{{ selectedCountries.length > 1 ? 's' : '' }})</p>
+                        <p>{{ filteredArbitrage.length }} résultats ({{ selectedCountries.length }} filtre{{ selectedCountries.length > 1 ? 's' : '' }})</p>
                         <!-- Pays -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
@@ -254,13 +254,12 @@
         .sort((a, b) => a.acc_fullname.localeCompare(b.acc_fullname));
 });
 
-    const filteredArbitrage = computed(() => {
-        return Object.values(localArbitrage.value).filter(arbitrage => {
-            const countryFilter = selectedCountries.value.length === 0 || selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
-            const departmentFilter = selectedDepartment.value.length === 0 || arbitrage.accounts.some(account => selectedDepartment.value.includes(account.account?.department?.dept_shortname));
-            return countryFilter && departmentFilter;
+const filteredArbitrage = computed(() => {
+    return Object.values(localArbitrage.value)
+        .filter(arbitrage => {
+            return selectedCountries.value.length === 0 || selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
         });
-    });
+});
 
     function removeEtuFromPlace(agree_id, pos) {
         const etu = localArbitrage.value[agree_id].accounts[pos].account
