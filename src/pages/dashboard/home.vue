@@ -252,7 +252,7 @@
         </div>
 
         <!-- Affichage voeux si temps pas écoule -->
-        <div>
+        <div v-else>
             <div class="flex flex-col items-center justify-start pt-10">
                 <p class="font-bold text-xl flex *:mx-1 py-2 items-center">
                     <span>Vos voeux</span>
@@ -326,31 +326,31 @@
     }
 
     function setAccordToVoeu(agree_id) {
-    const dropZoneId = `voeu${selectedChangeVoeu.value}`;
-    const dropZone = document.getElementById(dropZoneId);
+        const dropZoneId = `voeu${selectedChangeVoeu.value}`;
+        const dropZone = document.getElementById(dropZoneId);
 
-    if (dropZone) {
-        // Supprimez l'accord existant s'il y en a un
-        if (localVoeux.value[selectedChangeVoeu.value]) {
-            removeFavoris(localVoeux.value[selectedChangeVoeu.value].agree_id);
-        }
+        if (dropZone) {
+            // Supprimez l'accord existant s'il y en a un
+            if (localVoeux.value[selectedChangeVoeu.value]) {
+                removeFavoris(localVoeux.value[selectedChangeVoeu.value].agree_id);
+            }
 
-        // Ajoutez l'accord sélectionné au voeu spécifié
-        localVoeux.value[selectedChangeVoeu.value] = getAccord(agree_id);
+            // Ajoutez l'accord sélectionné au voeu spécifié
+            localVoeux.value[selectedChangeVoeu.value] = getAccord(agree_id);
 
-        // Supprimez l'accord des favoris
-        removeFavoris(agree_id);
+            // Supprimez l'accord des favoris
+            removeFavoris(agree_id);
 
-        // Rafraîchissez l'interface après avoir mis à jour les données
-        refreshDrag();
+            // Rafraîchissez l'interface après avoir mis à jour les données
+            refreshDrag();
 
-        // Fermez le modal en désélectionnant le checkbox
-        const modalCheckbox = document.getElementById('modal_ajout_accord');
-        if (modalCheckbox) {
-            modalCheckbox.checked = false; // Désélectionne le checkbox pour fermer le modal
+            // Fermez le modal en désélectionnant le checkbox
+            const modalCheckbox = document.getElementById('modal_ajout_accord');
+            if (modalCheckbox) {
+                modalCheckbox.checked = false; // Désélectionne le checkbox pour fermer le modal
+            }
         }
     }
-}
 
 
     async function initPage(){
@@ -451,7 +451,7 @@
             }
         }
     }
-
+    
     function dragStartHandler(e) {
         e.dataTransfer.setData("text/plain", e.target.id);
     }
