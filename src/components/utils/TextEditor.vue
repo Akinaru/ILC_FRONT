@@ -1,12 +1,12 @@
 <template>
-    <div class="w-full max-w-3xl mx-auto py-6">
+    <div class="w-full max-w-3xl  border border-gray-200 rounded-lg">
       <!-- Barre d'outils de l'éditeur -->
-      <div class="flex items-start space-x-4">
+      <div class="flex flex-wrap items-center space-x-4 p-1">
         <!-- Boutons de style avec tooltips -->
         <span data-tip="Gras" class="tooltip">
 
            <button type="button" @click="toggleStyle('bold')"  class="editor-button  hover:opacity-60 flex items-center justify-center" >
-             <svg fill="#000000" width="20px" height="20px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+             <svg fill="#000000" width="19px" height="19px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
                <path d="M480.286 822.857h548.571c151.269 0 274.286-123.017 274.286-274.286 0-151.268-123.017-274.285-274.286-274.285H480.286v548.571Zm0 822.857H1166c151.269 0 274.286-123.017 274.286-274.285 0-151.269-123.017-274.286-274.286-274.286H480.286v548.571ZM1166 1920H206V0h822.857c302.537 0 548.572 246.034 548.572 548.571 0 134.263-48.549 257.418-128.778 352.732 159.223 96.137 265.92 270.994 265.92 470.126 0 302.537-246.034 548.571-548.571 548.571Z" fill-rule="evenodd"/>
               </svg>
             </button>
@@ -14,7 +14,7 @@
 
         <span data-tip="Italique" class="tooltip flex items-center justify-center">
           <button type="button" @click="toggleStyle('italic')" class="editor-button  hover:opacity-60">
-            <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="22px" height="22px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 3H20M4 21H14M15 3L9 21" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -206,12 +206,9 @@
       </div>
   
       <!-- Zone de texte éditable -->
-      <div contenteditable="true" class="border border-gray-200 rounded-lg p-4 text-base focus:outline-none h-96" ref="editor" @input="updateContent"></div>
+      <div contenteditable="true" class="border border-gray-200 text-base focus:outline-none h-96" ref="editor" @input="updateContent" v-html="text"></div>
   
       <!-- Aperçu du contenu édité -->
-      <div class="mt-4">
-        <div v-html="description"></div>
-      </div>
     </div>
   </template>
   
@@ -250,7 +247,7 @@
   const alignText = (alignment) => {
     document.execCommand('justify' + alignment);
   };
-
+  
   const toggleBulletList = () => {
     document.execCommand('insertUnorderedList');
   };
@@ -277,6 +274,10 @@
   };
   
   // Initialiser le contenu éditable avec un exemple de texte
-  const description = ref('');
+  const props = defineProps({
+    text: String,
+  });
   
+  // Utiliser le texte passé en paramètre comme contenu initial
+  const description = ref(props.text);
   </script>

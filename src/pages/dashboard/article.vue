@@ -92,7 +92,7 @@
                     <div class="label">
                         <span class="label-text">Description</span>
                     </div>
-                    <textarea class="textarea w-full textarea-bordered h-80" v-model="currentArticleModif.art_description"></textarea>
+                    <TextEditor v-model="currentArticleModif.art_description" :text="currentArticleModif.art_description"></TextEditor>
                 </label>
                 <!-- Epingle -->
                 <div class="form-control">
