@@ -9,7 +9,8 @@
                 <div :style="{ backgroundImage: `url(${backgroundImage})` }" class="bg-cover bg-center w-full h-40"></div>
                 <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full" />
-                <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.art_description"></textarea>
+                <!-- <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.art_description"></textarea> -->
+                <TextEditor v-model="newArticle.art_description"></TextEditor>
                 <div class="form-control">
                     <label class="label cursor-pointer">
                         <span class="label-text">Épinglé ?</span> 
@@ -17,23 +18,9 @@
                     </label>
                 </div>
                 <div class="flex items-center justify-center *:mx-1">
-                    <label for="modal_apercu" class="btn">Aperçu</label>
-
                     <button class="btn btn-primary" type="submit">Ajouter l'article</button>
                 </div>
             </form>
-        </div>
-        <!-- Modal aperçu -->
-        <input type="checkbox" id="modal_apercu" class="modal-toggle" />
-        <div class="modal w-full h-full" role="dialog">
-            <div class="modal-box h-full">
-                <h3 class="font-bold text-lg">Aperçu article</h3>
-                <div class="text-2xl py-2" v-html="newArticle.title"></div>
-                <pre v-html="newArticle.art_description"></pre>
-                <div class="modal-action">
-                    <label for="modal_apercu" class="btn">Fermer</label>
-                </div>
-            </div>
         </div>
         <!-- Liste des articles -->
         <div>
@@ -68,7 +55,7 @@
                                     <p class="font-bold text-xl">{{ article.art_title }}</p>
                                     <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
                                 </div>
-                                <p class="overflow-hidden text-sm text-gray-700 max-h-24">{{ article.art_description }}{{ article.art_description }}</p>
+                                <div class="overflow-hidden text-sm text-gray-700 max-h-24" v-html="article.art_description"></div>
                             </div>
                         </RouterLink>
                     </div>
@@ -82,54 +69,54 @@
             </div>
         </div>
     </div>
-<!-- Modal de modification d'article -->
-<input type="checkbox" id="modal_modif" class="modal-toggle" />
-<div class="modal modal-bottom sm:modal-middle" role="dialog">
-    <div class="modal-box">
-        <h3 class="font-bold text-lg">Modification de l'article {{ currentArticleModif.art_id }}</h3>
-        <form @submit.prevent="confirmModifArticle" class="w-full">
-            <!-- Image -->
-            <div :style="{ backgroundImage: `url(${backgroundImageModif})` }" class="bg-cover bg-center w-full h-40"></div>
-            <!-- Ajout Image -->
-            <input type="file" @change="handleFileInputChangeModif" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
+    <!-- Modal de modification d'article -->
+    <input type="checkbox" id="modal_modif" class="modal-toggle" />
+    <div class="modal modal-bottom sm:modal-middle" role="dialog">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Modification de l'article {{ currentArticleModif.art_id }}</h3>
+            <form @submit.prevent="confirmModifArticle" class="w-full">
+                <!-- Image -->
+                <div :style="{ backgroundImage: `url(${backgroundImageModif})` }" class="bg-cover bg-center w-full h-40"></div>
+                <!-- Ajout Image -->
+                <input type="file" @change="handleFileInputChangeModif" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
 
-            <!-- Titre -->
-            <label class="form-control w-full">
-                <div class="label">
-                    <span class="label-text">Titre</span>
-                </div>
-                <input type="text"  class="input input-bordered w-full" v-model="currentArticleModif.art_title"/>
-            </label>
-            <!-- Description -->
-            <label class="form-control w-full">
-                <div class="label">
-                    <span class="label-text">Description</span>
-                </div>
-                <textarea class="textarea w-full textarea-bordered h-80" v-model="currentArticleModif.art_description"></textarea>
-            </label>
-            <!-- Epingle -->
-            <div class="form-control">
-                <label class="flex items-center justify-start cursor-pointer py-1">
-                    <input type="checkbox" class="checkbox" v-model="currentArticleModif.art_pin" />
-                    <span class="label-text mx-2">Épinglé ?</span> 
+                <!-- Titre -->
+                <label class="form-control w-full">
+                    <div class="label">
+                        <span class="label-text">Titre</span>
+                    </div>
+                    <input type="text"  class="input input-bordered w-full" v-model="currentArticleModif.art_title"/>
                 </label>
-            </div>
-            <div class="modal-action">
-                <label for="modal_modif" class="btn">Annuler</label>
-                <button type="submit">
-                    <label for="modal_modif" class="btn btn-success">Enregistrer</label>
-                </button>
-            </div>
-        </form>
+                <!-- Description -->
+                <label class="form-control w-full">
+                    <div class="label">
+                        <span class="label-text">Description</span>
+                    </div>
+                    <textarea class="textarea w-full textarea-bordered h-80" v-model="currentArticleModif.art_description"></textarea>
+                </label>
+                <!-- Epingle -->
+                <div class="form-control">
+                    <label class="flex items-center justify-start cursor-pointer py-1">
+                        <input type="checkbox" class="checkbox" v-model="currentArticleModif.art_pin" />
+                        <span class="label-text mx-2">Épinglé ?</span> 
+                    </label>
+                </div>
+                <div class="modal-action">
+                    <label for="modal_modif" class="btn">Annuler</label>
+                    <button type="submit">
+                        <label for="modal_modif" class="btn btn-success">Enregistrer</label>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 </template>
 
 <script setup>
 import { request } from '../../composables/httpRequest';
 import { onMounted, ref, computed } from 'vue';
 import config from '../../config';
-import axios from 'axios';
+import TextEditor from '../../components/utils/TextEditor.vue';
 import { useAccountStore } from '../../stores/accountStore';
 import { addAlert } from '../../composables/addAlert';
 
