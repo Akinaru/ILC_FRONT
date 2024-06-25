@@ -310,6 +310,7 @@
 
     async function fetchAll(){
         await request('GET',false, composantes, config.apiUrl+'api/component');
+
         resetInput();
     }
 
