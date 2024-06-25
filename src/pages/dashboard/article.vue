@@ -5,7 +5,7 @@
         <!-- Formulaire d'ajout d'article -->
         <div class="m-5 flex justify-center items-center flex-col">
             <p class="text-lg font-bold">Ajout article</p>
-            <form @submit.prevent="addArticle" class="w-2/5 *:my-2" enctype="multipart/form-data">
+            <form @submit.prevent="addArticle" class="w-3/5 *:my-2" enctype="multipart/form-data">
                 <div :style="{ backgroundImage: `url(${backgroundImage})` }" class="bg-cover bg-center w-full h-40"></div>
                 <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full" />
