@@ -150,7 +150,7 @@
                                     <p class="font-bold text-xl">{{ article.art_title }}</p>
                                     <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
                                 </div>
-                                <p class="overflow-hidden text-sm text-gray-700 max-h-20">{{ article.art_description }}</p>
+                                <div class="overflow-hidden text-sm text-gray-700 max-h-20" v-html="article.art_description"></div>
                             </div>
                         </RouterLink>
                     </div>
@@ -261,13 +261,15 @@
     }
 
     const filteredAccords = computed(() => {
-        return accords.value.agreements.filter(accord => {
-            const matchesDepartments = selectedDepartment.value.length === 0 || accord.departments.some(dept => selectedDepartment.value.includes(dept.dept_shortname));
-            const matchesCountries = selectedCountries.value.length === 0 || selectedCountries.value.includes(accord.partnercountry.parco_name);
-            
-            return matchesDepartments && matchesCountries;
-        });
+    return accords.value.agreements.filter(accord => {
+        const matchesDepartments = selectedDepartment.value.length === 0 || accord.departments.some(dept => selectedDepartment.value.includes(dept.dept_shortname));
+        const matchesCountries = selectedCountries.value.length === 0 || selectedCountries.value.includes(accord.partnercountry.parco_name);
+        const hasDepartments = accord.departments.length > 0;
+
+        return matchesDepartments && matchesCountries && hasDepartments;
     });
+});
+
 
     function isFavorited(agree_id) {
       return favoris.value.favoris.some(

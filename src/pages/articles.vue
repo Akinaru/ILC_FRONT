@@ -18,7 +18,7 @@
                             <p class="font-bold text-xl">{{ article.art_title }}</p>
                             <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
                         </div>
-                        <p class="overflow-hidden text-sm text-gray-700 max-h-24">{{ article.art_description }}{{ article.art_description }}</p>
+                        <div class="overflow-hidden text-sm text-gray-700 max-h-24" v-html="article.art_description"></div>
                     </div>
                 </RouterLink>
             </div>

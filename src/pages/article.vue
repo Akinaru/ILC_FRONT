@@ -16,6 +16,7 @@
                         <p class="text-gray-600 text-md">Dernière modif: {{ article.art_lastmodif }}</p>
                     </div>
                     <div id="description" v-html="article.art_description"></div>
+                    
                 </div>
                 <div class="w-full md:w-1/3 flex items-start justify-center md:py-0 py-10">
                     <img class="w-full" :src="article.art_image ? config.apiUrl+'api/article/image/'+article.art_id : config.apiUrl+'images/no_image.jpg'" alt="">
