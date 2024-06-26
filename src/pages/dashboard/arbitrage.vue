@@ -81,6 +81,8 @@
                     </div>
                 </div>
 
+                <button class="btn w-11/12 btn-success mb-5" @click="saveArbitrage">Enregistrer</button>
+
                 <!-- Partie rendu accord -->
                 <div class="flex flex-col items-center justify-start w-full select-none">
                     <div v-for="(arbitrage, accordIndex) in filteredArbitrage" :key="'accord-' + accordIndex" class="bg-base-300 w-11/12 mb-4 p-4 rounded-lg">
@@ -121,11 +123,12 @@
 
 <script setup>
 
-    import { ref, onMounted, computed, nextTick } from 'vue'
+    import { ref, onMounted, computed, nextTick, watch } from 'vue'
     import { request } from '../../composables/httpRequest'
     import config from '../../config'
     import LoadingComp from '../../components/utils/LoadingComp.vue';
 
+    const response = ref([])
     const accords = ref([])
     const etudiants = ref([])
     const components = ref([])
@@ -190,76 +193,45 @@
             return acc;
         }, {});
 
-
-
-        
-        let dropZones = document.getElementsByClassName('dropZones');
         await nextTick();
         refreshDrag();
-
-        for (let dropZone of dropZones) {
-    dropZone.addEventListener("dragover", function(e) {
-        e.preventDefault();
-    });
-    dropZone.addEventListener("drop", function(e) {
-        e.preventDefault();
-        let id = e.dataTransfer.getData("text/plain");
-        let selected = document.getElementById(id);
-        if (selected) {
-            const etuId = selected.id.replace('etu_drag_', '');
-            const idMatch = dropZone.id.match(/^drop_(\d+)_(\d+)$/);
-            if (idMatch) {
-                const agree_id = parseInt(idMatch[1]); // Convertir en entier si nécessaire
-                const pos = parseInt(idMatch[2]); // Convertir en entier si nécessaire
-
-                const etu = localEtus.value[etuId];
-                if (etu) {
-
-                    const existingStudent = localArbitrage.value[agree_id].accounts[pos];
-                    if (existingStudent && existingStudent.account != null) {
-                        // Remettre l'étudiant existant dans localEtus.value
-                        localEtus.value[existingStudent.account.acc_id] = existingStudent.account;
-                    }
-
-                    // Supprimer l'étudiant de localEtus.value
-                    delete localEtus.value[etuId];
-
-                    // Ajouter l'étudiant à localArbitrage.value[agree_id]
-                    localArbitrage.value[agree_id].accounts[pos] = {
-                        arb_pos: pos + 1,
-                        account: etu
-                    };
-                    refreshDrag();
-                } else {
-                    console.error("Étudiant non trouvé dans localEtus.value avec etuId :", etuId);
-                }
-            } else {
-                console.error("ID de dropZone non valide :", dropZone.id);
-            }
-        }
-    });
-}
-
+        refreshDrop();
     }   
 
+    async function saveArbitrage(){
+    const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
+        arbitrage.accounts.forEach(accountInfo => {
+            if (accountInfo.account) {
+                acc.push({
+                    acc_id: accountInfo.account.acc_id,
+                    agree_id: arbitrage.agreement.agree_id,
+                    arb_pos: accountInfo.arb_pos
+                });
+            }
+        });
+        return acc;
+    }, []);
+
+    await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
+}
 
     const filteredEtus = computed(() => {
-    return Object.values(localEtus.value)
-        .filter(etu => {
-            if (selectedDepartment.value.length === 0) {
-                return true; // Retourne tous les étudiants si aucun filtre n'est sélectionné
-            }
-            return selectedDepartment.value.includes(etu.department?.dept_shortname);
-        })
-        .sort((a, b) => a.acc_fullname.localeCompare(b.acc_fullname));
-});
+        return Object.values(localEtus.value)
+            .filter(etu => {
+                if (selectedDepartment.value.length === 0) {
+                    return true; // Retourne tous les étudiants si aucun filtre n'est sélectionné
+                }
+                return selectedDepartment.value.includes(etu.department?.dept_shortname);
+            })
+            .sort((a, b) => a.acc_fullname.localeCompare(b.acc_fullname));
+    });
 
-const filteredArbitrage = computed(() => {
-    return Object.values(localArbitrage.value)
-        .filter(arbitrage => {
-            return selectedCountries.value.length === 0 || selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
-        });
-});
+    const filteredArbitrage = computed(() => {
+        return Object.values(localArbitrage.value)
+            .filter(arbitrage => {
+                return selectedCountries.value.length === 0 || selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
+            });
+    });
 
     function removeEtuFromPlace(agree_id, pos) {
         const etu = localArbitrage.value[agree_id].accounts[pos].account
@@ -268,9 +240,64 @@ const filteredArbitrage = computed(() => {
         refreshDrag();
     }
 
+    async function handleFiltreEtu() {
+        await nextTick();
+        refreshDrag();
+        refreshDrop();
+    }
+
+    async function handleChangeArbitrage(){
+        console.log("l'arbitrage a été modifié")
+    }
+
+    watch(selectedDepartment, handleFiltreEtu);
 
 
+    async function refreshDrop(){
+        let dropZones = document.getElementsByClassName('dropZones');
+        for (let dropZone of dropZones) {
+            dropZone.addEventListener("dragover", function(e) {
+                e.preventDefault();
+            });
+            dropZone.addEventListener("drop", function(e) {
+                e.preventDefault();
+                let id = e.dataTransfer.getData("text/plain");
+                let selected = document.getElementById(id);
+                if (selected) {
+                    const etuId = selected.id.replace('etu_drag_', '');
+                    const idMatch = dropZone.id.match(/^drop_(\d+)_(\d+)$/);
+                    if (idMatch) {
+                        const agree_id = parseInt(idMatch[1]); // Convertir en entier si nécessaire
+                        const pos = parseInt(idMatch[2]); // Convertir en entier si nécessaire
 
+                        const etu = localEtus.value[etuId];
+                        if (etu) {
+
+                            const existingStudent = localArbitrage.value[agree_id].accounts[pos];
+                            if (existingStudent && existingStudent.account != null) {
+                                // Remettre l'étudiant existant dans localEtus.value
+                                localEtus.value[existingStudent.account.acc_id] = existingStudent.account;
+                            }
+
+                            // Supprimer l'étudiant de localEtus.value
+                            delete localEtus.value[etuId];
+
+                            // Ajouter l'étudiant à localArbitrage.value[agree_id]
+                            localArbitrage.value[agree_id].accounts[pos] = {
+                                arb_pos: pos + 1,
+                                account: etu
+                            };
+                            refreshDrag();
+                        } else {
+                            console.error("Étudiant non trouvé dans localEtus.value avec etuId :", etuId);
+                        }
+                    } else {
+                        console.error("ID de dropZone non valide :", dropZone.id);
+                    }
+                }
+            });
+        }
+    }
 
 
     async function refreshDrag() {
