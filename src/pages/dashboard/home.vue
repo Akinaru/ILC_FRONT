@@ -1,8 +1,26 @@
 <template>
     <div class="flex flex-col" v-if="isLoaded">
+        <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
+
+        <!-- Destination finale -->
+        <div v-if="destination.agreement">
+            <p>Destination finale</p>
+            <div class="select-none flex justify-between items-center elementDrag xl:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
+                <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
+
+                    <div class="bg-yellow-600 flex items-center justify-center w-full h-20 select-none">
+                        <span class="tooltip mr-2" :data-tip="destination.agreement.partnercountry.parco_name">
+                            <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+destination.agreement.partnercountry.parco_code "></span>
+                        </span>
+                        <p class="w-full select-none">({{ destination.agreement.partnercountry.parco_name }}) <span class="font-bold">{{destination.agreement.university.univ_city}} - {{ destination.agreement.university.univ_name }}</span> ({{ destination.agreement.isced.isc_code }})</p>    
+                    </div>
+                    <span class="absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
+                </RouterLink>
+            </div>
+        </div>
+
         <!-- Partie informations -->
         <div>
-            <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
             <div v-if="account && account.acc_id" class="block md:flex w-full justify-center">
                 <!-- Informations -->
                  <div class="w-full md:w-1/2 pt-10">
@@ -145,7 +163,7 @@
                                 <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
                                 <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 xl:w-96 w-72 flex items-center justify-center transition-all duration-100 ease-in-out">
                                     <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class=" select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
-                                        <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                                        <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'bg-yellow-600' : 'bg-base-300'" class="flex items-center justify-center h-20 select-none w-full">
                                             <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                                 <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                             </span>
@@ -297,6 +315,7 @@
     const account = ref([]);
     const favoris = ref([]);
     const accords = ref([]);
+    const destination = ref([])
     const admin = ref([]);
     const isLoaded = ref(false);
     const accountStore = useAccountStore();
@@ -464,6 +483,7 @@
         await request('GET', false, accords, config.apiUrl + 'api/agreement');
         await request('GET', false, favoris, config.apiUrl + 'api/favoris');
         await request('GET', false, admin, config.apiUrl + 'api/admin');
+        await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+accountStore.login);
         isLoaded.value = true;
 
         initPage();

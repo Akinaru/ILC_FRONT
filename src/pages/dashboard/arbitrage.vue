@@ -90,6 +90,7 @@
                             <span class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out mr-2" :class="'fi-' + arbitrage.agreement.partnercountry.parco_code"></span>
                             <p class="font-bold text-lg">{{ arbitrage.agreement.partnercountry.parco_name }}</p>
                         </div>
+                        <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }}</p>
 
                         <div class="w-full flex justify-center">
                             <div class="flex flex-wrap gap-4 justify-start w-full">
