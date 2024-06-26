@@ -102,7 +102,6 @@
             <div class="md:block hidden" >
                 <p class="text-center">Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
                 <p class="text-center">Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
-                <p class="text-center">Pensez à bien sauvegarder vos modifications.</p>
                 <p class="text-center">Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
                 <div class="flex *:mr-5 py-5 justify-center">
                     <!-- Partie de gauche avec liste des favoris -->
@@ -161,7 +160,6 @@
                                 </div>
                             </span>
 
-                            <button class="btn btn-primary mt-5" @click="saveWishes">Sauvegarder</button>
                         </div>
                     </div>
                 </div>
@@ -224,7 +222,6 @@
                             </label>
                         </div>
                     </span>
-                    <button class="btn btn-primary mt-5 w-full" @click="saveWishes">Sauvegarder</button>
 
                     <input type="checkbox" id="modal_ajout_accord" class="modal-toggle" />
                     <div class="modal" role="dialog">
@@ -343,6 +340,7 @@
 
             // Rafraîchissez l'interface après avoir mis à jour les données
             refreshDrag();
+            saveWishes();
 
             // Fermez le modal en désélectionnant le checkbox
             const modalCheckbox = document.getElementById('modal_ajout_accord');
@@ -364,7 +362,7 @@
         if(nbVoeu() > 0){
 
             Object.keys(account.value.wishes).forEach(key => {
-                if(key != 'acc_id'){
+                if(key.startsWith('wsha_')){  // Modifier cette ligne pour inclure uniquement les clés de voeux
                     const accordId = account.value.wishes[key];
                     if(accordId != null){
                         const accord = accords.value.agreements.find(accord => accord.agree_id === accordId);
@@ -375,6 +373,7 @@
                     index++;
                 }
             });
+
         }
 
         await nextTick();
@@ -407,12 +406,14 @@
                                 localVoeux.value[dropZoneId] = getAccord(accordId);
                                 localVoeux.value[currentDropZoneId] = existingAccord;
                                 refreshDrag();
+                                saveWishes();
                             }
                             else{
                                 // Pas de voeu dans l'emplacement
                                 localVoeux.value[getCurrentVoeuNum(accordId)] = null;
                                 localVoeux.value[dropZoneId] = getAccord(accordId); 
                                 refreshDrag();
+                                saveWishes();
                             }
                         }
                     } else {
@@ -425,12 +426,14 @@
                             removeFavoris(accordId)
                             localVoeux.value[dropZoneId] = getAccord(accordId);
                             refreshDrag();
+                            saveWishes();
 
                         }else{
                             // Pas de voeu dans l'emplacement
                             removeFavoris(accordId)
                             localVoeux.value[dropZoneId] = getAccord(accordId); 
                             refreshDrag();
+                            saveWishes();
                         }
                     }
 
@@ -565,6 +568,7 @@
             addFavoris(agree_id);
             refreshDrag();
         }
+        saveWishes();
     }
 
     function joursRestants(date) {
@@ -593,7 +597,7 @@
             wsha_five: localVoeux.value[5] != null ? localVoeux.value[5].agree_id : null,
             wsha_six: localVoeux.value[6] != null ? localVoeux.value[6].agree_id : null,
         }
-        await request('POST', true, response, config.apiUrl + 'api/wishagreement', requestData);
+        await request('POST', false, response, config.apiUrl + 'api/wishagreement', requestData);
     }
 
 
