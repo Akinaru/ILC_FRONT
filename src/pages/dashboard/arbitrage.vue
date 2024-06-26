@@ -93,17 +93,21 @@
 
                         <div class="w-full flex justify-center">
                             <div class="flex flex-wrap gap-4 justify-start w-full">
+                                <!-- Rendu des cases -->
                                 <div :id="'drop_'+arbitrage.agreement.agree_id+'_'+placeIndex" v-for="(place, placeIndex) in Array(arbitrage.agreement.agree_nbplace).fill()" :key="'place-' + placeIndex" 
-                                    class="dropZones bg-base-200 m-1 h-20 w-80 flex justify-center items-center relative"
-                                    :style="{borderBottom: `4px solid ${arbitrage.accounts[placeIndex]?.account?.department?.dept_color || '#aaaaaa'}`}">
+                                    class="dropZones bg-base-200 m-1 h-20 w-80 relative flex items-center justify-center">
                                     
-                                    <div v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account">
+                                    <div v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account"
+                                    draggable="true"
+                                    :id="'etu_drag_'+arbitrage.accounts[placeIndex].account.acc_id"
+                                    class="h-full w-full flex items-center justify-center elementDrag cursor-move hover:opacity-60"
+                                    :style="{borderBottom: `4px solid ${arbitrage.accounts[placeIndex]?.account?.department?.dept_color || '#aaaaaa'}`}">
                                         <p>{{ arbitrage.accounts[placeIndex].account.acc_fullname }}</p>
                                         <button @click="removeEtuFromPlace(arbitrage.agreement.agree_id, placeIndex)" class="hover:cursor-pointer hover:opacity-60 absolute top-0 right-0 p-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         </button>
                                     </div>
-                                    <p v-else>Aucun étudiant</p>
+                                    <p v-else class="">Aucun étudiant</p>
                                 </div>
                                 <div class="w-80 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer">
                                     <p class="text-lg font-bold">+</p>
@@ -246,64 +250,136 @@
         refreshDrop();
     }
 
-    async function handleChangeArbitrage(){
-        console.log("l'arbitrage a été modifié")
-    }
 
     watch(selectedDepartment, handleFiltreEtu);
 
 
-    async function refreshDrop(){
-        let dropZones = document.getElementsByClassName('dropZones');
-        for (let dropZone of dropZones) {
-            dropZone.addEventListener("dragover", function(e) {
-                e.preventDefault();
-            });
-            dropZone.addEventListener("drop", function(e) {
-                e.preventDefault();
-                let id = e.dataTransfer.getData("text/plain");
-                let selected = document.getElementById(id);
-                if (selected) {
-                    const etuId = selected.id.replace('etu_drag_', '');
-                    const idMatch = dropZone.id.match(/^drop_(\d+)_(\d+)$/);
-                    if (idMatch) {
-                        const agree_id = parseInt(idMatch[1]); // Convertir en entier si nécessaire
-                        const pos = parseInt(idMatch[2]); // Convertir en entier si nécessaire
+    async function refreshDrop() {
+    let dropZones = document.getElementsByClassName('dropZones');
+    for (let dropZone of dropZones) {
+        dropZone.addEventListener("dragover", function(e) {
+            e.preventDefault();
+        });
+        dropZone.addEventListener("drop", function(e) {
+            e.preventDefault();
+            let id = e.dataTransfer.getData("text/plain");
+            let selected = document.getElementById(id);
+            if (selected) {
+                const etuId = selected.id.replace('etu_drag_', '');
+                const idMatch = dropZone.id.match(/^drop_(\d+)_(\d+)$/);
+                if (idMatch) {
+                    const agree_id = parseInt(idMatch[1]); // Convertir en entier si nécessaire
+                    const pos = parseInt(idMatch[2]); // Convertir en entier si nécessaire
 
-                        const etu = localEtus.value[etuId];
-                        if (etu) {
+                    let etu = localEtus.value[etuId];
 
+
+
+                    if (etu) {
+                        // Vérifier si l'étudiant est déjà dans localArbitrage.value
+                        const existingStudent = localArbitrage.value[agree_id].accounts[pos];
+                        if (existingStudent && existingStudent.account != null) {
+
+                            // Échanger les étudiants si celui en cours de drag n'est pas déjà dans la dropzone
+                            const currentEtuId = existingStudent.account.acc_id;
+                            if (currentEtuId !== etu.acc_id) {
+                                // Remettre l'étudiant existant dans localEtus.value
+                                localEtus.value[currentEtuId] = existingStudent.account;
+                            }
+                        }
+
+                        // Supprimer l'étudiant de localEtus.value s'il est là
+                        if (localEtus.value[etuId]) {
+                            delete localEtus.value[etuId];
+                        }
+
+                        // Mettre l'étudiant dans la dropzone actuelle de l'arbitrage
+                        localArbitrage.value[agree_id].accounts[pos] = {
+                            arb_pos: pos + 1,
+                            account: etu
+                        };
+
+                        refreshDrag();
+                    // Si l'étudiant n'est pas trouvé dans localEtus.value, chercher dans localArbitrage.value
+                    }else if (!etu) {
+                        etu = findStudentInArbitrage(etuId);
+                        if((findStudentPositionInArbitrage(etuId)-1) != pos || getCurrentAgreeIdByAccId(etuId) != agree_id){
                             const existingStudent = localArbitrage.value[agree_id].accounts[pos];
                             if (existingStudent && existingStudent.account != null) {
-                                // Remettre l'étudiant existant dans localEtus.value
-                                localEtus.value[existingStudent.account.acc_id] = existingStudent.account;
+                                localArbitrage.value[agree_id].accounts[pos] = {
+                                    arb_pos: pos + 1,
+                                    account: etu
+                                };
+                                localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1] = {
+                                    arb_pos: findStudentPositionInArbitrage(etuId),
+                                    account: existingStudent.account
+                                } 
+                                refreshDrag();
+                            }else{
+                                localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1].account = null;
+                                localArbitrage.value[agree_id].accounts[pos] = {
+                                    arb_pos: pos + 1,
+                                    account: etu
+                                };                                
+                                refreshDrag();
                             }
-
-                            // Supprimer l'étudiant de localEtus.value
-                            delete localEtus.value[etuId];
-
-                            // Ajouter l'étudiant à localArbitrage.value[agree_id]
-                            localArbitrage.value[agree_id].accounts[pos] = {
-                                arb_pos: pos + 1,
-                                account: etu
-                            };
-                            refreshDrag();
-                        } else {
-                            console.error("Étudiant non trouvé dans localEtus.value avec etuId :", etuId);
+                            //Verifier si il y a deja un étudiant dans la dropzone
                         }
                     } else {
-                        console.error("ID de dropZone non valide :", dropZone.id);
+                        console.error("Étudiant non trouvé dans localEtus.value ou localArbitrage.value avec etuId :", etuId);
                     }
+                } else {
+                    console.error("ID de dropZone non valide :", dropZone.id);
                 }
-            });
+            }
+        });
+    }
+}
+
+
+function findStudentInArbitrage(etuId) {
+    for (let agreementId in localArbitrage.value) {
+        const accounts = localArbitrage.value[agreementId].accounts;
+        for (let accountInfo of accounts) {
+            if (accountInfo.account && accountInfo.account.acc_id == etuId) {
+                return accountInfo.account;
+            }
         }
     }
+    return null;
+}
+
+function findStudentPositionInArbitrage(accId) {
+    for (let agreementId in localArbitrage.value) {
+        const accounts = localArbitrage.value[agreementId].accounts;
+        for (let i = 0; i < accounts.length; i++) {
+            const accountInfo = accounts[i];
+            if (accountInfo.account && accountInfo.account.acc_id === accId) {
+                return i + 1; // Return arb_pos (adjusted to 1-based index)
+            }
+        }
+    }
+    return null; // Return null if student not found
+}
+
+function getCurrentAgreeIdByAccId(accId) {
+    for (let agreementId in localArbitrage.value) {
+        const accounts = localArbitrage.value[agreementId].accounts;
+        for (let accountInfo of accounts) {
+            if (accountInfo.account && accountInfo.account.acc_id === accId) {
+                return parseInt(agreementId);
+            }
+        }
+    }
+    console.error("Aucun accord trouvé pour l'acc_id :", accId);
+    return null;
+}
+
 
 
     async function refreshDrag() {
         await nextTick();
         let elementsDraggable = document.getElementsByClassName("elementDrag");
-        
         // Parcourir tous les éléments
         for (let element of elementsDraggable) {
             if (!element.hasListener) {
