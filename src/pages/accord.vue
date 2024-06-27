@@ -68,7 +68,11 @@
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accord, config.apiUrl+'api/agreement/getbyid/'+route.params.agree_id);
-        await request('GET', false, accords, config.apiUrl+'api/agreement/random');
+        const requestData = {
+            univ_id: accord.value.university.univ_id,
+            isc_id: accord.value.isced.isc_id
+        }
+        await request('GET', false, accords, config.apiUrl+'api/agreement/random', requestData);
         isLoaded.value = true;
     }
 
