@@ -81,7 +81,6 @@
                     </div>
                 </div>
 
-                <button class="btn w-11/12 btn-success mb-5" @click="saveArbitrage">Enregistrer</button>
 
                 <!-- Partie rendu accord -->
                 <div class="flex flex-col items-center justify-start w-full select-none">
@@ -217,7 +216,7 @@
         return acc;
     }, []);
 
-    await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
+    await request('POST', false, response, config.apiUrl+'api/arbitrage', extractedData)
 }
 
     const filteredEtus = computed(() => {
@@ -243,6 +242,7 @@
         localEtus.value[etu.acc_id] = etu;
         localArbitrage.value[agree_id].accounts[pos].account = null;
         refreshDrag();
+        saveArbitrage();
     }
 
     async function handleFiltreEtu() {
@@ -295,34 +295,24 @@
                         }
 
                         // Mettre l'étudiant dans la dropzone actuelle de l'arbitrage
-                        localArbitrage.value[agree_id].accounts[pos] = {
-                            arb_pos: pos + 1,
-                            account: etu
-                        };
-
+                        localArbitrage.value[agree_id].accounts[pos].account = etu;
                         refreshDrag();
+                        saveArbitrage();
                     // Si l'étudiant n'est pas trouvé dans localEtus.value, chercher dans localArbitrage.value
                     }else if (!etu) {
                         etu = findStudentInArbitrage(etuId);
                         if((findStudentPositionInArbitrage(etuId)-1) != pos || getCurrentAgreeIdByAccId(etuId) != agree_id){
                             const existingStudent = localArbitrage.value[agree_id].accounts[pos];
                             if (existingStudent && existingStudent.account != null) {
-                                localArbitrage.value[agree_id].accounts[pos] = {
-                                    arb_pos: pos + 1,
-                                    account: etu
-                                };
-                                localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1] = {
-                                    arb_pos: findStudentPositionInArbitrage(etuId),
-                                    account: existingStudent.account
-                                } 
+                                localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1].account = existingStudent.account 
+                                localArbitrage.value[agree_id].accounts[pos].account = etu
                                 refreshDrag();
+                                saveArbitrage();
                             }else{
                                 localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1].account = null;
-                                localArbitrage.value[agree_id].accounts[pos] = {
-                                    arb_pos: pos + 1,
-                                    account: etu
-                                };                                
+                                localArbitrage.value[agree_id].accounts[pos].account = etu;                       
                                 refreshDrag();
+                                saveArbitrage();
                             }
                             //Verifier si il y a deja un étudiant dans la dropzone
                         }
