@@ -1,8 +1,8 @@
 import { useAlertStore } from "../stores/alertStore";
 
-export async function addAlert(status, message) {
+export async function addAlert(error, message) {
         const alertStore = useAlertStore();
-        const alertWithId = { response: message, id: Date.now(), status: status };
+        const alertWithId = { response: message, id: Date.now(), iserror: error };
         alertStore.addAlert(alertWithId);
 }
 
