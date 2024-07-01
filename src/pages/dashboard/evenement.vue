@@ -170,9 +170,8 @@
             return;
         }
 
-        console.log(requestData)
         var rep = ref();
-        // await request("POST", true, rep, config.apiUrl+'api/event', requestData);
+        await request("POST", true, rep, config.apiUrl+'api/event', requestData);
         await fetchAll();
 
         if(rep.value.status == 201){
