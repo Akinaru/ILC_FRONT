@@ -11,7 +11,7 @@ export async function authLogAccount(login, router) {
     if (response.value.response && response.value.response.status == 404) {
         await authRegisterAccount(login, router);
     } else {
-        await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
+        // await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
         
         var requestData = {
             acc_id: response.value.acc_id,
@@ -32,23 +32,27 @@ export async function authLogAccount(login, router) {
 }
 
 async function authRegisterAccount(login, router) {
+    // Récupération des informations de l'utilisateur depuis le LDAP
     const decomposedInfo = ref([]);
     const response = ref([]);
-    await request('GET', true, response, 'http://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
+    await request('GET', false, response, 'http://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
     decomposedInfo.value = decomposeDN(login, response.value[0].dn);
+
+    // Création de l'utilisateur dans la base
     var requestData = {
         acc_id: decomposedInfo.value.login,
         acc_fullname: decomposedInfo.value.fullname,
     };
-
     await request('POST', false, response, config.apiUrl + 'api/account', requestData);
+
+    
     if (response.value.status && response.value.status == 201) {
         requestData = {
             acc_id: response.value.account.acc_id,
             acc_fullname: response.value.account.acc_fullname,
             acc_lastlogin: response.value.account.acc_lastlogin,
             acc_validateacc: response.value.account.acc_validateacc,
-            acc_access: 0
+            acc_access: response.value.access
         };
 
         authStoreUser(requestData);

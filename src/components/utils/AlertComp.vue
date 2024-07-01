@@ -1,10 +1,11 @@
 <template>
   <div v-if="response">
+    {{ response.status }}
     <div role="alert" 
      :class="{
-       'alert-success': response.status === 'message',
-       'alert-error': response.status === 'error',
-       'alert-info': response.status === 'save'
+       'alert-success': response.status == 'message',
+       'alert-error': response.status == 'error',
+       'alert-info': response.status == 'save'
      }" 
      class="relative alert my-1 overflow-hidden drop-shadow-lg flex"
 >
