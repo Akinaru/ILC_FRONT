@@ -10,7 +10,9 @@
                         <div class="md:m-5 m-1">
                             <div v-for="(acc, index) in access.access[1]" :key="index" class="flex *:my-1">
                                 <div class="bg-base-300 p-2 w-full flex items-center">
-                                    <span class="font-bold mr-1">{{ acc.acc_id }}</span>  <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
+                                    <span class="font-bold mr-1">{{ acc.acc_id }}</span>
+                                    <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
+                                    <span v-else>(Nom introuvable)</span>
                                 </div>
                                 <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeAccess(acc.acc_id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -135,11 +137,13 @@
                                     <tr v-for="(acc, index) in filteredEtudiants" :key="index">
                                         <th>{{ index }}</th>
                                         <th>{{ acc.acc_id }}</th>
-                                        <th class="min-w-44">{{ acc.account.acc_fullname }}</th>
+                                        <th class="min-w-44" v-if="acc.account">{{ acc.account.acc_fullname }}</th>
+                                        <th class="min-w-44" v-else>Nom introuvable</th>
                                         <th>
                                             <span class="flex items-center justify-center">
                                                 <span v-if="acc.department" class="badge p-3 min-w-40" :style="{backgroundColor: acc.department.dept_color}">{{ acc.department.dept_shortname }}</span>
-                                                <span v-else class="badge p-3 min-w-40">Aucun</span>
+                                                <span v-else-if="acc.account" class="badge p-3 min-w-40">Aucun</span>
+                                                <span v-else class="badge p-3 min-w-40">Introuvable</span>
                                             </span>
                                         </th>
                                         <th>
