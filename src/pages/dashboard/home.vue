@@ -617,7 +617,7 @@
             wsha_five: localVoeux.value[5] != null ? localVoeux.value[5].agree_id : null,
             wsha_six: localVoeux.value[6] != null ? localVoeux.value[6].agree_id : null,
         }
-        await request('POST', false, response, config.apiUrl + 'api/wishagreement', requestData);
+        await request('POST', true, response, config.apiUrl + 'api/wishagreement', requestData);
     }
 
 

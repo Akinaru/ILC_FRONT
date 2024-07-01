@@ -216,7 +216,7 @@
         return acc;
     }, []);
 
-    await request('POST', false, response, config.apiUrl+'api/arbitrage', extractedData)
+    await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
 }
 
     const filteredEtus = computed(() => {

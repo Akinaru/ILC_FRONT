@@ -14,12 +14,15 @@ export async function request(method, sendAlert, object, url, data = null) {
         object.value = responseData;
 
         if ((responseData.message || responseData.error) && sendAlert) {
-            addAlert(false, responseData);
+            addAlert('message', responseData);
+        }
+        else if ((responseData.save || responseData.error) && sendAlert) {
+            addAlert('save', responseData);
         }
     } catch (error) {
         object.value = error;
         if (sendAlert){
-            addAlert(true, error.response);
+            addAlert('error', error.response);
         }
     }
 }
