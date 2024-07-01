@@ -36,6 +36,9 @@ export default {
         '23xl': '23rem',
         '24xl': '24rem',
         '25xl': '25rem',
+        'xxs': '0.625rem', 
+        'xxxs': '0.5rem', 
+        'xxxxs': '0.375rem',
       },
       margin: {
         '37': '9.25rem',

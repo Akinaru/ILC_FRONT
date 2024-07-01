@@ -33,13 +33,26 @@
                 <div class="bg-base-300 w-full h-64 overflow-x-auto whitespace-nowrap flex items-center text-sm">
                     <!-- Afficher les autres accords ici -->
                     <RouterLink :to="{name: 'Accord', params: {agree_id: item.agree_id}}" v-for="(item, index) in accords.agreements" :key="index" class="relative group hover:opacity-60 hover:cursor-pointer bg-base-100 rounded-lg p-4 m-2 min-w-80 w-80 h-52 drop-shadow-lg flex flex-col justify-between">
-                        <span class="fi text-5xl transition-all duration-100 ease-in-out" :class="'fi-'+item.partnercountry.parco_code "></span>
+                        <div class="flex justify-between">
+                            <div>
+                                <span class="fi text-5xl transition-all duration-100 ease-in-out" :class="'fi-'+item.partnercountry.parco_code "></span>
+                            </div>
+                            <div class=" flex items-start justify-start flex-wrap ml-2" v-if="item.departments.length > 0">
+                                <div class="font-bold text-xxs p-1"  :style="{backgroundColor: dept.dept_color}" v-for="(dept, index) in item.departments" :key="index">
+                                    {{ dept.dept_shortname }}
+                                </div>
+                            </div>
+                            <div v-else>
+                                <p>Aucun département</p>
+                            </div>
+                        </div>
                         <div>
                             <p class="font-bold break-words whitespace-normal text-xl">{{ item.university.univ_name }}</p>
-                            <p>{{ item.university.univ_city }} ({{ item.partnercountry.parco_name }})</p>
+                            <p>{{ item.university.univ_city }} ({{ item.partnercountry.parco_name }}) - {{ item.isced.isc_code }}</p>
                         </div>
                         <span class="absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
                     </RouterLink>
+
                 </div>
 
             </div>
@@ -59,20 +72,32 @@
     import { request } from '../composables/httpRequest';
     import config from '../config';
     import LoadingComp from '../components/utils/LoadingComp.vue';
- 
+    import { useAccountStore } from '../stores/accountStore';
+    const accountStore = useAccountStore();
+
     const route = useRoute();
     const accord = ref([]);
     const isLoaded = ref(false);
     const accords = ref([])
+    const account = ref([])
 
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accord, config.apiUrl+'api/agreement/getbyid/'+route.params.agree_id);
-        const requestData = {
-            univ_id: accord.value.university.univ_id,
-            isc_id: accord.value.isced.isc_id
+        const requestData = {}
+        if(accountStore.isLogged()){
+            await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+accountStore.login); 
+            requestData.dept_id = account.value.department ? account.value.department.dept_id : null;
         }
-        await request('GET', false, accords, config.apiUrl+'api/agreement/random', requestData);
+
+        let apiUrl = config.apiUrl + 'api/agreement/random?';
+        if (requestData.dept_id) {
+            apiUrl += 'dept_id=' + requestData.dept_id + '&';
+        }
+        apiUrl += requestData.dept_id ? 'agree_id=' + accord.value.agree_id + '&' : '';
+        apiUrl += requestData.dept_id ? 'univ_id=' + accord.value.university.univ_id : '';
+
+        await request('GET', true, accords, apiUrl);
         isLoaded.value = true;
     }
 
