@@ -96,10 +96,11 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center flex-wrap">
-                                        <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out">
+                                        <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out h-full">
                                             <div v-for="(dept, index) in accord.departments" :key="index">
                                                 <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 font-bold md:text-xl text-xs text-center select-none" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                                             </div>
+                                            
                                         </div>
                                         <div v-else>
                                             <p class="p-3 m-1">Aucun département</p>
@@ -184,8 +185,8 @@
                                     <p class="md:p-4 p-1 md:text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
                                     <div class="bg-base-300 p-6 xl:w-110 md:w-100 w-80 my-3 drop-shadow-lg flex flex-col transition-all duration-100 ease-in-out rounded-lg">
                                         <div class="flex justify-between">
-                                            <p class="font-bold  truncate">{{ event.evt_name }}</p>
-                                            <span class="badge badge-warning">{{ event.theme.evthm_name }}</span>
+                                            <p class="font-bold truncate">{{ event.evt_name }}</p>
+                                            <span class="badge badge-warning min-w-fit">{{ event.theme.evthm_name }}</span>
                                         </div>  
                                         <p class="truncate">{{ event.evt_description }}</p>
                                     </div>
