@@ -174,7 +174,7 @@
                     <div class="flex h-full items-center lg:items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
                         <div class="flex flex-col items-center justify-center">
                             <CalendarComp :events="events"></CalendarComp>
-                            <div class="flex items-center justify-center p-5 w-full">
+                            <div class="flex items-center justify-center py-5 w-full">
                                 <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full">Voir tous les évènements</RouterLink>
                             </div>
                         </div>
