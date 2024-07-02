@@ -19,6 +19,11 @@
                     </div>
                     <div class="p-1" v-show="isOpen.departments">
                         <button class="hover:opacity-70" @click="deselectAllDept">Tout désélectionner</button>
+                        <div class="flex items-center hover:opacity-60 my-1">
+                            <input id="filt_dept_0" type="checkbox" class="checkbox mx-2" value="Aucun" v-model="selectedDepartment">
+                            <div class="w-3 h-3 mr-1" :style="{backgroundColor: '#aaaaaa'}"></div>
+                            <label for="filt_dept_0" class="select-none w-full">Aucun</label>
+                        </div>
                         <div v-for="(comp, index) in components.components" :key="index">
                             <p>{{ comp.comp_name }}</p>
                             <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1">
@@ -59,7 +64,7 @@
                 <!-- Barre de recherche -->
                 <div class="py-2">
                     <label class="input input-bordered flex items-center gap-2">
-                        <input type="text" class="grow" placeholder="Recherche par nom" v-model="searchQuery" />
+                        <input type="text" class="grow" placeholder="Recherche par nom et prénom" v-model="searchQuery" />
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
                             <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
                         </svg>
@@ -128,7 +133,9 @@ function toggleCollapse(section) {
 const filteredEtudiants = computed(() => {
     return etudiants.value.accounts
         .filter(etu => {
-            const matchesDepartments = selectedDepartment.value.length === 0 || (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname));
+            const matchesDepartments = selectedDepartment.value.length === 0 || 
+                (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
+                (selectedDepartment.value.includes('Aucun') && !etu.department);
             
             const hasAccess = etu.access === null;
 
