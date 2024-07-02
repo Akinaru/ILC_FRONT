@@ -74,15 +74,15 @@
 
     async function confirmCompl(){
         if(!complDossier.value.ine || complDossier.value.ine === ''){
-            addAlert(true,{data: {error: 'Veuillez renseigner le numéro étudiant (INE).'}});
+            addAlert('error',{data: {error: 'Veuillez renseigner le numéro étudiant (INE).'}});
             return;
         }
         else if(!complDossier.value.department || complDossier.value.department === ''){
-            addAlert(true,{data: {error: 'Veuillez renseigner votre département.'}});
+            addAlert('error',{data: {error: 'Veuillez renseigner votre département.'}});
             return;
         }
         else if(!complDossier.value.consent){
-            addAlert(true,{data: {error: 'Votre consentement au droit à l\'image est obligatoire.'}});
+            addAlert('error',{data: {error: 'Votre consentement au droit à l\'image est obligatoire.'}});
             return;
         }
         const requestData = {

@@ -209,17 +209,17 @@
 
         // Gestion de la nouvelle composante
         if (newDep.value.compo == 'Selectionnez une composante'){
-            addAlert(true, {data:{error: 'Vous devez choisir une composante.', message:'Ajout du département annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez choisir une composante.', message:'Ajout du département annulé.'}})
             return;
         }else if (newDep.value.compo !== 'addNew') {
             requestData.comp_id = newDep.value.compo;
         } else {
             if(!newDep.value.newcompo.name || newDep.value.newcompo.name === ''){
-                addAlert(true, {data:{error: 'Vous devez mettre un nom à votre composante.', message:'Ajout du département annulé.'}})
+                addAlert('error', {data:{error: 'Vous devez mettre un nom à votre composante.', message:'Ajout du département annulé.'}})
                 return;
             }
             else if(!newDep.value.newcompo.shortname || newDep.value.newcompo.shortname === ''){
-                addAlert(true, {data:{error: 'Vous devez mettre un nom raccourci à votre composante.', message:'Ajout du département annulé.'}})
+                addAlert('error', {data:{error: 'Vous devez mettre un nom raccourci à votre composante.', message:'Ajout du département annulé.'}})
                 return;
             }
             requestData.newcompo = {
@@ -229,11 +229,11 @@
         }
         
         if(newDep.value.name == ''){
-            addAlert(true, {data:{error: 'Vous devez mettre un nom à votre département.', message:'Ajout du département annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez mettre un nom à votre département.', message:'Ajout du département annulé.'}})
             return;
         }
         if(newDep.value.shortname == ''){
-            addAlert(true, {data:{error: 'Vous devez mettre un nom raccourci à votre département.', message:'Ajout du département annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez mettre un nom raccourci à votre département.', message:'Ajout du département annulé.'}})
             return;
         }
         

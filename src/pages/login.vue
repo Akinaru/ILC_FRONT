@@ -43,14 +43,14 @@ async function login() {
             if (isLoginAccepted || isLoginAccess) {
                 await authLogAccount(newLogin.value.login, router);
             } else {
-                addAlert(true, { data: { error: 'Vous n\'êtes pas autorisé à accéder à la partie connectée.', message: 'Veuillez vous renseigner auprès du service ILC.' } });
+                addAlert('error', { data: { error: 'Vous n\'êtes pas autorisé à accéder à la partie connectée.', message: 'Veuillez vous renseigner auprès du service ILC.' } });
             }
         } catch (error) {
-            addAlert(true, { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: error.message } });
+            addAlert('error', { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: error.message } });
             console.log(error)
         }
     } else {
-        addAlert(true, { data: { error: 'Vous devez entrer un login.', message: 'Veuillez saisir votre identifiant de connexion.' } });
+        addAlert('error', { data: { error: 'Vous devez entrer un login.', message: 'Veuillez saisir votre identifiant de connexion.' } });
     }
     tryToLogin.value = false;
 }

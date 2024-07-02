@@ -12,14 +12,18 @@ export async function request(method, sendAlert, object, url, data = null) {
         const response = await axios(axiosConfig);
         const responseData = response.data;
         object.value = responseData;
-
-        if ((responseData.message || responseData.error) && sendAlert) {
-            addAlert(false, responseData);
+        if(responseData.save && sendAlert){
+            addAlert('save', responseData)
         }
+        else if ((responseData.message || responseData.error) && sendAlert) {
+            addAlert('message', responseData);
+        }
+
+        
     } catch (error) {
         object.value = error;
         if (sendAlert){
-            addAlert(true, error.response);
+            addAlert('error', error.response);
         }
     }
 }

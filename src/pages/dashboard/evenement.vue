@@ -138,15 +138,15 @@
     // Ajout d'evenement
     async function addEvent(){
         if(newEvent.value.name == ''){
-            addAlert(true, {data:{error: 'Vous devez mettre un titre d\'événement.', message:'Ajout de l\'événement annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez mettre un titre d\'événement.', message:'Ajout de l\'événement annulé.'}})
             return;
         }
         if(newEvent.value.description == ''){
-            addAlert(true, {data:{error: 'Vous devez mettre une description.', message:'Ajout de l\'événement annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez mettre une description.', message:'Ajout de l\'événement annulé.'}})
             return;
         }
         if(newEvent.value.datetime == ''){
-            addAlert(true, {data:{error: 'Vous devez mettre une date.', message:'Ajout de l\'événement annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez mettre une date.', message:'Ajout de l\'événement annulé.'}})
             return;
         }        
         const requestData = {
@@ -158,7 +158,7 @@
             requestData.evthm_id = newEvent.value.thematique;
         } else {
             if(newEvent.value.newthem.name == ''){
-                addAlert(true, {data:{error: 'Vous devez choisir un nom de thématique.', message:'Ajout de l\'événement annulé.'}})
+                addAlert('error', {data:{error: 'Vous devez choisir un nom de thématique.', message:'Ajout de l\'événement annulé.'}})
                 return;
             }
             requestData.newthem = {
@@ -166,7 +166,7 @@
             };
         }
         if(requestData.evthm_id == 'Selectionnez une thématique'){
-            addAlert(true, {data:{error: 'Vous devez choisir une thématique.', message:'Ajout de l\'événement annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez choisir une thématique.', message:'Ajout de l\'événement annulé.'}})
             return;
         }
 

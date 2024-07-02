@@ -174,11 +174,11 @@ const handleFileInputChangeModif = (event) => {
 async function addArticle(){
 
     if(newArticle.value.title == null){
-        addAlert(true, {data:{error: 'Vous devez mettre un titre à votre article.', message:'Ajout de l\'article annulé.'}})
+        addAlert('error', {data:{error: 'Vous devez mettre un titre à votre article.', message:'Ajout de l\'article annulé.'}})
         return;
     }
     if(newArticle.value.art_description == null){
-        addAlert(true, {data:{error: 'Vous devez mettre une description à votre article.', message:'Ajout de l\'article annulé.'}})
+        addAlert('error', {data:{error: 'Vous devez mettre une description à votre article.', message:'Ajout de l\'article annulé.'}})
         return;
     }
     const requestData = {

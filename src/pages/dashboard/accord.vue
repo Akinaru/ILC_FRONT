@@ -369,7 +369,7 @@
 
     // Vérification du nombre de places
     if (newAgreement.value.nbplace <= 0) {
-        addAlert(true, { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
+        addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
         return;
     }
 
@@ -418,7 +418,7 @@
 
     // Vérification du type d'accord
     if (requestData.typeaccord === 'Selectionnez un type d\'accord') {
-        addAlert(true, { data: { error: 'Vous devez choisir un type d\'accord.', message: 'Ajout de l\'accord annulé.' } });
+        addAlert('error', { data: { error: 'Vous devez choisir un type d\'accord.', message: 'Ajout de l\'accord annulé.' } });
         return;
     }
 

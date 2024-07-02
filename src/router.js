@@ -18,7 +18,7 @@ const requireAuth = (to, from, next) => {
         }
     } else {
         next({ name: 'Login' });
-        addAlert(true, {
+        addAlert('error', {
             data: { 
                 error: 'Vous devez être connecté pour accéder à cette page.'
             }
@@ -32,7 +32,7 @@ const requireAccess = (accessLevel) => (to, from, next) => {
         next();
     } else {
         next({ name: 'Dashboard' });
-        addAlert(true, {data: {error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'}})
+        addAlert('error', {data: {error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'}})
     }
 };
 function checkMultipleAccess(...levels) {
@@ -43,7 +43,7 @@ function checkMultipleAccess(...levels) {
         next();
       } else {
         next({ name: 'Dashboard' });
-        addAlert(true, {data: {error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'}})
+        addAlert('error', {data: {error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'}})
       }
     };
   }

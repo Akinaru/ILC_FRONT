@@ -166,7 +166,7 @@ async function editAgreement(agree_id) {
 
     // Vérification du nombre de places
     if (newAgreement.value.nbplace <= 0) {
-        addAlert(true, { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Modification de l\'accord annulée.' } });
+        addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Modification de l\'accord annulée.' } });
         return;
     }
 
@@ -182,11 +182,11 @@ async function editAgreement(agree_id) {
         requestData.isc_id = newAgreement.value.isced;
     } else {
         if (newAgreement.value.newisced.code === 0 || newAgreement.value.newisced.code === '0') {
-            addAlert(true, { data: { error: 'Vous devez choisir un code ISCED.', message: 'Modification de l\'accord annulée.' } });
+            addAlert('error', { data: { error: 'Vous devez choisir un code ISCED.', message: 'Modification de l\'accord annulée.' } });
             return;
         }
         if (newAgreement.value.newisced.name === '') {
-            addAlert(true, { data: { error: 'Vous devez choisir un nom ISCED.', message: 'Modification de l\'accord annulée.' } });
+            addAlert('error', { data: { error: 'Vous devez choisir un nom ISCED.', message: 'Modification de l\'accord annulée.' } });
             return;
         }
         requestData.newisced = {
@@ -200,11 +200,11 @@ async function editAgreement(agree_id) {
         requestData.comp_id = newAgreement.value.compo;
     } else {
         if (newAgreement.value.newcompo.name === '') {
-            addAlert(true, { data: { error: 'Vous devez choisir un nom de composante.', message: 'Modification de l\'accord annulée.' } });
+            addAlert('error', { data: { error: 'Vous devez choisir un nom de composante.', message: 'Modification de l\'accord annulée.' } });
             return;
         }
         if (newAgreement.value.newcompo.shortname === '') {
-            addAlert(true, { data: { error: 'Vous devez choisir une abréviation de composante.', message: 'Modification de l\'accord annulée.' } });
+            addAlert('error', { data: { error: 'Vous devez choisir une abréviation de composante.', message: 'Modification de l\'accord annulée.' } });
             return;
         }
         requestData.newcompo = {
@@ -218,15 +218,15 @@ async function editAgreement(agree_id) {
         requestData.univ_id = newAgreement.value.univ;
     } else {
         if (newAgreement.value.newuniv.name === '') {
-            addAlert(true, { data: { error: 'Vous devez choisir un nom d\'université.', message: 'Modification de l\'accord annulée.' } });
+            addAlert('error', { data: { error: 'Vous devez choisir un nom d\'université.', message: 'Modification de l\'accord annulée.' } });
             return;
         }
         if (newAgreement.value.newuniv.city === '') {
-            addAlert(true, { data: { error: 'Vous devez choisir une ville pour l\'université.', message: 'Modification de l\'accord annulée.' } });
+            addAlert('error', { data: { error: 'Vous devez choisir une ville pour l\'université.', message: 'Modification de l\'accord annulée.' } });
             return;
         }
         if (newAgreement.value.newuniv.partnercountry === '') {
-            addAlert(true, { data: { error: 'Vous devez choisir un pays d\'université.', message: 'Modification de l\'accord annulée.' } });
+            addAlert('error', { data: { error: 'Vous devez choisir un pays d\'université.', message: 'Modification de l\'accord annulée.' } });
             return;
         }
         requestData.newuniv = {

@@ -122,7 +122,7 @@ async function confirmModifDate(){
   const currentDate = new Date();
   
   if (selectedDate < currentDate) {
-    addAlert(true, { data: {error: 'Le jour que vous avez choisi est déjà passé. Action annulée.'} });
+    addAlert('error', { data: {error: 'Le jour que vous avez choisi est déjà passé. Action annulée.'} });
     modifDate.value = formatDateModif(admin.value.adm_datelimite);
     return;
   }
