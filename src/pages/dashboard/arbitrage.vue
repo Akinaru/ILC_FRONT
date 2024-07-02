@@ -3,7 +3,7 @@
         <p class="font-bold text-xl text-center">Arbitrage</p>
         <div class="flex">
             <!-- Gauche -->
-            <div class="w-1/2 min-h-screen flex flex-col items-center">
+            <div class=" min-h-screen flex flex-col items-center">
                 <p class="text-center py-5">Liste des étudiants</p>
 
                 <!-- Partie filtre étudiants -->
@@ -49,7 +49,7 @@
             </div>
 
             <!-- Droite -->
-            <div class="w-1/2 min-h-screen flex flex-col items-center">
+            <div class=" min-h-screen flex flex-col items-center">
                 <p class="text-center py-5 w-full">Liste des accords</p>
 
                 <!-- Partie filtre accords -->
@@ -92,10 +92,10 @@
                         <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }}</p>
 
                         <div class="w-full flex justify-center">
-                            <div class="flex flex-wrap gap-4 justify-start w-full">
+                            <div class="flex flex-wrap gap-4 justify-center w-full">
                                 <!-- Rendu des cases -->
                                 <div :id="'drop_'+arbitrage.agreement.agree_id+'_'+placeIndex" v-for="(place, placeIndex) in Array(arbitrage.agreement.agree_nbplace).fill()" :key="'place-' + placeIndex" 
-                                    class="dropZones bg-base-200 m-1 h-20 w-80 relative flex items-center justify-center">
+                                    class="dropZones bg-base-200 m-1 h-20 w-72 relative flex items-center justify-center">
                                     
                                     <div v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account"
                                     draggable="true"
@@ -109,7 +109,7 @@
                                     </div>
                                     <p v-else class="">Aucun étudiant</p>
                                 </div>
-                                <div class="w-80 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer">
+                                <div class="w-72 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer">
                                     <p class="text-lg font-bold">+</p>
                                 </div>
                             </div>

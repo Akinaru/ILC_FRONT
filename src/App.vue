@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderComp/>
-    <div id="content" class="mt-37 m-5">
+    <div id="content" class="mt-37 m-5 min-h-screen">
       <RouterView  />
     </div>
     <AlertContainer />
