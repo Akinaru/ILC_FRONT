@@ -40,11 +40,18 @@
             <span class="badge badge-sm badge-info indicator-item select-none">8</span>
           </div>
 
-          <div tabindex="0" class="dropdown-content menu bg-base-100 z-[1] w-96 p-2 shadow min-h-96 flex items-center justify-center">
-            <div v-for="n in 5">
-              
+          <div tabindex="0" class="dropdown-content menu bg-base-100 z-[1] w-96 p-2 min-h-96 flex items-center justify-tart">
+            <div v-if="1 == 1" class="w-full">
+
+                <div v-for="n in 5" class="w-full py-5">
+                  <div class="flex justify-between">
+                    <p class="font-bold">Administrateur RI</p>
+                    <p>Jeudi 19 Mai à 19h30</p>
+                  </div>
+                  <p>fezhui fheziuofhzeuifhezuifhzeufiezhui</p>
+                </div>
             </div>
-            <p class="font-bold">Aucune notification</p>
+            <p v-else class="font-bold">Aucune notification</p>
           </div>
         </div>
       
