@@ -1,6 +1,12 @@
 <template>
     <div>
-        <p class="text-xl font-bold">Departement</p>
+        <div class="flex justify-between">
+            <p class="text-xl font-bold">Departement</p>
+            <div class="flex *:mx-1">
+                <ImportComp text="Importer des départements en csv"></ImportComp>
+                <ExportComp text="Exporter des départements en csv"></ExportComp>
+            </div>
+        </div>
         <!-- Ajout de département -->
         <div class="m-5">
             <div class="m-5 flex justify-center items-center flex-col">
@@ -172,6 +178,8 @@
     import config from '../../config';
     import { addAlert } from '../../composables/addAlert';
     import { useAccountStore } from '../../stores/accountStore';
+    import ImportComp from '../../components/impexp/ImportComp.vue';
+    import ExportComp from '../../components/impexp/ExportComp.vue';
 
     const accountStore = useAccountStore();
 

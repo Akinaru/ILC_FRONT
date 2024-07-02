@@ -1,6 +1,7 @@
 <template>
     <div v-if="isLoaded">
         <!-- Partie accès de haut niveau -->
+        <p class="text-xl font-bold">Accès</p>
         <div class="m-5 flex items-center justify-center md:flex-row flex-col">
             <div class="md:w-1/2 w-4/5 flex items-center flex-col">
                 <p class="text-lg font-bold">Liste des accès de haut niveau</p>
@@ -183,7 +184,7 @@
                         </div>
                     </form>
                 </div>
-                <button class="btn btn-success" disabled>Importer des étudiants</button>
+                <ImportComp text="Importer des étudiants en csv"></ImportComp>
             </div>
         </div>
     </div>
@@ -200,6 +201,7 @@
     import { useAccountStore } from '../../stores/accountStore';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { addAlert } from '../../composables/addAlert';
+    import ImportComp from '../../components/impexp/ImportComp.vue';
 
     const accountStore = useAccountStore();
     const access = ref([]);

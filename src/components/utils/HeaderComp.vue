@@ -8,20 +8,20 @@
       <div class="flex items-center justify-center">
         <div v-if="!accountStore.isLogged()">
           <!-- Afficher le portail de connexion -->
-          <p class="mx-5 hover:opacity-70 transition-all">
+          <p class=" hover:opacity-70 transition-all">
             <RouterLink :to="{ name: 'Login' }">Portail connexion</RouterLink>
           </p>
         </div>
         <div v-else>
-          <ul class="menu menu-horizontal px-1">
+          <ul class="menu menu-horizontal">
             <li>
               <details>
                 <summary>
                   {{ fullname }}
                 </summary>
-                <ul class="p-2 bg-base-100 rounded-t-none">
+                <ul class="bg-base-100 rounded-t-none">
                   <li><a @click="profil">Profil</a></li>
-                  <li><a @click="logout">Déconnexion</a></li>
+                  <li><a @click="logout" class="text-red-600">Déconnexion</a></li>
                 </ul>
               </details>
             </li>

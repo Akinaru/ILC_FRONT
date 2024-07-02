@@ -2,7 +2,13 @@
     <div>
         <div v-if="isLoaded">
 
-            <p class="font-bold text-xl">Accord</p>
+        <div class="flex justify-between">
+            <p class="text-xl font-bold">Accord</p>
+            <div class="flex *:mx-1">
+                <ImportComp text="Importer des accords en csv"></ImportComp>
+                <ExportComp text="Exporter des accords en csv"></ExportComp>
+            </div>
+        </div>
             <!-- Partie ajout d'un accord -->
             <div class="m-5">
                 <div class="m-5 flex justify-center items-center flex-col" >
@@ -299,6 +305,8 @@
     import { useAccountStore } from '../../stores/accountStore';
     import { addAlert } from '../../composables/addAlert';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
+    import ImportComp from '../../components/impexp/ImportComp.vue';
+    import ExportComp from '../../components/impexp/ExportComp.vue';
     const accountStore = useAccountStore();
     const response = ref([]);
 
