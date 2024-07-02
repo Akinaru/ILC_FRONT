@@ -1,10 +1,10 @@
 <template>
     <div class="flex flex-col" v-if="isLoaded">
-        <p>Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
+        <p class="font-bold text-xl pb-5">Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
 
         <!-- Destination finale -->
         <div v-if="destination.agreement">
-            <p>Destination finale</p>
+            <p class="text-sm font-bold pb-2">Destination finale</p>
             <div class="select-none flex justify-between items-center elementDrag xl:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
                 <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
@@ -14,7 +14,6 @@
                         </span>
                         <p class="w-full select-none">({{ destination.agreement.partnercountry.parco_name }}) <span class="font-bold">{{destination.agreement.university.univ_city}} - {{ destination.agreement.university.univ_name }}</span> ({{ destination.agreement.isced.isc_code }})</p>    
                     </div>
-                    <span class="absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
                 </RouterLink>
             </div>
         </div>
@@ -24,7 +23,7 @@
             <div v-if="account && account.acc_id" class="block md:flex w-full justify-center">
                 <!-- Informations -->
                  <div class="w-full md:w-1/2 pt-10">
-                    <p>Vos informations:</p>
+                    <p class="text-sm font-bold">Vos informations:</p>
                     <div>
                         <label class="form-control w-full">
                             <div class="label">
@@ -61,7 +60,7 @@
 
                 <!-- Documents -->
                  <div class="w-fyll md:w-1/2 pt-10">
-                    <p>Vos documents:</p>
+                    <p class="text-sm font-bold">Vos documents:</p>
                     <div>
                         <div class="form-control w-full py-3 max-w-xl">
                             <div class="label">
@@ -117,7 +116,7 @@
         <div v-if="joursRestants(admin.adm_datelimite) > 0">
 
             <!-- Partie voeux -->
-            <div class="md:block hidden" >
+            <div class="md:block hidden pt-5" >
                 <p class="text-center">Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
                 <p class="text-center">Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
                 <p class="text-center">Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
@@ -187,7 +186,6 @@
             <div class="md:hidden btn-block pt-10">
                 <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
                 <p>Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
-                <p>Pensez à bien sauvegarder vos modifications.</p>
                 <p>Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>            
                 
                     <!-- Liste des accords -->
