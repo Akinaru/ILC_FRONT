@@ -1,15 +1,17 @@
 <template>
-  <div >
+  <div>
     <HeaderComp/>
     <div id="content" class="mt-37 m-5">
       <RouterView  />
     </div>
     <AlertContainer />
+    <FooterComp></FooterComp>
   </div>
 </template>
 
 <script setup>
   import HeaderComp from './components/utils/HeaderComp.vue';
+  import FooterComp from './components/utils/FooterComp.vue';
   import AlertContainer from './components/utils/AlertContainer.vue'
   import { useAccountStore } from './stores/accountStore';
   import { onMounted } from 'vue';
