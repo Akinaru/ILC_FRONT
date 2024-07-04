@@ -128,8 +128,8 @@
                                     </div>
                                 </RouterLink>
                             </div>
-                            <div v-else>
-                                <p>Aucun événement pour cette date.</p>
+                            <div v-else class="py-10">
+                                <p>Aucun événement n'a été trouvé.</p>
                             </div>
                         </div>
 
