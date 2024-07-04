@@ -8,11 +8,11 @@
         </div>
         <div v-if="isLoaded" class="flex">
             <!-- Filtres -->
-            <div class="bg-base-200 min-w-72 drop-shadow-lg" v-if="account.access.acs_accounttype == 1">
+            <div class="bg-base-200 min-w-72 drop-shadow-lg" >
                 <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
                 
                 <!-- Départements -->
-                <div>
+                <div v-if="account.access.acs_accounttype == 1">
                     <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
                         <p>Départements ({{ selectedDepartment.length }} séléctionné{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
                         <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
@@ -52,6 +52,40 @@
                         </div>
                     </div>
                 </div>
+                <!-- Documents -->
+                <div>
+                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('voeux')">
+                        <p>Documents ({{ selectedDocument.length }} séléctionné{{ selectedDocument.length > 1 ? 's' : '' }})</p>
+                        <span :class="isOpen.document ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                    </div>
+                    <div class="p-1" v-show="isOpen.document">
+                        <button class="hover:opacity-70" @click="deselectAllVoeux">Tout désélectionner</button>
+                        <div class="flex items-center hover:opacity-60 my-1">
+                            <input id="filt_document_1" type="checkbox" class="checkbox mx-2" value="0" v-model="selectedDocument">
+                            <label for="filt_document_1" class="select-none w-full">0</label>
+                        </div>
+                        <div class="flex items-center hover:opacity-60 my-1">
+                            <input id="filt_document_2" type="checkbox" class="checkbox mx-2" value="1" v-model="selectedDocument">
+                            <label for="filt_document_2" class="select-none w-full">1</label>
+                        </div>
+                        <div class="flex items-center hover:opacity-60 my-1">
+                            <input id="filt_document_2" type="checkbox" class="checkbox mx-2" value="2" v-model="selectedDocument">
+                            <label for="filt_document_2" class="select-none w-full">2</label>
+                        </div>
+                        <div class="flex items-center hover:opacity-60 my-1">
+                            <input id="filt_document_3" type="checkbox" class="checkbox mx-2" value="3" v-model="selectedDocument">
+                            <label for="filt_document_3" class="select-none w-full">3</label>
+                        </div>
+                        <div class="flex items-center hover:opacity-60 my-1">
+                            <input id="filt_document_4" type="checkbox" class="checkbox mx-2" value="4" v-model="selectedDocument">
+                            <label for="filt_document_4" class="select-none w-full">4</label>
+                        </div>
+                        <div class="flex items-center hover:opacity-60 my-1">
+                            <input id="filt_document_5" type="checkbox" class="checkbox mx-2" value="5" v-model="selectedDocument">
+                            <label for="filt_document_5" class="select-none w-full">5</label>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- Liste des étudiants -->
             <div v-if="account && account.acc_id && etudiants && etudiants.accounts" class="w-full px-10">
@@ -87,6 +121,7 @@
                                     <div class="mt-4">
                                         <p class="text-sm text-gray-700">
                                             <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
+                                            <strong>Documents ajouté(s):</strong> 0<br>
                                             <strong>Dernière connexion:</strong> {{ etu.acc_lastlogin }}
                                         </p>
                                     </div>
@@ -122,9 +157,11 @@ const searchQuery = ref('');
 
 const selectedDepartment = ref([]);
 const selectedVoeux = ref([]);
+const selectedDocument = ref([]);
 const isOpen = ref({
     voeux: true,
     departments: true,
+    document: true,
 });
 function toggleCollapse(section) {
     isOpen.value[section] = !isOpen.value[section];
