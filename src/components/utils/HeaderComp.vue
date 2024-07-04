@@ -1,6 +1,6 @@
 <template>
   <div class="fixed w-full top-0 z-50">
-    <div class="flex justify-between items-center bg-base-300 md:p-10 px-3 py-8 drop-shadow-lg min-h-36">
+    <div class="flex justify-between items-center bg-base-300 md:p-10 px-3 py-8 drop-shadow-md min-h-36">
       <RouterLink :to="{ name: 'Accueil' }" class="hover:opacity-80 transition-all hover:scale-105">
         <img :src="config.apiUrl + 'images/LOGOS/Logo_ILC_couleur_complet.png'" alt="ILC" class="w-36">
       </RouterLink>
@@ -9,7 +9,7 @@
         <!-- Connexion -->
         <div v-if="!accountStore.isLogged()">
           <!-- Afficher le portail de connexion -->
-          <p class=" hover:opacity-70 transition-all">
+          <p class=" hover:opacity-70 transition-all mr-2">
             <RouterLink :to="{ name: 'Login' }">Portail connexion</RouterLink>
           </p>
         </div>
@@ -29,32 +29,43 @@
             </li>
           </ul>
         </div>
+
         <!-- Notification -->
-
-
-        <div class="dropdown dropdown-end">
+        <div v-if="accountStore.isLogged()" class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="indicator  cursor-pointer group">
             <svg width="36px" height="36px" viewBox="0 0 24 24" fill="none"  class="w-8 h-8 fill-current transition-all group-hover:opacity-60" xmlns="http://www.w3.org/2000/svg">
               <path d="M11.713 7.14977C12.1271 7.13953 12.4545 6.79555 12.4443 6.38146C12.434 5.96738 12.0901 5.63999 11.676 5.65023L11.713 7.14977ZM6.30665 12.193H7.05665C7.05665 12.1874 7.05659 12.1818 7.05646 12.1761L6.30665 12.193ZM6.30665 14.51L6.34575 15.259C6.74423 15.2382 7.05665 14.909 7.05665 14.51H6.30665ZM6.30665 17.6L6.26755 18.349C6.28057 18.3497 6.29361 18.35 6.30665 18.35L6.30665 17.6ZM9.41983 18.35C9.83404 18.35 10.1698 18.0142 10.1698 17.6C10.1698 17.1858 9.83404 16.85 9.41983 16.85V18.35ZM10.9445 6.4C10.9445 6.81421 11.2803 7.15 11.6945 7.15C12.1087 7.15 12.4445 6.81421 12.4445 6.4H10.9445ZM12.4445 4C12.4445 3.58579 12.1087 3.25 11.6945 3.25C11.2803 3.25 10.9445 3.58579 10.9445 4H12.4445ZM11.713 5.65023C11.299 5.63999 10.955 5.96738 10.9447 6.38146C10.9345 6.79555 11.2619 7.13953 11.676 7.14977L11.713 5.65023ZM17.0824 12.193L16.3325 12.1761C16.3324 12.1818 16.3324 12.1874 16.3324 12.193H17.0824ZM17.0824 14.51H16.3324C16.3324 14.909 16.6448 15.2382 17.0433 15.259L17.0824 14.51ZM17.0824 17.6V18.35C17.0954 18.35 17.1084 18.3497 17.1215 18.349L17.0824 17.6ZM13.9692 16.85C13.555 16.85 13.2192 17.1858 13.2192 17.6C13.2192 18.0142 13.555 18.35 13.9692 18.35V16.85ZM10.1688 17.6027C10.1703 17.1885 9.83574 16.8515 9.42153 16.85C9.00732 16.8485 8.67034 17.1831 8.66886 17.5973L10.1688 17.6027ZM10.0848 19.3L10.6322 18.7873L10.6309 18.786L10.0848 19.3ZM13.3023 19.3L12.7561 18.786L12.7549 18.7873L13.3023 19.3ZM14.7182 17.5973C14.7167 17.1831 14.3797 16.8485 13.9655 16.85C13.5513 16.8515 13.2167 17.1885 13.2182 17.6027L14.7182 17.5973ZM9.41788 16.85C9.00366 16.85 8.66788 17.1858 8.66788 17.6C8.66788 18.0142 9.00366 18.35 9.41788 18.35V16.85ZM13.9692 18.35C14.3834 18.35 14.7192 18.0142 14.7192 17.6C14.7192 17.1858 14.3834 16.85 13.9692 16.85V18.35ZM11.676 5.65023C8.198 5.73622 5.47765 8.68931 5.55684 12.2099L7.05646 12.1761C6.99506 9.44664 9.09735 7.21444 11.713 7.14977L11.676 5.65023ZM5.55665 12.193V14.51H7.05665V12.193H5.55665ZM6.26755 13.761C5.0505 13.8246 4.125 14.8488 4.125 16.055H5.625C5.625 15.6136 5.95844 15.2792 6.34575 15.259L6.26755 13.761ZM4.125 16.055C4.125 17.2612 5.0505 18.2854 6.26755 18.349L6.34575 16.851C5.95843 16.8308 5.625 16.4964 5.625 16.055H4.125ZM6.30665 18.35H9.41983V16.85H6.30665V18.35ZM12.4445 6.4V4H10.9445V6.4H12.4445ZM11.676 7.14977C14.2917 7.21444 16.3939 9.44664 16.3325 12.1761L17.8322 12.2099C17.9114 8.68931 15.191 5.73622 11.713 5.65023L11.676 7.14977ZM16.3324 12.193V14.51H17.8324V12.193H16.3324ZM17.0433 15.259C17.4306 15.2792 17.764 15.6136 17.764 16.055H19.264C19.264 14.8488 18.3385 13.8246 17.1215 13.761L17.0433 15.259ZM17.764 16.055C17.764 16.4964 17.4306 16.8308 17.0433 16.851L17.1215 18.349C18.3385 18.2854 19.264 17.2612 19.264 16.055H17.764ZM17.0824 16.85H13.9692V18.35H17.0824V16.85ZM8.66886 17.5973C8.66592 18.4207 8.976 19.2162 9.53861 19.814L10.6309 18.786C10.335 18.4715 10.1673 18.0473 10.1688 17.6027L8.66886 17.5973ZM9.53739 19.8127C10.0977 20.4109 10.8758 20.7529 11.6935 20.7529V19.2529C11.2969 19.2529 10.9132 19.0873 10.6322 18.7873L9.53739 19.8127ZM11.6935 20.7529C12.5113 20.7529 13.2894 20.4109 13.8497 19.8127L12.7549 18.7873C12.4739 19.0873 12.0901 19.2529 11.6935 19.2529V20.7529ZM13.8484 19.814C14.4111 19.2162 14.7211 18.4207 14.7182 17.5973L13.2182 17.6027C13.2198 18.0473 13.0521 18.4715 12.7561 18.786L13.8484 19.814ZM9.41788 18.35H13.9692V16.85H9.41788V18.35Z" fill="currentColor"/>
             </svg>
-            <span class="badge badge-sm badge-info indicator-item select-none">8</span>
+            <span class="badge badge-sm badge-info indicator-item select-none" v-if="notification && notification.countvue > 0">{{ notification.countvue }}</span>
           </div>
 
-          <div tabindex="0" class="dropdown-content menu bg-base-100 z-[1] w-96 p-2 min-h-96 flex items-center justify-tart">
-            <div v-if="1 == 1" class="w-full">
-
-                <div v-for="n in 5" class="w-full py-5">
-                  <div class="flex justify-between">
-                    <p class="font-bold">Administrateur RI</p>
-                    <p>Jeudi 19 Mai à 19h30</p>
-                  </div>
-                  <p>fezhui fheziuofhzeuifhezuifhzeufiezhui</p>
-                </div>
-            </div>
-            <p v-else class="font-bold">Aucune notification</p>
+          <div tabindex="0" class="dropdown-content menu bg-base-200 z-[1] w-120 p-2 min-h-96 flex items-center justify-start  drop-shadow-lg">
+  <div v-if="1 == 1" class="w-full">
+    <div v-for="(notif, index) in notification.notifications" :key="index" class="relative w-full my-1 flex items-center justify-start p-2"
+        :class="{ 'bg-base-100 border-l-4 border-blue-500': !notif.not_vue, 'bg-base-100 border-l-4 border-base-100': notif.not_vue }">
+        <!-- Image -->
+        <div class="avatar placeholder h-12 my-1 mr-2">
+          <div class="text-neutral-content w-12 rounded-full select-none" :class="notif.envoyeur.access?.acs_accounttype == 1 ? 'bg-error' : 'bg-neutral'">
+            <span>{{ getInitials(notif.envoyeur?.acc_fullname) }}</span>
           </div>
         </div>
-      
+        <!-- Texte -->
+        <div class="flex flex-col w-full">
+          <div class="flex justify-between w-full">
+            <p class="font-bold" v-if="notif.envoyeur?.acc_fullname">{{ notif.envoyeur.acc_fullname }}</p>
+            <p class="font-bold" v-else>Message automatique</p>
+            <p>{{ notif.not_date }}</p>
+          </div>
+          <p>{{ notif.not_message }}</p>
+        </div>
+      </div>
+  </div>
+  <p v-else class="font-bold">Aucune notification</p>
+</div>
+
+
+        </div>
+
         <!-- Changement de thème -->
         <div class="scale-75 hover:opacity-60 transition-all ml-2 flex items-center justify-center">
           <label class="swap swap-rotate">
@@ -78,12 +89,15 @@ import { useAccountStore } from '../../stores/accountStore';
 import { storeToRefs } from 'pinia';
 import config from '../../config';
 import { useRouter } from 'vue-router';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, nextTick } from 'vue';
+import { request } from '../../composables/httpRequest';
 
 const router = useRouter();
 const accountStore = useAccountStore();
 const { fullname } = storeToRefs(accountStore);
 const theme = ref(localStorage.getItem('theme') || 'light');
+
+const notification = ref([])
 
 function logout() {
   accountStore.logoutAccount();
@@ -113,7 +127,28 @@ function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
 }
 
-onMounted(() => {
+function getInitials(fullname) {
+  if (!fullname) {
+    return 'MA';
+  }
+  const names = fullname.split(' ');
+  if (names.length === 1) {
+    return names[0].substring(0, 2).toUpperCase();
+  }
+  return (names[0][0] + names[1][0]).toUpperCase();
+}
+
+async function load(){
+  await nextTick();
+  await request('GET', true, notification, config.apiUrl+'api/notification/getbylogin/'+accountStore.login)
   applyTheme(theme.value);
-});
+}
+
+onMounted(load)
 </script>
+
+<style scoped>
+.drop-shadow-lg {
+    --tw-drop-shadow: none !important;
+}
+</style>
