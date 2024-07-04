@@ -39,8 +39,10 @@
             <span class="badge badge-sm badge-info indicator-item select-none" v-if="notification && notification.countvue > 0">{{ notification.countvue }}</span>
           </div>
 
-          <div tabindex="0" class="dropdown-content menu bg-base-200 z-[1] w-120 p-2 min-h-96 flex items-center justify-start  drop-shadow-lg"  >
-            <div v-if="1 == 1" class="w-full h-96 overflow-y-auto">
+          <div tabindex="0" class="dropdown-content menu bg-base-200 z-[1] w-120 p-2 min-h-96 flex items-center justify-center drop-shadow-lg"  >
+            <div v-if="notification.count && notification.count > 0" class="w-full h-96 overflow-y-auto">
+              <p>Vous avez {{ notification.count }} notification{{ notification.count > 1 ? 's' : '' }} dont {{ notification.countvue }} non lue{{ notification.countvue > 1 ? 's' : '' }}.</p>
+              <!-- Liste des notifs -->
               <div v-for="(notif, index) in notification.notifications" :key="index" class="relative w-full my-1 flex items-center justify-start p-2"
                   :class="{ 'bg-base-100 border-l-4 border-blue-500': !notif.not_vue, 'bg-base-100 border-l-4 border-base-100': notif.not_vue }">
                   <!-- Image -->
@@ -60,7 +62,9 @@
                   </div>
               </div>
             </div>
-            <p v-else class="font-bold">Aucune notification</p>
+            <div v-else class="w-full">
+              <p class="font-bold text-center">Vous n'avez pas de notification.</p>
+            </div>
           </div>
         </div>
 
@@ -113,7 +117,7 @@ function closeMenu() {
 }
 
 async function handleMenuOpen(){
-  if(!menuAlreadyOpen.value && notification.value.notifications.countvue > 0){
+  if(!menuAlreadyOpen.value && notification.value.countvue > 0){
     menuAlreadyOpen.value = true;
     const requestData = {
       acc_id: accountStore.login

@@ -8,7 +8,7 @@
             <div class="select-none flex justify-between items-center elementDrag xl:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
                 <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
-                    <div class="bg-yellow-600 flex items-center justify-center w-full h-20 select-none">
+                    <div class="border-warning border-2 p-1 flex items-center justify-center w-full h-20 select-none">
                         <span class="tooltip mr-2" :data-tip="destination.agreement.partnercountry.parco_name">
                             <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+destination.agreement.partnercountry.parco_code "></span>
                         </span>
@@ -161,8 +161,8 @@
                             <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
                                 <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
                                 <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 xl:w-96 w-72 flex items-center justify-center transition-all duration-100 ease-in-out">
-                                    <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class=" select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
-                                        <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'bg-yellow-600' : 'bg-base-300'" class="flex items-center justify-center h-20 select-none w-full">
+                                    <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
+                                        <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 flex items-center justify-center h-20 select-none w-full">
                                             <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                                 <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                             </span>
@@ -200,7 +200,7 @@
                                 <div class="lg:block flex flex-wrap">
                                     <!-- Liste des favoris -->
                                     <div v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center w-full h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
-                                        <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
+                                        <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none ">
                                             <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
                                                 <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
                                             </span>
@@ -218,10 +218,11 @@
 
                     <!-- Voeux -->
                     <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
-                        <div :id="'voeu'+i" class="rounded-lg voeuxDrop bg-base-100 h-20 w-full flex items-center justify-center transition-all duration-100 ease-in-out">
+                        <div :id="'voeu'+i" class=" voeuxDrop bg-base-100 h-20 w-full flex items-center justify-center transition-all duration-100 ease-in-out">
                             <!-- Sil y a un accord -->
-                            <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 rounded-lg select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
-                                <div class="rounded-lg bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                            <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300  select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
+                                <div class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full"
+                                :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'">
                                     <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                         <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                     </span>
@@ -232,7 +233,7 @@
                                 </button>
                             </div>
                             <!-- Pas d'accord dans la case -->
-                            <label for="modal_ajout_accord" @click="changeVoeuLocal(i)" v-else class="hover:opacity-80 select-none w-full flex flex-col items-center justify-center bg-base-300 rounded-lg p-2">
+                            <label for="modal_ajout_accord" @click="changeVoeuLocal(i)" v-else class="hover:opacity-80 select-none w-full flex flex-col items-center justify-center bg-base-300  p-2">
                                 <p class="text-lg">Emplacement voeu n°{{ i }}</p>
                                 <p class="opacity-50">Cliquez pour ajouter un accord</p>
                             </label>
