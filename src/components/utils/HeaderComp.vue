@@ -2,7 +2,7 @@
   <div class="fixed w-full top-0 z-50">
     <div class="flex justify-between items-center bg-base-300 md:p-10 px-3 py-8 drop-shadow-md min-h-36">
       <RouterLink :to="{ name: 'Accueil' }" class="hover:opacity-80 transition-all hover:scale-105">
-        <img :src="config.apiUrl + 'images/LOGOS/Logo_ILC_couleur_complet.png'" alt="ILC" class="w-36">
+        <img :src="config.apiUrl + 'images/LOGOS/Logo_ILC_couleur_complet.png'" alt="ILC" class="w-24 sm:w-36">
       </RouterLink>
 
       <div class="flex items-center justify-center">
