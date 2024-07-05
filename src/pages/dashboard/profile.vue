@@ -8,7 +8,7 @@
         </ul>
     </div>
     <div v-if="account && account.acc_id">
-        <p class="text-xl font-bold py-5 bg-base-300 flex items-center justify-center">{{ account.acc_fullname }}<span v-if="account.department != null" :style="{backgroundColor: account.department.dept_color}" class="p-3 mx-3">{{ account.department.dept_shortname }}</span> </p>
+        <p class="text-xl font-bold py-5 bg-base-200 flex items-center justify-center">{{ account.acc_fullname }}<span v-if="account.department != null" :style="{backgroundColor: account.department.dept_color}" class="p-3 mx-3">{{ account.department.dept_shortname }}</span> </p>
         <div>
             <!-- Destination finale -->
             <div v-if="destination.agreement">
@@ -51,42 +51,103 @@
                 </div>
                 <!-- Informations -->
                 <div class="w-full flex items-center justify-center flex-col ">
-                    <div class="w-3/5">
-
+                    <div class="w-3/5 flex items-center justify-center flex-col">
                         <p class="font-bold text-xl py-5 w-full">Informations:</p>
-                            <label class="form-control w-full">
-                                <div class="label">
-                                    <span class="label-text">Identitée</span>
-                                </div>
-                                <input type="text" :value="account.acc_fullname" class="input input-bordered w-full " disabled />
-                            </label>
-                            <label class="form-control w-full" >
-                                <div class="label">
-                                    <span class="label-text">Email</span>
-                                </div>
-                                <input type="text" :value="'mail'" class="input input-bordered w-full " disabled/>
-                            </label>
-                            <label class="form-control w-full">
-                                <div class="label">
-                                    <span class="label-text">Numéro étudiant</span>
-                                </div>
-                                <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full " disabled />
-                            </label>
-                            <label class="form-control w-full " >
-                                <div class="label">
-                                    <span class="label-text">Département</span>
-                                </div>
-                                <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full " disabled/>
-                            </label>
-                            <label class="form-control w-full" >
-                                <div class="label">
-                                    <span class="label-text">Score TOEIC</span>
-                                </div>
-                                <input type="text" :value="'0'" class="input input-bordered w-full " disabled/>
-                            </label>
-                            <button class="btn btn-primary w-full max-w-sm my-10">Modifier</button>
-                    </div>
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Identitée</span>
+                            </div>
+                            <input type="text" :value="account.acc_fullname" class="input input-bordered w-full " disabled />
+                        </label>
+                        <label class="form-control w-full" >
+                            <div class="label">
+                                <span class="label-text">Email</span>
+                            </div>
+                            <input type="text" :value="account.acc_mail" class="input input-bordered w-full " disabled/>
+                        </label>
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Numéro étudiant</span>
+                            </div>
+                            <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full " disabled />
+                        </label>
+                        <label class="form-control w-full " >
+                            <div class="label">
+                                <span class="label-text">Département</span>
+                            </div>
+                            <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full " disabled/>
+                        </label>
+                        <label class="form-control w-full" >
+                            <div class="label">
+                                <span class="label-text">Score TOEIC</span>
+                            </div>
+                            <input type="text" :value="account.acc_toeic" class="input input-bordered w-full " disabled/>
+                        </label>
+                        <!-- Boutton de modification -->
+                        <label for="my_modal_6" class="btn btn-primary w-full max-w-sm my-10" @click="resetModif">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            </svg>
+                            <p>Modifier</p>
+                        </label>
 
+                        <!-- Modal de modification des informations -->
+                        <input type="checkbox" id="my_modal_6" class="modal-toggle" />
+                        <div class="modal" role="dialog">
+                            <div class="modal-box">
+                                <h3 class="text-lg font-bold">Modification des informations</h3>
+                                
+
+                                <form @submit.prevent="confirmModifCompte" class="w-full">
+                                    <!-- Mail -->
+                                    <label class="form-control w-full">
+                                        <div class="label">
+                                            <span class="label-text">Mail</span>
+                                        </div>
+                                        <input type="text"  class="input input-bordered w-full" v-model="modifCompte.acc_mail"/>
+                                    </label>
+                                    <!-- Numéro étudiant -->
+                                    <label class="form-control w-full">
+                                        <div class="label">
+                                            <span class="label-text">Numéro étudiant</span>
+                                        </div>
+                                        <input type="text"  class="input input-bordered w-full" v-model="modifCompte.acc_studentnum"/>
+                                    </label>
+                                    <!-- Département -->
+                                    <label class="form-control w-full">
+                                        <div class="label">
+                                            <span class="label-text">Département</span>
+                                        </div>
+                                        <select 
+                                        :disabled="accountStore.access !== 1"
+                                        class="select select-bordered w-full" 
+                                        v-model="modifCompte.dept_id"
+                                        >
+                                            <option value="no_dept">Aucun département</option>
+                                            <option v-for="department in department.departments" :key="department.dept_id" :value="department.dept_id">
+                                                {{ department.dept_shortname }}
+                                            </option>
+                                        </select>
+                                        <p v-if="accountStore.access != 1">Seul les administrateurs peuvent modifier ce champ.</p>
+                                    </label>
+                                    <!-- Toeic -->
+                                    <label class="form-control w-full">
+                                        <div class="label">
+                                            <span class="label-text">Toeic</span>
+                                        </div>
+                                        <input type="text"  class="input input-bordered w-full" v-model="modifCompte.acc_toeic"/>
+                                    </label>
+                                    <div class="modal-action">
+                                        <button type="submit">
+                                            <label for="my_modal_6" class="btn btn-success">Enregistrer</label>
+                                        </button>
+                                        <label for="my_modal_6" class="btn">Annuler</label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- Envoyer une notification -->
@@ -103,20 +164,48 @@
     import { useRoute } from 'vue-router';
     import { request } from '../../composables/httpRequest';
     import config from '../../config';
+    import { useAccountStore } from '../../stores/accountStore';
  
+    const accountStore = useAccountStore();
     const route = useRoute();
     const acc_id = route.params.acc_id;
     const account = ref([]);
+    const department = ref([]);
     const wishes = ref([])
+    const response = ref([])
     const destination = ref([])
     const labels = ref(['agree_one', 'agree_two', 'agree_three', 'agree_four', 'agree_five', 'agree_six']);
 
+    const modifCompte = ref([])
+
     async function fetchAll(){
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
+        resetModif();
         await request('GET', false, wishes, config.apiUrl+'api/wishagreement/getbylogin/'+acc_id);
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
+        await request('GET', false, department, config.apiUrl+'api/department');
     }
 
+
+    async function confirmModifCompte(){
+        const requestData = {
+            acc_id: account.value.acc_id,
+            acc_studentnum: modifCompte.value.acc_studentnum != '' ? modifCompte.value.acc_studentnum : 0,
+            dept_id: modifCompte.value.dept_id != 'no_dept' ? modifCompte.value.dept_id : null,
+            acc_mail: modifCompte.value.acc_mail != '' ? modifCompte.value.acc_mail : 'Aucun mail' ,
+            acc_toeic: modifCompte.value.acc_toeic != '' ? modifCompte.value.acc_toeic : 0, 
+        }
+        await request('PUT', true, response, config.apiUrl+'api/account/modif', requestData);
+        await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
+        resetModif();
+    }
+
+    function resetModif(){
+        modifCompte.value.acc_studentnum = account.value.acc_studentnum;
+        modifCompte.value.acc_mail = account.value.acc_mail;
+        modifCompte.value.acc_toeic = account.value.acc_toeic;
+        modifCompte.value.dept_id = account.value.department ? account.value.department.dept_id : 'no_dept' 
+    }
 
     onMounted(fetchAll)
 
