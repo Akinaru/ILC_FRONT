@@ -35,7 +35,7 @@
                             <div class="label">
                                 <span class="label-text">Email</span>
                             </div>
-                            <input type="text" :value="'mail'" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.acc_mail" class="input input-bordered w-full max-w-xl" disabled/>
                         </label>
                         <label class="form-control w-full">
                             <div class="label">
@@ -47,13 +47,13 @@
                             <div class="label">
                                 <span class="label-text">Département</span>
                             </div>
-                            <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.department ? account.department.dept_name : 'Aucun'" class="input input-bordered w-full max-w-xl" disabled/>
                         </label>
                         <label class="form-control w-full" >
                             <div class="label">
                                 <span class="label-text">Score TOEIC</span>
                             </div>
-                            <input type="text" :value="'0'" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.acc_toeic" class="input input-bordered w-full max-w-xl" disabled/>
                         </label>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                                     <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     </svg>                                
-                                    Aucun fichié disponible
+                                    Aucun fichier disponible
                                 </div>
                                 <input type="file" class="file-input file-input-bordered w-full" />
                         </div>
@@ -103,7 +103,7 @@
                                     <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     </svg>
-                                    Aucun fichié disponible
+                                    Aucun fichier disponible
                                 </div>
                                 <input type="file" class="file-input file-input-bordered w-full" />
                         </div>
