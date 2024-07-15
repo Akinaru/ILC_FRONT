@@ -1,19 +1,30 @@
 <template>
+
     <div class="m-5 flex items-center justify-center flex-col">
+        
+        <div class="w-full flex items-center justify-center flex-col py-10">
+            <p class="py-4">Avancement des étapes actuelles:</p>
+            <ul class="steps steps-vertical lg:steps-horizontal max-w-lg">
+                <li class="step step-neutral">Inscription</li>
+                <li class="step">Choix des voeux</li>
+                <li class="step">Arbitrage</li>
+                <li class="step">Validation</li>
+            </ul>
+        </div>
         <p>Bienvenue sur votre accès personnel aux relations internationales.</p>
         <p>Votre dossier est incomplet,</p>
         <p>veuillez remplir les informations ci-dessous pour compléter votre dossier étudiant lié aux relations internationales.</p>
 
 
-        <form @submit.prevent="confirmCompl" class="m-5 w-4/6 flex items-center justify-center flex-col">
+        <form @submit.prevent="confirmCompl" class="m-5 w-4/6 flex items-center justify-center flex-col mt-10">
             <p>Formulaire</p>
-            <label class="form-control w-full max-w-xs">
+            <label class="form-control w-full max-w-lg">
                 <div class="label">
                     <span class="label-text">Numéro étudiant (INE)</span>
                 </div>
-                <input type="text" placeholder="XXXXXXXX" class="input input-bordered w-full max-w-xs" v-model="complDossier.ine"/>
+                <input type="text" placeholder="XXXXXXXX" class="input input-bordered w-full max-w-lg" v-model="complDossier.ine"/>
             </label>
-            <label class="form-control w-full max-w-xs">
+            <label class="form-control w-full max-w-lg">
                 <div class="label">
                     <span class="label-text">Département</span>
                 </div>
@@ -31,11 +42,11 @@
                         <input type="checkbox" class="checkbox" v-model="complDossier.amenagement"/>
                     </label>
                 </div>
-                <label class="form-control w-full max-w-xs" v-if="complDossier.amenagement">
+                <label class="form-control w-full max-w-lg" v-if="complDossier.amenagement">
                     <div class="label">
                         <span class="label-text">Description (facultatif)</span>
                     </div>
-                    <input type="text" placeholder="Description de l'aménagement" class="input input-bordered w-full max-w-xs" v-model="complDossier.amenagementdesc"/>
+                    <input type="text" placeholder="Description de l'aménagement" class="input input-bordered w-full max-w-lg" v-model="complDossier.amenagementdesc"/>
                 </label>
                 <div class="form-control">
                     <label class="label cursor-pointer">
@@ -43,7 +54,7 @@
                         <input type="checkbox" class="checkbox" v-model="complDossier.consent"/>
                     </label>
                 </div>
-                <div class="flex items-center justify-center">
+                <div class="flex items-center justify-center mt-10">
                     <button class="btn btn-primary" type="submit">Valider</button>
                 </div>
             </label>

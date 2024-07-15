@@ -2,6 +2,16 @@
     <div class="flex flex-col" v-if="isLoaded">
         <p class="font-bold text-xl pb-5">Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
 
+        <div class="w-full flex items-center justify-center flex-col py-4 md:py-10">
+            <p class="py-4">Avancement des étapes actuelles:</p>
+            <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
+                <li class="step step-neutral">Inscription</li>
+                <li class="step step-neutral">Choix des voeux</li>
+                <li class="step" :class="{'step-neutral' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+                <li class="step">Validation</li>
+            </ul>
+        </div>
+
         <!-- Destination finale -->
         <div v-if="destination.agreement">
             <p class="text-sm font-bold pb-2">Destination finale</p>
@@ -47,7 +57,7 @@
                             <div class="label">
                                 <span class="label-text">Département</span>
                             </div>
-                            <input type="text" :value="account.department ? account.department.dept_name : 'Aucun'" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full max-w-xl" disabled/>
                         </label>
                         <label class="form-control w-full" >
                             <div class="label">
@@ -117,7 +127,7 @@
 
             <!-- Partie voeux -->
             <div class="md:block hidden pt-5" >
-                <p class="text-center">Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
+                <p class="text-center">Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux.</p>
                 <p class="text-center">Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
                 <p class="text-center">Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
                 <div class="flex *:mr-5 py-5 justify-center">
@@ -274,7 +284,10 @@
                         <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                     </svg>
                 </p>
-                <p class="text-center p-5">Vous ne pouvez plus modifier vos voeux car la date limite a été atteinte.</p>
+                <div class="py-5 text-center">
+                    <p>Vous ne pouvez plus modifier vos voeux car la date limite a été atteinte.</p>
+                    <p>Si votre destination finale correspond à un de vos voeux, alors la case sera entourée en jaune.</p>
+                </div>
 
                 <div id="right" class="bg-base-200 flex flex-col *:m-3">
 
@@ -282,7 +295,7 @@
                         <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
                         <div  class="bg-base-100 h-20 xl:w-96 w-72 flex items-center justify-center transition-all duration-100 ease-in-out">
                             <div v-if="localVoeux[i]" :draggable="true" class=" select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:opacity-80">
-                                <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                                <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full">
                                     <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                         <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                     </span>
