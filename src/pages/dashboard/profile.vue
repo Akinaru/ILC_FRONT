@@ -32,7 +32,7 @@
                     <p class="font-bold text-xl py-5">Liste des voeux:</p>
                     <div v-for="(label, index) in labels" :key="index">
                         <div class="w-fit flex items-center justify-start my-1 bg-base-300 border-2 "
-                        :class="destination.agreement && wishes.wishes[label] && destination.agreement.agree_id == wishes.wishes[label].agree_id ? ' border-warning' : 'border-base-300'">
+                        :class="destination.agreement && wishes?.count > 0 && wishes.wishes[label] && destination.agreement.agree_id == wishes.wishes[label].agree_id ? ' border-warning' : 'border-base-300'">
                             <p class="font-bold text-sm xl:text-lg min-w-fit p-5 transition-all duration-100 ease-in-out">Voeu n° {{ index+1 }}</p>
                             <div v-if="wishes && wishes.count > 0 && wishes.wishes[label]" class=" select-none flex justify-between items-center elementDrag w-96 h-20">
                                 <div class=" flex items-center justify-center h-20 select-none">
