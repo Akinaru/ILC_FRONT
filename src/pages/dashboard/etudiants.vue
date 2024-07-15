@@ -59,7 +59,7 @@
                         <span :class="isOpen.document ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.document">
-                        <button class="hover:opacity-70" @click="deselectAllVoeux">Tout désélectionner</button>
+                        <button class="hover:opacity-70" @click="deselectAllDocuments">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
                             <input id="filt_document_1" type="checkbox" class="checkbox mx-2" value="0" v-model="selectedDocument">
                             <label for="filt_document_1" class="select-none w-full">0</label>
@@ -210,5 +210,8 @@ onMounted(fetch);
     }
     function deselectAllVoeux() {
         selectedVoeux.value = [];
+    }
+    function deselectAllDocuments() {
+        selectedDocument.value = [];
     }
 </script>
