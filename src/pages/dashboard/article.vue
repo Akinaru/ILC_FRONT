@@ -6,7 +6,7 @@
         <div class="m-5 flex justify-center items-center flex-col">
             <p class="text-lg font-bold">Ajout article</p>
             <form @submit.prevent="addArticle" class="w-3/5 *:my-2" enctype="multipart/form-data">
-                <div :style="{ backgroundImage: `url(${backgroundImage})` }" class="bg-cover bg-center w-full h-40"></div>
+                <div :style="{ backgroundImage: `url(${backgroundImage})` }" class="bg-cover bg-center w-full h-72"></div>
                 <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full" />
                 <!-- <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.art_description"></textarea> -->
@@ -181,11 +181,14 @@ async function addArticle(){
         addAlert('error', {data:{error: 'Vous devez mettre une description à votre article.', message:'Ajout de l\'article annulé.'}})
         return;
     }
+   // Enlever les couleurs de fond dans la description
+   const cleanedDescription = removeBackgroundColors(newArticle.value.art_description);
+
     const requestData = {
-        art_title: newArticle.value.title, 
-        art_description: newArticle.value.art_description, 
-        art_pin: newArticle.value.pinned, 
-    }
+        art_title: newArticle.value.title,
+        art_description: cleanedDescription,
+        art_pin: newArticle.value.pinned,
+    };
     var rep = ref();
     await request("POST", true, rep, config.apiUrl+'api/article', requestData);
 
@@ -218,6 +221,20 @@ async function addArticle(){
     newArticle.value.pinned = false;
     newArticle.value.image = null;
     imagePreview.value = null;
+}
+
+function removeBackgroundColors(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const elements = doc.body.getElementsByTagName('*');
+
+    for (let element of elements) {
+        if (element.style.backgroundColor) {
+            element.style.backgroundColor = '';
+        }
+    }
+
+    return doc.body.innerHTML;
 }
 
 // Suppression d'article
