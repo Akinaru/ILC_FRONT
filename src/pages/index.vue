@@ -110,7 +110,7 @@
                                     <span class="absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
                                 </RouterLink>
                                 <span v-if="accountStore.isLogged() && accountStore.isStudent()">
-                                    <div @click="toggleFavoris(accord.agree_id)" class="group md:p-5 p-2 flex items-center justify-center hover:opacity-60 hover:cursor-pointer">
+                                    <div @click="toggleFavoris(accord.agree_id)" class="group md:p-5 p-2 flex items-center justify-center  hover:cursor-pointer" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
                                         <svg 
                                             class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" 
                                             viewBox="0 0 24 24" 

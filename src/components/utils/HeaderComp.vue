@@ -47,15 +47,19 @@
                   :class="{ 'bg-base-100 border-l-4 border-blue-500': !notif.not_vue, 'bg-base-100 border-l-4 border-base-100': notif.not_vue }">
                   <!-- Image -->
                   <div class="avatar placeholder h-12 my-1 mr-2">
-                    <div class="text-neutral-content w-12 rounded-full select-none" :class="notif.envoyeur.access?.acs_accounttype == 1 ? 'bg-error' : 'bg-neutral'">
+                    <div class="text-neutral-content w-12 rounded-full select-none" :class="notif.envoyeur.access?.acs_accounttype == 1 ? 'bg-red-600' : 'bg-neutral'" :style="{backgroundColor: notif.envoyeur?.department?.dept_color}">
                       <span>{{ getInitials(notif.envoyeur?.acc_fullname) }}</span>
                     </div>
                   </div>
                   <!-- Texte -->
                   <div class="flex flex-col w-full">
-                    <div class="flex justify-between w-full">
-                      <p class="font-bold" v-if="notif.envoyeur?.acc_fullname">{{ notif.envoyeur.acc_fullname }}</p>
-                      <p class="font-bold" v-else>Message automatique</p>
+                    <div class="flex justify-between w-full py-1">
+                      <p class="font-bold" v-if="notif.envoyeur?.acc_fullname">
+                        <span v-if="notif.envoyeur?.access?.acs_accounttype == 1" class=" bg-red-600 p-1 rounded-lg">ILC</span>
+                        <span v-else-if="notif.envoyeur?.department?.dept_name" :style="{backgroundColor: notif.envoyeur?.department?.dept_color}" class="p-1 rounded-lg">{{ notif.envoyeur.department.dept_shortname }}</span>
+                         {{ notif.envoyeur.acc_fullname }}
+                      </p>
+                      <p class="font-bold" v-else><span class="bg-blue-600 p-1 rounded-lg">Auto</span> Système</p>
                       <p>{{ notif.not_date }}</p>
                     </div>
                     <p>{{ notif.not_message }}</p>
@@ -102,7 +106,6 @@ const theme = ref(localStorage.getItem('theme') || 'light');
 const notification = ref([])
 const response = ref([])
 const menuAlreadyOpen = ref(false)
-const isMenuOpen = ref(false)
 
 function logout() {
   accountStore.logoutAccount();
@@ -144,7 +147,7 @@ function applyTheme(theme) {
 
 function getInitials(fullname) {
   if (!fullname) {
-    return 'MA';
+    return 'Sys';
   }
   const names = fullname.split(' ');
   if (names.length === 1) {
@@ -163,7 +166,7 @@ onMounted(load)
 </script>
 
 <style scoped>
-.drop-shadow-lg {
-    --tw-drop-shadow: none !important;
-}
+  .drop-shadow-lg {
+      --tw-drop-shadow: none !important;
+  }
 </style>
