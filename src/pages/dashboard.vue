@@ -8,7 +8,7 @@
                 :key="route.routeName" 
                 :to="{name: route.routeName}" 
                 :class="{ 'border-b-2 border-current text-[#3f2ab4]': $route.name === route.routeName }" 
-                class="hover:opacity-60 transition-opacity m-1">
+                class="hover:opacity-60 transition-opacity m-1 select-none">
                 {{ route.name }}
             </RouterLink>
         </span>

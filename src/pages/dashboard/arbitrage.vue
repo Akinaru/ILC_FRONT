@@ -22,28 +22,76 @@
                                 <div v-for="(comp, index) in components.components" :key="index">
                                     <div class="lg:block flex flex-wrap">
                                         <p>- {{ comp.comp_name }}</p>
-                                        <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1 ">
+                                        <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
                                             <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
-                                            <div class="lg:w-3 w-6 lg:h-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
-                                            <label :for="'filt_dept_'+index" class="select-none w-full">{{ dept.dept_shortname }}</label>
+                                            <label :for="'filt_dept_'+index" class="w-full flex items-center justify-center cursor-pointer">
+                                                <div class="lg:w-3 w-6 lg:h-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
+                                                <label :for="'filt_dept_'+index" class="select-none w-full hover:cursor-pointer">{{ dept.dept_shortname }}</label>
+                                            </label>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Accords -->
+                        <div>
+                            <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('accords')">
+                                <p>Accords (voeux) ({{ selectedAccord.length }} séléctionné{{ selectedAccord.length > 1 ? 's' : '' }})</p>
+                                <span :class="isOpen.accords ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                            </div>
+                            <div class="p-1" v-show="isOpen.accords">
+                                <button class="hover:opacity-70" @click="deselectAllAccord">Tout désélectionner</button>
+                                <div v-for="(accord,index) in accords.agreements" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
+                                    <input :id="'filt_accord_'+index" type="checkbox" class="checkbox mx-2" :value="accord.agree_id" v-model="selectedAccord">
+                                    <label :for="'filt_accord_'+index" class="cursor-pointer w-full">
+                                        <span class="fi mr-1" :class="'fi-'+accord.partnercountry.parco_code"></span>
+                                        <label :for="'filt_accord_'+index" class="select-none w-full hover:cursor-pointer">{{ accord.university.univ_name }} - {{ accord.isced.isc_code }}</label>
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Affichage des etudiants -->
                 <div class="flex flex-col items-center justify-start w-full">
-                    <div class="elementDrag bg-base-300 w-96 h-24 mb-2 flex items-center justify-center cursor-move select-none hover:opacity-80 flex-col" 
+                    <div class="elementDrag bg-base-300 w-96 mb-2 flex items-center justify-center cursor-move select-none hover:opacity-80 flex-col" 
                         :draggable="true" 
                         :id="'etu_drag_'+etu.acc_id"
                         v-for="(etu, index) in filteredEtus" :key="index"
-                        :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">   
-                        
-                        <p>{{ etu.acc_fullname }}</p> 
-                        <p v-if="etu.department" :style="{backgroundColor: etu.department.dept_color}" class="p-2">{{ etu.department.dept_shortname }}</p>
-                        <p v-else class="bg-gray-500 p-2">Aucun</p>
+                        :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">  
+
+                        <div class="flex items-center justify-between w-full p-1">
+                            <p v-if="etu.department" :style="{backgroundColor: etu.department.dept_color}" class="p-2 rounded-lg min-w-16 text-center">{{ etu.department.dept_shortname }}</p>
+                            <p v-else class="bg-gray-500 p-2 rounded-lg min-w-16 text-center">Aucun</p>
+                            <div class="flex flex-col w-full items-center justify-start">
+                                <p class="w-full text-center">{{ etu.acc_fullname }}</p> 
+                                <p class="py-1" v-if="etu.wishes.count <= 0" >Aucun voeux enregistrés.</p>
+                            </div>
+                        </div>
+
+                        <div v-if="etu.wishes.count > 0" class="bg-base-200 w-full p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapseEtu(etu.acc_id)">
+                            <p>Voir les voeux</p>
+                            <span :class="isOpen.etudiants[etu.acc_id] ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                        </div>
+
+                        <div class="p-1 w-full" v-show="isOpen.etudiants[etu.acc_id]">
+                            <div>
+                                <div>
+                                    <div v-for="(accord, index) in getFilteredAgreements(etu)" :key="index" class="flex justify-between">
+                                        <p class="min-w-fit">Voeu {{ accord.place }}</p>
+                                        <div class="flex w-full items-center justify-start ml-2">
+                                            <span class="fi mr-1" :class="'fi-'+accord.agreement.partnercountry.parco_code"></span>
+                                            <p>{{accord.agreement.university.univ_name}} {{ accord.agreement.isced.isc_code }}</p>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+   
+
                     </div>
                 </div>
             </div>
@@ -65,13 +113,15 @@
                             </div>
                             <div class="p-1" v-show="isOpen.pays">
                                 <button class="hover:opacity-70" @click="deselectAllCountry">Tout désélectionner</button>
-                                <div class="flex flex-wrap items-center justify-center">
+                                <div class="flex flex-wrap items-center justify-start">
 
-                                    <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 w-1/2">
+                                    <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 md:w-2/6 xl:w-1/6 hover:cursor-pointer">
                                         <input :id="'filt_pays_'+index" type="checkbox" class="checkbox mx-2 checkbox-sm" :value="country.parco_name" v-model="selectedCountries">
                                         <div class="flex w-full">
-                                            <span class="fi mr-1" :class="'fi-'+country.parco_code"></span>
-                                            <label :for="'filt_pays_'+index" class="select-none w-full text-sm">{{ country.parco_name }}</label>
+                                            <label :for="'filt_pays_'+index" class="w-full cursor-pointer">
+                                                <span class="fi mr-1" :class="'fi-'+country.parco_code"></span>
+                                                <label :for="'filt_pays_'+index" class="select-none w-full text-sm  hover:cursor-pointer">{{ country.parco_name }}</label>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
@@ -89,7 +139,7 @@
                             <span class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out mr-2" :class="'fi-' + arbitrage.agreement.partnercountry.parco_code"></span>
                             <p class="font-bold text-lg">{{ arbitrage.agreement.partnercountry.parco_name }}</p>
                         </div>
-                        <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }}</p>
+                        <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }} - {{ arbitrage.agreement.isced.isc_code }} {{ arbitrage.agreement.isced.isc_name }}</p>
 
                         <div class="w-full flex justify-center">
                             <div class="flex flex-wrap gap-4 justify-center w-full">
@@ -140,6 +190,7 @@
     const isLoaded = ref(false)
 
     const selectedDepartment = ref([]);
+    const selectedAccord = ref([]);
     const selectedCountries = ref([]);
 
     const arbitrage = ref([])
@@ -150,11 +201,16 @@
     const isOpen = ref({
         pays: false,
         departments: false,
+        accords: false,
+        etudiants: [], 
     });
 
     function toggleCollapse(section) {
         isOpen.value[section] = !isOpen.value[section];
     }
+    const toggleCollapseEtu = (acc_id) => {
+        isOpen.value.etudiants[acc_id] = !isOpen.value.etudiants[acc_id];
+    };
 
     async function fetch(){
         isLoaded.value = false;
@@ -165,6 +221,12 @@
         await request('GET', false, arbitrage, config.apiUrl+'api/arbitrage');
         isLoaded.value = true;
         init();
+        if (etudiants.value && etudiants.value.accounts) {
+            isOpen.value.etudiants = etudiants.value.accounts.reduce((acc, student) => {
+                acc[student.acc_id] = false;
+                return acc;
+            }, {});
+        }
     }
 
 
@@ -218,17 +280,28 @@
 
     await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
 }
+const filteredEtus = computed(() => {
+    return Object.values(localEtus.value)
+        .filter(etu => {
+            if (selectedDepartment.value.length === 0) {
+                return true; // Retourne tous les étudiants si aucun filtre n'est sélectionné
+            }
+            return selectedDepartment.value.includes(etu.department?.dept_shortname);
+        })
+        .filter(etu => {
+            const filteredAgreements = getFilteredAgreements(etu).map(item => item.agreement.agree_id);
+            return selectedAccord.value.length === 0 || selectedAccord.value.some(accord => filteredAgreements.includes(accord));
+        })
+        .sort((a, b) => {
+            const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
+            const bMinPlace = Math.min(...getFilteredAgreements(b).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
+            if (aMinPlace !== bMinPlace) {
+                return aMinPlace - bMinPlace; // Trier par position du vœu
+            }
+            return a.acc_fullname.localeCompare(b.acc_fullname); // Trier alphabétiquement
+        });
+});
 
-    const filteredEtus = computed(() => {
-        return Object.values(localEtus.value)
-            .filter(etu => {
-                if (selectedDepartment.value.length === 0) {
-                    return true; // Retourne tous les étudiants si aucun filtre n'est sélectionné
-                }
-                return selectedDepartment.value.includes(etu.department?.dept_shortname);
-            })
-            .sort((a, b) => a.acc_fullname.localeCompare(b.acc_fullname));
-    });
 
     const filteredArbitrage = computed(() => {
         return Object.values(localArbitrage.value)
@@ -236,6 +309,23 @@
                 return selectedCountries.value.length === 0 || selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
             });
     });
+    
+    function getFilteredAgreements(etu) {
+      const wishes = etu.wishes;
+      const wishIds = [
+        { place: 1, id: wishes.wsha_one },
+        { place: 2, id: wishes.wsha_two },
+        { place: 3, id: wishes.wsha_three },
+        { place: 4, id: wishes.wsha_four },
+        { place: 5, id: wishes.wsha_five },
+        { place: 6, id: wishes.wsha_six }
+      ].filter(wsha => wsha !== null);
+
+      return wishIds.map(wsha => {
+        const agreement = accords.value.agreements.find(agreement => agreement.agree_id === wsha.id);
+        return { place: wsha.place, agreement };
+      }).filter(item => item.agreement !== undefined);
+    }
 
     function removeEtuFromPlace(agree_id, pos) {
         const etu = localArbitrage.value[agree_id].accounts[pos].account
@@ -253,6 +343,7 @@
 
 
     watch(selectedDepartment, handleFiltreEtu);
+    watch(selectedAccord, handleFiltreEtu);
 
 
     async function refreshDrop() {
@@ -385,6 +476,9 @@ function getCurrentAgreeIdByAccId(accId) {
 
     function deselectAllDept() {
         selectedDepartment.value = [];
+    }
+    function deselectAllAccord() {
+        selectedAccord.value = [];
     }
     function deselectAllCountry() {
         selectedCountries.value = [];
