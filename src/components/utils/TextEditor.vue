@@ -113,12 +113,13 @@
       contenteditable="true"
       @input="updateContent"
       class="editor-content p-2 focus:outline-none inputt  rounded-b-lg"
+      id="editorzone"
     ></div>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const props = defineProps({
   text: String,
@@ -127,20 +128,11 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue']); // Définir les événements émis
 
 const currentColor = ref('#000000');
-const isUnderlineActive = ref(false);
 
 const toggleStyle = (style) => {
   document.execCommand(style);
 };
 
-const isStyleActive = (style) => {
-  return document.queryCommandState(style);
-};
-
-const toggleUnderline = () => {
-  document.execCommand('underline');
-  isUnderlineActive.value = !isUnderlineActive.value;
-};
 
 const toggleLink = () => {
   const url = prompt("Entrez l'URL :");
@@ -169,13 +161,6 @@ const outdentText = () => {
   document.execCommand('outdent');
 };
 
-const undo = () => {
-  document.execCommand('undo');
-};
-
-const redo = () => {
-  document.execCommand('redo');
-};
 
 const updateContent = (event) => {
   const editorContent = event.target.innerHTML;

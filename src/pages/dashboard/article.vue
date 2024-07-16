@@ -1,24 +1,30 @@
 <template>
-    <div>
+    <div >
         <p class="text-xl font-bold">Articles</p>
 
         <!-- Formulaire d'ajout d'article -->
         <div class="m-5 flex justify-center items-center flex-col">
-            <p class="text-lg font-bold">Ajout article</p>
-            <form @submit.prevent="addArticle" class="w-3/5 *:my-2" enctype="multipart/form-data">
-                <div :style="{ backgroundImage: `url(${backgroundImage})` }" class="bg-cover bg-center w-full h-72"></div>
-                <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
-                <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full" />
-                <!-- <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newArticle.art_description"></textarea> -->
+            <p class="text-lg font-bold">{{ isEditing ? 'Modifier article' : 'Ajout article' }}</p>
+            <form @submit.prevent="addArticle" class="w-4/5 *:my-2" enctype="multipart/form-data">
+                <!-- Affichage de l'image conditionnel -->
+                <div class="flex items-center justify-center">
+                     <div :style="{ backgroundImage: `url(${isEditing ? backgroundImageModif : backgroundImage})` }" class="bg-cover bg-center w-3/5 h-72 mb-4"></div>
+                </div>
+                <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full mb-4" />
+                <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full mb-4" />
                 <TextEditor v-model="newArticle.art_description"></TextEditor>
-                <div class="form-control">
+                <div class="form-control my-4">
                     <label class="label cursor-pointer">
                         <span class="label-text">Épinglé ?</span> 
-                        <input type="checkbox"  checked="checked" class="checkbox" v-model="newArticle.pinned" />
+                        <input type="checkbox" class="checkbox" v-model="newArticle.pinned" />
                     </label>
                 </div>
                 <div class="flex items-center justify-center *:mx-1">
-                    <button class="btn btn-primary" type="submit">Ajouter l'article</button>
+                    <button v-if="!isEditing" class="btn btn-primary" type="submit">Ajouter l'article</button>
+                    <div v-else>
+                        <button class="btn btn-success mr-1" type="button" @click="confirmModifArticle">Enregistrer les modifications</button>
+                        <button class="btn btn-neutral ml-1" type="button" @click="cancelModifArticle">Annuler les modifications</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -35,7 +41,7 @@
                         <!-- Modification / Suppression -->
                         <div class="flex absolute top-0 right-0 ">
                                 <!-- Bouton de modification -->
-                                <label for="modal_modif" class="hover:opacity-90 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
+                                <label class="hover:opacity-90 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
                                     <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                         <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -69,47 +75,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal de modification d'article -->
-    <input type="checkbox" id="modal_modif" class="modal-toggle" />
-    <div class="modal modal-bottom sm:modal-middle" role="dialog">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg">Modification de l'article {{ currentArticleModif.art_id }}</h3>
-            <form @submit.prevent="confirmModifArticle" class="w-full">
-                <!-- Image -->
-                <div :style="{ backgroundImage: `url(${backgroundImageModif})` }" class="bg-cover bg-center w-full h-40"></div>
-                <!-- Ajout Image -->
-                <input type="file" @change="handleFileInputChangeModif" name="image" accept="image/*" class="file-input file-input-bordered w-full" />
 
-                <!-- Titre -->
-                <label class="form-control w-full">
-                    <div class="label">
-                        <span class="label-text">Titre</span>
-                    </div>
-                    <input type="text"  class="input input-bordered w-full" v-model="currentArticleModif.art_title"/>
-                </label>
-                <!-- Description -->
-                <label class="form-control w-full">
-                    <div class="label">
-                        <span class="label-text">Description</span>
-                    </div>
-                    <TextEditor v-model="currentArticleModif.art_description" :text="currentArticleModif.art_description"></TextEditor>
-                </label>
-                <!-- Epingle -->
-                <div class="form-control">
-                    <label class="flex items-center justify-start cursor-pointer py-1">
-                        <input type="checkbox" class="checkbox" v-model="currentArticleModif.art_pin" />
-                        <span class="label-text mx-2">Épinglé ?</span> 
-                    </label>
-                </div>
-                <div class="modal-action">
-                    <label for="modal_modif" class="btn">Annuler</label>
-                    <button type="submit">
-                        <label for="modal_modif" class="btn btn-success">Enregistrer</label>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 </template>
 
 <script setup>
@@ -124,6 +90,7 @@ const accountStore = useAccountStore();
 const response = ref([]);
 const articles = ref([]);
 const newArticle = ref({ title: null, description: null, pinned: false, image: null });
+const isEditing = ref(false)
 
 const currentArticleModif = ref([]);
 const imagePreview = ref(null);
@@ -131,44 +98,45 @@ const imagePreviewModif = ref(null);
 
 // Gestion du changement d'image dans le formulaire
 const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            imagePreview.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-        newArticle.value.image = file;
-    } else {
-        imagePreview.value = null;
-        newArticle.value.image = null;
+    if(isEditing.value){
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+            imagePreviewModif.value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            currentArticleModif.value.art_image = file;
+        } else {
+            imagePreviewModif.value = null;
+            currentArticleModif.value.art_image = null;
+        }
+    }else{
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            newArticle.value.image = file;
+        } else {
+            imagePreview.value = null;
+            newArticle.value.image = null;
+        }
     }
 };
 
 const backgroundImage = computed(() => {
     return imagePreview.value ? imagePreview.value : `${config.apiUrl}images/no_image.jpg`;
 });
+
 const backgroundImageModif = computed(() => {
     return imagePreviewModif.value ? imagePreviewModif.value : 
         currentArticleModif.value.art_image
         ? `${config.apiUrl}api/article/image/${currentArticleModif.value.art_id}`
         : `${config.apiUrl}images/no_image.jpg`;
 });
-
-const handleFileInputChangeModif = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-        imagePreviewModif.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-        currentArticleModif.value.art_image = file;
-    } else {
-        imagePreviewModif.value = null;
-        currentArticleModif.value.art_image = null;
-    }
-};
 
 // Ajout d'article
 async function addArticle(){
@@ -193,17 +161,20 @@ async function addArticle(){
     await request("POST", true, rep, config.apiUrl+'api/article', requestData);
 
     if(rep.value.status == 201){
-        try{
-            const formData = new FormData();
-            formData.append('image', newArticle.value.image);
-            formData.append('fileName', 'img_art_' + rep.value.article.art_id);
-            formData.append('filePath', 'private/images/articles');
-            formData.append('articleId', rep.value.article.art_id);
-            
-            await request('POST', true, response, config.apiUrl+'api/image/upload', formData)        
+        if(newArticle.value.image != null){
 
-        } catch (error){
-            console.log("Erreur ajout image: "+error)
+            try{
+                const formData = new FormData();
+                formData.append('image', newArticle.value.image);
+                formData.append('fileName', 'img_art_' + rep.value.article.art_id);
+                formData.append('filePath', 'private/images/articles');
+                formData.append('articleId', rep.value.article.art_id);
+                
+                await request('POST', true, response, config.apiUrl+'api/image/upload', formData)        
+
+            } catch (error){
+                console.log("Erreur ajout image: "+error)
+            }
         }
         const requestDataAction = {
             act_description: 'Ajout de l\'article '+rep.value.article.art_title+'.',
@@ -229,8 +200,15 @@ function removeBackgroundColors(html) {
     const elements = doc.body.getElementsByTagName('*');
 
     for (let element of elements) {
+        // Supprimer les couleurs de fond
         if (element.style.backgroundColor) {
             element.style.backgroundColor = '';
+        }
+
+        // Supprimer les couleurs de texte noir et blanc
+        const textColor = element.style.color;
+        if (textColor === 'black' || textColor === 'white' || textColor === '#000000' || textColor === '#ffffff') {
+            element.style.color = '';
         }
     }
 
@@ -254,38 +232,74 @@ async function removeArticle(title, id){
 // Gestion de la modification d'article
 // Modifie la ref par l'article qu'on veut modifier
 // pour afficher les bonnes informations dans le form de modif
-function modifArticle(article){
+function modifArticle(article) {
     currentArticleModif.value.art_id = article.art_id;
     currentArticleModif.value.art_title = article.art_title;
     currentArticleModif.value.art_description = article.art_description;
     currentArticleModif.value.art_pin = article.art_pin;
     currentArticleModif.value.art_image = article.art_image;
+    
+    const editor = document.querySelector('.editor-content');
+    editor.innerHTML = currentArticleModif.value.art_description;
+    isEditing.value = true;
+
+    newArticle.value.title = currentArticleModif.value.art_title;
+    newArticle.value.pinned = currentArticleModif.value.art_pin;
+    window.scrollTo({
+        top: 120,
+        behavior: 'smooth' 
+    });
+
+    // Mettre à jour l'image de prévisualisation pour la modification
+    if (article.art_image) {
+        imagePreviewModif.value = `${config.apiUrl}api/article/image/${article.art_id}`;
+    } else {
+        imagePreviewModif.value = `${config.apiUrl}images/no_image.jpg`;
+    }
 }
 
+function cancelModifArticle() {
+        isEditing.value = false;
+        // Réinitialiser les valeurs
+        currentArticleModif.value = {};
+        newArticle.value.title = '';
+        newArticle.value.art_description = '';
+        newArticle.value.pinned = false;
+        newArticle.value.image = null;
+        imagePreview.value = null;
+        imagePreviewModif.value = null;
+        const editor = document.querySelector('.editor-content');
+        editor.innerHTML = '';
+    }
+
 async function confirmModifArticle() {
+    const editor = document.querySelector('.editor-content');
+    const cleanedDescription = removeBackgroundColors(editor.innerHTML);
     const requestData = { 
         art_id: currentArticleModif.value.art_id,
-        art_title: currentArticleModif.value.art_title,
-        art_description: currentArticleModif.value.art_description,
-        art_pin: currentArticleModif.value.art_pin,
+        art_title: newArticle.value.title,
+        art_pin: newArticle.value.pinned,
+        art_description: cleanedDescription
     };
 
     await request('PUT', true, response, config.apiUrl + 'api/article', requestData);
-
     if (response.value.status === 200) {
-        try {
-            if (currentArticleModif.value.art_image instanceof File) {
-                const formData = new FormData();
-                formData.append('image', currentArticleModif.value.art_image);
-                formData.append('fileName', 'img_art_' + currentArticleModif.value.art_id);
-                formData.append('filePath', 'private/images/articles');
-                formData.append('articleId', currentArticleModif.value.art_id);
-                await request('POST', true, response, config.apiUrl + 'api/image/upload', formData);
+        console.log(currentArticleModif.value.art_image)
+        if(currentArticleModif.value.art_image){
+            try {
+                if (currentArticleModif.value.art_image instanceof File) {
+                    const formData = new FormData();
+                    formData.append('image', currentArticleModif.value.art_image);
+                    formData.append('fileName', 'img_art_' + currentArticleModif.value.art_id);
+                    formData.append('filePath', 'private/images/articles');
+                    formData.append('articleId', currentArticleModif.value.art_id);
+                    await request('POST', true, response, config.apiUrl + 'api/image/upload', formData);
+                }
+                else{
+                }
+            } catch (error) {
+                console.log("Erreur ajout image: " + error);
             }
-            else{
-            }
-        } catch (error) {
-            console.log("Erreur ajout image: " + error);
         }
 
         const requestDataAction = {
@@ -296,6 +310,7 @@ async function confirmModifArticle() {
 
         await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
         await fetchAll();
+        cancelModifArticle();
 
     }
 }
@@ -304,6 +319,7 @@ async function confirmModifArticle() {
 
 async function fetchAll(){
     await request('GET', false, articles, config.apiUrl+'api/article');
+    isEditing.value = false;
 }
 
 
