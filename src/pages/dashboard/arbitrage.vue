@@ -33,6 +33,23 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Voeux -->
+                        <div>
+                            <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('voeux')">
+                                <p>Nombre de voeux ({{ selectedVoeux.length }} séléctionné{{ selectedVoeux.length > 1 ? 's' : '' }})</p>
+                                <span :class="isOpen.voeux ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                            </div>
+                            <div class="p-1" v-show="isOpen.voeux">
+                                <button class="hover:opacity-70" @click="deselectAllVoeux">Tout désélectionner</button>
+                                
+                                <div v-for="(voeu,index) in voeuxNoms" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
+                                    <input :id="'filt_voeux_'+index" type="checkbox" class="checkbox mx-2" :value="voeu.val" v-model="selectedVoeux">
+                                    <label :for="'filt_voeux_'+index" class="cursor-pointer w-full">
+                                        <label :for="'filt_voeux_'+index" class="select-none w-full hover:cursor-pointer">{{ voeu.name }}</label>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>                        
                         <!-- Accords -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('accords')">
@@ -41,6 +58,7 @@
                             </div>
                             <div class="p-1" v-show="isOpen.accords">
                                 <button class="hover:opacity-70" @click="deselectAllAccord">Tout désélectionner</button>
+
                                 <div v-for="(accord,index) in accords.agreements" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
                                     <input :id="'filt_accord_'+index" type="checkbox" class="checkbox mx-2" :value="accord.agree_id" v-model="selectedAccord">
                                     <label :for="'filt_accord_'+index" class="cursor-pointer w-full">
@@ -191,6 +209,7 @@
 
     const selectedDepartment = ref([]);
     const selectedAccord = ref([]);
+    const selectedVoeux = ref([]);
     const selectedCountries = ref([]);
 
     const arbitrage = ref([])
@@ -198,10 +217,21 @@
     const localEtus = ref([]);
     const localArbitrage = ref([])
 
+    const voeuxNoms = [
+        {val: 0, name: 'Aucun voeux'},
+        {val: 1, name: '1 voeu'},
+        {val: 2, name: '2 voeux'},
+        {val: 3, name: '3 voeux'},
+        {val: 4, name: '4 voeux'},
+        {val: 5, name: '5 voeux'},
+        {val: 6, name: '6 voeux'},
+    ]
+
     const isOpen = ref({
         pays: false,
         departments: false,
         accords: false,
+        voeux: false,
         etudiants: [], 
     });
 
@@ -283,22 +313,30 @@
 const filteredEtus = computed(() => {
     return Object.values(localEtus.value)
         .filter(etu => {
+            // Filtre par département
             if (selectedDepartment.value.length === 0) {
                 return true; // Retourne tous les étudiants si aucun filtre n'est sélectionné
             }
             return selectedDepartment.value.includes(etu.department?.dept_shortname);
         })
         .filter(etu => {
+            // Filtre par accords
             const filteredAgreements = getFilteredAgreements(etu).map(item => item.agreement.agree_id);
             return selectedAccord.value.length === 0 || selectedAccord.value.some(accord => filteredAgreements.includes(accord));
         })
+        .filter(etu => {
+            // Filtre par nombre de vœux
+            const voeuxCount = etu.wishes.count;
+            return selectedVoeux.value.length === 0 || selectedVoeux.value.includes(voeuxCount);
+        })
         .sort((a, b) => {
+            // Tri par position du vœu et alphabétiquement
             const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
             const bMinPlace = Math.min(...getFilteredAgreements(b).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
             if (aMinPlace !== bMinPlace) {
-                return aMinPlace - bMinPlace; // Trier par position du vœu
+                return aMinPlace - bMinPlace;
             }
-            return a.acc_fullname.localeCompare(b.acc_fullname); // Trier alphabétiquement
+            return a.acc_fullname.localeCompare(b.acc_fullname);
         });
 });
 
@@ -344,6 +382,7 @@ const filteredEtus = computed(() => {
 
     watch(selectedDepartment, handleFiltreEtu);
     watch(selectedAccord, handleFiltreEtu);
+    watch(selectedVoeux, handleFiltreEtu);
 
 
     async function refreshDrop() {
@@ -482,6 +521,9 @@ function getCurrentAgreeIdByAccId(accId) {
     }
     function deselectAllCountry() {
         selectedCountries.value = [];
+    }
+    function deselectAllVoeux() {
+        selectedVoeux.value = [];
     }
     onMounted(fetch)
 
