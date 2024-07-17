@@ -177,7 +177,8 @@
                                     </div>
                                     <p v-else class="">Aucun étudiant</p>
                                 </div>
-                                <div class="w-72 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer">
+                                <div class="w-72 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer"
+                                    @click="addPlace(arbitrage.agreement.agree_id)">
                                     <p class="text-lg font-bold">+</p>
                                 </div>
                             </div>
@@ -310,35 +311,37 @@
 
     await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
 }
-const filteredEtus = computed(() => {
-    return Object.values(localEtus.value)
-        .filter(etu => {
-            // Filtre par département
-            if (selectedDepartment.value.length === 0) {
-                return true; // Retourne tous les étudiants si aucun filtre n'est sélectionné
-            }
-            return selectedDepartment.value.includes(etu.department?.dept_shortname);
-        })
-        .filter(etu => {
-            // Filtre par accords
-            const filteredAgreements = getFilteredAgreements(etu).map(item => item.agreement.agree_id);
-            return selectedAccord.value.length === 0 || selectedAccord.value.some(accord => filteredAgreements.includes(accord));
-        })
-        .filter(etu => {
-            // Filtre par nombre de vœux
-            const voeuxCount = etu.wishes.count;
-            return selectedVoeux.value.length === 0 || selectedVoeux.value.includes(voeuxCount);
-        })
-        .sort((a, b) => {
-            // Tri par position du vœu et alphabétiquement
-            const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
-            const bMinPlace = Math.min(...getFilteredAgreements(b).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
-            if (aMinPlace !== bMinPlace) {
-                return aMinPlace - bMinPlace;
-            }
-            return a.acc_fullname.localeCompare(b.acc_fullname);
-        });
-});
+
+
+    const filteredEtus = computed(() => {
+        return Object.values(localEtus.value)
+            .filter(etu => {
+                // Filtre par département
+                if (selectedDepartment.value.length === 0) {
+                    return true; // Retourne tous les étudiants si aucun filtre n'est sélectionné
+                }
+                return selectedDepartment.value.includes(etu.department?.dept_shortname);
+            })
+            .filter(etu => {
+                // Filtre par accords
+                const filteredAgreements = getFilteredAgreements(etu).map(item => item.agreement.agree_id);
+                return selectedAccord.value.length === 0 || selectedAccord.value.some(accord => filteredAgreements.includes(accord));
+            })
+            .filter(etu => {
+                // Filtre par nombre de vœux
+                const voeuxCount = etu.wishes.count;
+                return selectedVoeux.value.length === 0 || selectedVoeux.value.includes(voeuxCount);
+            })
+            .sort((a, b) => {
+                // Tri par position du vœu et alphabétiquement
+                const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
+                const bMinPlace = Math.min(...getFilteredAgreements(b).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
+                if (aMinPlace !== bMinPlace) {
+                    return aMinPlace - bMinPlace;
+                }
+                return a.acc_fullname.localeCompare(b.acc_fullname);
+            });
+    });
 
 
     const filteredArbitrage = computed(() => {
@@ -372,6 +375,36 @@ const filteredEtus = computed(() => {
         refreshDrag();
         saveArbitrage();
     }
+
+    async function addPlace(agreeId) {
+  // Trouver l'accord correspondant par son ID
+  let foundAgreement = accords.value.agreements.find(agreement => agreement.agree_id === agreeId);
+
+  if (foundAgreement) {
+    // Ajouter temporairement une place en incrémentant agree_nbplace
+    foundAgreement.agree_nbplace += 1;
+
+    // Ajouter temporairement une place dans localArbitrage
+    if (!localArbitrage.value[agreeId]) {
+      localArbitrage.value[agreeId] = { accounts: [] };
+    }
+    if (!localArbitrage.value[agreeId].accounts) {
+      localArbitrage.value[agreeId].accounts = [];
+    }
+    localArbitrage.value[agreeId].accounts.push({
+      arb_pos: localArbitrage.value[agreeId].accounts.length + 1,
+      account: null
+    });
+
+    // Debugging output
+
+    // Attendre la prochaine mise à jour du DOM et rafraîchir le composant
+    await nextTick();
+    refreshDrop();
+  }
+}
+
+
 
     async function handleFiltreEtu() {
         await nextTick();
