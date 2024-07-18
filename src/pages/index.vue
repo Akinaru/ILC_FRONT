@@ -21,11 +21,11 @@
                             <div class="lg:block flex flex-wrap">
 
                                 <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 w-1/2 sm:w-1/3 lg:w-full">
-                                    <input :id="'filt_pays_'+index" type="checkbox" class="checkbox mx-2" :value="country.parco_name" v-model="selectedCountries">
-                                    <div class="flex  w-full">
+                                    <input :id="'filt_pays_'+index" type="checkbox" class="checkbox " :value="country.parco_name" v-model="selectedCountries">
+                                    <label :for="'filt_pays_'+index"  class="flex  w-full hover:cursor-pointer pl-2">
                                         <span class="fi mr-1" :class="'fi-'+country.parco_code"></span>
-                                        <label :for="'filt_pays_'+index" class="select-none w-full">{{ country.parco_name }}</label>
-                                    </div>
+                                        <label :for="'filt_pays_'+index" class="select-none w-full cursor-pointer">{{ country.parco_name }}</label>
+                                    </label>
                                 </div>
                             </div>
 
@@ -44,9 +44,11 @@
                                 <div class="lg:block flex flex-wrap">
                                     <p>{{ comp.comp_name }}</p>
                                     <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1 ">
-                                        <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
-                                        <div class="lg:w-3 w-6 lg:h-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
-                                        <label :for="'filt_dept_'+index" class="select-none w-full">{{ dept.dept_shortname }}</label>
+                                        <input :id="'filt_dept_'+index" type="checkbox" class="checkbox " :value="dept.dept_shortname" v-model="selectedDepartment">
+                                        <label :for="'filt_dept_'+index" class="hover:cursor-pointer flex items-center justify-center w-full pl-2">
+                                            <div class="lg:w-3 w-6 lg:h-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
+                                            <label :for="'filt_dept_'+index" class="select-none w-full hover:cursor-pointer">{{ dept.dept_shortname }}</label>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -63,9 +65,9 @@
                             <button class="hover:opacity-70" @click="deselectAllComp">Tout désélectionner</button>
 
                             <div class="lg:block flex flex-wrap">
-                                <div v-for="(compo,index) in components.components" :key="index" class="flex items-center hover:opacity-60 my-1 w-fit">
-                                    <input :id="'filt_compo_'+index" type="checkbox" class="checkbox mx-2" :value="compo.comp_name" v-model="selectedComponent">
-                                    <label :for="'filt_compo_'+index" class="select-none w-full">{{ compo.comp_name }}</label>
+                                <div v-for="(compo,index) in components.components" :key="index" class="flex items-center hover:opacity-60 my-1 w-full">
+                                    <input :id="'filt_compo_'+index" type="checkbox" class="checkbox" :value="compo.comp_name" v-model="selectedComponent">
+                                    <label :for="'filt_compo_'+index" class="select-none w-full hover:cursor-pointer pl-2">{{ compo.comp_name }}</label>
                                 </div>
                                 
                             </div>

@@ -20,16 +20,20 @@
                     <div class="p-1" v-show="isOpen.departments">
                         <button class="hover:opacity-70" @click="deselectAllDept">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_dept_0" type="checkbox" class="checkbox mx-2" value="Aucun" v-model="selectedDepartment">
-                            <div class="w-3 h-3 mr-1" :style="{backgroundColor: '#aaaaaa'}"></div>
-                            <label for="filt_dept_0" class="select-none w-full">Aucun</label>
+                            <input id="filt_dept_zero" type="checkbox" class="checkbox " value="Aucun" v-model="selectedDepartment">
+                            <label for="filt_dept_zero" class="flex items-center justify-center w-full cursor-pointer pl-2">
+                                <div class="w-3 h-3 mr-1" :style="{backgroundColor: '#aaaaaa'}"></div>
+                                <label for="filt_dept_zero" class="select-none w-full cursor-pointer">Aucun</label>
+                            </label>
                         </div>
                         <div v-for="(comp, index) in components.components" :key="index">
                             <p>{{ comp.comp_name }}</p>
                             <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1">
-                                <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
-                                <div class="w-3 h-3 mr-1" :style="{backgroundColor: dept.dept_color}"></div>
-                                <label :for="'filt_dept_'+index" class="select-none w-full">{{ dept.dept_shortname }}</label>
+                                <input :id="'filt_dept_'+index" type="checkbox" class="checkbox" :value="dept.dept_shortname" v-model="selectedDepartment">
+                                <label :for="'filt_dept_'+index" class="cursor-pointer w-full flex items-center justify-center pl-2">
+                                    <div class="w-3 h-3 mr-1" :style="{backgroundColor: dept.dept_color}"></div>
+                                    <label :for="'filt_dept_'+index" class="select-none w-full cursor-pointer">{{ dept.dept_shortname }}</label>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -43,12 +47,12 @@
                     <div class="p-1" v-show="isOpen.voeux">
                         <button class="hover:opacity-70" @click="deselectAllVoeux">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_voeux_1" type="checkbox" class="checkbox mx-2" value="Aucun" v-model="selectedVoeux">
-                            <label for="filt_voeux_1" class="select-none w-full">Aucun</label>
+                            <input id="filt_voeux_1" type="checkbox" class="checkbox " value="Aucun" v-model="selectedVoeux">
+                            <label for="filt_voeux_1" class="select-none w-full cursor-pointer pl-2">Aucun</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_voeux_2" type="checkbox" class="checkbox mx-2" value="AuMoinsUn" v-model="selectedVoeux">
-                            <label for="filt_voeux_2" class="select-none w-full">Au moins un</label>
+                            <input id="filt_voeux_2" type="checkbox" class="checkbox " value="AuMoinsUn" v-model="selectedVoeux">
+                            <label for="filt_voeux_2" class="select-none w-full cursor-pointer pl-2">Au moins un</label>
                         </div>
                     </div>
                 </div>
@@ -61,28 +65,28 @@
                     <div class="p-1" v-show="isOpen.document">
                         <button class="hover:opacity-70" @click="deselectAllDocuments">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_1" type="checkbox" class="checkbox mx-2" value="0" v-model="selectedDocument">
-                            <label for="filt_document_1" class="select-none w-full">0</label>
+                            <input id="filt_document_1" type="checkbox" class="checkbox" value="0" v-model="selectedDocument">
+                            <label for="filt_document_1" class="select-none w-full cursor-pointer pl-2">0</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_2" type="checkbox" class="checkbox mx-2" value="1" v-model="selectedDocument">
-                            <label for="filt_document_2" class="select-none w-full">1</label>
+                            <input id="filt_document_2" type="checkbox" class="checkbox " value="1" v-model="selectedDocument">
+                            <label for="filt_document_2" class="select-none w-full cursor-pointer pl-2">1</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_2" type="checkbox" class="checkbox mx-2" value="2" v-model="selectedDocument">
-                            <label for="filt_document_2" class="select-none w-full">2</label>
+                            <input id="filt_document_2" type="checkbox" class="checkbox " value="2" v-model="selectedDocument">
+                            <label for="filt_document_2" class="select-none w-full cursor-pointer pl-2">2</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_3" type="checkbox" class="checkbox mx-2" value="3" v-model="selectedDocument">
-                            <label for="filt_document_3" class="select-none w-full">3</label>
+                            <input id="filt_document_3" type="checkbox" class="checkbox " value="3" v-model="selectedDocument">
+                            <label for="filt_document_3" class="select-none w-full cursor-pointer pl-2">3</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_4" type="checkbox" class="checkbox mx-2" value="4" v-model="selectedDocument">
-                            <label for="filt_document_4" class="select-none w-full">4</label>
+                            <input id="filt_document_4" type="checkbox" class="checkbox " value="4" v-model="selectedDocument">
+                            <label for="filt_document_4" class="select-none w-full cursor-pointer pl-2">4</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_5" type="checkbox" class="checkbox mx-2" value="5" v-model="selectedDocument">
-                            <label for="filt_document_5" class="select-none w-full">5</label>
+                            <input id="filt_document_5" type="checkbox" class="checkbox" value="5" v-model="selectedDocument">
+                            <label for="filt_document_5" class="select-none w-full cursor-pointer pl-2">5</label>
                         </div>
                     </div>
                 </div>

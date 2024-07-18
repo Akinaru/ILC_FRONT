@@ -23,8 +23,8 @@
                                     <div class="lg:block flex flex-wrap">
                                         <p>- {{ comp.comp_name }}</p>
                                         <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
-                                            <input :id="'filt_dept_'+index" type="checkbox" class="checkbox mx-2" :value="dept.dept_shortname" v-model="selectedDepartment">
-                                            <label :for="'filt_dept_'+index" class="w-full flex items-center justify-center cursor-pointer">
+                                            <input :id="'filt_dept_'+index" type="checkbox" class="checkbox" :value="dept.dept_shortname" v-model="selectedDepartment">
+                                            <label :for="'filt_dept_'+index" class="w-full flex items-center justify-center cursor-pointer pl-2">
                                                 <div class="lg:w-3 w-6 lg:h-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
                                                 <label :for="'filt_dept_'+index" class="select-none w-full hover:cursor-pointer">{{ dept.dept_shortname }}</label>
                                             </label>
@@ -43,8 +43,8 @@
                                 <button class="hover:opacity-70" @click="deselectAllVoeux">Tout désélectionner</button>
                                 
                                 <div v-for="(voeu,index) in voeuxNoms" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
-                                    <input :id="'filt_voeux_'+index" type="checkbox" class="checkbox mx-2" :value="voeu.val" v-model="selectedVoeux">
-                                    <label :for="'filt_voeux_'+index" class="cursor-pointer w-full">
+                                    <input :id="'filt_voeux_'+index" type="checkbox" class="checkbox" :value="voeu.val" v-model="selectedVoeux">
+                                    <label :for="'filt_voeux_'+index" class="cursor-pointer w-full pl-2">
                                         <label :for="'filt_voeux_'+index" class="select-none w-full hover:cursor-pointer">{{ voeu.name }}</label>
                                     </label>
                                 </div>
@@ -60,8 +60,8 @@
                                 <button class="hover:opacity-70" @click="deselectAllAccord">Tout désélectionner</button>
 
                                 <div v-for="(accord,index) in accords.agreements" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
-                                    <input :id="'filt_accord_'+index" type="checkbox" class="checkbox mx-2" :value="accord.agree_id" v-model="selectedAccord">
-                                    <label :for="'filt_accord_'+index" class="cursor-pointer w-full">
+                                    <input :id="'filt_accord_'+index" type="checkbox" class="checkbox" :value="accord.agree_id" v-model="selectedAccord">
+                                    <label :for="'filt_accord_'+index" class="cursor-pointer w-full pl-2">
                                         <span class="fi mr-1" :class="'fi-'+accord.partnercountry.parco_code"></span>
                                         <label :for="'filt_accord_'+index" class="select-none w-full hover:cursor-pointer">{{ accord.university.univ_name }} - {{ accord.isced.isc_code }}</label>
                                     </label>
