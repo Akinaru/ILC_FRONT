@@ -20,14 +20,18 @@
             <p>Aucune action.</p>
           </div>
         </div>
-        <div>
+
+        <!-- Date limite voeux -->
+        <div class="flex items-center justify-center flex-col">
           <p>Date limite des voeux:</p>
-          <div class="flex items-center justify-start bg-base-300 w-fit p-2">
+          <div class="flex items-center justify-start bg-base-300 w-fit p-3">
             <div class="flex py-3 pr-3 ">
               <p class="font-bold">{{ formatDate(admin.adm_datelimite) }}</p>
               <p class="mx-2">{{ getJoursRestants(admin.adm_datelimite) }}</p>
             </div>
             <label for="modal_date" class="btn btn-primary">Modifier</label>
+
+
             <!-- Modal modification date -->
             <input type="checkbox" id="modal_date" class="modal-toggle" />
             <div class="modal" role="dialog">
@@ -44,7 +48,18 @@
                 </form>
               </div>
             </div>
+
+
           </div>
+          <!-- Etapes -->
+          <div class="w-fit flex items-center justify-center flex-col py-4 md:py-10">
+                <p class="py-4">Avancement des étapes actuelles:</p>
+                <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
+                    <li class="step step-neutral">Inscription</li>
+                    <li class="step step-neutral">Choix des voeux</li>
+                    <li class="step" :class="{'step-neutral' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+                </ul>
+            </div>
         </div>
       </div>
     </div>
@@ -108,6 +123,7 @@ function joursRestants(date) {
   const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
   return daysRemaining;
 }
+
 
 function formatDate(dateString) {
   const date = new Date(dateString);

@@ -157,7 +157,7 @@
                             <span class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out mr-2" :class="'fi-' + arbitrage.agreement.partnercountry.parco_code"></span>
                             <p class="font-bold text-lg">{{ arbitrage.agreement.partnercountry.parco_name }}</p>
                         </div>
-                        <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }} - {{ arbitrage.agreement.isced.isc_code }} {{ arbitrage.agreement.isced.isc_name }} avec {{ arbitrage.agreement.agree_nbplace }} place{{ arbitrage?.agreement?.agree_nbplace > 1 ? 's' : '' }}</p>
+                        <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }} - {{ arbitrage.agreement.isced.isc_code }} {{ arbitrage.agreement.isced.isc_name }} </p>
 
                         <div class="w-full flex justify-center">
                             <div class="flex flex-wrap gap-4 justify-center w-full">
@@ -387,32 +387,30 @@
     }
 
     async function addPlace(agreeId) {
-  // Trouver l'accord correspondant par son ID
-  let foundAgreement = accords.value.agreements.find(agreement => agreement.agree_id === agreeId);
+        // Trouver l'accord correspondant par son ID
+        let foundAgreement = accords.value.agreements.find(agreement => agreement.agree_id === agreeId);
 
-  if (foundAgreement) {
-    // Ajouter temporairement une place en incrémentant agree_nbplace
-    foundAgreement.agree_nbplace += 1;
+        if (foundAgreement) {
+            // Ajouter temporairement une place en incrémentant agree_nbplace
+            foundAgreement.agree_nbplace += 1;
 
-    // Ajouter temporairement une place dans localArbitrage
-    if (!localArbitrage.value[agreeId]) {
-      localArbitrage.value[agreeId] = { accounts: [] };
+            // Ajouter temporairement une place dans localArbitrage
+            if (!localArbitrage.value[agreeId]) {
+            localArbitrage.value[agreeId] = { accounts: [] };
+            }
+            if (!localArbitrage.value[agreeId].accounts) {
+            localArbitrage.value[agreeId].accounts = [];
+            }
+            localArbitrage.value[agreeId].accounts.push({
+            arb_pos: localArbitrage.value[agreeId].accounts.length + 1,
+            account: null
+            });
+
+
+            await nextTick();
+            refreshDrop();
+        }
     }
-    if (!localArbitrage.value[agreeId].accounts) {
-      localArbitrage.value[agreeId].accounts = [];
-    }
-    localArbitrage.value[agreeId].accounts.push({
-      arb_pos: localArbitrage.value[agreeId].accounts.length + 1,
-      account: null
-    });
-
-    // Debugging output
-
-    // Attendre la prochaine mise à jour du DOM et rafraîchir le composant
-    await nextTick();
-    refreshDrop();
-  }
-}
 
 function getNumberOfPlace(agreeId) {
     const agreements = accords.value.agreements;

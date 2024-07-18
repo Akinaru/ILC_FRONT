@@ -7,8 +7,8 @@
             <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
                 <li class="step step-neutral">Inscription</li>
                 <li class="step step-neutral">Choix des voeux</li>
-                <li class="step" :class="{'step-neutral' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
-                <li class="step">Validation</li>
+                <li class="step" :class="{'step-neutral' : destination.agree_id || joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+                <li class="step":class="{'step-neutral' : destination.agree_id}">Validation</li>
             </ul>
         </div>
 
