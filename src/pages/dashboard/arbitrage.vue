@@ -149,7 +149,7 @@
                     </div>
                 </div>
 
-
+                
                 <!-- Partie rendu accord -->
                 <div class="flex flex-col items-center justify-start w-full select-none">
                     <div v-for="(arbitrage, accordIndex) in filteredArbitrage" :key="'accord-' + accordIndex" class="bg-base-300 w-11/12 mb-4 p-4 rounded-lg">
@@ -157,14 +157,13 @@
                             <span class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out mr-2" :class="'fi-' + arbitrage.agreement.partnercountry.parco_code"></span>
                             <p class="font-bold text-lg">{{ arbitrage.agreement.partnercountry.parco_name }}</p>
                         </div>
-                        <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }} - {{ arbitrage.agreement.isced.isc_code }} {{ arbitrage.agreement.isced.isc_name }}</p>
+                        <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }} - {{ arbitrage.agreement.isced.isc_code }} {{ arbitrage.agreement.isced.isc_name }} avec {{ arbitrage.agreement.agree_nbplace }} place{{ arbitrage?.agreement?.agree_nbplace > 1 ? 's' : '' }}</p>
 
                         <div class="w-full flex justify-center">
                             <div class="flex flex-wrap gap-4 justify-center w-full">
                                 <!-- Rendu des cases -->
-                                <div :id="'drop_'+arbitrage.agreement.agree_id+'_'+placeIndex" v-for="(place, placeIndex) in Array(arbitrage.agreement.agree_nbplace).fill()" :key="'place-' + placeIndex" 
+                                <div :id="'drop_'+arbitrage.agreement.agree_id+'_'+placeIndex" v-for="(place, placeIndex) in getNumberOfPlace(arbitrage.agreement.agree_id)" :key="'place-' + placeIndex" 
                                     class="dropZones bg-base-200 m-1 h-20 w-72 relative flex items-center justify-center">
-                                    
                                     <div v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account"
                                     draggable="true"
                                     :id="'etu_drag_'+arbitrage.accounts[placeIndex].account.acc_id"
@@ -263,37 +262,48 @@
 
 
     async function init() {
-        // Initialiser localEtus avec les étudiants qui ne sont pas dans arbitrage
-        localEtus.value = etudiants.value.accounts
-            .filter(etu => !arbitrage.value.some(arbitre => arbitre.account.acc_id === etu.acc_id))
-            .reduce((acc, etu) => {
-                acc[etu.acc_id] = etu;
-                return acc;
-        }, {});
-
-        localArbitrage.value = accords.value.agreements.reduce((acc, accord) => {
-            // Chercher les étudiants correspondants dans arbitrage
-            const matchingArbitrages = arbitrage.value.filter(arbitre => arbitre.agreement.agree_id === accord.agree_id);
-
-            // Créer l'objet pour l'accord actuel
-            acc[accord.agree_id] = {
-                agreement: accord,
-                accounts: Array.from({ length: accord.agree_nbplace }, (_, index) => {
-                    const matchingArbitrage = matchingArbitrages.find(arbitre => arbitre.arb_pos === (index + 1));
-                    return {
-                        arb_pos: index + 1,
-                        account: matchingArbitrage ? matchingArbitrage.account : null // Mettre account à null si matchingArbitrage n'existe pas
-                    };
-                })
-            };
-
+    // Initialiser localEtus avec les étudiants qui ne sont pas dans arbitrage
+    localEtus.value = etudiants.value.accounts
+        .filter(etu => !arbitrage.value.some(arbitre => arbitre.account.acc_id === etu.acc_id))
+        .reduce((acc, etu) => {
+            acc[etu.acc_id] = etu;
             return acc;
-        }, {});
+    }, {});
 
-        await nextTick();
-        refreshDrag();
-        refreshDrop();
-    }   
+    // Initialiser localArbitrage avec les accords et les informations sur les étudiants correspondants
+    localArbitrage.value = accords.value.agreements.reduce((acc, accord) => {
+        // Obtenir toutes les positions possibles pour l'accord actuel
+        const allPositions = getNumberOfPlace(accord.agree_id);
+
+        // Chercher les étudiants correspondants dans arbitrage
+        const matchingArbitrages = arbitrage.value.filter(arbitre => arbitre.agreement.agree_id === accord.agree_id);
+
+        // Créer l'objet pour l'accord actuel
+        acc[accord.agree_id] = {
+            agreement: accord,
+            accounts: allPositions.map(pos => {
+                // Chercher les arbitrages qui correspondent à la position actuelle
+                const matchingArbitrage = matchingArbitrages.find(arbitre => arbitre.arb_pos === pos + 1);
+                return {
+                    arb_pos: pos + 1, // Les positions doivent être basées sur 1
+                    account: matchingArbitrage ? matchingArbitrage.account : null // Mettre account à null si matchingArbitrage n'existe pas
+                };
+            })
+        };
+
+        return acc;
+    }, {});
+
+    // Attendre le prochain "tick" pour assurer que les changements sont appliqués
+    await nextTick();
+
+    // Rafraîchir les éléments de drag and drop
+    refreshDrag();
+    refreshDrop();
+}
+
+
+
 
     async function saveArbitrage(){
     const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
@@ -403,6 +413,36 @@
     refreshDrop();
   }
 }
+
+function getNumberOfPlace(agreeId) {
+    const agreements = accords.value.agreements;
+    
+    const agreement = agreements.find(agreement => agreement.agree_id === agreeId);
+    
+    if (!agreement) {
+        console.error(`Accord avec agreeId ${agreeId} non trouvé.`);
+        return [];
+    }
+    
+    const numberOfPlaces = agreement.agree_nbplace;
+    
+    const studentPositions = arbitrage.value.filter(entry => entry.agree_id === agreeId);
+    
+    
+    const maxPosition = studentPositions.reduce((max, student) => {
+        return student.arb_pos > max ? student.arb_pos : max;
+    }, numberOfPlaces - 1);
+    
+    
+    const totalPlaces = Math.max(numberOfPlaces, maxPosition );
+    
+    
+    const places = Array.from({ length: totalPlaces }, (v, k) => k);
+    
+    return places;
+}
+
+
 
 
 
