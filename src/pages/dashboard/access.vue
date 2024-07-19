@@ -138,67 +138,68 @@
                             </label>
                         </div>
 
-<!-- Liste utilisateurs -->
-<div class="overflow-x-auto max-h-125" v-if="filteredEtudiants.length > 0">
-    <table class="table table-zebra w-full">
-        <!-- head -->
-        <thead>
-            <tr>
-                <th class="w-1/12"></th>
-                <th class="w-2/12">Login</th>
-                <th class="w-4/12">NOM Prénom</th>
-                <th class="w-2/12 flex items-center justify-center">Département</th>
-                <th class="w-3/12">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="(acc, index) in filteredEtudiants" :key="index">
-                <th>{{ index }}</th>
-                <th>{{ acc.acc_id }}</th>
-                <th class="min-w-44" v-if="acc.account">{{ acc.account.acc_fullname }}</th>
-                <th class="min-w-44" v-else>Nom introuvable</th>
-                <th>
-                    <span class="flex items-center justify-center">
-                        <span v-if="acc.department" class="badge p-3 min-w-40" :style="{backgroundColor: acc.department.dept_color}">{{ acc.department.dept_shortname }}</span>
-                        <span v-else-if="acc.account" class="badge badge-neutral p-3 min-w-40">Aucun</span>
-                        <span v-else class="badge badge-neutral p-3 min-w-40">Introuvable</span>
-                    </span>
-                </th>
-                <th>
-                    <RouterLink target="_blank" :to="{name: 'Profile', params: {acc_id: acc.acc_id}}" class="tooltip" data-tip="Afficher le profil">
-                        <button class="hover:opacity-60 hover:cursor-pointer p-2">
-                            <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                                 viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
-                                <g>
-                                    <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
-                                    <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
-                                    <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
-                                        237.594,166.688 322.39,166.688 204.531,284.547 	"/>
-                                </g>
-                            </svg>
-                        </button>
-                    </RouterLink>
-                    <span class="tooltip" data-tip="Supprimer de la liste">
-                        <button class="hover:opacity-60 hover:cursor-pointer p-2" @click="removeAccepted(acc.acc_id)" >
-                            <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" class="stroke-current" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </span>
-                </th>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div v-else>
-    <p class="text-center p-5">Aucun étudiant trouvé.</p>
-</div>
+                        <!-- Liste utilisateurs -->
+                        <div class="overflow-x-auto max-h-125" v-if="filteredEtudiants.length > 0">
+                            <table class="table table-zebra w-full">
+                                <!-- head -->
+                                <thead>
+                                    <tr>
+                                        <th class="w-1/12"></th>
+                                        <th class="w-2/12">Login</th>
+                                        <th class="w-4/12">NOM Prénom</th>
+                                        <th class="w-2/12 flex items-center justify-center">Département</th>
+                                        <th class="w-3/12">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(acc, index) in filteredEtudiants" :key="index">
+                                        <th>{{ index }}</th>
+                                        <th>{{ acc.acc_id }}</th>
+                                        <th class="min-w-44" v-if="acc.account">{{ acc.account.acc_fullname }}</th>
+                                        <th class="min-w-44" v-else>Nom introuvable</th>
+                                        <th>
+                                            <span class="flex items-center justify-center">
+                                                <span v-if="acc.department" class="badge p-3 min-w-40" :style="{backgroundColor: acc.department.dept_color}">{{ acc.department.dept_shortname }}</span>
+                                                <span v-else-if="acc.account" class="badge badge-neutral p-3 min-w-40">Aucun</span>
+                                                <span v-else class="badge badge-neutral p-3 min-w-40">Introuvable</span>
+                                            </span>
+                                        </th>
+                                        <th>
+                                            <RouterLink target="_blank" :to="{name: 'Profile', params: {acc_id: acc.acc_id}}" class="tooltip" data-tip="Afficher le profil">
+                                                <button class="hover:opacity-60 hover:cursor-pointer p-2">
+                                                    <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                        viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
+                                                        <g>
+                                                            <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
+                                                            <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
+                                                            <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                                                237.594,166.688 322.39,166.688 204.531,284.547 	"/>
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </RouterLink>
+                                            <span class="tooltip" data-tip="Supprimer de la liste">
+                                                <button class="hover:opacity-60 hover:cursor-pointer p-2" @click="removeAccepted(acc.acc_id)" >
+                                                    <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" class="stroke-current" fill="none" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div v-else>
+                            <p class="text-center p-5">Aucun étudiant trouvé.</p>
+                        </div>
                     </div>
                     <div v-else>
                         <p>Aucun utilisateur n'a été trouvé.</p>
                     </div>
                 </div>
             </div>
+            <!-- Formulaire ajout accepted etudiant -->
             <div class="md:w-1/2 w-full flex items-center justify-center flex-col">
                 <div class="w-96 flex items-center flex-col justify-center">
                     <p class="text-lg font-bold">Ajouter un utilisateur</p>
@@ -210,6 +211,40 @@
                     </form>
                 </div>
                 <ImportComp text="Importer des étudiants en csv" @csv-imported="handleCsvImported"></ImportComp>
+                <div class="py-10">
+                    <p class="text-center">Exemple de csv à importer:</p>
+                    <p class="text-center">(Important: "login" sans majuscule)</p>
+
+                    <div class="overflow-x-auto mt-3">
+                        <table class="table table-zebra">
+                            <!-- head -->
+                            <thead>
+                            <tr>
+                                <th>login</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- row 1 -->
+                            <tr >
+                                <th >sbouc</th>
+                            </tr>
+                            <!-- row 2 -->
+                            <tr>
+                                <th>ldama</th>
+                            </tr>
+                            <!-- row 3 -->
+                            <tr>
+                                <th>gallottm</th>
+                            </tr>
+                            <!-- row 4 -->
+                            <tr>
+                                <th>martmate</th>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+
             </div>
         </div>
     </div>
@@ -257,11 +292,11 @@
 
     async function addAccess(){
         if(newAccess.value.login == ''){
-            addAlert('error', {data:{error: 'Vous devez entrer un login.', message:'Ajout de l\'accès annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez entrer un login.', message:'L\'ajout de l\'accès a été annulé.'}})
             return;
         }
         if(newAccess.value.access == "Selectionnez un niveau d'accès"){
-            addAlert('error', {data:{error: 'Vous devez choisir un niveau d\'accès..', message:'Ajout de l\'accès annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez choisir un niveau d\'accès.', message:'L\'ajout de l\'accès a été annulé.'}})
             return;
         }
         const requestData = { 
@@ -283,7 +318,7 @@
 
     async function addAccepted(){
         if(newAccepted.value.login == ''){
-            addAlert('error', {data:{error: 'Vous devez entrer un login.', message:'Ajout de l\'autorisation annulé.'}})
+            addAlert('error', {data:{error: 'Vous devez entrer un login.', message:'L\'ajout de l\'autorisation a été annulée.'}})
             return;
         }
         const requestData = { 
@@ -403,28 +438,25 @@
     }
 
     const handleCsvImported = async (csvData) => {
-    // Mapper les logins du csvData pour créer les objets avec uniquement acc_id
-    const requestData = csvData.map(item => ({
-        acc_id: item.login,
-    }));
-    for (const data of requestData) {
-        // Vérification pour s'assurer que data n'est ni nul ni vide
-        if (data && data.acc_id) {
-            
-            await request("POST", true, response, config.apiUrl+'api/acceptedaccount', data);
-            if (response.value && response.value.status === 201) {
-                const requestDataAction = {
-                    act_description: `Ajout de l'accès pour ${data.acc_id}.`,
-                    acc_id: accountStore.login,
-                    access: 1, 
-                };
-                await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+        const requestData = csvData.map(item => ({
+            acc_id: item.login,
+        }));
+        for (const data of requestData) {
+            if (data && data.acc_id) {
+                
+                await request("POST", true, response, config.apiUrl+'api/acceptedaccount', data);
+                if (response.value && response.value.status === 201) {
+                    const requestDataAction = {
+                        act_description: `Ajout de l'accès pour ${data.acc_id}.`,
+                        acc_id: accountStore.login,
+                        access: 1, 
+                    };
+                    await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+                }
             }
         }
-    }
-    
-    // Appeler fetch() après avoir traité tous les enregistrements
-    fetch();
+        
+        fetch();
     };
 
 
