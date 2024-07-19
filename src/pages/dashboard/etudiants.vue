@@ -108,7 +108,104 @@
                         </svg>
                     </label>
                 </div>
+                <!-- Liste des etudiants -->
                 <div class="flex flex-wrap gap-4 items-center justify-center py-5">
+                    <div v-for="(etu, index) in filteredEtudiants" :key="index" v-if="filteredEtudiants && filteredEtudiants.length > 0" class="">
+                        <template class="w-full md:w-1/3 lg:w-1/4 py-2" v-if="etu.acc_id">
+                            <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}">
+                                <div class="bg-base-300 shadow-lg rounded-lg p-4 hover:scale-105 transform transition-transform duration-200 h-full flex flex-col"
+                                    :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">
+                                    <div class="flex-1">
+                                        <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ etu.acc_fullname }}</h5>
+                                        <h6 class="text-gray-600 mb-2 truncate">
+                                            {{ etu.acc_id }} 
+                                            <span v-if="etu.department" :style="{color: etu.department.dept_color}">({{ etu.department.dept_shortname }})</span>
+                                            <span v-else>(Aucun département)</span>
+                                        </h6>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="text-sm text-gray-700">
+                                            <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
+                                            <strong>Documents ajouté(s):</strong> 0<br>
+                                            <strong>Dernière connexion:</strong> {{ etu.acc_lastlogin }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </RouterLink>
+                        </template>
+                    </div>
+                    <div v-for="(etu, index) in filteredEtudiants" :key="index" v-if="filteredEtudiants && filteredEtudiants.length > 0" class="">
+                        <template class="w-full md:w-1/3 lg:w-1/4 py-2" v-if="etu.acc_id">
+                            <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}">
+                                <div class="bg-base-300 shadow-lg rounded-lg p-4 hover:scale-105 transform transition-transform duration-200 h-full flex flex-col"
+                                    :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">
+                                    <div class="flex-1">
+                                        <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ etu.acc_fullname }}</h5>
+                                        <h6 class="text-gray-600 mb-2 truncate">
+                                            {{ etu.acc_id }} 
+                                            <span v-if="etu.department" :style="{color: etu.department.dept_color}">({{ etu.department.dept_shortname }})</span>
+                                            <span v-else>(Aucun département)</span>
+                                        </h6>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="text-sm text-gray-700">
+                                            <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
+                                            <strong>Documents ajouté(s):</strong> 0<br>
+                                            <strong>Dernière connexion:</strong> {{ etu.acc_lastlogin }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </RouterLink>
+                        </template>
+                    </div>
+                    <div v-for="(etu, index) in filteredEtudiants" :key="index" v-if="filteredEtudiants && filteredEtudiants.length > 0" class="">
+                        <template class="w-full md:w-1/3 lg:w-1/4 py-2" v-if="etu.acc_id">
+                            <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}">
+                                <div class="bg-base-300 shadow-lg rounded-lg p-4 hover:scale-105 transform transition-transform duration-200 h-full flex flex-col"
+                                    :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">
+                                    <div class="flex-1">
+                                        <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ etu.acc_fullname }}</h5>
+                                        <h6 class="text-gray-600 mb-2 truncate">
+                                            {{ etu.acc_id }} 
+                                            <span v-if="etu.department" :style="{color: etu.department.dept_color}">({{ etu.department.dept_shortname }})</span>
+                                            <span v-else>(Aucun département)</span>
+                                        </h6>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="text-sm text-gray-700">
+                                            <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
+                                            <strong>Documents ajouté(s):</strong> 0<br>
+                                            <strong>Dernière connexion:</strong> {{ etu.acc_lastlogin }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </RouterLink>
+                        </template>
+                    </div>
+                    <div v-for="(etu, index) in filteredEtudiants" :key="index" v-if="filteredEtudiants && filteredEtudiants.length > 0" class="">
+                        <template class="w-full md:w-1/3 lg:w-1/4 py-2" v-if="etu.acc_id">
+                            <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}">
+                                <div class="bg-base-300 shadow-lg rounded-lg p-4 hover:scale-105 transform transition-transform duration-200 h-full flex flex-col"
+                                    :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">
+                                    <div class="flex-1">
+                                        <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ etu.acc_fullname }}</h5>
+                                        <h6 class="text-gray-600 mb-2 truncate">
+                                            {{ etu.acc_id }} 
+                                            <span v-if="etu.department" :style="{color: etu.department.dept_color}">({{ etu.department.dept_shortname }})</span>
+                                            <span v-else>(Aucun département)</span>
+                                        </h6>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="text-sm text-gray-700">
+                                            <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
+                                            <strong>Documents ajouté(s):</strong> 0<br>
+                                            <strong>Dernière connexion:</strong> {{ etu.acc_lastlogin }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </RouterLink>
+                        </template>
+                    </div>
                     <div v-for="(etu, index) in filteredEtudiants" :key="index" v-if="filteredEtudiants && filteredEtudiants.length > 0" class="">
                         <template class="w-full md:w-1/3 lg:w-1/4 py-2" v-if="etu.acc_id">
                             <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}">

@@ -3,7 +3,6 @@ import { decomposeDN } from '../composables/destructLDAP';
 import { ref } from 'vue';
 import { useAccountStore } from "../stores/accountStore";
 import config from '../config';
-import { addAlert } from "./addAlert";
 
 export async function authLogAccount(login, router) {
     const response = ref([]);
@@ -11,7 +10,7 @@ export async function authLogAccount(login, router) {
     if (response.value.response && response.value.response.status == 404) {
         await authRegisterAccount(login, router);
     } else {
-        // await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
+        await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
         
         var requestData = {
             acc_id: response.value.acc_id,

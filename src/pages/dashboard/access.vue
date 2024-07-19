@@ -9,11 +9,22 @@
                     <div v-if="access && access.count > 0">
                         <p>RI (Relations Internationales)</p>
                         <div class="md:m-5 m-1">
+                            <!-- Liste acces ADMIN -->
                             <div v-for="(acc, index) in access.access[1]" :key="index" class="flex *:my-1">
-                                <div class="bg-base-300 p-2 w-full flex items-center">
-                                    <span class="font-bold mr-1">{{ acc.acc_id }}</span>
-                                    <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
-                                    <span v-else>(Nom introuvable)</span>
+                                <div class="bg-base-300 p-2 w-full flex items-center justify-between">
+                                    <div>
+
+                                        <!-- Image -->
+                                        <div class="avatar placeholder h-12 my-1 mr-2">
+                                            <div class="text-neutral-content w-12 rounded-full select-none bg-neutral" >
+                                                <span>{{ getInitials(acc.account?.acc_fullname) }}</span>
+                                            </div>
+                                        </div>
+                                        <span class="font-bold mr-1">{{ acc.acc_id }}</span>
+                                        <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
+                                        <span v-else>(Nom introuvable)</span> 
+                                    </div>
+                                    <span>Dernière connexion: <span v-if="acc.account.acc_lastlogin">{{ acc.account.acc_lastlogin }}</span><span v-else>Inconnu</span></span>
                                 </div>
                                 <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeAccess(acc.acc_id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -22,10 +33,16 @@
                         </div>
                         <p>Dept (Département)</p>
                         <div class="md:m-5 m-1">
+                            <!-- Liste access chef DEPT -->
                             <div v-for="(acc, index) in access.access[2]" :key="index" class="flex flex-col *:my-1">
                                 <div class="flex w-full">
 
                                     <div class="bg-base-300 p-2 w-full flex items-center">
+                                        <div class="avatar placeholder h-12 my-1 mr-2">
+                                            <div class="text-neutral-content w-12 rounded-full select-none bg-neutral" >
+                                            <span>{{ getInitials(acc.account?.acc_fullname) }}</span>
+                                            </div>
+                                        </div>
                                         <span class="font-bold mr-1">{{ acc.acc_id }}</span>
                                         <span v-if="acc.account">
                                             ({{ acc.account.acc_fullname }})
@@ -35,7 +52,7 @@
                                         </span>
                                         <div v-if="acc.account && acc.account.department && acc.account.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
                                             <span class="p-2 mx-2 flex items-center justify-center" :style="{backgroundColor: acc.account.department.dept_color}">
-                                                <p class="mx-1">{{ acc.account.department.dept_shortname}}</p>
+                                                <p class="mx-1 select-none">{{ acc.account.department.dept_shortname}}</p>
                                                 <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1" @click="removeDept(acc.acc_id)">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                 </button>
@@ -120,62 +137,62 @@
                                 </svg>
                             </label>
                         </div>
-                        <!-- Liste utilisateurs -->
 
-                        <div class="overflow-x-auto" v-if="filteredEtudiants.length > 0">
-                            <table class="table table-zebra">
-                                <!-- head -->
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Login</th>
-                                        <th>NOM Prénom</th>
-                                        <th class="flex items-center justify-center">Département</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(acc, index) in filteredEtudiants" :key="index">
-                                        <th>{{ index }}</th>
-                                        <th>{{ acc.acc_id }}</th>
-                                        <th class="min-w-44" v-if="acc.account">{{ acc.account.acc_fullname }}</th>
-                                        <th class="min-w-44" v-else>Nom introuvable</th>
-                                        <th>
-                                            <span class="flex items-center justify-center">
-                                                <span v-if="acc.department" class="badge p-3 min-w-40" :style="{backgroundColor: acc.department.dept_color}">{{ acc.department.dept_shortname }}</span>
-                                                <span v-else-if="acc.account" class="badge badge-neutral p-3 min-w-40">Aucun</span>
-                                                <span v-else class="badge badge-neutral p-3 min-w-40">Introuvable</span>
-                                            </span>
-                                        </th>
-                                        <th>
-                                            <RouterLink target="_blank" :to="{name: 'Profile', params: {acc_id: acc.acc_id}}" class="tooltip" data-tip="Afficher le profil">
-                                                <button class="hover:opacity-60 hover:cursor-pointer p-2">
-                                                    <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                                                            viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
-                                                        <g>
-                                                            <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
-                                                            <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
-                                                            <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
-                                                                237.594,166.688 322.39,166.688 204.531,284.547 	"/>
-                                                        </g>
-                                                    </svg>
-                                                </button>
-                                            </RouterLink>
-                                            <span class="tooltip" data-tip="Supprimer de la liste">
-                                                <button class="hover:opacity-60 hover:cursor-pointer p-2" @click="removeAccepted(acc.acc_id)" >
-                                                    <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" class="stroke-current" fill="none" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div v-else>
-                            <p class="text-center p-5">Aucun étudiant trouvé.</p>
-                        </div>
+<!-- Liste utilisateurs -->
+<div class="overflow-x-auto max-h-125" v-if="filteredEtudiants.length > 0">
+    <table class="table table-zebra w-full">
+        <!-- head -->
+        <thead>
+            <tr>
+                <th class="w-1/12"></th>
+                <th class="w-2/12">Login</th>
+                <th class="w-4/12">NOM Prénom</th>
+                <th class="w-2/12 flex items-center justify-center">Département</th>
+                <th class="w-3/12">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(acc, index) in filteredEtudiants" :key="index">
+                <th>{{ index }}</th>
+                <th>{{ acc.acc_id }}</th>
+                <th class="min-w-44" v-if="acc.account">{{ acc.account.acc_fullname }}</th>
+                <th class="min-w-44" v-else>Nom introuvable</th>
+                <th>
+                    <span class="flex items-center justify-center">
+                        <span v-if="acc.department" class="badge p-3 min-w-40" :style="{backgroundColor: acc.department.dept_color}">{{ acc.department.dept_shortname }}</span>
+                        <span v-else-if="acc.account" class="badge badge-neutral p-3 min-w-40">Aucun</span>
+                        <span v-else class="badge badge-neutral p-3 min-w-40">Introuvable</span>
+                    </span>
+                </th>
+                <th>
+                    <RouterLink target="_blank" :to="{name: 'Profile', params: {acc_id: acc.acc_id}}" class="tooltip" data-tip="Afficher le profil">
+                        <button class="hover:opacity-60 hover:cursor-pointer p-2">
+                            <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                 viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
+                                <g>
+                                    <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
+                                    <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
+                                    <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                        237.594,166.688 322.39,166.688 204.531,284.547 	"/>
+                                </g>
+                            </svg>
+                        </button>
+                    </RouterLink>
+                    <span class="tooltip" data-tip="Supprimer de la liste">
+                        <button class="hover:opacity-60 hover:cursor-pointer p-2" @click="removeAccepted(acc.acc_id)" >
+                            <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" class="stroke-current" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </span>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div v-else>
+    <p class="text-center p-5">Aucun étudiant trouvé.</p>
+</div>
                     </div>
                     <div v-else>
                         <p>Aucun utilisateur n'a été trouvé.</p>
@@ -192,7 +209,7 @@
                         </div>
                     </form>
                 </div>
-                <ImportComp text="Importer des étudiants en csv"></ImportComp>
+                <ImportComp text="Importer des étudiants en csv" @csv-imported="handleCsvImported"></ImportComp>
             </div>
         </div>
     </div>
@@ -226,6 +243,17 @@
 
     const searchQuery = ref('');
 
+
+    function getInitials(fullname) {
+        if (!fullname) {
+            return 'Sys';
+        }
+        const names = fullname.split(' ');
+        if (names.length === 1) {
+            return names[0].substring(0, 2).toUpperCase();
+        }
+        return (names[0][0] + names[1][0]).toUpperCase();
+    }
 
     async function addAccess(){
         if(newAccess.value.login == ''){
@@ -296,7 +324,7 @@
             return accepted.value.accounts;
         }
         return accepted.value.accounts.filter(acc =>
-            acc.account.acc_fullname.toLowerCase().includes(searchQuery.value.toLowerCase())
+            acc.account?.acc_fullname?.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
     });
 
@@ -373,6 +401,32 @@
         await nextTick()
         resetInput();
     }
+
+    const handleCsvImported = async (csvData) => {
+    // Mapper les logins du csvData pour créer les objets avec uniquement acc_id
+    const requestData = csvData.map(item => ({
+        acc_id: item.login,
+    }));
+    for (const data of requestData) {
+        // Vérification pour s'assurer que data n'est ni nul ni vide
+        if (data && data.acc_id) {
+            
+            await request("POST", true, response, config.apiUrl+'api/acceptedaccount', data);
+            if (response.value && response.value.status === 201) {
+                const requestDataAction = {
+                    act_description: `Ajout de l'accès pour ${data.acc_id}.`,
+                    acc_id: accountStore.login,
+                    access: 1, 
+                };
+                await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            }
+        }
+    }
+    
+    // Appeler fetch() après avoir traité tous les enregistrements
+    fetch();
+    };
+
 
     onMounted(fetch)
 </script>
