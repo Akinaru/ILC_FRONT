@@ -13,7 +13,7 @@
                     <div class="flex py-3">
                         <div class="flex items-center justify-center mr-2" v-for="(type, index) in types" :key="index">
                             <input type="checkbox" :id="'filt_type_'+index" class="checkbox mx-1" :value="type.condition" v-model="selectedTypes">
-                            <label :for="'filt_type_'+index" class="badge select-none" :class="type.color">{{ type.name }}</label>
+                            <label :for="'filt_type_'+index" class="badge select-none min-w-32" :class="type.color">{{ type.name }}</label>
                         </div>
                     </div>
                     <!-- Barre de recherche -->
@@ -44,11 +44,22 @@
         </div>
         <table class="table table-zebra" v-if="filteredActions && filteredActions.length > 0">
             <thead>
-                <tr>
+                <tr class="select-none">
                     <th>n°</th>
                     <th>Login</th>
                     <th>Description</th>
-                    <th>Date</th>
+                    <th @click="sortByDateAsc = !sortByDateAsc">
+                        <div class="flex items-center justify-between cursor-pointer hover:opacity-70">
+
+                            Date
+                            <span class="ml-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4" :style="{ transform: sortByDateAsc.value ? 'rotate(0deg)' : 'rotate(180deg)' }">
+                                    <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v15.69l5.47-5.47a.75.75 0 111.06 1.06l-6.75 6.75a.75.75 0 01-1.06 0l-6.75-6.75a.75.75 0 011.06-1.06l5.47 5.47V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" v-if="sortByDateAsc"></path>
+                                    <path fill-rule="evenodd" d="M12 20.25a.75.75 0 01-.75-.75V3.81l-5.47 5.47a.75.75 0 01-1.06-1.06l6.75-6.75a.75.75 0 011.06 0l6.75 6.75a.75.75 0 01-1.06 1.06L12.75 3.81v15.69a.75.75 0 01-.75.75z" clip-rule="evenodd" v-else></path>
+                                </svg>
+                            </span>
+                        </div>
+                    </th>
                     <th class="flex items-center justify-center">Type</th>
                 </tr>
             </thead>
@@ -57,11 +68,11 @@
                     <th>{{ act.act_id }}</th>
                     <td>{{ act.acc_id }}</td>
                     <td class="w-full">{{ act.act_description }}</td>
-                    <td class="min-w-32">{{ act.act_date }}</td>
+                    <td class="min-w-56 flex items-center justify-center">{{ formatDate(act.act_date) }}</td>
                     <td>
-                        <span v-for="(type, typeIndex) in types" :key="typeIndex" class="flex items-center justify-center min-w-36">
-                            <template v-if="type && type.condition && checkCondition(type.condition, act)">
-                                <span :class="['badge', type.color]">{{ type.name }}</span>
+                        <span class="flex items-center justify-center min-w-36">
+                            <template v-if="getType(act.act_type)">
+                                <span class="min-w-32" :class="['badge', getType(act.act_type).color]">{{ getType(act.act_type).name }}</span>
                             </template>
                         </span>
                     </td>
@@ -78,7 +89,7 @@
 import { request } from '../../composables/httpRequest';
 import { onMounted, ref, computed } from 'vue';
 
-import { checkCondition } from '../../composables/actionType'
+import { getType } from '../../composables/actionType'
 import { types } from '../../composables/actionType'
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
@@ -90,6 +101,8 @@ const searchQuery = ref('');
 
 const response = ref([]);
 
+
+const sortByDateAsc = ref(false);
 
 async function fetch() {
     await request('GET', false, actions, config.apiUrl + 'api/action');
@@ -109,8 +122,16 @@ const filteredActions = computed(() => {
             return action.acc_id.includes(searchQuery.value.trim());
         });
     }
+
+    filtered = filtered.sort((a, b) => {
+        const dateA = new Date(a.act_date);
+        const dateB = new Date(b.act_date);
+        return sortByDateAsc.value ? dateA - dateB : dateB - dateA;
+    });
+
     return filtered;
 });
+
 
 async function deleteHistory(){
     await request('DELETE', true, response, config.apiUrl+'api/action');
@@ -124,6 +145,18 @@ async function deleteHistory(){
     }
     fetch();
 }
+
+function formatDate(date) {
+        const d = new Date(date);
+
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0
+        const year = d.getFullYear();
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+
+        return `${day}/${month}/${year} à ${hours}h${minutes}`;
+    }
 
 
 

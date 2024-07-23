@@ -1,12 +1,13 @@
 export const types = [
-    { name: 'Département', color: 'badge-primary', condition: 'dept_id' },
-    { name: 'Accord', color: 'badge-neutral', condition: 'agree_id' },
-    { name: 'Article', color: 'badge-accent', condition: 'art_id' },
+    { name: 'Département', color: 'badge-primary', condition: 'department' },
+    { name: 'Accord', color: 'badge-neutral', condition: 'agreement' },
+    { name: 'Article', color: 'badge-accent', condition: 'article' },
     { name: 'Access', color: 'badge-info', condition: 'access' },
-    { name: 'Evenement', color: 'badge-error', condition: 'evt_id' },
+    { name: 'Evenement', color: 'badge-error', condition: 'event' },
     { name: 'Admin', color: 'badge-secondary', condition: 'admin' },
+    { name: 'Autre', color: 'badge-warning', condition: 'other' },
 ];
 
-export function checkCondition(condition, act) {
-    return act[condition] !== null && act[condition] !== undefined;
+export function getType(act_type) {
+    return types.find(type => type.condition === act_type);
 }
