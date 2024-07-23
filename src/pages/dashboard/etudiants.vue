@@ -100,7 +100,9 @@
                         </span>:
                         {{ filteredEtudiants.length }} résultat{{ filteredEtudiants.length > 1 ? 's' : '' }}
                     </p>
-                    <ExportComp text="Exporter tous les étudiants en csv" :link="config.apiUrl+'api/account/export'"></ExportComp>
+            {{ exportUrl }}
+
+                    <ExportComp text="Exporter tous les étudiants en csv" :link="exportUrl"></ExportComp>
                 </div>
 
                 <!-- Barre de recherche -->
@@ -213,6 +215,12 @@ async function fetch() {
     await request('GET', false, components, config.apiUrl + 'api/component');
     isLoaded.value = true;
 }
+
+const exportUrl = computed(() => {
+    const ids = filteredEtudiants.value.map(etu => etu.acc_id);
+    const queryString = new URLSearchParams({ ids: JSON.stringify(ids) }).toString();
+    return `${config.apiUrl}api/account/export?${queryString}`;
+});
 
 onMounted(fetch);
 
