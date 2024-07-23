@@ -163,13 +163,6 @@ const routes = [
                 meta: { title: 'Dashboard - Documents' }
             },
             { 
-                path: 'importexport', 
-                name: 'ImpExpDash', 
-                component: () => import('./pages/dashboard/impexp.vue'),
-                beforeEnter: requireAccess(1),
-                meta: { title: 'Dashboard - Imports/Exports' }
-            },
-            { 
                 path: 'arbitrage', 
                 name: 'Arbitrage', 
                 component: () => import('./pages/dashboard/arbitrage.vue'),
