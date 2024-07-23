@@ -11,10 +11,10 @@
                 <div class="flex items-start flex-col w-fit ">
                     <!-- Type à cocher -->
                     <div class="flex py-3">
-                        <div class="flex items-center justify-center mr-2" v-for="(type, index) in types" :key="index">
+                        <label :for="'filt_type_'+index" class="flex items-center justify-center mr-2 hover:cursor-pointer" v-for="(type, index) in types" :key="index">
                             <input type="checkbox" :id="'filt_type_'+index" class="checkbox mx-1" :value="type.condition" v-model="selectedTypes">
-                            <label :for="'filt_type_'+index" class="badge select-none min-w-32" :class="type.color">{{ type.name }}</label>
-                        </div>
+                            <label :for="'filt_type_'+index" class="badge select-none min-w-32 cursor-pointer" :class="type.color">{{ type.name }}</label>
+                        </label>
                     </div>
                     <!-- Barre de recherche -->
                     <label class="input input-bordered flex items-center gap-2 w-full">
@@ -110,13 +110,15 @@ async function fetch() {
 
 const filteredActions = computed(() => {
     let filtered = actions.value;
+
     if (selectedTypes.value.length > 0) {
         filtered = filtered.filter(action => {
             return selectedTypes.value.some(selectedType => {
-                return action[selectedType] !== null && action[selectedType] !== undefined;
+                return action.act_type === selectedType;
             });
         });
     }
+
     if (searchQuery.value.trim() !== '') {
         filtered = filtered.filter(action => {
             return action.acc_id.includes(searchQuery.value.trim());
@@ -131,6 +133,7 @@ const filteredActions = computed(() => {
 
     return filtered;
 });
+
 
 
 async function deleteHistory(){
