@@ -14,13 +14,13 @@
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full mb-4" />
                 <TextEditor v-model="newArticle.art_description"></TextEditor>
                 <div class="form-control my-4">
-                    <label class="label cursor-pointer">
+                    <label class="label cursor-pointer justify-start w-fit">
+                        <input type="checkbox" class="checkbox mr-2" v-model="newArticle.pinned" />
                         <span class="label-text">Épinglé ?</span> 
-                        <input type="checkbox" class="checkbox" v-model="newArticle.pinned" />
                     </label>
                 </div>
-                <div class="flex items-center justify-center *:mx-1">
-                    <button v-if="!isEditing" class="btn btn-primary" type="submit">Ajouter l'article</button>
+                <div class="flex items-center justify-center *:mx-1 ">
+                    <button v-if="!isEditing" class="btn btn-primary w-96" type="submit">Ajouter l'article</button>
                     <div v-else>
                         <button class="btn btn-success mr-1" type="button" @click="confirmModifArticle">Enregistrer les modifications</button>
                         <button class="btn btn-neutral ml-1" type="button" @click="cancelModifArticle">Annuler les modifications</button>
@@ -41,14 +41,14 @@
                         <!-- Modification / Suppression -->
                         <div class="flex absolute top-0 right-0 ">
                                 <!-- Bouton de modification -->
-                                <label class="hover:opacity-90 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
+                                <label class="hover:opacity-70 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
                                     <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                         <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     </svg>
                                 </label>
                                 <!-- Bouton de suppression -->
-                                <button class="hover:opacity-90 p-5 hover:cursor-pointer bg-base-300" @click="removeArticle(article.art_title, article.art_id)">
+                                <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300 " @click="removeArticle(article.art_title, article.art_id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>

@@ -300,7 +300,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, computed, nextTick, defineEmits  } from 'vue';
+    import { ref, onMounted, computed, nextTick  } from 'vue';
     import config from '../../config'
     import { request } from '../../composables/httpRequest';
     import ModifAccordComp from '../../components/modif/ModifAccordComp.vue';
