@@ -29,7 +29,6 @@
             </li>
           </ul>
         </div>
-
         <!-- Notification -->
         <div v-if="accountStore.isLogged()" class="dropdown dropdown-end" @click="handleMenuOpen">
           <div tabindex="1000" role="button" class="indicator  cursor-pointer group flex items-center justify-center">
@@ -158,7 +157,7 @@ function getInitials(fullname) {
 
 async function load(){
   await nextTick();
-  await request('GET', true, notification, config.apiUrl+'api/notification/getbylogin/'+accountStore.login)
+  await request('GET', false, notification, config.apiUrl+'api/notification/getbylogin/'+accountStore.login)
   applyTheme(theme.value);
 }
 
