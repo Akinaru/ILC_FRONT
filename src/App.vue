@@ -48,7 +48,7 @@ header {
   z-index: 2000;
 }
 
-.alert-container {
+#alert-container {
   position: fixed;
   bottom: 0;
   right: 0;
