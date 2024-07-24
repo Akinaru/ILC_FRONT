@@ -2,18 +2,19 @@
     <div class="flex flex-col" v-if="isLoaded">
         <p class="font-bold text-xl pb-5">Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
 
+        <!-- Etapes -->
         <div class="w-full flex items-center justify-center flex-col py-4 md:py-10">
             <p class="py-4">Avancement des étapes actuelles:</p>
             <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
-                <li class="step step-neutral">Inscription</li>
-                <li class="step step-neutral">Choix des voeux</li>
-                <li class="step" :class="{'step-neutral' : destination.agree_id || joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
-                <li class="step":class="{'step-neutral' : destination.agree_id}">Validation</li>
+                <li class="step step-primary">Inscription</li>
+                <li class="step step-primary">Choix des voeux</li>
+                <li class="step" :class="{'step-primary' : destination.agree_id || joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+                <li class="step" :class="{'step-primary' : destination.agree_id}">Validation</li>
             </ul>
         </div>
 
         <!-- Destination finale -->
-        <div v-if="destination.agreement">
+        <div v-if="destination.agreement" class="flex items-center justify-center flex-col">
             <p class="text-sm font-bold pb-2">Destination finale</p>
             <div class="select-none flex justify-between items-center elementDrag xl:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
                 <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
@@ -30,66 +31,68 @@
 
         <!-- Partie informations -->
         <div>
-            <div v-if="account && account.acc_id" class="block md:flex w-full justify-center">
+            <div v-if="account && account.acc_id" class="block md:flex w-full justify-center items-center">
                 <!-- Informations -->
-                 <div class="w-full md:w-1/2 pt-10">
-                    <p class="text-sm font-bold">Vos informations:</p>
-                    <div>
-                        <label class="form-control w-full">
-                            <div class="label">
+                 <div class="w-full md:w-1/2 pt-10 flex items-center justify-center flex-col">
+                    <p class="text-md font-bold w-full max-w-xl">Vos informations:</p>
+                    <div class="w-full max-w-xl">
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label w-full">
                                 <span class="label-text">Identitée</span>
                             </div>
-                            <input type="text" :value="account.acc_fullname" class="input input-bordered w-full max-w-xl" disabled />
+                            <input type="text" :value="account.acc_fullname" class="input input-bordered w-full" disabled />
                         </label>
-                        <label class="form-control w-full" >
-                            <div class="label">
+                        <label class="form-control w-full items-center justify-center" >
+                            <div class="label w-full">
                                 <span class="label-text">Email</span>
                             </div>
-                            <input type="text" :value="account.acc_mail" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.acc_mail" class="input input-bordered w-full " disabled/>
                         </label>
-                        <label class="form-control w-full">
-                            <div class="label">
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label w-full">
                                 <span class="label-text">Numéro étudiant</span>
                             </div>
-                            <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full max-w-xl" disabled />
+                            <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full " disabled />
                         </label>
-                        <label class="form-control w-full " >
-                            <div class="label">
+                        <label class="form-control w-full items-center justify-center " >
+                            <div class="label w-full">
                                 <span class="label-text">Département</span>
                             </div>
-                            <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full " disabled/>
                         </label>
-                        <label class="form-control w-full" >
-                            <div class="label">
+                        <label class="form-control w-full items-center justify-center" >
+                            <div class="label w-full">
                                 <span class="label-text">Score TOEIC</span>
                             </div>
-                            <input type="text" :value="account.acc_toeic" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.acc_toeic" class="input input-bordered w-full " disabled/>
                         </label>
                     </div>
                 </div>
 
                 <!-- Documents -->
-                 <div class="w-fyll md:w-1/2 pt-10">
-                    <p class="text-sm font-bold">Vos documents:</p>
-                    <div>
-                        <div class="form-control w-full py-3 max-w-xl">
+                 <div class="w-full md:w-1/2 pt-10 flex items-center justify-center flex-col">
+                    <p class="text-md font-bold">Vos documents:</p>
+                    <div class="w-full max-w-xl">
+                        <!-- Choix de cours -->
+                        <div class="form-control w-full py-3">
                             <div class="label">
                                 <span class="label-text">Choix de cours</span>
                             </div>
-                                <div class="btn btn-success">
-                                    <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    </svg>
-                                    Telecharger le fichier disponible
-                                </div>
-                                <input type="file" class="file-input file-input-bordered w-full" />
-                                <div class="btn btn-primary">
-                                    Envoyer votre fichier
-                                </div>
+                            <div class="btn btn-success">
+                                <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                                Telecharger le fichier disponible
                             </div>
-                        <div class="form-control w-full py-3 max-w-xl">
+                            <input type="file" class="file-input file-input-bordered w-full" />
+                            <div class="btn btn-primary">
+                                Envoyer votre fichier
+                            </div>
+                        </div>
+                        <!-- Contrat pédagogique -->
+                        <div class="form-control w-full py-3">
                             <div class="label">
                                 <span class="label-text">Contrat pédagogique</span>
                             </div>
@@ -103,7 +106,8 @@
                                 </div>
                                 <input type="file" class="file-input file-input-bordered w-full" />
                         </div>
-                        <div class="form-control w-full py-3 max-w-xl">
+                        <!-- Relevé de notes -->
+                        <div class="form-control w-full py-3">
                             <div class="label">
                                 <span class="label-text">Relevés de notes avant départ</span>
                             </div>

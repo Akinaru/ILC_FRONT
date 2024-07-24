@@ -3,16 +3,15 @@
     <div v-if="events && events.count > 0" class="flex lg:flex-row flex-col">
       <!-- Calendrier -->
       <CalendarComp :events="events"></CalendarComp>
+
       <!-- Partie droite (actions, date limite) -->
-      <div class="px-3">
+      <div class="px-3 w-full">
         <div>
           <p>Vos 5 dernières actions:</p>
           <div v-if="limitedActions.length > 0" v-for="(action, index) in limitedActions" :key="index" class="flex py-2">
-            <span v-for="(type, typeIndex) in types" :key="typeIndex" class="select-none flex items-center justify-center">
-              <template v-if="type && type.condition && checkCondition(type.condition, action)">
-                <span :class="['badge', type.color]" class="min-w-32">{{ type.name }}</span>
+              <template v-if="getType(action.act_type)">
+                <span class="min-w-32" :class="['badge', getType(action.act_type).color]">{{ getType(action.act_type).name }}</span>
               </template>
-            </span>
             <p class="ml-2">{{ action.act_date }}</p>
             <p class="ml-2">{{ action.act_description }}</p>
           </div>
@@ -55,9 +54,9 @@
           <div class="w-fit flex items-center justify-center flex-col py-4 md:py-10">
                 <p class="py-4">Avancement des étapes actuelles:</p>
                 <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
-                    <li class="step step-neutral">Inscription</li>
-                    <li class="step step-neutral">Choix des voeux</li>
-                    <li class="step" :class="{'step-neutral' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+                    <li class="step step-primary">Inscription</li>
+                    <li class="step step-primary">Choix des voeux</li>
+                    <li class="step" :class="{'step-primary' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
                 </ul>
             </div>
         </div>
@@ -75,8 +74,8 @@ import CalendarComp from '../../components/utils/CalendarComp.vue';
 import { request } from '../../composables/httpRequest';
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
-import { checkCondition } from '../../composables/actionType';
-import { types } from '../../composables/actionType';
+import { getType } from '../../composables/actionType'
+import { types } from '../../composables/actionType'
 import LoadingComp from '../../components/utils/LoadingComp.vue';
 import { addAlert } from '../../composables/addAlert';
 
