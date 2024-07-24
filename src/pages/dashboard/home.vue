@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col" v-if="isLoaded">
-        <p class="font-bold text-xl pb-5">Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
+        <p class="font-bold text-lg pb-5">Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
 
         <!-- Etapes -->
         <div class="w-full flex items-center justify-center flex-col py-4 md:py-10">
