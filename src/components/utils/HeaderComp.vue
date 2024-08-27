@@ -19,6 +19,7 @@
             <li>
               <details>
                 <summary>
+                  <span class="p-1 hidden sm:block rounded-lg " :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">{{ role.role }}</span>
                   {{ fullname }}
                 </summary>
                 <ul class="bg-base-100 rounded-t-none">
@@ -104,6 +105,7 @@ const { fullname } = storeToRefs(accountStore);
 const theme = ref(localStorage.getItem('theme') || 'light');
 
 const notification = ref([])
+const role = ref([])
 const response = ref([])
 const menuAlreadyOpen = ref(false)
 
@@ -159,6 +161,7 @@ function getInitials(fullname) {
 async function load(){
   await nextTick();
   await request('GET', true, notification, config.apiUrl+'api/notification/getbylogin/'+accountStore.login)
+  await request('GET', true, role, config.apiUrl+'api/access/getrole/'+accountStore.login)
   applyTheme(theme.value);
 }
 
