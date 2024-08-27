@@ -39,22 +39,22 @@
     import { storeToRefs } from 'pinia'
 
     const routesRi = [
-        {routeName: 'HomeRI', name: '🏠Accueil'},
-        {routeName: 'ArticleDash', name: '📄Article'},
-        {routeName: 'DepartementDash', name: '📍Departement'},
-        {routeName: 'AccordDash', name: '🔗Accord'},
-        {routeName: 'AccessDash', name: '🛡️Accès'},
-        {routeName: 'EvenementDash', name: '📆Evenements'},
-        {routeName: 'HistoriqueDash', name: '🕵️‍♀️Historique'},
-        {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
-        {routeName: 'DocumentsDash', name: '📜Documents'},
-        {routeName: 'Arbitrage', name: '🖥️Arbitrage'},
-        {routeName: 'ModifBaseDash', name: '⚙️Modif base'},
+        {routeName: 'HomeRI', name: '🏠 Accueil'},
+        {routeName: 'ArticleDash', name: '📄 Article'},
+        {routeName: 'DepartementDash', name: '📍 Departement'},
+        {routeName: 'AccordDash', name: '🔗 Accord'},
+        {routeName: 'AccessDash', name: '🛡️ Accès'},
+        {routeName: 'EvenementDash', name: '📆 Evenements'},
+        {routeName: 'HistoriqueDash', name: '🕵️‍♀️ Historique'},
+        {routeName: 'EtudiantsDash', name: '👩‍🎓 Etudiants'},
+        {routeName: 'DocumentsDash', name: '📜 Documents'},
+        {routeName: 'Arbitrage', name: '🖥️ Arbitrage'},
+        {routeName: 'ModifBaseDash', name: '⚙️ Modif base'},
     ]
 
     const routesDept = [
-        {routeName: 'HomeDept', name: '🏠Accueil'},
-        {routeName: 'EtudiantsDash', name: '👩‍🎓Etudiants'},
+        {routeName: 'HomeDept', name: '🏠 Accueil'},
+        {routeName: 'EtudiantsDash', name: '👩‍🎓 Etudiants'},
     ]
 
     const accountStore = useAccountStore();

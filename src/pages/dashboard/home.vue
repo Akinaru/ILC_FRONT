@@ -1,21 +1,22 @@
 <template>
     <div class="flex flex-col" v-if="isLoaded">
-        <p class="font-bold text-xl pb-5">Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
+        <p class="font-bold text-lg pb-5">Bienvenue sur votre profil étudiant lié aux relations internationales.</p>
 
+        <!-- Etapes -->
         <div class="w-full flex items-center justify-center flex-col py-4 md:py-10">
             <p class="py-4">Avancement des étapes actuelles:</p>
             <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
-                <li class="step step-neutral">Inscription</li>
-                <li class="step step-neutral">Choix des voeux</li>
-                <li class="step" :class="{'step-neutral' : destination.agree_id || joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
-                <li class="step":class="{'step-neutral' : destination.agree_id}">Validation</li>
+                <li class="step step-primary">Inscription</li>
+                <li class="step step-primary">Choix des voeux</li>
+                <li class="step" :class="{'step-primary' : destination.agree_id || joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+                <li class="step" :class="{'step-primary' : destination.agree_id}">Validation</li>
             </ul>
         </div>
 
         <!-- Destination finale -->
-        <div v-if="destination.agreement">
+        <div v-if="destination.agreement" class="flex items-center justify-center flex-col">
             <p class="text-sm font-bold pb-2">Destination finale</p>
-            <div class="select-none flex justify-between items-center elementDrag xl:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
+            <div class="select-none flex justify-between items-center elementDrag xl:w-120 w-105 h-20 transition-all duration-100 ease-in-out">
                 <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
                     <div class="border-warning border-2 p-1 flex items-center justify-center w-full h-20 select-none">
@@ -30,66 +31,74 @@
 
         <!-- Partie informations -->
         <div>
-            <div v-if="account && account.acc_id" class="block md:flex w-full justify-center">
+            <div v-if="account && account.acc_id" class="block md:flex w-full justify-center items-center">
                 <!-- Informations -->
-                 <div class="w-full md:w-1/2 pt-10">
-                    <p class="text-sm font-bold">Vos informations:</p>
-                    <div>
-                        <label class="form-control w-full">
-                            <div class="label">
+                 <div class="w-full md:w-1/2 pt-10 flex items-center justify-center flex-col">
+                    <p class="text-lg font-bold w-full max-w-xl mb-5">Vos informations:</p>
+                    <p class="w-full max-w-xl">Vos informations ne peuvent pas être modifiées. Renseignez-vous auprès d'ILC si besoin.</p>
+                    <div class="w-full max-w-xl">
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label w-full">
                                 <span class="label-text">Identitée</span>
                             </div>
-                            <input type="text" :value="account.acc_fullname" class="input input-bordered w-full max-w-xl" disabled />
+                            <input type="text" :value="account.acc_fullname" class="input input-bordered w-full" disabled />
                         </label>
-                        <label class="form-control w-full" >
-                            <div class="label">
+                        <label class="form-control w-full items-center justify-center" >
+                            <div class="label w-full">
                                 <span class="label-text">Email</span>
                             </div>
-                            <input type="text" :value="account.acc_mail" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.acc_mail" class="input input-bordered w-full " disabled/>
                         </label>
-                        <label class="form-control w-full">
-                            <div class="label">
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label w-full">
                                 <span class="label-text">Numéro étudiant</span>
                             </div>
-                            <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full max-w-xl" disabled />
+                            <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full " disabled />
                         </label>
-                        <label class="form-control w-full " >
-                            <div class="label">
+                        <label class="form-control w-full items-center justify-center " >
+                            <div class="label w-full">
                                 <span class="label-text">Département</span>
                             </div>
-                            <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" 
+       :value="account.department ? account.department.dept_shortname : 'Aucun'" 
+       class="input input-bordered w-full" 
+       :style="{ borderBottom: '2px solid ' + (account.department && account.department.dept_color ? account.department.dept_color : 'grey') }" 
+       disabled />
+
                         </label>
-                        <label class="form-control w-full" >
-                            <div class="label">
+                        <label class="form-control w-full items-center justify-center" >
+                            <div class="label w-full">
                                 <span class="label-text">Score TOEIC</span>
                             </div>
-                            <input type="text" :value="account.acc_toeic" class="input input-bordered w-full max-w-xl" disabled/>
+                            <input type="text" :value="account.acc_toeic" class="input input-bordered w-full " disabled/>
                         </label>
                     </div>
                 </div>
 
                 <!-- Documents -->
-                 <div class="w-fyll md:w-1/2 pt-10">
-                    <p class="text-sm font-bold">Vos documents:</p>
-                    <div>
-                        <div class="form-control w-full py-3 max-w-xl">
+                 <div class="w-full md:w-1/2 pt-10 flex items-center justify-center flex-col">
+                    <p class="text-md font-bold">Vos documents:</p>
+                    <div class="w-full max-w-xl">
+                        <!-- Choix de cours -->
+                        <div class="form-control w-full py-3">
                             <div class="label">
                                 <span class="label-text">Choix de cours</span>
                             </div>
-                                <div class="btn btn-success">
-                                    <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    </svg>
-                                    Telecharger le fichier disponible
-                                </div>
-                                <input type="file" class="file-input file-input-bordered w-full" />
-                                <div class="btn btn-primary">
-                                    Envoyer votre fichier
-                                </div>
+                            <div class="btn btn-success">
+                                <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                                Telecharger le fichier disponible
                             </div>
-                        <div class="form-control w-full py-3 max-w-xl">
+                            <input type="file" class="file-input file-input-bordered w-full" />
+                            <div class="btn btn-primary">
+                                Envoyer votre fichier
+                            </div>
+                        </div>
+                        <!-- Contrat pédagogique -->
+                        <div class="form-control w-full py-3">
                             <div class="label">
                                 <span class="label-text">Contrat pédagogique</span>
                             </div>
@@ -103,7 +112,8 @@
                                 </div>
                                 <input type="file" class="file-input file-input-bordered w-full" />
                         </div>
-                        <div class="form-control w-full py-3 max-w-xl">
+                        <!-- Relevé de notes -->
+                        <div class="form-control w-full py-3">
                             <div class="label">
                                 <span class="label-text">Relevés de notes avant départ</span>
                             </div>
@@ -123,7 +133,7 @@
         </div>
 
         <!-- Modif voeux si temps pas écoulé -->
-        <div v-if="joursRestants(admin.adm_datelimite) > 0">
+        <div v-if="joursRestants(admin.adm_datelimite) > 0" class="px-5 xl:px-20 transition-all duration-100 ease-in-out">
 
             <!-- Partie voeux -->
             <div class="md:block hidden pt-5" >
@@ -132,7 +142,7 @@
                 <p class="text-center">Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
                 <div class="flex *:mr-5 py-5 justify-center">
                     <!-- Partie de gauche avec liste des favoris -->
-                    <div class="flex flex-col justify-center items-center">
+                    <div class="flex flex-col justify-center items-center w-2/5">
                         <p class="font-bold text-xl flex *:mx-1 py-2  items-center">
                             <span>Vos favoris</span>
                             <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -140,9 +150,9 @@
                             </svg>
 
                         </p>
-                        <div id="left" class="flex flex-col bg-base-200 p-5 *:my-1 h-full">
+                        <div id="left" class="flex flex-col bg-base-200 p-5 *:my-1 h-full w-full">
                             <!-- Liste des favoris -->
-                            <div v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center elementDrag xl:w-105 w-96 h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
+                            <div v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center elementDrag h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
                                 <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
                                     <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
                                         <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
@@ -156,27 +166,25 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Partie du millieu -->
-                    <div class="flex items-center"></div>
                     <!-- Partie de droite avec les voeux -->
-                    <div class="flex flex-col items-center justify-start">
+                    <div class="flex flex-col items-center justify-start w-3/5">
                         <p class="font-bold text-xl flex *:mx-1 py-2 items-center">
                             <span>Vos voeux</span>
                             <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                             </svg>
                         </p>
-                        <div id="right" class="bg-base-200 flex flex-col *:m-3">
+                        <div id="right" class="bg-base-200 flex flex-col *:m-3 w-full">
 
-                            <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
-                                <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
-                                <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 xl:w-96 w-72 flex items-center justify-center transition-all duration-100 ease-in-out">
-                                    <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
+                            <span class="flex items-center min-h-20 w-full px-5 xl:px-10 transition-all duration-100 ease-in-out" v-for="(i, index) in 6" :key="index">
+                                <p class="font-bold xl:pr-5 pr-3 xl:text-lg transition-all duration-100 ease-in-out min-w-fit">Voeu n°{{ i }}</p>
+                                <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 w-full flex items-center justify-center transition-all duration-100 ease-in-out">
+                                    <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
                                         <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 flex items-center justify-center h-20 select-none w-full">
                                             <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                                 <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                             </span>
-                                            <p class="w-full select-none">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
+                                            <p class="w-full select-none xl:text-md text-sm transition-all duration-100 ease-in-out">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
                                             
                                         </div>
                                         <button @click="removeVoeu(localVoeux[i].agree_id, i)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer">
@@ -275,7 +283,7 @@
             </div>
         </div>
 
-        <!-- Affichage voeux si temps pas écoule -->
+        <!-- Affichage voeux si temps écoule -->
         <div v-else>
             <div class="flex flex-col items-center justify-start pt-10">
                 <p class="font-bold text-xl flex *:mx-1 py-2 items-center">
@@ -293,8 +301,8 @@
 
                     <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
                         <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
-                        <div  class="bg-base-100 h-20 xl:w-96 w-72 flex items-center justify-center transition-all duration-100 ease-in-out">
-                            <div v-if="localVoeux[i]" :draggable="true" class=" select-none flex justify-between items-center elementDrag xl:w-96 w-72 transition-all duration-100 ease-in-out h-20 hover:opacity-80">
+                        <div  class="bg-base-100 h-20 xl:w-130 w-105 flex items-center justify-center transition-all duration-100 ease-in-out">
+                            <div v-if="localVoeux[i]" :draggable="true" class=" select-none flex justify-between items-center xl:w-150 w-120 transition-all duration-100 ease-in-out h-20 hover:opacity-80">
                                 <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full">
                                     <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                         <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>

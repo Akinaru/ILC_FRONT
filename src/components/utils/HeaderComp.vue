@@ -30,7 +30,6 @@
             </li>
           </ul>
         </div>
-
         <!-- Notification -->
         <div v-if="accountStore.isLogged()" class="dropdown dropdown-end" @click="handleMenuOpen">
           <div tabindex="1000" role="button" class="indicator  cursor-pointer group flex items-center justify-center">

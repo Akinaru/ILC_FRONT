@@ -100,7 +100,7 @@
                         </span>:
                         {{ filteredEtudiants.length }} résultat{{ filteredEtudiants.length > 1 ? 's' : '' }}
                     </p>
-            {{ exportUrl }}
+                    {{ exportUrl }}
 
                     <ExportComp text="Exporter tous les étudiants en csv" :link="exportUrl"></ExportComp>
                 </div>
@@ -130,10 +130,10 @@
                                         </h6>
                                     </div>
                                     <div class="mt-4">
-                                        <p class="text-sm text-gray-700">
+                                        <p class="text-sm text-gray-400">
                                             <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
                                             <strong>Documents ajouté(s):</strong> 0<br>
-                                            <strong>Dernière connexion:</strong> {{ etu.acc_lastlogin }}
+                                            <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}
                                         </p>
                                     </div>
                                 </div>
@@ -215,6 +215,18 @@ async function fetch() {
     await request('GET', false, components, config.apiUrl + 'api/component');
     isLoaded.value = true;
 }
+
+function formatDate(date) {
+        const d = new Date(date);
+
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0
+        const year = d.getFullYear();
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+
+        return `${day}/${month}/${year} à ${hours}h${minutes}`;
+    }
 
 const exportUrl = computed(() => {
     const ids = filteredEtudiants.value.map(etu => etu.acc_id);

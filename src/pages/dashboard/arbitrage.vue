@@ -387,30 +387,36 @@
     }
 
     async function addPlace(agreeId) {
-        // Trouver l'accord correspondant par son ID
-        let foundAgreement = accords.value.agreements.find(agreement => agreement.agree_id === agreeId);
+    // Trouver l'accord correspondant par son ID
+    let foundAgreement = accords.value.agreements.find(agreement => agreement.agree_id === agreeId);
+    let currentPlaces = getNumberOfPlace(agreeId).length;
 
-        if (foundAgreement) {
-            // Ajouter temporairement une place en incrémentant agree_nbplace
-            foundAgreement.agree_nbplace += 1;
+    if (foundAgreement) {
+        // Synchroniser les places si elles sont différentes
+        if (foundAgreement.agree_nbplace !== currentPlaces) {
+            foundAgreement.agree_nbplace = currentPlaces;
+        }
 
-            // Ajouter temporairement une place dans localArbitrage
-            if (!localArbitrage.value[agreeId]) {
+        // Ajouter temporairement une place en incrémentant agree_nbplace
+        foundAgreement.agree_nbplace += 1;
+
+        // Ajouter temporairement une place dans localArbitrage
+        if (!localArbitrage.value[agreeId]) {
             localArbitrage.value[agreeId] = { accounts: [] };
-            }
-            if (!localArbitrage.value[agreeId].accounts) {
+        }
+        if (!localArbitrage.value[agreeId].accounts) {
             localArbitrage.value[agreeId].accounts = [];
-            }
-            localArbitrage.value[agreeId].accounts.push({
+        }
+        localArbitrage.value[agreeId].accounts.push({
             arb_pos: localArbitrage.value[agreeId].accounts.length + 1,
             account: null
-            });
+        });
 
-
-            await nextTick();
-            refreshDrop();
-        }
+        await nextTick();
+        refreshDrop();
     }
+}
+
 
 function getNumberOfPlace(agreeId) {
     const agreements = accords.value.agreements;
