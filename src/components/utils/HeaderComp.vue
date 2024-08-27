@@ -95,12 +95,12 @@ import { useAccountStore } from '../../stores/accountStore';
 import { storeToRefs } from 'pinia';
 import config from '../../config';
 import { useRouter } from 'vue-router';
-import { onMounted, ref, nextTick } from 'vue';
+import { onMounted, ref, nextTick, watch } from 'vue';
 import { request } from '../../composables/httpRequest';
 
 const router = useRouter();
 const accountStore = useAccountStore();
-const { fullname } = storeToRefs(accountStore);
+const { fullname, isLogged } = storeToRefs(accountStore);
 const theme = ref(localStorage.getItem('theme') || 'light');
 
 const notification = ref([])
@@ -160,15 +160,19 @@ function getInitials(fullname) {
 async function load(){
   await nextTick();
   await request('GET', true, notification, config.apiUrl+'api/notification/getbylogin/'+accountStore.login)
-  await request('GET', true, role, config.apiUrl+'api/access/getrole/'+accountStore.login)
+  await request('GET', false, role, config.apiUrl+'api/access/getrole/'+accountStore.login)
   applyTheme(theme.value);
 }
 
+// Watcher sur le changement de connexion
+watch(fullname, async (newVal) => {
+  if (newVal) {
+    await request('GET', true, notification, config.apiUrl+'api/notification/getbylogin/'+accountStore.login)
+    await request('GET', false, role, config.apiUrl+'api/access/getrole/'+accountStore.login);
+  } else {
+    role.value = [];
+  }
+});
+
 onMounted(load)
 </script>
-
-<style scoped>
-  .drop-shadow-lg {
-      --tw-drop-shadow: none !important;
-  }
-</style>

@@ -222,7 +222,7 @@
                                     <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
                                         <div class="w-fit p-2 flex  items-center justify-center mx-1 tooltip select-none font-bold" :data-tip="(dept.pivot.deptagree_valide == 0 ? '(INVISIBLE) ' : '')+'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}" >
                                             <p>{{ dept.dept_shortname }}<span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span></p>
-                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot.deptagree_valide)">
+                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot.deptagree_valide, dept.dept_shortname)">
                                                 <svg v-if="dept.pivot.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
                                                     <g>
                                                         <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
@@ -495,13 +495,14 @@
         newAgreement.value.lien = null;
     }
 
-    async function changeVisibility(accordId, deptId, deptagree_valide) {
+    async function changeVisibility(accordId, deptId, deptagree_valide, deptShortName) {
         const newVisibility = deptagree_valide === 0 ? 1 : 0;
 
         const requestData = {
             dept_id: deptId,
             agree_id: accordId,
-            deptagree_valide: newVisibility
+            deptagree_valide: newVisibility,
+            dept_shortname: deptShortName
         }
 
         await request('PUT', true, response, config.apiUrl+'api/departmentagreement/changevisibility', requestData);

@@ -27,6 +27,7 @@ export async function authLogAccount(login, router) {
         }
         authStoreUser(requestData);
         router.push({ name: 'Dashboard' });
+        
     }
 }
 
