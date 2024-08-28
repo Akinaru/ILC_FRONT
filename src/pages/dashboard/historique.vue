@@ -48,8 +48,8 @@
                     <th>n°</th>
                     <th>Login</th>
                     <th>Description</th>
-                    <th @click="sortByDateAsc = !sortByDateAsc">
-                        <div class="flex items-center justify-between cursor-pointer hover:opacity-70">
+                    <th @click="sortByDateAsc = !sortByDateAsc" class="cursor-pointer hover:opacity-70">
+                        <div class="flex items-center justify-between cursor-pointer">
 
                             Date
                             <span class="ml-2">
