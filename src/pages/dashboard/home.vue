@@ -162,7 +162,7 @@
                                 </div>
                             </div>
                             <div v-else>
-                                <p class="w-105 flex items-center justify-center">Aucun favoris dans la liste</p>
+                                <p class="flex items-center justify-center">Aucun favoris dans la liste</p>
                             </div>
                         </div>
                     </div>

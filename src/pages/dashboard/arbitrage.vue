@@ -9,12 +9,12 @@
                 <!-- Partie filtre étudiants -->
                 <div class="flex items-center justify-center py-5">
                     <div class="bg-base-200 drop-shadow-lg w-96" v-if="accords && accords.agreements">
-                        <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg">Filtres</p>
-                        <p>{{ filteredEtus.length }} résultats ({{ selectedDepartment.length }} filtre{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
+                        <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg select-none">Filtres</p>
+                        <p class="select-none">{{ filteredEtus.length }} résultats ({{ selectedDepartment.length }} filtre{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
                         <!-- Départements -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
-                                <p>Départements ({{ selectedDepartment.length }} séléctionné{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
+                                <p class="select-none">Départements ({{ selectedDepartment.length }} séléctionné{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
                                 <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                             </div>
                             <div class="p-1" v-show="isOpen.departments">
@@ -36,7 +36,7 @@
                         <!-- Voeux -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('voeux')">
-                                <p>Nombre de voeux ({{ selectedVoeux.length }} séléctionné{{ selectedVoeux.length > 1 ? 's' : '' }})</p>
+                                <p class="select-none">Nombre de voeux ({{ selectedVoeux.length }} séléctionné{{ selectedVoeux.length > 1 ? 's' : '' }})</p>
                                 <span :class="isOpen.voeux ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                             </div>
                             <div class="p-1" v-show="isOpen.voeux">
@@ -53,7 +53,7 @@
                         <!-- Accords -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('accords')">
-                                <p>Accords (voeux) ({{ selectedAccord.length }} séléctionné{{ selectedAccord.length > 1 ? 's' : '' }})</p>
+                                <p class="select-none">Accords (voeux) ({{ selectedAccord.length }} séléctionné{{ selectedAccord.length > 1 ? 's' : '' }})</p>
                                 <span :class="isOpen.accords ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                             </div>
                             <div class="p-1" v-show="isOpen.accords">
@@ -121,12 +121,12 @@
                 <!-- Partie filtre accords -->
                 <div class="flex items-center justify-center py-5 w-full">
                     <div class="bg-base-200 drop-shadow-lg w-11/12" v-if="accords && accords.agreements">
-                        <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg">Filtres</p>
-                        <p>{{ filteredArbitrage.length }} résultats ({{ selectedCountries.length }} filtre{{ selectedCountries.length > 1 ? 's' : '' }})</p>
+                        <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg select-none">Filtres</p>
+                        <p class="select-none">{{ filteredArbitrage.length }} résultats ({{ selectedCountries.length }} filtre{{ selectedCountries.length > 1 ? 's' : '' }})</p>
                         <!-- Pays -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
-                                <p>Pays ({{ selectedCountries.length }} séléctionné{{ selectedCountries.length > 1 ? 's' : '' }})</p>
+                                <p class="select-none">Pays ({{ selectedCountries.length }} séléctionné{{ selectedCountries.length > 1 ? 's' : '' }})</p>
                                 <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                             </div>
                             <div class="p-1" v-show="isOpen.pays">
