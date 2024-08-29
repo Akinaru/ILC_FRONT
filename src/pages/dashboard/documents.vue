@@ -1,7 +1,7 @@
 <template>
     <div class="m-5">
         <p class="font-bold text-lg mb-4">Documents</p>
-        <div class="flex justify-center items-start">
+        <div class="flex justify-center items-start flex-col">
 
             <!-- Formulaire Autorisation Affichage -->
             <div class="mb-6 w-2/3 ">
@@ -9,9 +9,32 @@
                 <div class="flex w-full">
                     <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange" class="file-input file-input-bordered max-w-2xl w-full" />
                     <button v-if="files.anciensEtudiants.file != null" class="btn btn-success mx-2" @click="saveFile('auto_ancien_etu', 'documents/admin', files.anciensEtudiants.file)">Envoyer le fichier</button>
-                    <button v-if="files.anciensEtudiants.exist" class="btn btn-primary mx-2" @click="openFileInNewTab(files.anciensEtudiants.path)">Voir le fichier actuel</button>
+                    <button v-if="files.anciensEtudiants.exist" class="btn btn-primary mx-2 min-w-44" @click="openFileInNewTab(files.anciensEtudiants.path)">Voir le fichier actuel</button>
                 </div>
             </div>
+
+            <!-- Tableau choix des cours -->
+            <div class="mb-6 w-2/3 ">
+                <p class="font-semibold text-md mb-2">Tableau excel des choix des cours</p>
+                <div class="flex w-full">
+                    <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange" class="file-input file-input-bordered max-w-2xl w-full" />
+                    <button v-if="files.choixCours.file != null" class="btn btn-success mx-2" @click="saveFile('choix_cours', 'documents/admin', files.choixCours.file)">Envoyer le fichier</button>
+                    <button v-if="files.choixCours.exist" class="btn btn-primary mx-2 min-w-44" @click="openFileInNewTab(files.choixCours.path)">Voir le fichier actuel</button>
+                    <button v-else disabled class="btn btn-primary mx-2 min-w-44">Aucun fichier</button>
+                </div>
+            </div>
+
+            <!-- Contrat pédagogique -->
+            <div class="mb-6 w-2/3 ">
+                <p class="font-semibold text-md mb-2">Contrat pédagogique</p>
+                <div class="flex w-full">
+                    <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange" class="file-input file-input-bordered max-w-2xl w-full" />
+                    <button v-if="files.contratPeda.file != null" class="btn btn-success mx-2" @click="saveFile('choix_cours', 'documents/admin', files.contratPeda.file)">Envoyer le fichier</button>
+                    <button v-if="files.contratPeda.exist" class="btn btn-primary mx-2 min-w-44" @click="openFileInNewTab(files.contratPeda.path)">Voir le fichier actuel</button>
+                    <button v-else disabled class="btn btn-primary mx-2 min-w-44">Aucun fichier</button>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -30,6 +53,16 @@
     
     const files = ref({
         anciensEtudiants: {
+            file: null,
+            exist: false,
+            path: ''
+        },
+        choixCours: {
+            file: null,
+            exist: false,
+            path: ''
+        },
+        contratPeda: {
             file: null,
             exist: false,
             path: ''
@@ -76,6 +109,7 @@
     
     function resetInput(){
         files.value.anciensEtudiants.file = null;
+        files.value.choixCours.file = null;
         const inputs = document.querySelectorAll('.file-input');
         inputs.forEach(input => {
             input.value = '';

@@ -5,8 +5,8 @@
         <div class="flex justify-between">
             <p class="text-xl font-bold">Accord</p>
             <div class="flex *:mx-1">
-                <ImportComp text="Importer des accords en csv"></ImportComp>
-                <ExportComp text="Exporter des accords en csv"></ExportComp>
+                <ImportComp texte="Importer des accords en csv"></ImportComp>
+                <ExportComp texte="Exporter des accords en csv" :link="config.apiUrl+'api/agreement/export'"></ExportComp>
             </div>
         </div>
             <!-- Partie ajout d'un accord -->

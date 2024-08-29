@@ -6,7 +6,7 @@
           <line id="primary-2" data-name="primary" x1="21" y1="3" x2="11" y2="13" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
           <path id="primary-3" data-name="primary" d="M19,13.89V20a1,1,0,0,1-1,1H4a1,1,0,0,1-1-1V6A1,1,0,0,1,4,5h6.11" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
         </svg>
-        <p>{{ text }}</p>
+        <p>{{ texte }}</p>
       </button>
       <input type="file" ref="fileInput" @change="handleFileUpload" accept=".csv" style="display: none;" />
     </div>
@@ -18,7 +18,7 @@
   import Papa from 'papaparse';
   
   const props = defineProps({
-    text: {
+    texte: {
       type: String,
       default: 'Importer des étudiants en csv',
     },

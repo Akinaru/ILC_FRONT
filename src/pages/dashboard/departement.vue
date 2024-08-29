@@ -3,8 +3,8 @@
         <div class="flex justify-between">
             <p class="text-xl font-bold">Departement</p>
             <div class="flex *:mx-1">
-                <ImportComp text="Importer des départements en csv"></ImportComp>
-                <ExportComp text="Exporter des départements en csv" :link="config.apiUrl+'api/department/export'"></ExportComp>
+                <ImportComp texte="Importer des départements en csv"></ImportComp>
+                <ExportComp texte="Exporter des départements en csv" :link="config.apiUrl+'api/department/export'"></ExportComp>
             </div>
         </div>
         <!-- Ajout de département -->
