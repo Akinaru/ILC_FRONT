@@ -56,7 +56,13 @@ export default {
       },
       margin: {
         '37': '9.25rem',
-      }
+      },
+      scale: {
+        '70': '0.7',
+        '102': '1.02', // Ajout du scale 102
+        '115': '1.15',
+        '120': '1.2',
+      },
     },
   },
   plugins: [require("daisyui")],

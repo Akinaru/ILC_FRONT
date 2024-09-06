@@ -13,23 +13,40 @@
             <RouterLink :to="{ name: 'Login' }">Portail connexion</RouterLink>
           </p>
         </div>
-        <!-- Profil -->
-        <div v-else class="flex items-center justify-center">
-          <ul class="menu menu-horizontal">
-            <li>
-              <details>
-                <summary>
-                  <span class="p-1 hidden sm:block rounded-lg " :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">{{ role.role }}</span>
-                  {{ fullname }}
-                </summary>
-                <ul class="bg-base-100 rounded-t-none">
-                  <li><a @click="profil">Profil</a></li>
-                  <li><a @click="logout" class="text-red-600">Déconnexion</a></li>
-                </ul>
-              </details>
-            </li>
-          </ul>
-        </div>
+<!-- Profil -->
+<div v-else class="flex items-center justify-center">
+  <ul class="menu menu-horizontal">
+    <li>
+      <details>
+        <summary>
+          <!-- Affichage du rôle uniquement pour les grands écrans -->
+          <span class="p-1 hidden sm:block rounded-lg" :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">
+            {{ role.role }}
+          </span>
+          <!-- Nom d'utilisateur avec bordure inférieure pour les petits écrans -->
+          <span 
+            :class="{
+              'border-b-2': true,
+              'border-dept-color': true
+            }"
+            :style="{ borderBottomColor: `${role.color ? role.color : '#000000'}` }"
+            class="block sm:hidden"
+          >
+            {{ fullname }}
+          </span>
+          <!-- Nom d'utilisateur affiché sur les grands écrans -->
+          <span class="hidden sm:inline">
+            {{ fullname }}
+          </span>
+        </summary>
+        <ul class="bg-base-100 rounded-t-none">
+          <li><a @click="profil">Profil</a></li>
+          <li><a @click="logout" class="text-red-600">Déconnexion</a></li>
+        </ul>
+      </details>
+    </li>
+  </ul>
+</div>
         <!-- Notification -->
         <div v-if="accountStore.isLogged()" class="dropdown dropdown-end" @click="handleMenuOpen">
           <div tabindex="1000" role="button" class="indicator  cursor-pointer group flex items-center justify-center">

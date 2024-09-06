@@ -6,7 +6,7 @@
             <div class="block lg:flex my-5">
  
                 <!-- Partie filtre -->
-                <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5" v-if="accords && accords.agreements">
+                <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5 z-10" v-if="accords && accords.agreements">
                     <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
                     <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length + selectedComponent.length }} filtre{{ selectedCountries.length + selectedDepartment.length + selectedComponent.length > 1 ? 's' : '' }})</p>
                     <!-- Pays -->
@@ -78,15 +78,15 @@
 
                 
                 <!-- Partie rendu des accords -->
-                <div class="w-full overflow-x-hidden">
+                <div class="w-full z-20">
                     <div>
                         <!-- Si il y a des accords -->
                         <div v-if="filteredAccords && filteredAccords.length > 0">
 
 
 
-                            <div>
-                                <div v-for="(accord, index) in paginatedAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden z-auto">
+                            <div class="z-10">
+                                <div v-for="(accord, index) in paginatedAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden transition-all hover:scale-102">
                                 <RouterLink :to="{ name: 'Accord', params: { agree_id: accord.agree_id }}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
                                     <div class="flex items-center flex-wrap">
                                     <span class="mr-2 flex items-center justify-center">
@@ -130,7 +130,7 @@
                                 </span>
                                 </div>
                                 <div class="flex items-center justify-center">
-                                    <button v-if="canShowMore" @click="showMore" class="btn btn-primary mt-4 w-52">Voir plus</button>
+                                    <button v-if="canShowMore" @click="showMore" class="btn btn-primary mt-4 w-52 hover:opacity-80 transition-all hover:scale-105" >Voir plus</button>
                                 </div>
                             </div>
 
@@ -171,7 +171,7 @@
                         <p>Aucun article n'a été trouvé.</p>
                     </div>
                     <RouterLink v-if="articles.count > 0" :to="{ name: 'Articles' }" class="my-12 flex justify-center">
-                        <button class="btn btn-primary w-96">Voir tous les articles</button>
+                        <button class="btn btn-primary w-96 hover:opacity-80 transition-all hover:scale-105">Voir tous les articles</button>
                     </RouterLink>
                 </div>
                 <div v-else class="flex items-center justify-center my-20">
@@ -187,7 +187,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <CalendarComp :events="events"></CalendarComp>
                             <div class="flex items-center justify-center py-5 w-full">
-                                <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full">Voir tous les évènements</RouterLink>
+                                <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full hover:opacity-80 transition-all hover:scale-105">Voir tous les évènements</RouterLink>
                             </div>
                         </div>
 
