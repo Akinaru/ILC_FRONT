@@ -34,6 +34,7 @@
 
     async function fetch(){
         await request('GET', false, event, config.apiUrl+'api/event/getbyid/'+evt_id)
+        document.title = `ILC - ${event.value.evt_name}`
     }
 
     function formatDate(date) {
