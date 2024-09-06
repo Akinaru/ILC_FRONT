@@ -18,16 +18,33 @@
 
   const accountStore = useAccountStore();
 
-  accountStore.$subscribe(function(mutation, state){
-    localStorage.setItem("account", JSON.stringify(state));
-  });
+// Subscribe to store changes and save to localStorage
+accountStore.$subscribe((mutation, state) => {
+  localStorage.setItem("account", JSON.stringify(state));
+});
 
-  onMounted(function(){
-    const accounStorage = localStorage.getItem('account');
-    if(accounStorage){
-      accountStore.$patch(JSON.parse(accounStorage));
-    }
-  })
+// Function to check if last_login is more than 24 hours ago
+function checkLoginExpiry() {
+  const currentTime = new Date().getTime();
+  const lastLoginTime = new Date(accountStore.last_login).getTime();
+
+  // 24 hours in milliseconds
+  const hours24 = 24 * 60 * 60 * 1000;
+
+  if (currentTime - lastLoginTime > hours24) {
+    accountStore.logoutAccount();
+    localStorage.removeItem('account'); // Optionally clear localStorage
+  }
+}
+
+onMounted(() => {
+  const accountStorage = localStorage.getItem('account');
+  
+  if (accountStorage) {
+    accountStore.$patch(JSON.parse(accountStorage));
+    checkLoginExpiry();
+  }
+});
 </script>
 
 <style>

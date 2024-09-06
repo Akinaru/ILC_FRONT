@@ -110,7 +110,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue';
+import { ref, onMounted } from 'vue';
 import { request } from '../../composables/httpRequest';
 import config from '../../config';
 

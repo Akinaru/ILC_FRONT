@@ -100,8 +100,7 @@
                         </span>:
                         {{ filteredEtudiants.length }} résultat{{ filteredEtudiants.length > 1 ? 's' : '' }}
                     </p>
-
-                    <ExportComp text="Exporter tous les étudiants en csv" :link="exportUrl"></ExportComp>
+                        <ExportComp texte="Exporter tous les étudiants en csv" :link="exportUrl"></ExportComp>
                 </div>
 
                 <!-- Barre de recherche -->
