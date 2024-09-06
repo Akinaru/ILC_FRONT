@@ -50,7 +50,7 @@
           </ul>
         </div>
         <!-- Notification -->
-        <div v-if="accountStore.isLogged()" class="dropdown dropdown-end" @click="handleMenuOpen">
+        <div v-if="accountStore.isLogged()" class="ml-2 dropdown dropdown-end" @click="handleMenuOpen">
 
           <div tabindex="1000" role="button" class="indicator cursor-pointer group flex items-center justify-center">
             <svg width="36px" height="36px" viewBox="0 0 24 24"  class="w-8 h-8 fill-current transition-all group-hover:opacity-60" xmlns="http://www.w3.org/2000/svg" >
@@ -65,21 +65,31 @@
               <!-- Liste des notifs -->
               <div v-for="(notif, index) in notification.notifications" :key="index" class="relative w-full my-1 flex items-center justify-start p-2"
                   :class="{ 'bg-base-100 border-l-4 border-blue-500': !notif.not_vue, 'bg-base-100 border-l-4 border-base-100': notif.not_vue }">
+                  
                   <!-- Image -->
                   <div class="avatar placeholder h-12 my-1 mr-2">
                     <div class="text-neutral-content w-12 rounded-full select-none" :class="notif.envoyeur.access?.acs_accounttype == 1 ? 'bg-red-600' : 'bg-neutral'" :style="{backgroundColor: notif.envoyeur?.department?.dept_color}">
                       <span>{{ getInitials(notif.envoyeur?.acc_fullname) }}</span>
                     </div>
                   </div>
+                  
                   <!-- Texte -->
                   <div class="flex flex-col w-full">
                     <div class="flex justify-between w-full py-1">
+
+                      <!-- Si envoyeur vrai utilisateur -->
                       <p class="font-bold" v-if="notif.envoyeur?.acc_fullname">
-                        <span v-if="notif.envoyeur?.access?.acs_accounttype == 1" class=" bg-red-600 p-1 rounded-lg">ILC</span>
-                        <span v-else-if="notif.envoyeur?.department?.dept_name" :style="{backgroundColor: notif.envoyeur?.department?.dept_color}" class="p-1 rounded-lg">{{ notif.envoyeur.department.dept_shortname }}</span>
-                         {{ notif.envoyeur.acc_fullname }}
+                        <span v-if="notif.envoyeur?.role" :style="{backgroundColor: notif.envoyeur.role.color}" class="p-1 rounded-lg">
+                          {{ notif.envoyeur.role.role }}
+                        </span>
+                        <span v-else-if="notif.envoyeur?.department?.dept_name" :style="{backgroundColor: notif.envoyeur?.department?.dept_color}" class="p-1 rounded-lg">
+                          {{ notif.envoyeur.department.dept_shortname }}
+                        </span>
+                        {{ notif.envoyeur.acc_fullname }}
                       </p>
-                      <p class="font-bold" v-else><span class="bg-blue-600 p-1 rounded-lg">Auto</span> Système</p>
+                      <!-- Si message auto -->
+                      <p class="font-bold" v-else><span class="bg-blue-600 p-1 rounded-lg">AUTO</span> Système</p>
+
                       <p>{{ notif.not_date }}</p>
                     </div>
                     <p>{{ notif.not_message }}</p>
@@ -93,7 +103,7 @@
         </div>
 
         <!-- Changement de thème -->
-        <div class="scale-75 hover:opacity-60 transition-all ml-2 flex items-center justify-center w-fit">
+        <div class="scale-75 hover:opacity-60 transition-all flex items-center justify-center w-fit">
           <label class="swap swap-rotate">
             <input type="checkbox" class="theme-controller" @change="toggleTheme" :checked="theme === 'dark'" />
             <svg class="swap-off fill-current w-10 h-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
