@@ -32,12 +32,12 @@
                       'border-dept-color': true
                     }"
                     :style="{ borderBottomColor: `${role.color ? role.color : '#000000'}` }"
-                    class="block sm:hidden text-xs"
+                    class="block sm:hidden text-xs font-semibold"
                   >
                     {{ fullname }}
                   </span>
                   <!-- Nom d'utilisateur affiché sur les grands écrans -->
-                  <span class="hidden sm:inline">
+                  <span class="hidden sm:inline font-semibold">
                     {{ fullname }}
                   </span>
                 </summary>

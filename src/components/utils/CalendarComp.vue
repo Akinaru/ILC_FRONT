@@ -39,7 +39,7 @@
                 class="font-bold hover:cursor-pointer select-none hover:bg-base-200 hover:opacity-80 relative hover:drop-shadow-lg" 
                 v-for="day in week" 
                 :key="day.date"
-                :class="{ 'font-normal': day.isNotMonth, 'bg-error': day.isToday, 'bg-base-200': dayHasEvent(day) }"
+                :class="{ 'font-normal': day.isNotMonth, 'bg-primary': day.isToday, 'bg-base-200': dayHasEvent(day) }"
             >
                 <RouterLink 
                     :to="{ 
