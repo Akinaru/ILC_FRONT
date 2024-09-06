@@ -21,7 +21,7 @@
         </div>
 
         <!-- Date limite voeux -->
-        <div class="flex items-center justify-center flex-col">
+        <div class="flex items-center justify-center flex-col pt-5">
           <p>Date limite des voeux:</p>
           <div class="flex items-center justify-start bg-base-300 w-fit p-3">
             <div class="flex py-3 pr-3 ">
@@ -51,10 +51,10 @@
 
           </div>
           <!-- Etapes -->
-          <div class="w-fit flex items-center justify-center flex-col py-4 md:py-10">
+          <div class="w-fit flex items-center justify-center flex-col md:py-10">
                 <p class="py-4">Avancement des étapes actuelles:</p>
                 <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
-                    <li class="step step-primary">Inscription</li>
+                    <li class="step step-primary">Inscriptions</li>
                     <li class="step step-primary">Choix des voeux</li>
                     <li class="step" :class="{'step-primary' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
                 </ul>

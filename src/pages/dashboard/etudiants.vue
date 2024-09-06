@@ -100,7 +100,6 @@
                         </span>:
                         {{ filteredEtudiants.length }} résultat{{ filteredEtudiants.length > 1 ? 's' : '' }}
                     </p>
-                    {{ exportUrl }}
 
                     <ExportComp text="Exporter tous les étudiants en csv" :link="exportUrl"></ExportComp>
                 </div>
