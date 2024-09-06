@@ -4,9 +4,9 @@
             <div class="text-sm breadcrumbs font-bold">
                 <ul>
                     <li><RouterLink :to="{name: 'Accueil'}">Accueil</RouterLink></li>
-                    <li v-if="displayMode == 'all'">Évènements</li>
-                    <li v-else><RouterLink :to="{name: 'Evenement'}">Évènements</RouterLink></li>
-                    <li v-if="displayMode != 'all'">{{  formatDate(selectedDate) }}</li>
+                    <li v-if="displayMode == 'all'">Événements</li>
+                    <li v-else><RouterLink :to="{name: 'Evenement'}">Événements</RouterLink></li>
+                    <li v-if="displayMode != 'all'">{{  formatDateFull(selectedDate) }}</li>
                 </ul>
             </div>
             <!-- Changement affichage -->
@@ -31,7 +31,7 @@
 
                     <!-- Titre de la page -->
                     <p class="font-bold text-2xl py-10 flex items-center justify-center">
-                        {{ displayMode === 'all' ? 'Liste des évènements' : 'Évènements du ' + formatDate(selectedDate) }}
+                        {{ displayMode === 'all' ? 'Liste des Événements' : 'Événements du ' + formatDateFull(selectedDate) }}
                     </p>
 
                     <!-- Filtes -->
@@ -114,7 +114,7 @@
                     </div>
 
                     <div v-if="displayMode != 'all'" class="flex items-center justify-center p-10 w-full">
-                        <RouterLink :to="{name: 'Evenement'}" class="hover:opacity-70 btn btn-primary w-72 md:w-100 hover:scale-105 transition-all">Voir tous les évènements</RouterLink>
+                        <RouterLink :to="{name: 'Evenement'}" class="hover:opacity-70 btn btn-primary w-72 md:w-100 hover:scale-105 transition-all">Voir tous les Événements</RouterLink>
                     </div>
             </div>
             <div v-else>
@@ -162,6 +162,22 @@ function formatDate(date) {
     if (!date) return '';
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     return new Date(date).toLocaleDateString('fr-FR', options);
+}
+
+function formatDateFull(date) {
+  if (!(date instanceof Date)) {
+    throw new Error('Le paramètre doit être une instance de Date.');
+  }
+
+  const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+  const dayOfWeek = dayNames[date.getDay()];
+  const dayOfMonth = date.getDate().toString().padStart(2, '0');
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${dayOfWeek} ${dayOfMonth} ${month} ${year}`;
 }
 
 function switchAffichage(val) {

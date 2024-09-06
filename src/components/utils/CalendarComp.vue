@@ -1,24 +1,30 @@
 <template>
     <div class="bg-base-300 w-fit p-5 drop-shadow-lg rounded-lg">
+      <!-- Partie du haut -->
       <div class="py-3 w-4/5 flex w-full">
         
+        <!-- Fleche de gauche -->
         <div class="flex items-center justify-center font-bold  w-full *:mx-2">
           <svg @click="previousMonth()" class="select-none hover:opacity-60 hover:cursor-pointer " xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="36" height="36" viewBox="0 0 24 24">
             <path d="M5 12l7-8v6h9v4h-9v6z"/>
           </svg>
         </div>
 
+        <!-- Selecteur de mois -->
         <select id="month" v-model="selectedMonth" class="rounded-lg hover:opacity-60 hover:cursor-pointer select-none p-2 mx-1 w-full font-bold drop-shadow-lg">
           <option v-for="(month, index) in months" :key="index" :value="index">
             {{ month }}
           </option>
         </select>
   
+        <!-- Selecteur de l'année -->
         <select id="year" v-model="selectedYear" class="rounded-lg hover:opacity-60 hover:cursor-pointer select-none p-2 mx-1 w-full font-bold drop-shadow-lg">
           <option v-for="year in years" :key="year" :value="year">
             {{ year }}
           </option>
         </select>
+        
+        <!-- Fleche de droite -->
         <div class="flex items-center justify-center font-bold  w-full *:mx-2">
           <svg @click="nextMonth()" class="select-none hover:opacity-60 hover:cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="36" height="36" viewBox="0 0 24 24">
             <path d="M19 12l-7 8v-6H3v-4h9v-6z"/>
@@ -27,20 +33,27 @@
 
       </div>
       
+      <!-- Partie table -->
       <table>
+
+        <!-- Nom des colonnes (premiere lettre des jours) -->
         <thead>
           <tr>
             <th class="p-2"  v-for="day in days" :key="day">{{ day }}</th>
           </tr>
         </thead>
+        
+        <!-- Contenu du calendrier -->
         <tbody>
           <tr v-for="week in calendar" :key="week">
+            <!-- Cases -->
             <td 
                 class="font-bold hover:cursor-pointer select-none hover:bg-base-200 hover:opacity-80 relative hover:drop-shadow-lg" 
                 v-for="day in week" 
                 :key="day.date"
                 :class="{ 'font-normal': day.isNotMonth, 'bg-primary': day.isToday, 'bg-base-200': dayHasEvent(day) }"
             >
+              <!-- Case de chaque jours -->
                 <RouterLink 
                     :to="{ 
                         name: 'Evenement', 
@@ -48,10 +61,12 @@
                             date: formatDayQuery(day) 
                         } 
                     }"
+                    @click="checkAndReload(formatDayQuery(day))"
                     class="flex items-center justify-center p-3 lg:p-6 transition-all duration-200 ease-in-out"
                 >
                     {{ day.date }}
                 </RouterLink>
+                <!-- Badge qui affiche le nombre d'évenement sur la case -->
                 <span class="scale-70 badge badge-accent absolute top-0 right-0 md:opacity-100 opacity-70" v-if="dayHasEvent(day)">
                     {{ countEventsOnDay(day) }}
                 </span>
@@ -59,16 +74,20 @@
         </tr>
 
         </tbody>
+
       </table>
     </div>
   </template>
   
 <script setup>
   import { ref, computed } from 'vue';
+  import { useRoute} from 'vue-router';
   const props = defineProps({
     events: Object,
   });
 
+
+  const route = useRoute();
   const months = ref([
     'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
@@ -112,8 +131,16 @@
     const dayOfMonth = String(day.date).padStart(2, '0');
     const monthFormatted = String(month).padStart(2, '0');
     return `${dayOfMonth}/${monthFormatted}/${year}`;
-}
+  }
 
+  // S'assure de bien refresh la page lors de changement de date du calendrier
+  function checkAndReload(path) {
+    const queryDate = route.query.date; 
+    if (path == queryDate) {
+      console.log("same reload")
+      window.location.reload();
+    } 
+  }
   
   // Retourne la liste correspondante au calendrier avec le mois et l"année séléctionné
   const calendar = computed(() => {

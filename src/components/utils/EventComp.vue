@@ -9,7 +9,7 @@
                 <span class="badge badge-warning min-w-fit md:badge-md badge-xs md:text-md text-xxxs">{{ event.theme.evthm_name }}</span>
                 <p class="font-bold md:mx-3 md:text-base text-xxs">{{ event.evt_name }}</p>
             </div>
-            <p class="truncate overflow-hidden w-full whitespace-nowrap md:text-md text-xxxs">{{ event.evt_description }}</p>
+            <p class="truncate overflow-hidden w-full whitespace-nowrap md:text-md text-xxs">{{ event.evt_description }}</p>
         </div>
     </RouterLink>
 </template>
