@@ -16,7 +16,7 @@
         <!-- Destination finale -->
         <div v-if="destination.agreement" class="flex items-center justify-center flex-col">
             <p class="text-sm font-bold pb-2">Destination finale</p>
-            <div class="select-none flex justify-between items-center elementDrag xl:w-120 w-105 h-20 transition-all duration-100 ease-in-out">
+            <div class="select-none flex justify-between items-center elementDrag xl:w-120 md:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
                 <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
                     <div class="border-warning border-2 p-1 flex items-center justify-center w-full h-20 select-none">
