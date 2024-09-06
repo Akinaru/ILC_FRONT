@@ -2,6 +2,7 @@
     <div v-if="isLoaded">
         <!-- Partie accord -->
         <div>
+            
             <p class="text-2xl font-bold">Les accords</p>
             <div class="block lg:flex my-5">
  
@@ -109,7 +110,7 @@
                                         <p class="p-3 m-1">Aucun département</p>
                                     </div>
                                     </div>
-                                    <span class="absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
+                                    <span class="hidden xs:absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
                                 </RouterLink>
                                 <span v-if="accountStore.isLogged() && accountStore.isStudent()">
                                     <div @click="toggleFavoris(accord.agree_id)" class="group md:p-5 p-2 flex items-center justify-center  hover:cursor-pointer" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
@@ -160,7 +161,7 @@
                             <span v-if="article.art_pin" class="badge badge-primary absolute top-6 left-1">📌Épinglé</span>
                             <div class="p-3 flex flex-col justify-start h-48">
                                 <div class="mb-2">
-                                    <p class="font-bold text-xl">{{ article.art_title }}</p>
+                                    <p class="font-bold text-md">{{ article.art_title }}</p>
                                     <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
                                 </div>
                                 <div class="overflow-hidden text-sm text-gray-700 max-h-20" v-html="article.art_description"></div>

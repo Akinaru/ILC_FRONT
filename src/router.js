@@ -69,7 +69,6 @@ const isAlreadyComplete = (to, from, next) => {
 const routes = [
     { path: '/', name: 'Accueil', component: Index, meta: { title: 'Accueil' } },
     { path: '/not-found', name: 'NotFound', component: () => import('./pages/notfound.vue'), meta: { title: 'Not Found' } },
-    { path: '/test', name: 'test', component: () => import('./pages/test.vue'), meta: { title: 'Not Found' } },
     { path: '/:pathMatch(.*)*', redirect: '/not-found' },
     { path: '/convert', name: 'Convert', component: () => import('./pages/convert.vue'), meta: { title: 'Convert' } },
     { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin, meta: { title: 'Login' } },
