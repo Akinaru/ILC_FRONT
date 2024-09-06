@@ -8,10 +8,10 @@
         </ul>
     </div>
     <div v-if="event && event.evt_id" class="py-10">
-        <p>{{ formatDate(event.evt_datetime) }}</p>
-        <div class="flex items-center justify-start">
-            <span class="badge badge-warning">{{ event.theme.evthm_name }}</span>
-            <p class="font-bold text-3xl mx-3">{{ event.evt_name }}</p>
+        <span class="badge badge-warning">{{ event.theme.evthm_name }}</span>
+        <div class="flex flex-col items-start justify-start my-10">
+            <p class="">{{ formatDate(event.evt_datetime) }}</p>
+            <p class="font-bold text-2xl">{{ event.evt_name }}</p>
         </div>
         <p class="text-xl py-5">{{ event.evt_description }}</p>
     </div>
