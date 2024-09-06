@@ -10,13 +10,13 @@
                 </ul>
             </div>
             <div class="flex justify-start items-end">
-                <button class="hover:opacity-70 transition-all btn btn-primary mx-1" @click="switchAffichage(true)">
+                <button class="hover:opacity-70 transition-all btn btn-primary mx-1 hover:scale-105" @click="switchAffichage(true)">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7 10H9V12H7V10ZM11 10H13V12H11V10ZM15 10H17V12H15V10ZM7 14H9V16H7V14ZM11 14H13V16H11V14ZM15 14H17V16H15V14ZM19 3H18V1H16V3H8V1H6V3H5C3.9 3 3 3.9 3 5V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V5C21 3.9 20.1 3 19 3ZM19 21H5V8H19V21Z" fill="currentColor"/>
                     </svg>
                 </button>
 
-                <button class="hover:opacity-70 transition-all btn btn-primary" @click="switchAffichage(false)">
+                <button class="hover:opacity-70 transition-all btn btn-primary hover:scale-105" @click="switchAffichage(false)">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3 3H11V11H3V3ZM13 3H21V11H13V3ZM3 13H11V21H3V13ZM13 13H21V21H13V13Z" fill="currentColor"/>
                     </svg>
@@ -41,8 +41,8 @@
                         </label>
 
                         <!-- Filtre sur les thematiques -->
-                        <div class="flex w-2/3 flex-wrap justify-center pt-1">
-                            <div v-for="(them, index) in thematiques" class="flex items-center justify-center py-1 min-w-fit">
+                        <div class="flex w-2/3 flex-wrap justify-start pt-1">
+                            <div v-for="(them, index) in thematiques" :key="index" class="flex items-center justify-center py-1 min-w-fit">
                                 <input :id="'filt_them_'+index" type="checkbox" class="checkbox" :value="them.evthm_id" v-model="selectedThematique">
                                 <label :for="'filt_them_'+index" class="select-none w-full mx-2">
                                     <span class="badge badge-warning min-w-fit">{{ them.evthm_name }}</span>
@@ -55,31 +55,31 @@
                     <div v-if="pastEvents && pastEvents.length > 0 || todayEvents && todayEvents.length > 0 || futureEvents && futureEvents.length > 0">
                         <!-- Événements passés -->
                         <div v-if="pastEvents.length > 0 && displayMode !== 'day'" class="flex flex-col justify-center items-center py-10">
-                            <h2 class="font-bold text-lg">Événements passés</h2>
+                            <h2 class="font-bold text-xl">Événements passés</h2>
                             <div class="w-full flex flex-col justify-center items-center py-5">
                                 <!-- Afficher les événements passés -->
                                 <RouterLink
                                     v-for="event in visiblePastEvents"
                                     :key="event.evt_id"
-                                    class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden opacity-50 scale-100 hover:scale-105 transition-all duration-200 ease-in-out"
+                                    class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden opacity-50 scale-100 hover:scale-105 "
                                     :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}"
                                 >
                                     <p class="font-bold md:text-xl flex items-center justify-center md:p-5 p-2 transition-all duration-200 ease-in-out">{{ formatDate(event.evt_datetime) }}</p>
                                     <div class="flex flex-col w-5/6 items-start justify-center md:py-5 p-3">
                                         <div class="flex items-center justify-start w-full md:flex-row flex-col transition-all duration-200 ease-in-out">
-                                            <span class="badge badge-warning min-w-fit transition-all duration-200 ease-in-out">{{ event.theme.evthm_name }}</span>
+                                            <span class="badge badge-warning min-w-fit">{{ event.theme.evthm_name }}</span>
                                             <p class="font-bold md:mx-3 transition-all duration-200 ease-in-out">{{ event.evt_name }}</p>
                                         </div>
                                         <p class="truncate overflow-hidden w-full whitespace-nowrap transition-all duration-200 ease-in-out">{{ event.evt_description }}</p>
                                     </div>
                                 </RouterLink>
-                                <button v-if="!showAllPastEvents && pastEvents.length > 2" @click="showAllPastEvents = true" class="btn btn-primary mt-2">Voir plus d'événements passés</button>
+                                <button v-if="!showAllPastEvents && pastEvents.length > 2" @click="showAllPastEvents = true" class="btn btn-primary mt-2 hover:scale-105 transition-all">Voir plus d'événements passés</button>
                             </div>
                         </div>
                         <!-- Condition pour cacher la section si aucun événement passé ou si mode affichage par jour -->
                         <div v-else-if="pastEvents.length === 0 && displayMode === 'all'" class="flex flex-col justify-center items-center py-10">
-                            <h2 class="font-bold text-lg">Événements passés</h2>
-                            <p>Aucun événement passé.</p>
+                            <h2 class="font-bold text-xl">Événements passés</h2>
+                            <p class="py-10">Il n'y a aucun événement passé.</p>
                         </div>
 
                         
@@ -91,21 +91,21 @@
                                 <RouterLink
                                     v-for="event in todayEvents"
                                     :key="event.evt_id"
-                                    class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden scale-110 hover:scale-115 transition-all duration-200 ease-in-out "
+                                    class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden scale-110 hover:scale-115 "
                                     :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}"
                                 >
                                 <p class="font-bold md:text-xl flex items-center justify-center md:p-5 p-2 transition-all duration-200 ease-in-out">{{ formatDate(event.evt_datetime) }}</p>
                                     <div class="flex flex-col w-5/6 items-start justify-center md:py-5 p-3">
                                         <div class="flex items-center justify-start w-full md:flex-row flex-col transition-all duration-200 ease-in-out">
-                                            <span class="badge badge-warning min-w-fit transition-all duration-200 ease-in-out">{{ event.theme.evthm_name }}</span>
-                                            <p class="font-bold md:mx-3 transition-all duration-200 ease-in-out">{{ event.evt_name }}</p>
+                                            <span class="badge badge-warning min-w-fit ">{{ event.theme.evthm_name }}</span>
+                                            <p class="font-bold md:mx-3">{{ event.evt_name }}</p>
                                         </div>
                                         <p class="truncate overflow-hidden w-full whitespace-nowrap transition-all duration-200 ease-in-out">{{ event.evt_description }}</p>
                                     </div>
                                 </RouterLink>
                             </div>
-                            <div v-else-if="displayMode === 'all'">
-                                <p>Aucun événement aujourd'hui.</p>
+                            <div v-else-if="displayMode === 'all'" class="py-10">
+                                <p>Il n'y a aucun événement aujourd'hui.</p>
                             </div>
                         </div>
                         
@@ -121,8 +121,8 @@
                                     <p class="font-bold md:text-xl flex items-center justify-center md:p-5 p-2 transition-all duration-200 ease-in-out">{{ formatDate(event.evt_datetime) }}</p>
                                     <div class="flex flex-col w-5/6 items-start justify-center md:py-5 p-3">
                                         <div class="flex items-center justify-start w-full md:flex-row flex-col transition-all duration-200 ease-in-out">
-                                            <span class="badge badge-warning min-w-fit transition-all duration-200 ease-in-out">{{ event.theme.evthm_name }}</span>
-                                            <p class="font-bold md:mx-3 transition-all durée-200 ease-in-out">{{ event.evt_name }}</p>
+                                            <span class="badge badge-warning min-w-fit">{{ event.theme.evthm_name }}</span>
+                                            <p class="font-bold md:mx-3">{{ event.evt_name }}</p>
                                         </div>
                                         <p class="truncate overflow-hidden w-full whitespace-nowrap transition-all durée-200 ease-in-out">{{ event.evt_description }}</p>
                                     </div>
@@ -135,27 +135,27 @@
 
                         <!-- Événements à venir -->
                         <div v-if="displayMode !== 'day'" class="flex flex-col justify-center items-center py-10">
-                            <h2 class="font-bold text-lg">Événements à venir</h2>
+                            <h2 class="font-bold text-xl">Événements à venir</h2>
                             <div v-if="futureEvents && futureEvents.length" class="w-full flex flex-col justify-center items-center py-5">
                                 <RouterLink
                                     v-for="event in visibleFutureEvents"
                                     :key="event.evt_id"
-                                    class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden scale-100 hover:scale-105 transition-all duration-200 ease-in-out"
+                                    class="hover:opacity-60 sm:w-2/3 w-full bg-base-300 my-2 flex overflow-hidden scale-100 hover:scale-105 "
                                     :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}"
                                 >
                                     <p class="font-bold md:text-xl flex items-center justify-center md:p-5 p-2 transition-all duration-200 ease-in-out">{{ formatDate(event.evt_datetime) }}</p>
                                     <div class="flex flex-col w-5/6 items-start justify-center md:py-5 p-3">
                                         <div class="flex items-center justify-start w-full md:flex-row flex-col transition-all duration-200 ease-in-out">
-                                            <span class="badge badge-warning min-w-fit transition-all duration-200 ease-in-out">{{ event.theme.evthm_name }}</span>
-                                            <p class="font-bold md:mx-3 transition-all duration-200 ease-in-out">{{ event.evt_name }}</p>
+                                            <span class="badge badge-warning min-w-fit ">{{ event.theme.evthm_name }}</span>
+                                            <p class="font-bold md:mx-3">{{ event.evt_name }}</p>
                                         </div>
                                         <p class="truncate overflow-hidden w-full whitespace-nowrap transition-all duration-200 ease-in-out">{{ event.evt_description }}</p>
                                     </div>
                                 </RouterLink>
-                                <button v-if="futureEvents.length > 2 && !showAllFutureEvents" @click="showAllFutureEvents = true" class="btn btn-primary mt-2">Voir plus d'événements à venir</button>
+                                <button v-if="futureEvents.length > 2 && !showAllFutureEvents" @click="showAllFutureEvents = true" class="btn btn-primary mt-2 hover:scale-105 transition-all">Voir plus d'événements à venir</button>
                             </div>
-                            <div v-else>
-                                <p>Aucun événement à venir.</p>
+                            <div v-else class="py-10">
+                                <p>Il n'y a aucun événement à venir.</p>
                             </div>
                         </div>
 
@@ -167,7 +167,7 @@
                     </div>
 
                     <div v-if="displayMode != 'all'" class="flex items-center justify-center p-10 w-full">
-                        <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-100">Voir tous les évènements</RouterLink>
+                        <RouterLink :to="{name: 'Evenement'}" class="hover:opacity-70 btn btn-primary w-100 hover:scale-105 transition-all">Voir tous les évènements</RouterLink>
                     </div>
             </div>
             <div v-else>

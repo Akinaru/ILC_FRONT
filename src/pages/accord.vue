@@ -2,23 +2,26 @@
     <div class="" v-if="isLoaded">
         <div v-if="accord && accord.agree_id">
             <div class="flex justify-end pb-20">
+                <!-- Favoris -->
+                <div v-if="accountStore.isLogged() && accountStore.isStudent()" @click="toggleFavoris(accord.agree_id)" class="w-fit group p-2 flex items-center justify-center  hover:cursor-pointer hover:scale-105 transition-all" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
 
-                <div v-if="accountStore.isLogged() && accountStore.isStudent()" @click="toggleFavoris(accord.agree_id)" class="w-fit group p-2 flex items-center justify-center  hover:cursor-pointer hover:scale-150 scale-120 transition-all" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
-                    <svg 
-                    class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out  " 
-                    viewBox="0 0 24 24" 
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path 
-                    :class="{'fill-current': isFavorited(accord.agree_id), 'group-hover:fill-current': !isFavorited(accord.agree_id)}" 
-                    :fill="isFavorited(accord.agree_id) ? 'currentColor' : 'none'" 
-                    stroke="currentColor" 
-                    stroke-width="2" 
-                    d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z" />
-                </svg>
+                    <button class="btn btn-primary">
+                        <svg 
+                        class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out  " 
+                        viewBox="0 0 24 24" 
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path 
+                        :class="{'fill-current': isFavorited(accord.agree_id), 'group-hover:fill-current': !isFavorited(accord.agree_id)}" 
+                        :fill="isFavorited(accord.agree_id) ? 'currentColor' : 'none'" 
+                        stroke="currentColor" 
+                        stroke-width="2" 
+                        d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z" />
+                        </svg>
+                        <span v-if="!isFavorited(accord.agree_id)">Ajouter aux favoris</span>
+                        <span v-else>Supprimer des favoris</span>
+                    </button>
+                </div>
             </div>
-        </div>
-
-
             <div class="flex items-center flex-col text-xl md:text-2xl">
                 <!-- Drapeau -->
                 <div class="bg-base-300 w-fit flex justify-start items-center flex-col p-10 rounded-xl">
