@@ -182,21 +182,27 @@
 
 
     function openFileInNewTab(filePath) {
+    // Diviser le chemin du fichier en segments et obtenir le dernier segment (nom du fichier)
+    const segments = filePath.split('/');
+    const fileName = segments[segments.length - 1];
 
-        // Diviser le chemin du fichier en segments et obtenir le dernier segment (nom du fichier)
-        const segments = filePath.split('/');
-        const fileName = segments[segments.length - 1];
+    // Construire l'URL complète pour accéder au fichier
+    const fileUrl = config.apiUrl + `api/documents/get/admin/${fileName}`;
 
-        // Construire l'URL complète pour accéder au fichier
-        const fileUrl = config.apiUrl + `api/documents/get/admin/${fileName}`;
-
-        // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
-        if (fileName.toLowerCase().endsWith('.pdf')) {
-            window.open(fileUrl, '_blank');
-        } else {
-            console.log("Le fichier n'est pas un PDF.");
-        }
+    // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
+    if (fileName.toLowerCase().endsWith('.pdf')) {
+        window.open(fileUrl, '_blank');
+    } else {
+        // Si ce n'est pas un PDF, forcer le téléchargement du fichier
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = fileName;  // Propose le téléchargement avec le nom du fichier
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
+}
+
 
     onMounted(fetch)
 
