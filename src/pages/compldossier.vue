@@ -6,17 +6,17 @@
             <p class="py-4">Avancement des étapes actuelles:</p>
             <ul class="steps steps-vertical lg:steps-horizontal max-w-lg">
                 <li class="step step-neutral">Inscription</li>
-                <li class="step">Choix des voeux</li>
+                <li class="step">Choix des vœux</li>
                 <li class="step">Arbitrage</li>
                 <li class="step">Validation</li>
             </ul>
         </div>
-        <p>Bienvenue sur votre accès personnel aux relations internationales.</p>
-        <p>Votre dossier est incomplet,</p>
-        <p>veuillez remplir les informations ci-dessous pour compléter votre dossier étudiant lié aux relations internationales.</p>
+        <p class="font-bold">Bienvenue sur votre espace personnel dédié aux relations internationales.</p>
+        <p class="font-bold">Votre dossier est incomplet,</p>
+        <p class="font-bold">veuillez remplir les informations ci-dessous pour compléter votre dossier.</p>
 
 
-        <form @submit.prevent="confirmCompl" class="m-5 w-4/6 flex items-center justify-center flex-col mt-10">
+        <form @submit.prevent="confirmCompl" class="m-5 md:w-4/6 w-full flex items-center justify-center flex-col mt-10">
             <p>Formulaire</p>
             <label class="form-control w-full max-w-lg">
                 <div class="label">
