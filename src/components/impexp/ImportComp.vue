@@ -20,7 +20,7 @@
   const props = defineProps({
     texte: {
       type: String,
-      default: 'Importer des étudiants en csv',
+      default: 'Importer des x en csv',
     },
   });
   
