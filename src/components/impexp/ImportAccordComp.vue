@@ -14,19 +14,17 @@
   
   <script setup>
   import { ref, getCurrentInstance } from 'vue';
-  import { convertCSVToJson, checkCSVFile } from '../../composables/csvConvert.js';
   import Papa from 'papaparse';
   
   const props = defineProps({
     texte: {
       type: String,
-      default: 'Importer des etudiants en csv',
+      default: 'Importer des x en csv',
     },
   });
   
   const fileInput = ref(null);
   const result = ref([]);
- 
   
   // Utilisation de getCurrentInstance pour obtenir l'objet emit
   const { emit } = getCurrentInstance();
@@ -35,25 +33,41 @@
     fileInput.value.click();
   };
   
+  const isEmptyRow = (row) => {
+    // Vérifier si tous les champs d'une ligne sont vides
+    return Object.values(row).every(value => !value || value.trim() === '');
+  };
+  
   const handleFileUpload = (event) => {
-  const file = event.target.files[0];
-
-  if (checkCSVFile(file)) {
-    Papa.parse(file, {
-      header: true,
-      complete: (results) => {
-        result.value = results.data;
-
-        // Émet l'événement après que les données ont été mises à jour
-        emit('csv-imported', result.value);
-      },
-      error: (error) => {
-        console.error('Erreur lors de la conversion de CSV en JSON :', error);
-      }
-    });
-  } else {
-    console.error('Fichier non valide');
-  }
-};
+    const file = event.target.files[0];
+  
+    if (file && file.name.endsWith('.csv')) {
+      Papa.parse(file, {
+        header: true,            // Inclure les en-têtes pour obtenir les colonnes
+        skipEmptyLines: true,    // Ignorer les lignes vides dans le CSV
+        worker: true,            // Utiliser un Web Worker pour éviter le blocage de l'UI avec de grands fichiers
+        encoding: "UTF-8",       // Assurer que les accents sont correctement lus
+        complete: (results) => {
+          // Filtrer les lignes vides
+          result.value = results.data.filter(row => !isEmptyRow(row));
+  
+          // Afficher les colonnes (les clés de l'objet)
+          const columns = Object.keys(result.value[0]);
+          console.log('Colonnes :', columns);
+  
+          // Afficher toutes les données
+          console.log('Données CSV :', result.value);
+  
+          // Émet l'événement après que les données ont été mises à jour
+          emit('csv-imported', result.value);
+        },
+        error: (error) => {
+          console.error('Erreur lors de la conversion de CSV en JSON :', error);
+        }
+      });
+    } else {
+      console.error('Fichier non valide');
+    }
+  };
   </script>
   

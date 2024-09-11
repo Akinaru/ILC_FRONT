@@ -5,7 +5,7 @@
         <div class="flex justify-between">
             <p class="text-xl font-bold">Accord</p>
             <div class="flex *:mx-1">
-                <ImportComp texte="Importer des accords en csv"></ImportComp>
+                <ImportAccordComp texte="Importer des accords en csv"></ImportAccordComp>
                 <ExportComp texte="Exporter des accords en csv" :link="config.apiUrl+'api/agreement/export'"></ExportComp>
             </div>
         </div>
@@ -290,7 +290,7 @@
                     </div>
                 
                     <div v-else>
-                        <p>Aucun accord trouvé.</p>
+                        <p class="text-center py-20">Aucun accord trouvé.</p>
                     </div>
                 </div>
             </div>
@@ -307,7 +307,7 @@
     import { useAccountStore } from '../../stores/accountStore';
     import { addAlert } from '../../composables/addAlert';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
-    import ImportComp from '../../components/impexp/ImportComp.vue';
+    import ImportAccordComp from '../../components/impexp/ImportAccordComp.vue';
     import ExportComp from '../../components/impexp/ExportComp.vue';
     const accountStore = useAccountStore();
     const response = ref([]);
@@ -364,82 +364,82 @@
     });
 
     async function addAgreement() {
-    const requestData = { 
-        typeaccord: newAgreement.value.typeaccord,
-        nbplace: newAgreement.value.nbplace,
-    };
-
-    // Vérification du nombre de places
-    if (newAgreement.value.nbplace <= 0) {
-        addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
-        return;
-    }
-
-    if (newAgreement.value.lien != null) {
-        requestData.agree_lien = newAgreement.value.lien;
-    }
-    if (newAgreement.value.description != null) {
-        requestData.agree_description = newAgreement.value.description;
-    }
-
-    // Gestion du nouveau isced
-    if (newAgreement.value.isced !== 'addNew') {
-        requestData.isc_id = newAgreement.value.isced;
-    } else {
-        requestData.newisced = {
-            isc_code: '0' + newAgreement.value.newisced.code.toString(),
-            isc_name: newAgreement.value.newisced.name
+        const requestData = { 
+            agree_typeaccord: newAgreement.value.typeaccord,
+            agree_nbplace: newAgreement.value.nbplace,
         };
-    }
 
-    // Gestion de la nouvelle composante
-    if (newAgreement.value.compo !== 'addNew') {
-        requestData.comp_id = newAgreement.value.compo;
-    } else {
-        requestData.newcompo = {
-            comp_name: newAgreement.value.newcompo.name,
-            comp_shortname: newAgreement.value.newcompo.shortname.toUpperCase()
-        };
-    }
-
-    // Gestion de la nouvelle université
-    if (newAgreement.value.univ !== 'addNew') {
-        requestData.univ_id = newAgreement.value.univ;
-    } else {
-        requestData.newuniv = {
-            univ_name: newAgreement.value.newuniv.name,
-            univ_city: newAgreement.value.newuniv.city,
-        };
-        if (newAgreement.value.newuniv.partnercountry !== 'addNew') {
-            requestData.newuniv.parco_id = newAgreement.value.newuniv.partnercountry;
-        } else {
-            requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry;
-            requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode;
+        // Vérification du nombre de places
+        if (newAgreement.value.nbplace <= 0) {
+            addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
+            return;
         }
+
+        if (newAgreement.value.lien != null) {
+            requestData.agree_lien = newAgreement.value.lien;
+        }
+        if (newAgreement.value.description != null) {
+            requestData.agree_description = newAgreement.value.description;
+        }
+
+        // Gestion du nouveau isced
+        if (newAgreement.value.isced !== 'addNew') {
+            requestData.isc_id = newAgreement.value.isced;
+        } else {
+            requestData.newisced = {
+                isc_code: '0' + newAgreement.value.newisced.code.toString(),
+                isc_name: newAgreement.value.newisced.name
+            };
+        }
+
+        // Gestion de la nouvelle composante
+        if (newAgreement.value.compo !== 'addNew') {
+            requestData.comp_id = newAgreement.value.compo;
+        } else {
+            requestData.newcompo = {
+                comp_name: newAgreement.value.newcompo.name,
+                comp_shortname: newAgreement.value.newcompo.shortname.toUpperCase()
+            };
+        }
+
+        // Gestion de la nouvelle université
+        if (newAgreement.value.univ !== 'addNew') {
+            requestData.univ_id = newAgreement.value.univ;
+        } else {
+            requestData.newuniv = {
+                univ_name: newAgreement.value.newuniv.name,
+                univ_city: newAgreement.value.newuniv.city,
+            };
+            if (newAgreement.value.newuniv.partnercountry !== 'addNew') {
+                requestData.newuniv.parco_id = newAgreement.value.newuniv.partnercountry;
+            } else {
+                requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry;
+                requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode;
+            }
+        }
+
+        // Vérification du type d'accord
+        if (requestData.typeaccord === 'Selectionnez un type d\'accord') {
+            addAlert('error', { data: { error: 'Vous devez choisir un type d\'accord.', message: 'Ajout de l\'accord annulé.' } });
+            return;
+        }
+
+        // Effectuer la requête POST pour ajouter l'accord
+        await request("POST", true, response, config.apiUrl + 'api/agreement', requestData);
+
+        // Vérification de la réponse et ajout d'une action si nécessaire
+        if (response.value.status === 201) {
+            const requestDataAction = {
+                act_description: 'Ajout de l\'accord avec ' + response.value.agreement.university.univ_name + ' (' + response.value.agreement.partnercountry.parco_name + ').',
+                acc_id: accountStore.login,
+                agree_id: response.value.agreement.agree_id
+            };
+            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+        }
+
+        // Rafraîchir les données après l'ajout
+        await fetchAll();
     }
-
-    // Vérification du type d'accord
-    if (requestData.typeaccord === 'Selectionnez un type d\'accord') {
-        addAlert('error', { data: { error: 'Vous devez choisir un type d\'accord.', message: 'Ajout de l\'accord annulé.' } });
-        return;
-    }
-
-    // Effectuer la requête POST pour ajouter l'accord
-    await request("POST", true, response, config.apiUrl + 'api/agreement', requestData);
-
-    // Vérification de la réponse et ajout d'une action si nécessaire
-    if (response.value.status === 201) {
-        const requestDataAction = {
-            act_description: 'Ajout de l\'accord avec ' + response.value.agreement.university.univ_name + ' (' + response.value.agreement.partnercountry.parco_name + ').',
-            acc_id: accountStore.login,
-            agree_id: response.value.agreement.agree_id
-        };
-        await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
-    }
-
-    // Rafraîchir les données après l'ajout
-    await fetchAll();
-}
 
     async function fetchAll(){
         isLoaded.value = false;
