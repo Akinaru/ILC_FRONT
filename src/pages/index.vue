@@ -2,12 +2,13 @@
     <div v-if="isLoaded">
         <!-- Partie accord -->
         <div>
-            <p class="text-2xl font-bold">Les accords</p>
+            
+            <p class="text-3xl font-bold py-10 text-center">Accords Internationaux</p>
             <div class="block lg:flex my-5">
  
                 <!-- Partie filtre -->
-                <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5" v-if="accords && accords.agreements">
-                    <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
+                <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5 z-10" v-if="accords && accords.agreements">
+                    <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg">Filtres des Accords</p>
                     <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length + selectedComponent.length }} filtre{{ selectedCountries.length + selectedDepartment.length + selectedComponent.length > 1 ? 's' : '' }})</p>
                     <!-- Pays -->
                     <div>
@@ -19,7 +20,7 @@
                             <button class="hover:opacity-70" @click="deselectAllCountry">Tout désélectionner</button>
 
                             <div class="lg:block flex flex-wrap">
-
+                                
                                 <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 w-1/2 sm:w-1/3 lg:w-full">
                                     <input :id="'filt_pays_'+index" type="checkbox" class="checkbox " :value="country.parco_name" v-model="selectedCountries">
                                     <label :for="'filt_pays_'+index"  class="flex  w-full hover:cursor-pointer pl-2">
@@ -78,15 +79,15 @@
 
                 
                 <!-- Partie rendu des accords -->
-                <div class="w-full overflow-x-hidden">
+                <div class="w-full z-20">
                     <div>
                         <!-- Si il y a des accords -->
                         <div v-if="filteredAccords && filteredAccords.length > 0">
 
 
 
-                            <div>
-                                <div v-for="(accord, index) in paginatedAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden z-auto">
+                            <div class="z-10">
+                                <div v-for="(accord, index) in paginatedAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden transition-all hover:scale-102">
                                 <RouterLink :to="{ name: 'Accord', params: { agree_id: accord.agree_id }}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
                                     <div class="flex items-center flex-wrap">
                                     <span class="mr-2 flex items-center justify-center">
@@ -100,16 +101,16 @@
                                     </div>
                                     </div>
                                     <div class="flex items-center flex-wrap">
-                                    <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center transition-all duration-100 ease-in-out h-full z-0">
+                                    <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center  h-full z-0">
                                         <div v-for="(dept, index) in accord.departments" :key="index">
-                                            <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 m-1 font-bold md:text-xl text-xs text-center select-none z-0" :style="{ backgroundColor: dept.dept_color }">{{ dept.dept_shortname }}</p>
+                                            <p v-if="dept.pivot.deptagree_valide" class=" md:p-3 min-w-11 p-1 m-1 font-bold md:text-xl text-xs text-center select-none z-0" :style="{ backgroundColor: dept.dept_color }">{{ dept.dept_shortname }}</p>
                                         </div>
                                     </div>
                                     <div v-else>
                                         <p class="p-3 m-1">Aucun département</p>
                                     </div>
                                     </div>
-                                    <span class="absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
+                                    <span class="hidden xs:absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
                                 </RouterLink>
                                 <span v-if="accountStore.isLogged() && accountStore.isStudent()">
                                     <div @click="toggleFavoris(accord.agree_id)" class="group md:p-5 p-2 flex items-center justify-center  hover:cursor-pointer" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
@@ -130,7 +131,7 @@
                                 </span>
                                 </div>
                                 <div class="flex items-center justify-center">
-                                    <button v-if="canShowMore" @click="showMore" class="btn btn-primary mt-4 w-52">Voir plus</button>
+                                    <button v-if="canShowMore" @click="showMore" class="btn btn-primary mt-4 w-52 hover:opacity-80 transition-all hover:scale-105" >Voir plus d'accords</button>
                                 </div>
                             </div>
 
@@ -150,9 +151,8 @@
 
         <!-- Espace communication -->
         <div class="w-full ">
-            <p class="text-2xl font-bold">Espace communication</p>
+            <p class="text-3xl font-bold text-center py-10">Espace communication</p>
             <!-- Articles -->
-                <p class="text-xl font-bold">Articles</p>
                 <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
                     <div v-if="articles.count > 0" class="flex flex-wrap justify-center xl:justify-start max-w-7xl gap-5 ">
                         <RouterLink v-for="(article, index) in articles.articles.slice(0, 6)" :key="index" :to="{ name: 'Article', params: { art_id: article.art_id } }" class="rounded-lg relative bg-base-300 w-80 md:w-96 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105 mb-5">
@@ -160,7 +160,7 @@
                             <span v-if="article.art_pin" class="badge badge-primary absolute top-6 left-1">📌Épinglé</span>
                             <div class="p-3 flex flex-col justify-start h-48">
                                 <div class="mb-2">
-                                    <p class="font-bold text-xl">{{ article.art_title }}</p>
+                                    <p class="font-bold text-md">{{ article.art_title }}</p>
                                     <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
                                 </div>
                                 <div class="overflow-hidden text-sm text-gray-700 max-h-20" v-html="article.art_description"></div>
@@ -171,7 +171,7 @@
                         <p>Aucun article n'a été trouvé.</p>
                     </div>
                     <RouterLink v-if="articles.count > 0" :to="{ name: 'Articles' }" class="my-12 flex justify-center">
-                        <button class="btn btn-primary w-96">Voir tous les articles</button>
+                        <button class="btn btn-primary w-96 hover:opacity-80 transition-all hover:scale-105">Voir tous les articles</button>
                     </RouterLink>
                 </div>
                 <div v-else class="flex items-center justify-center my-20">
@@ -180,27 +180,38 @@
 
 
             <!-- Agenda -->
-                <p class="text-xl font-bold">Agenda</p>
+            <p class="text-3xl font-bold text-center py-10">Agenda des événements</p>
                 <div class="m-5 flex items-center justify-center flex-col">
-                    <p class="font-bold text-xl p-5">Prochains évenements</p>
-                    <div class="flex h-full items-center lg:items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
-                        <div class="flex flex-col items-center justify-center">
+                    <div class="flex h-full items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
+                        <div class="flex flex-col items-center justify-center w-full">
                             <CalendarComp :events="events"></CalendarComp>
                             <div class="flex items-center justify-center py-5 w-full">
-                                <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary w-full">Voir tous les évènements</RouterLink>
+                                <RouterLink :to="{name: 'Evenement'}" class="btn btn-primary lg:w-100 w-80 hover:opacity-80 transition-all hover:scale-105">Voir tous les évènements</RouterLink>
                             </div>
                         </div>
 
                         <div class="p-5 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
-                                <div v-for="(event, index) in eventspf.events.slice(0, 4)" :key="index" class="flex items-center justify-center flex-1 ">
-                                    <p class="md:p-4 p-1 md:text-xl font-bold">{{ formatDate(event.evt_datetime) }}</p>
+                                <p class="text-center">Les 4 prochains événements</p>
+                                <RouterLink :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}" v-for="(event, index) in eventspf.events.slice(0, 4)" :key="index" class="hover:opacity-70 hover:scale-105 transition-all flex items-center justify-center flex-1 md:w-full ">
+                                    <p class="md:p-4 p-1 md:text-xl text-xs font-bold">{{ formatDate(event.evt_datetime) }}</p>
                                     <div class="bg-base-300 p-6 xl:w-110 md:w-100 w-80 my-3 drop-shadow-lg flex flex-col transition-all duration-100 ease-in-out rounded-lg">
                                         <div class="flex justify-between">
-                                            <p class="font-bold truncate">{{ event.evt_name }}</p>
-                                            <span class="badge badge-warning min-w-fit">{{ event.theme.evthm_name }}</span>
+                                            <p class="font-bold truncate md:text-md text-xs">{{ event.evt_name }}</p>
+                                            <span class="badge md:badge-md badge-xs md:text-md text-xxs badge-warning min-w-fit">{{ event.theme.evthm_name }}</span>
                                         </div>  
-                                        <p class="truncate">{{ event.evt_description }}</p>
+                                        <p class="truncate md:text-xs text-xxs">{{ event.evt_description }}</p>
+                                    </div>
+                                </RouterLink>
+                                <div v-if="eventspf.events.length < 4" class="flex flex-col">
+                                    <div v-for="(n, index) in (4 - eventspf.events.length)" :key="index" class="opacity-60 transition-all flex items-center justify-center flex-1 w-full">
+                                        <p class="md:p-4 p-1 md:text-xl text-xs font-bold">XX:XX</p>
+                                        <div class="bg-base-300 p-6 xl:w-110 md:w-100 w-80 my-3 drop-shadow-lg flex flex-col transition-all duration-100 ease-in-out rounded-lg">
+                                            <div class="flex justify-between">
+                                                <p class="font-bold truncate md:text-md text-xs">Aucun évenement...</p>
+                                            </div>  
+                                            <p class="truncate md:text-xs text-xxs">La case correspondant à cet événement est vide.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

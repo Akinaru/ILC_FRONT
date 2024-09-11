@@ -32,7 +32,7 @@
                 <textarea class="textarea w-full textarea-bordered h-48" placeholder="Description" v-model="newEvent.description"></textarea>
                 <div class="flex items-center justify-center *:mx-1">
 
-                    <button class="btn btn-primary" type="submit">Ajouter l'évènement</button>
+                    <button class="btn btn-primary hover:scale-105 transition-all" type="submit">Ajouter l'évènement</button>
                 </div>
             </form>
         </div>

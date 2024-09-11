@@ -1,7 +1,27 @@
 <template>
     <div class="" v-if="isLoaded">
-        <div v-if="accord && accord.agree_id" class="">
-            <p class="flex justify-center font-bold py-10 text-xl">Accord n°{{ accord.agree_id }}</p>
+        <div v-if="accord && accord.agree_id">
+            <div class="flex justify-end pb-20">
+                <!-- Favoris -->
+                <div v-if="accountStore.isLogged() && accountStore.isStudent()" @click="toggleFavoris(accord.agree_id)" class="w-fit group p-2 flex items-center justify-center  hover:cursor-pointer hover:scale-105 transition-all" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
+
+                    <button class="btn btn-primary">
+                        <svg 
+                        class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out  " 
+                        viewBox="0 0 24 24" 
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path 
+                        :class="{'fill-current': isFavorited(accord.agree_id), 'group-hover:fill-current': !isFavorited(accord.agree_id)}" 
+                        :fill="isFavorited(accord.agree_id) ? 'currentColor' : 'none'" 
+                        stroke="currentColor" 
+                        stroke-width="2" 
+                        d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z" />
+                        </svg>
+                        <span v-if="!isFavorited(accord.agree_id)">Ajouter aux favoris</span>
+                        <span v-else>Supprimer des favoris</span>
+                    </button>
+                </div>
+            </div>
             <div class="flex items-center flex-col text-xl md:text-2xl">
                 <!-- Drapeau -->
                 <div class="bg-base-300 w-fit flex justify-start items-center flex-col p-10 rounded-xl">
@@ -32,7 +52,7 @@
                 <p class="flex items-start w-full py-2">Autres accords qui pourraient vous plaire:</p>
                 <div class="bg-base-300 w-full h-64 overflow-x-auto whitespace-nowrap flex items-center text-sm">
                     <!-- Afficher les autres accords ici -->
-                    <RouterLink :to="{name: 'Accord', params: {agree_id: item.agree_id}}" v-for="(item, index) in accords.agreements" :key="index" class="relative group hover:opacity-60 hover:cursor-pointer bg-base-100 rounded-lg p-4 m-2 min-w-80 w-80 h-52 drop-shadow-lg flex flex-col justify-between">
+                    <RouterLink :to="{name: 'Accord', params: {agree_id: item.agree_id}}" v-for="(item, index) in accords.agreements" :key="index" class="relative group hover:opacity-60 hover:cursor-pointer bg-base-100 rounded-lg p-4 m-2 min-w-80 w-80 h-52 drop-shadow-lg flex flex-col justify-between transition-all hover:scale-102">
                         <div class="flex justify-between">
                             <div>
                                 <span class="fi text-5xl transition-all duration-100 ease-in-out" :class="'fi-'+item.partnercountry.parco_code "></span>
@@ -80,10 +100,14 @@
     const isLoaded = ref(false);
     const accords = ref([])
     const account = ref([])
+    const favoris = ref([])
+    const response = ref([])
 
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accord, config.apiUrl+'api/agreement/getbyid/'+route.params.agree_id);
+        if(accountStore.isLogged)
+            await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         const requestData = {}
         if(accountStore.isLogged()){
             await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+accountStore.login); 
@@ -100,7 +124,32 @@
         await request('GET', true, accords, apiUrl);
         isLoaded.value = true;
     }
+    function isFavorited(agree_id) {
+      return favoris.value.favoris.some(
+        favori => favori.acc_id === accountStore.login && favori.agree_id === agree_id
+      );
+    }
 
+    async function toggleFavoris(agree_id) {
+        if(!isFavorited(agree_id)){
+            const requestData = {
+                acc_id: accountStore.login,
+                agree_id: agree_id
+            }
+            await request('post', true, response, config.apiUrl+'api/favoris', requestData);
+            if(response.value.status == 201){
+                favoris.value.favoris.push({
+                    acc_id: accountStore.login,
+                    agree_id: agree_id
+                });
+            }
+        }
+        else{
+            await request('delete', true, response, config.apiUrl+'api/favoris/delete/'+accountStore.login+'/'+agree_id);
+            favoris.value.favoris = favoris.value.favoris.filter(favori => !(favori.acc_id === accountStore.login && favori.agree_id === agree_id));
+            
+        }
+    }
     onMounted(fetchAll)
 
     watch(() => route.params.agree_id, () => {

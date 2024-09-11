@@ -16,7 +16,7 @@
         <!-- Destination finale -->
         <div v-if="destination.agreement" class="flex items-center justify-center flex-col">
             <p class="text-sm font-bold pb-2">Destination finale</p>
-            <div class="select-none flex justify-between items-center elementDrag xl:w-120 w-105 h-20 transition-all duration-100 ease-in-out">
+            <div class="select-none flex justify-between items-center elementDrag xl:w-120 md:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
                 <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
                     <div class="border-warning border-2 p-1 flex items-center justify-center w-full h-20 select-none">
@@ -137,9 +137,9 @@
 
             <!-- Partie voeux -->
             <div class="md:block hidden pt-5" >
-                <p class="text-center">Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux.</p>
-                <p class="text-center">Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
-                <p class="text-center">Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
+                <p class="text-center">Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} vœux.</p>
+                <p class="text-center">Ajoutez des accords aux favoris pour ensuite les choisir comme vœux.</p>
+                <p class="text-center">Date limite avant la fermeture des vœux : <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
                 <div class="flex *:mr-5 py-5 justify-center">
                     <!-- Partie de gauche avec liste des favoris -->
                     <div class="flex flex-col justify-center items-center w-2/5">
@@ -202,9 +202,9 @@
 
             <!-- Partie voeux téléphone -->
             <div class="md:hidden btn-block pt-10">
-                <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} voeux</p>
-                <p>Ajoutez des accords en favoris pour ensuite les choisir comme voeux.</p>
-                <p>Date limite avant la fermeture des voeux: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>            
+                <p>Vous avez {{ localFavoris.length }} favoris et {{ nbVoeuLocal() }} vœux</p>
+                <p>Ajoutez des accords aux favoris pour ensuite les choisir comme vœux.</p>
+                <p>Date limite avant la fermeture des vœux : <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>            
                 
                     <!-- Liste des accords -->
                     <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5" v-if="accords && accords.agreements">

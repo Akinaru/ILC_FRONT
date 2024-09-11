@@ -1,4 +1,4 @@
 export default{
     apiUrl: 'https://gallotta.fr/ILC/',
-    alertTimeBeforeRemove: 5
+    alertTimeBeforeRemove: 50
 }

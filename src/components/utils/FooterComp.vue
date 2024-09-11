@@ -1,6 +1,7 @@
 <template>
     <footer class="footer footer-center bg-base-300 text-base-content rounded p-10">
     <nav class="grid grid-flow-col gap-4">
+        <RouterLink :to="{name: 'Accueil'}" class="link link-hover">Accueil</RouterLink>
         <RouterLink :to="{name: 'Evenement'}" class="link link-hover">Événements</RouterLink>
         <RouterLink :to="{name: 'Articles'}" class="link link-hover">Articles</RouterLink>
         <RouterLink v-if="!accountStore.isLogged()" :to="{name: 'Login'}" class="link link-hover">Connexion</RouterLink>
