@@ -1,63 +1,110 @@
 <template>
-    <div>
-      <button class="btn btn-info" @click="triggerFileInput">
-        <svg fill="#000000" width="24px" height="24px" viewBox="0 0 24 24" id="import-left" data-name="Flat Line" xmlns="http://www.w3.org/2000/svg" class="icon flat-line">
-          <polyline id="primary" points="15 13 11 13 11 9" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></polyline>
-          <line id="primary-2" data-name="primary" x1="21" y1="3" x2="11" y2="13" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
-          <path id="primary-3" data-name="primary" d="M19,13.89V20a1,1,0,0,1-1,1H4a1,1,0,0,1-1-1V6A1,1,0,0,1,4,5h6.11" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-        </svg>
-        <p>{{ texte }}</p>
-      </button>
-      <input type="file" ref="fileInput" @change="handleFileUpload" accept=".csv" style="display: none;" />
-    </div>
-  </template>
-  
-  <script setup>
-  import { ref, getCurrentInstance } from 'vue';
-  import Papa from 'papaparse';
-  
-  const props = defineProps({
-    texte: {
-      type: String,
-      default: 'Importer des x en csv',
-    },
+  <div>
+    <button class="btn btn-info" @click="triggerFileInput">
+      <svg fill="#000000" width="24px" height="24px" viewBox="0 0 24 24" id="import-left" data-name="Flat Line" xmlns="http://www.w3.org/2000/svg" class="icon flat-line">
+        <polyline id="primary" points="15 13 11 13 11 9" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></polyline>
+        <line id="primary-2" data-name="primary" x1="21" y1="3" x2="11" y2="13" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
+        <path id="primary-3" data-name="primary" d="M19,13.89V20a1,1,0,0,1-1,1H4a1,1,0,0,1-1-1V6A1,1,0,0,1,4,5h6.11" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+      </svg>
+      <p>{{ texte }}</p>
+    </button>
+    <input type="file" ref="fileInput" @change="handleFileUpload" accept=".csv" style="display: none;" />
+  </div>
+</template>
+
+<script setup>
+import { ref, getCurrentInstance } from 'vue';
+import Papa from 'papaparse';
+
+const props = defineProps({
+  texte: {
+    type: String,
+    default: 'Importer des x en csv',
+  },
+});
+
+const fileInput = ref(null);
+const result = ref([]);
+
+// Utilisation de getCurrentInstance pour obtenir l'objet emit
+const { emit } = getCurrentInstance();
+
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
+
+const isEmptyRow = (row) => {
+  // Vérifier si tous les champs d'une ligne sont vides
+  return Object.values(row).every(value => !value || value.trim() === '');
+};
+
+// Fonction pour lire le fichier CSV en tant que texte UTF-8
+const readFileAsText = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const text = event.target.result;
+      resolve(text);
+    };
+
+    reader.onerror = (event) => {
+      reject(new Error('Erreur de lecture du fichier'));
+    };
+
+    // Utiliser un TextDecoder pour forcer l'encodage UTF-8
+    reader.readAsText(file, 'UTF-8');
   });
-  
-  const fileInput = ref(null);
-  const result = ref([]);
-  
-  // Utilisation de getCurrentInstance pour obtenir l'objet emit
-  const { emit } = getCurrentInstance();
-  
-  const triggerFileInput = () => {
-    fileInput.value.click();
-  };
-  
-  const isEmptyRow = (row) => {
-    // Vérifier si tous les champs d'une ligne sont vides
-    return Object.values(row).every(value => !value || value.trim() === '');
-  };
-  
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-  
-    if (file && file.name.endsWith('.csv')) {
-      Papa.parse(file, {
+};
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+
+  if (file && file.name.endsWith('.csv')) {
+    try {
+      const fileContent = await readFileAsText(file);
+
+      // Utiliser PapaParse pour analyser le contenu du fichier CSV
+      Papa.parse(fileContent, {
         header: true,            // Inclure les en-têtes pour obtenir les colonnes
-        skipEmptyLines: true,    // Ignorer les lignes vides dans le CSV
-        worker: true,            // Utiliser un Web Worker pour éviter le blocage de l'UI avec de grands fichiers
-        encoding: "UTF-8",       // Assurer que les accents sont correctement lus
+        skipEmptyLines: false,   // Ne pas ignorer les lignes vides pour conserver les lignes vides de données
         complete: (results) => {
           // Filtrer les lignes vides
-          result.value = results.data.filter(row => !isEmptyRow(row));
-  
-          // Afficher les colonnes (les clés de l'objet)
-          const columns = Object.keys(result.value[0]);
-          console.log('Colonnes :', columns);
-  
-          // Afficher toutes les données
-          console.log('Données CSV :', result.value);
-  
+          let parsedData = results.data.filter(row => !isEmptyRow(row));
+
+          // Variable pour garder la dernière valeur de Pays
+          let lastCountry = '';
+
+          // Réorganiser les colonnes, combiner ISCED, et compléter le Pays si vide
+          result.value = parsedData.map((row) => {
+            // Si la colonne "Pays" est vide, utiliser la dernière valeur connue
+            if (!row.Pays || row.Pays.trim() === '') {
+              row.Pays = lastCountry;
+            } else {
+              lastCountry = row.Pays;  // Mettre à jour avec la nouvelle valeur
+            }
+
+            // Créer une nouvelle ligne avec les colonnes ordonnées
+            return {
+              'Pays': row.Pays || '',
+              'Universite': row.Universite || '',
+              'Ville': row.Ville || '',
+              'Composante': row.Composante || '',
+              'Lien': row.Lien || '',
+              'Description': row.Description || '',
+              'Isced': row.Isced,
+              'Nombre de place': row['Nombre de place'] || '',
+              'Type accord': row['Type accord'] || '',
+              'Departements': row['Departements'] || ''
+            };
+          });
+
+          // // Afficher les colonnes réorganisées
+          // console.log('Colonnes réorganisées :', Object.keys(result.value[0]));
+
+          // // Afficher toutes les données réorganisées
+          // console.log('Données CSV réorganisées :', result.value);
+
           // Émet l'événement après que les données ont été mises à jour
           emit('csv-imported', result.value);
         },
@@ -65,9 +112,11 @@
           console.error('Erreur lors de la conversion de CSV en JSON :', error);
         }
       });
-    } else {
-      console.error('Fichier non valide');
+    } catch (error) {
+      console.error('Erreur lors de la lecture du fichier :', error);
     }
-  };
-  </script>
-  
+  } else {
+    console.error('Fichier non valide');
+  }
+};
+</script>

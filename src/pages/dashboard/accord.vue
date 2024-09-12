@@ -5,7 +5,7 @@
         <div class="flex justify-between">
             <p class="text-xl font-bold">Accord</p>
             <div class="flex *:mx-1">
-                <ImportAccordComp texte="Importer des accords en csv"></ImportAccordComp>
+                <ImportAccordComp texte="Importer des accords en csv" @csv-imported="importCsv"></ImportAccordComp>
                 <ExportComp texte="Exporter des accords en csv" :link="config.apiUrl+'api/agreement/export'"></ExportComp>
             </div>
         </div>
@@ -352,6 +352,11 @@
 
     function toggleCollapse(section) {
         isOpen.value[section] = !isOpen.value[section];
+    }
+
+
+    function importCsv(data){
+        console.log(data)
     }
 
     const filteredAccords = computed(() => {
