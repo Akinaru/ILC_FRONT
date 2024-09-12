@@ -66,52 +66,47 @@ const handleFileUpload = async (event) => {
 
       // Utiliser PapaParse pour analyser le contenu du fichier CSV
       Papa.parse(fileContent, {
-        header: true,            // Inclure les en-têtes pour obtenir les colonnes
-        skipEmptyLines: false,   // Ne pas ignorer les lignes vides pour conserver les lignes vides de données
-        complete: (results) => {
-          // Filtrer les lignes vides
-          let parsedData = results.data.filter(row => !isEmptyRow(row));
+  header: true,
+  skipEmptyLines: false,
+  dynamicTyping: true, // Convertit automatiquement les données en type approprié
+  complete: (results) => {
+    // Filtrer les lignes vides
+    let parsedData = results.data.filter(row => !isEmptyRow(row));
 
-          // Variable pour garder la dernière valeur de Pays
-          let lastCountry = '';
+    // Variable pour garder la dernière valeur de Pays
+    let lastCountry = '';
 
-          // Réorganiser les colonnes, combiner ISCED, et compléter le Pays si vide
-          result.value = parsedData.map((row) => {
-            // Si la colonne "Pays" est vide, utiliser la dernière valeur connue
-            if (!row.Pays || row.Pays.trim() === '') {
-              row.Pays = lastCountry;
-            } else {
-              lastCountry = row.Pays;  // Mettre à jour avec la nouvelle valeur
-            }
+    // Réorganiser les colonnes, combiner ISCED, et compléter le Pays si vide
+    result.value = parsedData.map((row) => {
+      // Si la colonne "Pays" est vide, utiliser la dernière valeur connue
+      if (!row.Pays || row.Pays.trim() === '') {
+        row.Pays = lastCountry;
+      } else {
+        lastCountry = row.Pays;  // Mettre à jour avec la nouvelle valeur
+      }
 
-            // Créer une nouvelle ligne avec les colonnes ordonnées
-            return {
-              'Pays': row.Pays || '',
-              'Universite': row.Universite || '',
-              'Ville': row.Ville || '',
-              'Composante': row.Composante || '',
-              'Lien': row.Lien || '',
-              'Description': row.Description || '',
-              'Isced': row.Isced,
-              'Nombre de place': row['Nombre de place'] || '',
-              'Type accord': row['Type accord'] || '',
-              'Departements': row['Departements'] || ''
-            };
-          });
+      // Créer une nouvelle ligne avec les colonnes ordonnées
+      return {
+        'Pays': row.Pays || '',
+        'Universite': row.Universite || '',
+        'Ville': row.Ville || '',
+        'Composante': row.Composante || '',
+        'Lien': row.Lien || '',
+        'Description': row.Description || '',
+        'Isced': row.Isced,
+        'Nombre de place': row['Nombre de place'] || '',
+        'Type accord': row['Type accord'] || '',
+        'Departements': row['Departements'] || ''
+      };
+    });
 
-          // // Afficher les colonnes réorganisées
-          // console.log('Colonnes réorganisées :', Object.keys(result.value[0]));
-
-          // // Afficher toutes les données réorganisées
-          // console.log('Données CSV réorganisées :', result.value);
-
-          // Émet l'événement après que les données ont été mises à jour
-          emit('csv-imported', result.value);
-        },
-        error: (error) => {
-          console.error('Erreur lors de la conversion de CSV en JSON :', error);
-        }
-      });
+    // Émet l'événement après que les données ont été mises à jour
+    emit('csv-imported', result.value);
+  },
+  error: (error) => {
+    console.error('Erreur lors de la conversion de CSV en JSON :', error);
+  }
+});
     } catch (error) {
       console.error('Erreur lors de la lecture du fichier :', error);
     }

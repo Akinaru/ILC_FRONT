@@ -6,6 +6,21 @@
             <p class="text-xl font-bold">Accord</p>
             <div class="flex *:mx-1">
                 <ImportAccordComp texte="Importer des accords en csv" @csv-imported="importCsv"></ImportAccordComp>
+                <!-- Modal -->
+                <div v-if="exportModal && exportModal.length > 0" class="modal modal-open">
+                    <div class="modal-box mt-36">
+                        <h2 class="text-lg font-bold">Nouveaux accords (+ {{ exportModal.length }})</h2>
+                        <div class="max-h-110 overflow-y-auto">
+                            <div v-for="(accord, index) in exportModal" :key="index">
+                                <span class="fi text-5xl" :class="'fi-'+getCountryCode(accord.Pays)"></span>
+                            </div>
+                        </div>
+                        <div class="modal-action">
+                        <button class="btn" @click="closeModal">Annuler</button>
+                        <button class="btn btn-success" @click="handleExport">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
                 <ExportComp texte="Exporter des accords en csv" :link="config.apiUrl+'api/agreement/export'"></ExportComp>
             </div>
         </div>
@@ -282,6 +297,9 @@
                             <!-- Modal de modification d'accord -->
                             <ModifAccordComp  @agreementUpdated="fetchAll" :accord="accord" :isceds="isceds" :composantes="composantes.components" :universites="universites" :partnercountrys="partnercountry"></ModifAccordComp>
         
+
+
+
                             <!-- Bouton de suppression -->
                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.university.univ_name, accord.agree_id)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -319,6 +337,7 @@
     const selectedComponent = ref([]);
     const selectedCountries = ref([]);
     
+    const exportModal = ref([])
     const isLoaded = ref(false)
     const isceds = ref([]);
     const composantes = ref([]);
@@ -356,8 +375,14 @@
 
 
     function importCsv(data){
+        exportModal.value = data;
         console.log(data)
     }
+    // Fonction pour trouver le pays
+    function getCountryCode(pays) {
+        const country = partnercountry.value.find(country => country.parco_name === pays);
+        return country ? country.parco_code : 'Code non disponible';
+        }
 
     const filteredAccords = computed(() => {
         return accords.value.agreements.filter(accord => {
