@@ -48,6 +48,11 @@ onMounted(() => {
 </script>
 
 <style>
+
+html {
+  overflow-x: hidden;
+}
+
 #content {
   position: relative;
   z-index: 1;

@@ -94,8 +94,8 @@ const handleFileUpload = async (event) => {
         'Lien': row.Lien || '',
         'Description': row.Description || '',
         'Isced': row.Isced,
-        'Nombre de place': row['Nombre de place'] || '',
-        'Type accord': row['Type accord'] || '',
+        'Nombre_de_place': row['Nombre de place'] || '',
+        'Type_accord': row['Type accord'] || '',
         'Departements': row['Departements'] || ''
       };
     });

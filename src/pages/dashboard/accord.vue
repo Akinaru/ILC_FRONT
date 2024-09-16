@@ -6,21 +6,8 @@
             <p class="text-xl font-bold">Accord</p>
             <div class="flex *:mx-1">
                 <ImportAccordComp texte="Importer des accords en csv" @csv-imported="importCsv"></ImportAccordComp>
-                <!-- Modal -->
-                <div v-if="exportModal && exportModal.length > 0" class="modal modal-open">
-                    <div class="modal-box mt-36">
-                        <h2 class="text-lg font-bold">Nouveaux accords (+ {{ exportModal.length }})</h2>
-                        <div class="max-h-110 overflow-y-auto">
-                            <div v-for="(accord, index) in exportModal" :key="index">
-                                <span class="fi text-5xl" :class="'fi-'+getCountryCode(accord.Pays)"></span>
-                            </div>
-                        </div>
-                        <div class="modal-action">
-                        <button class="btn" @click="closeModal">Annuler</button>
-                        <button class="btn btn-success" @click="handleExport">Ajouter</button>
-                        </div>
-                    </div>
-                </div>
+
+
                 <ExportComp texte="Exporter des accords en csv" :link="config.apiUrl+'api/agreement/export'"></ExportComp>
             </div>
         </div>
