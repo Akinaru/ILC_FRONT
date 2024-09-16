@@ -20,7 +20,7 @@
           <ul class="menu menu-horizontal">
             <li>
               <details>
-                <summary class="p-0">
+                <summary>
                   <!-- Affichage du rôle uniquement pour les grands écrans -->
                   <span class="md:p-1 hidden sm:block rounded-lg" :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">
                     {{ role.role }}
