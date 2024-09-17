@@ -49,7 +49,7 @@
                         <span class="badge badge-warning mr-2">{{ them.evthm_name }}</span>
 
                         <!-- Bouton de modification -->
-                        <label for="modal_modif_thematique" class="hover:opacity-60 cursor-pointer flex items-center p-2" @click="modifThematique(them)">
+                        <label for="modal_modif_them" class="hover:opacity-60 cursor-pointer flex items-center p-2" @click="modifThematique(them)">
                             <svg class="h-5 w-5 text-gray-600" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                 <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -172,6 +172,32 @@
             </div>
         </div>
 
+        <!-- Modal de modification de thematique -->
+        <input type="checkbox" id="modal_modif_them" class="modal-toggle" />
+        <div class="modal modal-bottom sm:modal-middle" role="dialog">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg">Modification de la thématique {{ currentThematiqueModif.evthm_id }}</h3>
+                <form @submit.prevent="confirmModifThematique" class="w-full">
+                    <!-- Nom -->
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Nom</span>
+                        </div>
+                        <input type="text"  class="input input-bordered w-full" v-model="currentThematiqueModif.evthm_name"/>
+                    </label>
+                    <span class="badge badge-warning mt-3">{{ currentThematiqueModif.evthm_name ? currentThematiqueModif.evthm_name : 'Apperçu de la thématique' }}</span>
+                
+                    <!-- Save -->
+                    <div class="modal-action">
+                        <label for="modal_modif_them" class="btn ">Annuler</label>
+                        <button type="submit">
+                            <label for="modal_modif_them" class="btn btn-success">Enregistrer</label>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Modal de confirmation suppression thematique -->
         <dialog id="confirmModalThematique" ref="confirmModalThematique" class="modal">
             <div class="modal-box">
@@ -234,6 +260,7 @@
     const newEvent = ref({ name: '', description: '', datetime: '', thematique: '', newthem: {name: ''} });
 
     const currentEventModif = ref([]);
+    const currentThematiqueModif = ref([]);
 
     const confirmDeleteThematique = ref([])
     const confirmDeleteEvenement = ref([])
@@ -350,6 +377,8 @@
         await fetchAll();
     }
 
+
+    
     // Gestion de la modification d'evenement
     // Modifie la ref par l'evenement qu'on veut modifier
     // pour afficher les bonnes informations dans le form de modif
@@ -359,6 +388,11 @@
         currentEventModif.value.evt_description = event.evt_description;
         currentEventModif.value.evt_datetime = formatDateModif(event.evt_datetime);
     }
+    function modifThematique(them){
+        currentThematiqueModif.value.evthm_id = them.evthm_id;
+        currentThematiqueModif.value.evthm_name = them.evthm_name;
+    }
+
     // On format la date car la valeur entrée de input et sortie de l'api ne sont pas compatible 
     function formatDateModif(dateTime) {
         const date = new Date(dateTime);
@@ -366,6 +400,24 @@
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
+    }
+
+    // Confirmer la modification
+    async function confirmModifThematique(){
+        const requestData = { 
+            evthm_id: currentThematiqueModif.value.evthm_id,
+            evthm_name: currentThematiqueModif.value.evthm_name,
+        };
+        await request('PUT', true, response, config.apiUrl+'api/eventtheme', requestData);
+        if(response.value.status == 200){
+            const requestDataAction = {
+                act_description: 'Modification de la thématique '+currentThematiqueModif.value.evthm_name+'.',
+                acc_id: accountStore.login,
+                evt_id: currentThematiqueModif.value.evthm_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
+        fetchAll();
     }
 
     // Confirmer la modification
@@ -381,7 +433,7 @@
             const requestDataAction = {
                 act_description: 'Modification de l\'évènement '+currentEventModif.value.evt_name+'.',
                 acc_id: accountStore.login,
-                art_id: currentEventModif.value.evt_id
+                evt_id: currentEventModif.value.evt_id
             }
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
