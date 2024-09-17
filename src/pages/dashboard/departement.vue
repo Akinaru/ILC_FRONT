@@ -3,7 +3,6 @@
         <div class="flex justify-between">
             <p class="text-xl font-bold">Departement</p>
             <div class="flex *:mx-1">
-                <ImportComp texte="Importer des départements en csv"></ImportComp>
                 <ExportComp texte="Exporter des départements en csv" :link="config.apiUrl+'api/department/export'"></ExportComp>
             </div>
         </div>
@@ -63,7 +62,7 @@
                             </label>
                             
                             <!-- Bouton de suppression composante -->
-                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeComp(compo.comp_id)">
+                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModalCompo(compo)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -82,9 +81,11 @@
                             </label>
 
                             <!-- Bouton de suppression departement -->
-                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeDepartment(dept.dept_shortname, dept.dept_id)">
+                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(dept)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
+
+
                         </div>
                         <p class="list-disc mx-10 my-5" v-if="compo.departments.length == 0">Aucun département</p>
                     </div>
@@ -92,6 +93,38 @@
                 <div v-else>
                     <p>Aucune composante trouvée.</p>
                 </div>
+                                            <!-- Modal de confirmation suppression composante -->
+                                            <dialog id="confirmModalCompo" ref="confirmModalCompo" class="modal">
+                                <div class="modal-box">
+                                    <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                                    <div class="py-3">
+                                        <p>Confirmez vous la supression de la composante:</p>
+                                        <strong>
+                                            {{ confirmDeleteComposante.comp_name }}
+                                        </strong>
+                                    </div>
+                                <div class="modal-action">
+                                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                    <button class="btn btn-success"  @click="removeComp(confirmDeleteComposante.comp_id)">Confirmer</button>
+                                </div>
+                                </div>
+                            </dialog>
+                            <!-- Modal de confirmation suppression departement -->
+                            <dialog id="confirmModal" ref="confirmModal" class="modal">
+                                <div class="modal-box">
+                                    <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                                    <div class="py-3">
+                                        <p>Confirmez vous la supression du département:</p>
+                                        <strong>
+                                            <span class="badge p-3" :style="{backgroundColor: confirmDeleteDepartment.dept_color}">{{ confirmDeleteDepartment.dept_shortname }} </span> {{confirmDeleteDepartment.dept_name}}
+                                        </strong>
+                                    </div>
+                                <div class="modal-action">
+                                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                    <button class="btn btn-success"  @click="removeDepartment(confirmDeleteDepartment.dept_shortname, confirmDeleteDepartment.dept_id)">Confirmer</button>
+                                </div>
+                                </div>
+                            </dialog>
 
             </div>
             <div v-else class="flex items-center justify-center my-20">
@@ -178,7 +211,6 @@
     import config from '../../config';
     import { addAlert } from '../../composables/addAlert';
     import { useAccountStore } from '../../stores/accountStore';
-    import ImportComp from '../../components/impexp/ImportComp.vue';
     import ExportComp from '../../components/impexp/ExportComp.vue';
 
     const accountStore = useAccountStore();
@@ -187,6 +219,8 @@
     const response = ref([]);
     const currentDeptModif = ref([]);
     const currentCompModif = ref([]);
+    const confirmDeleteDepartment = ref([])
+    const confirmDeleteComposante = ref([])
 
     const newDep = ref({ 
         name: '', 
@@ -251,6 +285,27 @@
 
     }
 
+    //ouvrir le modal de confirmation de suppression des dept
+    function openConfirmModal(dept) {
+        confirmDeleteDepartment.value = dept;
+        const modal = document.getElementById('confirmModal')
+        modal.showModal()
+    }
+    //ouvrir le modal de confirmation de suppression des composantes
+    function openConfirmModalCompo(compo) {
+        confirmDeleteComposante.value = compo;
+        const modal = document.getElementById('confirmModalCompo')
+        modal.showModal()
+    }
+    //Fermer le modal de confirmation de suppression
+    function closeModal() {
+        const modal = document.getElementById('confirmModal')
+        modal.close()
+        const modal2 = document.getElementById('confirmModalCompo')
+        modal2.close()
+    }
+
+
     // Gestion de la modification de departement
     // Modifie la ref par departement qu'on veut modifier
     // pour afficher les bonnes informations dans le form de modif
@@ -298,6 +353,7 @@
 
     // Supprimer un département
     async function removeDepartment(shortname, id){
+        closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/department/deletebyid/'+id);
         if(response.value.status == 202){
             const requestDataAction = {
@@ -311,6 +367,7 @@
     }
     // Supprimer une composante
     async function removeComp(id){
+        closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/component/deletebyid/'+id);
         fetchAll();
     }

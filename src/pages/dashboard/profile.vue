@@ -125,7 +125,7 @@
                                         v-model="modifCompte.dept_id"
                                         >
                                             <option value="no_dept">Aucun département</option>
-                                            <option v-for="department in department.departments" :key="department.dept_id" :value="department.dept_id">
+                                            <option v-for="department in department.departments" :key="department.dept_id" :value="department.dept_id" :style="{color: department.dept_color}">
                                                 {{ department.dept_shortname }}
                                             </option>
                                         </select>
@@ -190,10 +190,10 @@
     async function confirmModifCompte(){
         const requestData = {
             acc_id: account.value.acc_id,
-            acc_studentnum: modifCompte.value.acc_studentnum != '' ? modifCompte.value.acc_studentnum : 0,
+            acc_studentnum: modifCompte.value.acc_studentnum != null ? modifCompte.value.acc_studentnum : 0,
             dept_id: modifCompte.value.dept_id != 'no_dept' ? modifCompte.value.dept_id : null,
-            acc_mail: modifCompte.value.acc_mail != '' ? modifCompte.value.acc_mail : 'Aucun mail' ,
-            acc_toeic: modifCompte.value.acc_toeic != '' ? modifCompte.value.acc_toeic : 0, 
+            acc_mail: modifCompte.value.acc_mail != null ? modifCompte.value.acc_mail : 'Aucun mail' ,
+            acc_toeic: modifCompte.value.acc_toeic != null ? modifCompte.value.acc_toeic : 0, 
         }
         await request('PUT', true, response, config.apiUrl+'api/account/modif', requestData);
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);

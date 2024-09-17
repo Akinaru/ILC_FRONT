@@ -48,10 +48,24 @@
                                     </svg>
                                 </label>
                                 <!-- Bouton de suppression -->
-                                <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300 " @click="removeArticle(article.art_title, article.art_id)">
+                                <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300 " @click="openConfirmModal(article)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
+                        </div>
+                        <!-- Modal de confirmation suppression -->
+                        <dialog id="confirmModal" ref="confirmModal" class="modal">
+                            <div class="modal-box">
+                                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                                <div class="py-3">
+                                    <p>Confirmez vous la supression de l'article: <strong>{{confirmDeleteArticle.art_title}}</strong></p>
+                                    <div :style="{ backgroundImage: `url(${confirmDeleteArticle.art_image ? config.apiUrl + 'api/article/image/' + confirmDeleteArticle.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48 my-2"></div>
+                                </div>
+                            <div class="modal-action">
+                                <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                <button class="btn btn-success" @click="removeArticle(confirmDeleteArticle.art_title, confirmDeleteArticle.art_id)">Confirmer</button>
                             </div>
+                            </div>
+                        </dialog>
                         <!-- Affichage -->
                         <RouterLink  :to="{name: 'Article', params: {art_id: article.art_id}}" >
                             <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
@@ -91,6 +105,8 @@ const response = ref([]);
 const articles = ref([]);
 const newArticle = ref({ title: null, description: null, pinned: false, image: null });
 const isEditing = ref(false)
+const confirmDeleteArticle = ref([])
+
 
 const currentArticleModif = ref([]);
 const imagePreview = ref(null);
@@ -137,6 +153,20 @@ const backgroundImageModif = computed(() => {
         ? `${config.apiUrl}api/article/image/${currentArticleModif.value.art_id}`
         : `${config.apiUrl}images/no_image.jpg`;
 });
+
+//ouvrir le modal de confirmation de suppression
+function openConfirmModal(article) {
+  
+    confirmDeleteArticle.value = article;
+    console.log(confirmDeleteArticle)
+    const modal = document.getElementById('confirmModal')
+    modal.showModal()
+}
+//Fermer le modal de confirmation de suppression
+function closeModal() {
+    const modal = document.getElementById('confirmModal')
+    modal.close()
+}
 
 // Ajout d'article
 async function addArticle(){
@@ -217,6 +247,7 @@ function removeBackgroundColors(html) {
 
 // Suppression d'article
 async function removeArticle(title, id){
+    closeModal()
     await request('DELETE', true, response, config.apiUrl+'api/article/deletebyid/'+id);
     if(response.value.status == 202){
         const requestDataAction = {
