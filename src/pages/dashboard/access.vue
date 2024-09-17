@@ -145,7 +145,7 @@
                         <option value="2">2 (Département)</option>
                     </select>
                     <div class="flex items-center justify-center">
-                        <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70 " type="submit">Ajouter l'accès</button>
+                        <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70 w-full" type="submit">Ajouter l'accès</button>
                     </div>
                 </form>
             </div>
@@ -266,13 +266,11 @@
             </div>
             <!-- Formulaire ajout accepted etudiant -->
             <div class="md:w-1/2 w-full flex items-center justify-center flex-col">
-                <div class="w-96 flex items-center flex-col justify-center">
+                <div class="w-full flex items-center flex-col justify-center mb-3">
                     <p class="text-lg font-bold">Ajouter un utilisateur</p>
                     <form @submit.prevent="addAccepted" class="w-2/5 *:my-2">
-                        <input type="text" placeholder="Login" v-model="newAccepted.login" class="input input-bordered w-full " />
-                        <div class="flex items-center justify-center">
-                            <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'utilisateur</button>
-                        </div>
+                        <input type="text" placeholder="Login" v-model="newAccepted.login" class="input input-bordered w-full" />
+                            <button class="btn btn-primary w-full hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'utilisateur</button>
                     </form>
                 </div>
                 <ImportComp text="Importer des étudiants en csv" @csv-imported="handleCsvImported"></ImportComp>
