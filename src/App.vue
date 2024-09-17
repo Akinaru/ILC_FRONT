@@ -1,4 +1,10 @@
 <template>
+
+
+  <!-- ILC -->
+  <!-- Luc DAMAS -->
+  <!-- Maxime GALLOTTA -->
+
   <div>
     <HeaderComp/>
     <div id="content" class="m-5 min-h-screen">
@@ -10,6 +16,9 @@
 </template>
 
 <script setup>
+
+ 
+
   import HeaderComp from './components/utils/HeaderComp.vue';
   import FooterComp from './components/utils/FooterComp.vue';
   import AlertContainer from './components/utils/AlertContainer.vue'

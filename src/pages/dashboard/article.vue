@@ -55,7 +55,9 @@
 
                         <!-- Affichage -->
                         <RouterLink  :to="{name: 'Article', params: {art_id: article.art_id}}" >
-                            <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
+                            <div class="p-2">
+                                <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
+                            </div>
                             <span v-if="article.art_pin" class="badge badge-primary absolute top-1 left-1">📌Épinglé</span>
                             <div class="p-4 flex flex-col justify-start h-52">
                                 <div class="mb-2">

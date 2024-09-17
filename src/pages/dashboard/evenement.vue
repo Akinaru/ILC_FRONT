@@ -132,115 +132,119 @@
 
         </div>
 
-
-        <!-- Modal de modification d'evenement -->
-        <input type="checkbox" id="modal_modif" class="modal-toggle" />
-        <div class="modal modal-bottom sm:modal-middle" role="dialog">
-            <div class="modal-box">
-                <h3 class="font-bold text-lg">Modification de l'évènement {{ currentEventModif.evt_id }}</h3>
-                <form @submit.prevent="confirmModifEvent" class="w-full">
-                    <!-- Titre -->
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text">Titre</span>
+        <!-- Partie modification et confirmation -->
+        <div>
+            <!-- Modal de modification d'evenement -->
+            <input type="checkbox" id="modal_modif" class="modal-toggle" />
+            <div class="modal modal-bottom sm:modal-middle" role="dialog">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg">Modification de l'évènement {{ currentEventModif.evt_id }}</h3>
+                    <form @submit.prevent="confirmModifEvent" class="w-full">
+                        <!-- Titre -->
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Titre</span>
+                            </div>
+                            <input type="text"  class="input input-bordered w-full" v-model="currentEventModif.evt_name"/>
+                        </label>
+                        <!-- Datetime -->
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Date</span>
+                            </div>
+                            <input type="date" class="input input-bordered w-full" v-model="currentEventModif.evt_datetime"/>
+                        </label>    
+                        <!-- Description -->
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Description</span>
+                            </div>
+                            <textarea class="textarea w-full textarea-bordered h-96 min-h-96" v-model="currentEventModif.evt_description"></textarea>
+                        </label>
+                    
+                        <!-- Save -->
+                        <div class="modal-action">
+                            <label for="modal_modif" class="btn ">Annuler</label>
+                            <button type="submit">
+                                <label for="modal_modif" class="btn btn-success">Enregistrer</label>
+                            </button>
                         </div>
-                        <input type="text"  class="input input-bordered w-full" v-model="currentEventModif.evt_name"/>
-                    </label>
-                    <!-- Datetime -->
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text">Date</span>
-                        </div>
-                        <input type="date" class="input input-bordered w-full" v-model="currentEventModif.evt_datetime"/>
-                    </label>    
-                    <!-- Description -->
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text">Description</span>
-                        </div>
-                        <textarea class="textarea w-full textarea-bordered h-96" v-model="currentEventModif.evt_description"></textarea>
-                    </label>
-                
-                    <!-- Save -->
-                    <div class="modal-action">
-                        <label for="modal_modif" class="btn ">Annuler</label>
-                        <button type="submit">
-                            <label for="modal_modif" class="btn btn-success">Enregistrer</label>
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
+
+            <!-- Modal de modification de thematique -->
+            <input type="checkbox" id="modal_modif_them" class="modal-toggle" />
+            <div class="modal modal-bottom sm:modal-middle" role="dialog">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg">Modification de la thématique {{ currentThematiqueModif.evthm_id }}</h3>
+                    <form @submit.prevent="confirmModifThematique" class="w-full">
+                        <!-- Nom -->
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Nom</span>
+                            </div>
+                            <input type="text"  class="input input-bordered w-full" v-model="currentThematiqueModif.evthm_name"/>
+                        </label>
+                        <span class="badge badge-warning mt-3">{{ currentThematiqueModif.evthm_name ? currentThematiqueModif.evthm_name : 'Apperçu de la thématique' }}</span>
+                    
+                        <!-- Save -->
+                        <div class="modal-action">
+                            <label for="modal_modif_them" class="btn ">Annuler</label>
+                            <button type="submit">
+                                <label for="modal_modif_them" class="btn btn-success">Enregistrer</label>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal de confirmation suppression thematique -->
+            <dialog id="confirmModalThematique" ref="confirmModalThematique" class="modal">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                    <div class="py-3">
+                        <div v-if="confirmDeleteThematique.canDelete">
+                            <p>Confirmez vous la supression de la thématique: </p>
+                        </div>
+                        <p v-else>Vous ne pouvez pas supprimer cette thématique car elle appartient à un ou plusieurs évenements.</p>
+                        <span class="badge badge-warning mt-3">{{confirmDeleteThematique.evthm_name}}</span>
+                    </div>
+                <!-- Si la thematique n'est dans aucun evenement -->
+                <div class="modal-action" v-if="confirmDeleteThematique.canDelete">
+                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn btn-success"  @click="removeThematique(confirmDeleteThematique.evthm_name, confirmDeleteThematique.evthm_id)">Confirmer</button>
+                </div>
+                <!-- Si la thematique est dans 1 ou plusieurs evenement -->
+                <div class="modal-action" v-else>
+                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                </div>
+                </div>
+            </dialog>
+
+            <!-- Modal de confirmation suppression evenement -->
+            <dialog id="confirmModalEvenement" ref="confirmModalEvenement" class="modal">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                    <div class="py-3">
+                        <p>Confirmez vous la suppression de l'événement:</p>
+                        <div class="mt-3">
+                            <div>
+                                <span :class="getBadgeClass(confirmDeleteEvenement.evt_datetime)" class="badge badge-info mr-2">{{ formatDate(confirmDeleteEvenement.evt_datetime) }}</span>
+                                <span v-if="confirmDeleteEvenement.theme" class="badge badge-warning">{{ confirmDeleteEvenement.theme.evthm_name }}</span>
+                            </div>
+                            <strong>{{ confirmDeleteEvenement.evt_name }}</strong>
+                        </div>
+                    </div>
+                <div class="modal-action">
+                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn btn-success"  @click="removeEvent(confirmDeleteEvenement.evt_name, confirmDeleteEvenement.evt_id)">Confirmer</button>
+                </div>
+                </div>
+            </dialog>
+
         </div>
 
-        <!-- Modal de modification de thematique -->
-        <input type="checkbox" id="modal_modif_them" class="modal-toggle" />
-        <div class="modal modal-bottom sm:modal-middle" role="dialog">
-            <div class="modal-box">
-                <h3 class="font-bold text-lg">Modification de la thématique {{ currentThematiqueModif.evthm_id }}</h3>
-                <form @submit.prevent="confirmModifThematique" class="w-full">
-                    <!-- Nom -->
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text">Nom</span>
-                        </div>
-                        <input type="text"  class="input input-bordered w-full" v-model="currentThematiqueModif.evthm_name"/>
-                    </label>
-                    <span class="badge badge-warning mt-3">{{ currentThematiqueModif.evthm_name ? currentThematiqueModif.evthm_name : 'Apperçu de la thématique' }}</span>
-                
-                    <!-- Save -->
-                    <div class="modal-action">
-                        <label for="modal_modif_them" class="btn ">Annuler</label>
-                        <button type="submit">
-                            <label for="modal_modif_them" class="btn btn-success">Enregistrer</label>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Modal de confirmation suppression thematique -->
-        <dialog id="confirmModalThematique" ref="confirmModalThematique" class="modal">
-            <div class="modal-box">
-                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
-                <div class="py-3">
-                    <div v-if="confirmDeleteThematique.canDelete">
-                        <p>Confirmez vous la supression de la thématique: </p>
-                    </div>
-                    <p v-else>Vous ne pouvez pas supprimer cette thématique car elle appartient à un ou plusieurs évenements.</p>
-                    <span class="badge badge-warning mt-3">{{confirmDeleteThematique.evthm_name}}</span>
-                </div>
-            <!-- Si la thematique n'est dans aucun evenement -->
-            <div class="modal-action" v-if="confirmDeleteThematique.canDelete">
-                <button class="btn btn-error" @click="closeModal">Annuler</button>
-                <button class="btn btn-success"  @click="removeThematique(confirmDeleteThematique.evthm_name, confirmDeleteThematique.evthm_id)">Confirmer</button>
-            </div>
-            <!-- Si la thematique est dans 1 ou plusieurs evenement -->
-            <div class="modal-action" v-else>
-                <button class="btn btn-error" @click="closeModal">Annuler</button>
-            </div>
-            </div>
-        </dialog>
-
-        <!-- Modal de confirmation suppression evenement -->
-        <dialog id="confirmModalEvenement" ref="confirmModalEvenement" class="modal">
-            <div class="modal-box">
-                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
-                <div class="py-3">
-                    <p>Confirmez vous la suppression de l'événement:</p>
-                    <div class="mt-3">
-                        <div>
-                            <span :class="getBadgeClass(confirmDeleteEvenement.evt_datetime)" class="badge badge-info mr-2">{{ formatDate(confirmDeleteEvenement.evt_datetime) }}</span>
-                            <span v-if="confirmDeleteEvenement.theme" class="badge badge-warning">{{ confirmDeleteEvenement.theme.evthm_name }}</span>
-                        </div>
-                        <strong>{{ confirmDeleteEvenement.evt_name }}</strong>
-                    </div>
-                </div>
-            <div class="modal-action">
-                <button class="btn btn-error" @click="closeModal">Annuler</button>
-                <button class="btn btn-success"  @click="removeEvent(confirmDeleteEvenement.evt_name, confirmDeleteEvenement.evt_id)">Confirmer</button>
-            </div>
-            </div>
-        </dialog>
         
     </div>
     
