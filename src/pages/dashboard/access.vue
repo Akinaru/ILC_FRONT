@@ -116,7 +116,7 @@
                         <option value="2">2 (Département)</option>
                     </select>
                     <div class="flex items-center justify-center">
-                        <button class="btn btn-primary" type="submit">Ajouter l'accès</button>
+                        <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70 " type="submit">Ajouter l'accès</button>
                     </div>
                 </form>
             </div>
@@ -206,7 +206,7 @@
                     <form @submit.prevent="addAccepted" class="w-2/5 *:my-2">
                         <input type="text" placeholder="Login" v-model="newAccepted.login" class="input input-bordered w-full " />
                         <div class="flex items-center justify-center">
-                            <button class="btn btn-primary" type="submit">Ajouter l'utilisateur</button>
+                            <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'utilisateur</button>
                         </div>
                     </form>
                 </div>

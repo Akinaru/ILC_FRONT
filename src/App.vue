@@ -79,6 +79,5 @@ header {
 
 footer {
   position: relative;
-  z-index: 1;
 }
 </style>

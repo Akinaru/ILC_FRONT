@@ -8,10 +8,10 @@
                 <p class="font-semibold text-md mb-2 text-start w-full">Formulaire autorisation affichage dans les anciens étudiants</p>
                 <div class="flex w-full">
                     <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChangeAncien" class="file-input file-input-bordered min-w-2xl w-full" />
-                    <button v-if="files.anciensEtudiants.file != null" class="btn btn-success mx-2" @click="saveFile('auto_ancien_etu', 'documents/admin', files.anciensEtudiants.file)">Envoyer le fichier</button>
-                    <button v-if="files.anciensEtudiants.exist" class="btn btn-primary mx-2 min-w-44" @click="openFileInNewTab(files.anciensEtudiants.path)">Voir le fichier actuel</button>
-                    <button v-if="files.anciensEtudiants.exist" class="btn btn-error mx-2 min-w-32" @click="deleteancien">Supprimer</button>
-                    <button v-else disabled class="btn btn-primary mx-2 min-w-44">Aucun fichier</button>
+                    <button v-if="files.anciensEtudiants.file != null" class="btn btn-success mx-2 hover:scale-105 transition-all hover:opacity-70" @click="saveFile('auto_ancien_etu', 'documents/admin', files.anciensEtudiants.file)">Envoyer le fichier</button>
+                    <button v-if="files.anciensEtudiants.exist" class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70" @click="openFileInNewTab(files.anciensEtudiants.path)">Voir le fichier actuel</button>
+                    <button v-if="files.anciensEtudiants.exist" class="btn btn-error mx-2 min-w-32 hover:scale-105 transition-all hover:opacity-70" @click="deleteancien">Supprimer</button>
+                    <button v-else disabled class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70">Aucun fichier</button>
                 </div>
             </div>
 
@@ -20,10 +20,10 @@
                 <p class="font-semibold text-md mb-2 text-start w-full">Tableau excel des choix des cours</p>
                 <div class="flex w-full">
                     <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChangeChoix" class="file-input file-input-bordered min-w-2xl w-full" />
-                    <button v-if="files.choixCours.file != null" class="btn btn-success mx-2" @click="saveFile('choix_cours', 'documents/admin', files.choixCours.file)">Envoyer le fichier</button>
-                    <button v-if="files.choixCours.exist" class="btn btn-primary mx-2 min-w-44" @click="openFileInNewTab(files.choixCours.path)">Voir le fichier actuel</button>
-                    <button v-if="files.choixCours.exist" class="btn btn-error mx-2 min-w-32" @click="deletechoix">Supprimer</button>
-                    <button v-else disabled class="btn btn-primary mx-2 min-w-44">Aucun fichier</button>
+                    <button v-if="files.choixCours.file != null" class="btn btn-success mx-2 hover:scale-105 transition-all hover:opacity-70" @click="saveFile('choix_cours', 'documents/admin', files.choixCours.file)">Envoyer le fichier</button>
+                    <button v-if="files.choixCours.exist" class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70" @click="openFileInNewTab(files.choixCours.path)">Voir le fichier actuel</button>
+                    <button v-if="files.choixCours.exist" class="btn btn-error mx-2 min-w-32 hover:scale-105 transition-all hover:opacity-70" @click="deletechoix">Supprimer</button>
+                    <button v-else disabled class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70">Aucun fichier</button>
                 </div>
             </div>
 

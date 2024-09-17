@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-info" @click="triggerFileInput">
+    <button class="btn btn-info hover:scale-105 transition-all hover:opacity-70" @click="triggerFileInput">
       <svg fill="#000000" width="24px" height="24px" viewBox="0 0 24 24" id="import-left" data-name="Flat Line" xmlns="http://www.w3.org/2000/svg" class="icon flat-line">
         <polyline id="primary" points="15 13 11 13 11 9" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></polyline>
         <line id="primary-2" data-name="primary" x1="21" y1="3" x2="11" y2="13" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>

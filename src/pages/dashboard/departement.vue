@@ -37,7 +37,7 @@
                     <input type="text" placeholder="Nom" v-model="newDep.name" class="input input-bordered w-full " />
                     <input type="text" placeholder="Nom raccourci" v-model="newDep.shortname" class="input input-bordered w-full" />
                     <div class="flex items-center justify-center">
-                        <button class="btn btn-primary" type="submit">Ajouter le département</button>
+                        <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter le département</button>
                     </div>
                 </form>
             </div>

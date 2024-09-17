@@ -116,7 +116,7 @@
                             <input type="text" placeholder="Description de l'accord" class="input input-bordered w-full" v-model="newAgreement.description"/>
                         </label>
                         <div class="flex items-center justify-center">
-                            <button class="btn btn-primary" type="submit">Ajouter l'accord</button>
+                            <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'accord</button>
                         </div>
                     </form>
                 </div>

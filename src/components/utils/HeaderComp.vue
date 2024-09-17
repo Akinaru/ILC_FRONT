@@ -42,7 +42,7 @@
                   </span>
                 </summary>
                 <ul class="bg-base-100 rounded-t-none">
-                  <li><a @click="profil">Profil</a></li>
+                  <li><a @click="profil">{{ accountStore.access == 0 ? 'Profil étudiant' : 'Dashboard' }}</a></li>
                   <li><a @click="logout" class="text-red-600">Déconnexion</a></li>
                 </ul>
               </details>

@@ -115,7 +115,7 @@
             </div>
 
             <!-- Droite -->
-            <div class=" min-h-screen flex flex-col items-center">
+            <div class=" min-h-screen flex flex-col items-center w-full">
                 <p class="text-center py-5 w-full">Liste des accords</p>
 
                 <!-- Partie filtre accords -->
