@@ -101,6 +101,7 @@ const handleFileUpload = async (event) => {
     });
 
     // Émet l'événement après que les données ont été mises à jour
+    
     emit('csv-imported', result.value);
   },
   error: (error) => {
