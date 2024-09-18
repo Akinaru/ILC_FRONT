@@ -157,7 +157,7 @@
                     <div v-if="articles.count > 0" class="flex flex-wrap justify-center xl:justify-start max-w-7xl gap-5 ">
                         <RouterLink v-for="(article, index) in articles.articles.slice(0, 6)" :key="index" :to="{ name: 'Article', params: { art_id: article.art_id } }" class="rounded-lg relative bg-base-300 w-80 md:w-96 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105 mb-5">
                             <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl + 'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
-                            <span v-if="article.art_pin" class="badge badge-primary absolute top-6 left-1">📌Épinglé</span>
+                            <span v-if="article.art_pin" class="badge badge-primary absolute top-6 left-1">📌 Épinglé</span>
                             <div class="p-3 flex flex-col justify-start h-48">
                                 <div class="mb-2">
                                     <p class="font-bold text-md">{{ article.art_title }}</p>
