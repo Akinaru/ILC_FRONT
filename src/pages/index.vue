@@ -90,23 +90,29 @@
                                 <div v-for="(accord, index) in paginatedAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden transition-all hover:scale-102">
                                 <RouterLink :to="{ name: 'Accord', params: { agree_id: accord.agree_id }}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
                                     <div class="flex items-center flex-wrap">
-                                    <span class="mr-2 flex items-center justify-center">
-                                        <span class="fi md:text-5xl text-3xl transition-all duration-100 ease-in-out z-0" :class="'fi-' + accord.partnercountry.parco_code"></span>
-                                    </span>
-                                    <div class="flex flex-col">
+                                        <span class="relative inline-block">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
+
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                ?
+                                            </span>
+                                        </span>
+                                    <div class="md:ml-2 ml-1 flex flex-col">
                                         <p>
-                                        <span class="font-bold">{{ accord.university.univ_name }}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }})
+                                        <span class="font-bold">{{ accord.university?.univ_name || 'Université indisponible' }}</span> à {{ accord.university?.univ_city || 'Ville indisponible' }} ({{accord.partnercountry?.parco_name || 'Pays indisponible' }})
                                         </p>
-                                        <p>[{{ accord.isced.isc_code }} {{ accord.isced.isc_name }}] pour {{ accord.component.comp_name }}</p>
+                                        <p>[{{ accord.isced?.isc_code || 'Code ISCED indisponible' }} {{ accord.isced?.isc_name || 'Nom ISCED indisponible' }}] pour {{ accord.component?.comp_name || 'Composante indisponible' }}</p>
                                     </div>
                                     </div>
                                     <div class="flex items-center flex-wrap">
-                                    <div v-if="accord.departments.length > 0" class="flex flex-col md:flex-row items-center  h-full z-0">
+                                    <div v-if="accord.departments?.length > 0" class="flex flex-col md:flex-row items-center  h-full z-0">
                                         <div v-for="(dept, index) in accord.departments" :key="index">
-                                            <p v-if="dept.pivot.deptagree_valide" class=" md:p-3 min-w-11 p-1 m-1 font-bold md:text-xl text-xs text-center select-none z-0" :style="{ backgroundColor: dept.dept_color }">{{ dept.dept_shortname }}</p>
+                                            <p v-if="dept.pivot?.deptagree_valide" class=" md:p-3 min-w-11 p-1 m-1 font-bold md:text-xl text-xs text-center select-none z-0" :style="{ backgroundColor: dept.dept_color }">{{ dept.dept_shortname }}</p>
                                         </div>
                                     </div>
-                                    <div v-else>
+                                    <div v-else class="hidden md:block">
                                         <p class="p-3 m-1">Aucun département</p>
                                     </div>
                                     </div>
@@ -289,13 +295,28 @@
 
     const filteredAccords = computed(() => {
         return accords.value.agreements.filter(accord => {
-            const matchesDepartments = selectedDepartment.value.length === 0 || accord.departments.some(dept => selectedDepartment.value.includes(dept.dept_shortname));
-            const matchesCountries = selectedCountries.value.length === 0 || selectedCountries.value.includes(accord.partnercountry.parco_name);
-            const hasDepartments = accord.departments.length > 0;
+            // Gestion des valeurs nulles ou undefined
+            const departments = accord.departments || [];
+            const partnercountry = accord.partnercountry || {};
+            const deptShortnames = selectedDepartment.value || [];
+            const countryNames = selectedCountries.value || [];
 
-            return matchesDepartments && matchesCountries && hasDepartments;
+            // Les accords doivent être filtrés en fonction des départements et des pays sélectionnés
+            const matchesDepartments = deptShortnames.length === 0 || 
+                departments.some(dept => dept && dept.dept_shortname && deptShortnames.includes(dept.dept_shortname));
+            
+            const matchesCountries = countryNames.length === 0 || 
+                (partnercountry && partnercountry.parco_name && countryNames.includes(partnercountry.parco_name));
+
+            // Assurez-vous que departments est un tableau et vérifiez sa longueur
+            const hasDepartments = Array.isArray(departments) && departments.length > 0;
+
+            // Retourner les accords qui correspondent aux filtres ou qui ont des départements
+            return matchesDepartments && matchesCountries && (hasDepartments || deptShortnames.length === 0);
         });
     });
+
+    
     const canShowMore = computed(() => {
       return itemsToShow.value < filteredAccords.value.length;
     });

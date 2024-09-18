@@ -533,6 +533,7 @@
         }
 
         // Effectuer la requête POST pour ajouter l'accord
+
         await request("POST", true, response, config.apiUrl + 'api/agreement', requestData);
 
         // Vérification de la réponse et ajout d'une action si nécessaire
@@ -647,10 +648,11 @@
         await request('POST', true, response, config.apiUrl+'api/departmentagreement', requestData);
         if(response.value.status == 201){
             const requestDataAction = {
-                act_description: 'Ajout du département '+response.value.department.dept_shortname+' à l\'accord '+response.value.agreement.university.univ_name + ' ('+response.value.agreement.partnercountry.parco_name+').',
+                act_description: `Ajout du département ${response.value.department?.dept_shortname || 'Inconnu'} à l'accord ${response.value.agreement?.university?.univ_name || 'Inconnu'} (${response.value.agreement?.partnercountry?.parco_name || 'Inconnu'}).`,
                 acc_id: accountStore.login,
-                agree_id: response.value.agreement.agree_id
-            }
+                agree_id: response.value.agreement?.agree_id || 'Inconnu'
+            };
+
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
         fetchAll();
