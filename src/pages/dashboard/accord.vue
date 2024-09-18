@@ -375,30 +375,40 @@
                     </div>
                 </dialog>
 
-                <!-- Modal de confirmation suppression -->
-                <dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
-                    <div class="modal-box max-w-full w-150">
-                        <h3 class="text-lg font-bold">Import d'accord</h3>
-                        <div class="py-3">
-                            <p>Ajout d'accord</p>
-                            <div>
-                                <div v-for="(accord, index) in exportModal" :key="index" class="flex bg-base-300 my-2">
-                                    <span class="mr-2 flex items-center justify-center">
-                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.Pays) "></span>
-                                    </span>
-                                    <div class="flex flex-col">
-                                        <p class="w-full select-none">({{ accord.Pays }}) <span class="font-bold">{{accord.Ville ? accord.Ville : 'Aucune ville'}} - {{ accord.Universite ? accord.Universite : 'Aucune université' }}</span> </p>
-                                        <p>({{ accord.Isced ? accord.Isced : 'Aucun ISCED' }})</p>    
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-action">
-                            <button class="btn btn-error" @click="closeModal">Annuler</button>
-                            <button class="btn btn-success" >Confirmer</button>
-                        </div>
+<!-- Modal de confirmation suppression -->
+<dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
+    <div class="modal-box max-w-full w-150">
+        <h3 class="text-lg font-bold">Import d'accord</h3>
+        <div class="py-3">
+            <p>Note : les problèmes d'accent, comme le symbole "�", pourraient venir du format du fichier CSV.</p>
+            <p>Assurez-vous de bien choisir le format "<strong>CSV UTF-8 (délimité par des virgules)</strong>".</p>
+
+            <!-- Boutons pour sélectionner ou désélectionner tous les accords -->
+            <div class="my-4">
+                <button class="hover:opacity-70" @click="selectAll">Tout sélectionner</button>
+                <button class="hover:opacity-70 ml-2" @click="deselectAll">Tout désélectionner</button>
+            </div>
+
+            <div>
+
+                <div v-for="(accord, index) in exportModal" :key="index" class="flex bg-base-300 my-2 items-center cursor-pointer " @click="accord.add = !accord.add">
+                    <input type="checkbox" v-model="accord.add" class="opacity-70 checkbox checkbox-sm m-2 hover:opacity-50 hover:scale-110 transition-all" />
+                    <span class="mr-2 flex items-center justify-center">
+                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.Pays) "></span>
+                    </span>
+                    <div class="flex flex-col">
+                        <p class="w-full select-none">({{ accord.Pays }}) <span class="font-bold">{{accord.Ville ? accord.Ville : 'Aucune ville'}} - {{ accord.Universite ? accord.Universite : 'Aucune université' }}</span> </p>
+                        <p>({{ accord.Isced ? accord.Isced : 'Aucun ISCED' }}) - {{ accord.Departements ? accord.Departements : 'Aucun départements' }}</p>    
                     </div>
-                </dialog>
+                </div>
+            </div>
+        </div>
+        <div class="modal-action">
+            <button class="btn btn-error" @click="closeModal">Annuler</button>
+            <button class="btn btn-success">Confirmer</button>
+        </div>
+    </div>
+</dialog>
             </div>
             
         </div>
@@ -476,12 +486,31 @@
         modal.close()
     }
 
-    function importCsv(data){
-        exportModal.value = data;
-        console.log(data)
-        const modal = document.getElementById('modalAjoutAccords')
-        modal.showModal()
-    }
+    // Fonction d'importation CSV
+    const importCsv = (data) => {
+        exportModal.value = data.map(accord => ({
+            ...accord,
+            add: accord.add !== undefined ? accord.add : true // Assurez-vous que 'add' est défini
+        }));
+        const modal = document.getElementById('modalAjoutAccords');
+        modal.showModal();
+        console.log(exportModal.value);
+    };
+
+    // Sélectionner tous les accords
+    const selectAll = () => {
+        exportModal.value.forEach(accord => {
+            accord.add = true;
+        });
+    };
+
+    // Désélectionner tous les accords
+    const deselectAll = () => {
+        exportModal.value.forEach(accord => {
+            accord.add = false;
+        });
+    };
+
     // Fonction pour trouver le pays
     function getCountryCode(pays) {
         const country = partnercountry.value.find(country => country.parco_name === pays);
@@ -576,6 +605,7 @@
         // Rafraîchir les données après l'ajout
         await fetchAll();
     }
+
 
     async function fetchAll(){
         isLoaded.value = false;

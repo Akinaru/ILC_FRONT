@@ -14,7 +14,6 @@
 
 <script setup>
 import { ref, getCurrentInstance } from 'vue';
-import Papa from 'papaparse';
 
 const props = defineProps({
   texte: {
@@ -34,26 +33,51 @@ const triggerFileInput = () => {
 };
 
 const isEmptyRow = (row) => {
-  // Vérifier si tous les champs d'une ligne sont vides
   return Object.values(row).every(value => !value || value.trim() === '');
 };
 
-// Fonction pour lire le fichier CSV en tant que texte UTF-8
-const readFileAsText = (file) => {
+const readFileAsArrayBuffer = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
     reader.onload = (event) => {
-      const text = event.target.result;
-      resolve(text);
+      const arrayBuffer = event.target.result;
+      resolve(arrayBuffer);
     };
 
     reader.onerror = (event) => {
       reject(new Error('Erreur de lecture du fichier'));
     };
 
-    // Utiliser un TextDecoder pour forcer l'encodage UTF-8
-    reader.readAsText(file, 'UTF-8');
+    reader.readAsArrayBuffer(file); // Lire le fichier en ArrayBuffer
+  });
+};
+
+const decodeArrayBuffer = (arrayBuffer) => {
+  const decoder = new TextDecoder('utf-8'); // Utiliser TextDecoder pour l'encodage UTF-8
+  return decoder.decode(arrayBuffer);
+};
+
+const parseCSV = (csvText) => {
+  // Utiliser un séparateur robuste qui fonctionne avec les accents
+  const rows = csvText.split('\n').map(row => row.trim()).filter(row => row.length > 0);
+  const headers = rows[0].split(';').map(header => header.trim());
+  
+  // Assurez-vous que les indices correspondent à l'ordre désiré
+  return rows.slice(1).map(row => {
+    const columns = row.split(';').map(column => column.trim());
+    return {
+      'Pays': columns[0] || '',
+      'Universite': columns[1] || '',
+      'Ville': columns[2] || '',
+      'Composante': columns[3] || '',
+      'Lien': columns[4] || '',
+      'Description': columns[5] || '',
+      'Isced': columns[6] || '',
+      'Nombre_de_place': columns[7] || '',
+      'Type_accord': columns[8] || '',
+      'Departements': columns[9] || ''
+    };
   });
 };
 
@@ -62,51 +86,30 @@ const handleFileUpload = async (event) => {
 
   if (file && file.name.endsWith('.csv')) {
     try {
-      const fileContent = await readFileAsText(file);
+      const arrayBuffer = await readFileAsArrayBuffer(file);
+      const fileContent = decodeArrayBuffer(arrayBuffer);
+      const parsedData = parseCSV(fileContent);
 
-      // Utiliser PapaParse pour analyser le contenu du fichier CSV
-      Papa.parse(fileContent, {
-  header: true,
-  skipEmptyLines: false,
-  dynamicTyping: true, // Convertit automatiquement les données en type approprié
-  complete: (results) => {
-    // Filtrer les lignes vides
-    let parsedData = results.data.filter(row => !isEmptyRow(row));
+      // Filtrer les lignes vides
+      const filteredData = parsedData.filter(row => !isEmptyRow(row));
 
-    // Variable pour garder la dernière valeur de Pays
-    let lastCountry = '';
+      // Variable pour garder la dernière valeur de Pays
+      let lastCountry = '';
 
-    // Réorganiser les colonnes, combiner ISCED, et compléter le Pays si vide
-    result.value = parsedData.map((row) => {
-      // Si la colonne "Pays" est vide, utiliser la dernière valeur connue
-      if (!row.Pays || row.Pays.trim() === '') {
-        row.Pays = lastCountry;
-      } else {
-        lastCountry = row.Pays;  // Mettre à jour avec la nouvelle valeur
-      }
+      // Réorganiser les colonnes, combiner ISCED, et compléter le Pays si vide
+      result.value = filteredData.map((row) => {
+        // Si la colonne "Pays" est vide, utiliser la dernière valeur connue
+        if (!row.Pays || row.Pays.trim() === '') {
+          row.Pays = lastCountry;
+        } else {
+          lastCountry = row.Pays;  // Mettre à jour avec la nouvelle valeur
+        }
 
-      // Créer une nouvelle ligne avec les colonnes ordonnées
-      return {
-        'Pays': row.Pays || '',
-        'Universite': row.Universite || '',
-        'Ville': row.Ville || '',
-        'Composante': row.Composante || '',
-        'Lien': row.Lien || '',
-        'Description': row.Description || '',
-        'Isced': row.Isced,
-        'Nombre_de_place': row['Nombre de place'] || '',
-        'Type_accord': row['Type accord'] || '',
-        'Departements': row['Departements'] || ''
-      };
-    });
+        return row;
+      });
 
-    // Émet l'événement après que les données ont été mises à jour
-    emit('csv-imported', result.value);
-  },
-  error: (error) => {
-    console.error('Erreur lors de la conversion de CSV en JSON :', error);
-  }
-});
+      // Émet l'événement après que les données ont été mises à jour
+      emit('csv-imported', result.value);
     } catch (error) {
       console.error('Erreur lors de la lecture du fichier :', error);
     }
