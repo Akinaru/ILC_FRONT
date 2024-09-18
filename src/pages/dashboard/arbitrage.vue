@@ -62,8 +62,17 @@
                                 <div v-for="(accord,index) in accords.agreements" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
                                     <input :id="'filt_accord_'+index" type="checkbox" class="checkbox" :value="accord.agree_id" v-model="selectedAccord">
                                     <label :for="'filt_accord_'+index" class="cursor-pointer w-full pl-2">
-                                        <span class="fi mr-1" :class="'fi-'+accord.partnercountry.parco_code"></span>
-                                        <label :for="'filt_accord_'+index" class="select-none w-full hover:cursor-pointer">{{ accord.university.univ_name }} - {{ accord.isced.isc_code }}</label>
+                                        <span class="relative inline-block mr-1">
+                                            <!-- Drapeau -->
+                                            <span class="fi" :class="'fi-' + (accord.partnercountry?.parco_code)"></span>
+
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                                ?
+                                            </span>
+                                        </span>
+
+                                        <label :for="'filt_accord_'+index" class="select-none w-full hover:cursor-pointer">{{ accord.university?.univ_name || 'Université indisponible' }} - {{ accord.isced?.isc_code || 'Code ISCED ?' }}</label>
                                     </label>
                                 </div>
                             </div>
@@ -99,8 +108,17 @@
                                     <div v-for="(accord, index) in getFilteredAgreements(etu)" :key="index" class="flex justify-between">
                                         <p class="min-w-fit">Voeu {{ accord.place }}</p>
                                         <div class="flex w-full items-center justify-start ml-2">
-                                            <span class="fi mr-1" :class="'fi-'+accord.agreement.partnercountry.parco_code"></span>
-                                            <p>{{accord.agreement.university.univ_name}} {{ accord.agreement.isced.isc_code }}</p>
+                                            <span class="relative inline-block mr-1">
+                                                <!-- Drapeau -->
+                                                <span class="fi" :class="'fi-' + (accord.agreement?.partnercountry?.parco_code)"></span>
+
+                                                <!-- Point d'interrogation si pas de drapeau -->
+                                                <span v-if="!accord.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                                    ?
+                                                </span>
+                                            </span>
+
+                                            <p>{{accord.agreement.university?.univ_name || 'Université indisponible'}} {{ accord.agreement.isced?.isc_code || 'Code ISCED ?' }}</p>
                                         </div>
                                         
                                     </div>
@@ -154,10 +172,19 @@
                 <div class="flex flex-col items-center justify-start w-full select-none">
                     <div v-for="(arbitrage, accordIndex) in filteredArbitrage" :key="'accord-' + accordIndex" class="bg-base-300 w-11/12 mb-4 p-4 rounded-lg">
                         <div class="flex items-center justify-center mb-2">
-                            <span class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out mr-2" :class="'fi-' + arbitrage.agreement.partnercountry.parco_code"></span>
-                            <p class="font-bold text-lg">{{ arbitrage.agreement.partnercountry.parco_name }}</p>
+                            <span class="relative inline-block mr-2">
+                                <!-- Drapeau -->
+                                <span class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out" :class="'fi-' + (arbitrage.agreement?.partnercountry?.parco_code)"></span>
+
+                                <!-- Point d'interrogation si pas de drapeau -->
+                                <span v-if="!arbitrage.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                    ?
+                                </span>
+                            </span>
+
+                            <p class="font-bold text-lg">{{ arbitrage.agreement.partnercountry?.parco_name || 'Pays indisponible' }}</p>
                         </div>
-                        <p class="text-center mb-3">{{ arbitrage.agreement.university.univ_name }} - {{ arbitrage.agreement.isced.isc_code }} {{ arbitrage.agreement.isced.isc_name }} </p>
+                        <p class="text-center mb-3">{{ arbitrage.agreement.university?.univ_name || 'Université indisponible' }} - {{ arbitrage.agreement.isced?.isc_code || 'Code ISCED indisponible' }} {{ arbitrage.agreement.isced?.isc_name || 'Nom ISCED indisponible' }} </p>
 
                         <div class="w-full flex justify-center">
                             <div class="flex flex-wrap gap-4 justify-center w-full">

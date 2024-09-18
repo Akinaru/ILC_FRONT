@@ -17,10 +17,17 @@
                     <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
                         <div class="border-warning border-2 bg-base-300 p-1 flex items-center justify-center w-full h-20 select-none">
-                            <span class="tooltip mr-2" :data-tip="destination.agreement.partnercountry.parco_name">
-                                <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+destination.agreement.partnercountry.parco_code "></span>
-                            </span>
-                            <p class="w-full select-none">({{ destination.agreement.partnercountry.parco_name }}) <span class="font-bold">{{destination.agreement.university.univ_city}} - {{ destination.agreement.university.univ_name }}</span> ({{ destination.agreement.isced.isc_code }})</p>    
+                            <span class="relative inline-block tooltip mr-2" :data-tip="destination.agreement?.partnercountry?.parco_name || 'Introuvable'">
+    <!-- Drapeau -->
+    <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-' + (destination.agreement?.partnercountry?.parco_code || '')"></span>
+
+    <!-- Point d'interrogation si pas de drapeau -->
+    <span v-if="!destination.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+        ?
+    </span>
+</span>
+
+                            <p class="w-full select-none">({{ destination.agreement.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{destination.agreement.university?.univ_city || 'Ville indisponible'}} - {{ destination.agreement.university?.univ_name || 'Université indisponible' }}</span> ({{ destination.agreement.isced?.isc_code || 'Code ISCED indisponible' }})</p>    
                         </div>
                     </RouterLink>
                 </div>
