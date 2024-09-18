@@ -36,10 +36,16 @@
                             <p class="font-bold text-sm xl:text-lg min-w-fit p-5 transition-all duration-100 ease-in-out">Voeu n° {{ index+1 }}</p>
                             <div v-if="wishes && wishes.count > 0 && wishes.wishes[label]" class=" select-none flex justify-between items-center elementDrag w-96 h-20">
                                 <div class=" flex items-center justify-center h-20 select-none">
-                                    <span class="tooltip mr-2" :data-tip="wishes.wishes[label].partnercountry.parco_name">
-                                        <span class="fi text-3xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-'+wishes.wishes[label].partnercountry.parco_code "></span>
-                                    </span>
-                                    <p class="w-full select-none">({{ wishes.wishes[label].partnercountry.parco_name }}) <span class="font-bold">{{wishes.wishes[label].university.univ_city}} - {{ wishes.wishes[label].university.univ_name }}</span> ({{ wishes.wishes[label].isced.isc_code }})</p>
+                                    <span class="relative inline-block mr-2">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (wishes.wishes[label].partnercountry?.parco_code)"></span>
+
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <span v-if="!wishes.wishes[label].partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                ?
+                                            </span>
+                                        </span>
+                                    <p class="w-full select-none">({{ wishes.wishes[label].partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{wishes.wishes[label].university?.univ_city || 'Ville indisponible'}} - {{ wishes.wishes[label].university?.univ_name || 'Université indisponible' }}</span> ({{ wishes.wishes[label].isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                     
                                 </div>
                             </div>
