@@ -375,40 +375,42 @@
                     </div>
                 </dialog>
 
-<!-- Modal de confirmation suppression -->
-<dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
-    <div class="modal-box max-w-full w-150">
-        <h3 class="text-lg font-bold">Import d'accord</h3>
-        <div class="py-3">
-            <p>Note : les problèmes d'accent, comme le symbole "�", pourraient venir du format du fichier CSV.</p>
-            <p>Assurez-vous de bien choisir le format "<strong>CSV UTF-8 (délimité par des virgules)</strong>".</p>
+                <!-- Modal de confirmation suppression -->
+                <dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
+                    <div class="modal-box max-w-full w-150">
+                        <h3 class="text-lg font-bold">Import d'accord</h3>
+                        <div class="py-3">
+                            <p>Note : les problèmes d'accent, comme le symbole "�", pourraient venir du format du fichier CSV.</p>
+                            <p>Assurez-vous de bien choisir le format "<strong>CSV UTF-8 (délimité par des virgules)</strong>".</p>
 
-            <!-- Boutons pour sélectionner ou désélectionner tous les accords -->
-            <div class="my-4">
-                <button class="hover:opacity-70" @click="selectAll">Tout sélectionner</button>
-                <button class="hover:opacity-70 ml-2" @click="deselectAll">Tout désélectionner</button>
-            </div>
+                            <p>Nombre d'accord séléctionné à ajouter: <strong>{{ exportModal.filter(accord => accord.add).length }}</strong></p>
 
-            <div>
+                            <!-- Boutons pour sélectionner ou désélectionner tous les accords -->
+                            <div class="my-4">
+                                <button class="hover:opacity-70" @click="selectAll">Tout sélectionner</button>
+                                <button class="hover:opacity-70 ml-2" @click="deselectAll">Tout désélectionner</button>
+                            </div>
 
-                <div v-for="(accord, index) in exportModal" :key="index" class="flex bg-base-300 my-2 items-center cursor-pointer " @click="accord.add = !accord.add">
-                    <input type="checkbox" v-model="accord.add" class="opacity-70 checkbox checkbox-sm m-2 hover:opacity-50 hover:scale-110 transition-all" />
-                    <span class="mr-2 flex items-center justify-center">
-                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.Pays) "></span>
-                    </span>
-                    <div class="flex flex-col">
-                        <p class="w-full select-none">({{ accord.Pays }}) <span class="font-bold">{{accord.Ville ? accord.Ville : 'Aucune ville'}} - {{ accord.Universite ? accord.Universite : 'Aucune université' }}</span> </p>
-                        <p>({{ accord.Isced ? accord.Isced : 'Aucun ISCED' }}) - {{ accord.Departements ? accord.Departements : 'Aucun départements' }}</p>    
+                            <div>
+
+                                <div v-for="(accord, index) in exportModal" :key="index" :class="{ 'bg-base-200': !accord.add, 'bg-base-300': accord.add }" class="flex select-none my-2 items-center cursor-pointer " @click="accord.add = !accord.add">
+                                    <input type="checkbox" v-model="accord.add" class="opacity-70 checkbox checkbox-sm m-2 hover:opacity-50 hover:scale-110 transition-all" />
+                                    <span class="mr-2 flex items-center justify-center">
+                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.Pays) "></span>
+                                    </span>
+                                    <div class="flex flex-col">
+                                        <p class="w-full select-none">({{ accord.Pays }}) <span class="font-bold">{{accord.Ville ? accord.Ville : 'Aucune ville'}} - {{ accord.Universite ? accord.Universite : 'Aucune université' }}</span> </p>
+                                        <p>({{ accord.Isced ? accord.Isced : 'Aucun ISCED' }}) {{ accord.Composante ? accord.Composante : 'Aucune composante' }} - {{ accord.Departements ? accord.Departements : 'Aucun départements' }}</p>    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-action">
+                            <button class="btn btn-error" @click="closeModalImport">Annuler</button>
+                            <button class="btn btn-success" @click="confirmImportAccord">Confirmer</button>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-action">
-            <button class="btn btn-error" @click="closeModal">Annuler</button>
-            <button class="btn btn-success">Confirmer</button>
-        </div>
-    </div>
-</dialog>
+                </dialog>
             </div>
             
         </div>
@@ -439,6 +441,8 @@
     const confirmDeleteAccord = ref([])
     
     const exportModal = ref([])
+    const importFinalAccord = ref([])
+
     const isLoaded = ref(false)
     const isceds = ref([]);
     const composantes = ref([]);
@@ -486,6 +490,13 @@
         modal.close()
     }
 
+    //Fermer le modal de confirmation de suppression
+    function closeModalImport() {
+        const modal = document.getElementById('modalAjoutAccords')
+        exportModal.value = [];
+        modal.close()
+    }
+
     // Fonction d'importation CSV
     const importCsv = (data) => {
         exportModal.value = data.map(accord => ({
@@ -494,8 +505,97 @@
         }));
         const modal = document.getElementById('modalAjoutAccords');
         modal.showModal();
-        console.log(exportModal.value);
     };
+
+    // Calcul de la distance de Levenshtein
+    const levenshtein = (a, b) => {
+        const alen = a.length;
+        const blen = b.length;
+        let row = Array(blen + 1).fill(0).map((_, i) => i); // Utiliser `let` ici
+        let current = Array(blen + 1); // Utiliser `let` ici
+
+        for (let i = 0; i < alen; i++) {
+            current[0] = i + 1;
+            for (let j = 0; j < blen; j++) {
+            const cost = a[i] === b[j] ? 0 : 1;
+            current[j + 1] = Math.min(
+                current[j] + 1, // Suppression
+                row[j + 1] + 1, // Insertion
+                row[j] + cost    // Substitution
+            );
+            }
+            [row, current] = [current, row]; // Cela est maintenant valide avec `let`
+        }
+        return row[blen];
+        };
+
+    // Fonction pour comparer deux chaînes avec une tolérance de ressemblance
+    const isSimilar = (str1, str2, threshold = 3) => {
+        return levenshtein(str1.toLowerCase(), str2.toLowerCase()) <= threshold;
+    };
+
+
+
+    function confirmImportAccord() {
+  // Filtrer les accords importés qui sont marqués pour ajout
+  const newAccords = exportModal.value.filter(accord => accord.add);
+
+  console.log('New Accords à comparer:', newAccords);
+
+  importFinalAccord.value = newAccords.filter(newAccord => {
+    return !accords.value.agreements.some(existingAccord => {
+      // Vérifier que les champs ne sont pas null ou vides
+      const existingUnivName = existingAccord.university?.univ_name?.trim() || '';
+      const existingIscedCode = (existingAccord.isced?.isc_code?.split(' - ')[0] || '').trim();
+      const existingCompShortname = existingAccord.component?.comp_shortname?.trim() || '';
+      const existingCountry = existingAccord.partnercountry?.parco_name?.trim() || '';
+
+      const newUnivName = newAccord.Universite?.trim() || '';
+      const newIscedCode = (newAccord.Isced?.split(' - ')[0] || '').trim();
+      const newCompShortname = newAccord.Composante?.trim() || '';
+      const newCountry = newAccord.Pays?.trim() || '';
+
+      // Comparer les champs avec la fonction isSimilar
+      return (
+        isSimilar(existingUnivName, newUnivName) &&
+        isSimilar(existingIscedCode, newIscedCode) &&
+        isSimilar(existingCompShortname, newCompShortname) &&
+        isSimilar(existingCountry, newCountry)
+      );
+    });
+  }).map(newAccord => ({
+    university: { univ_name: newAccord.Universite },
+    isced: { isc_code: newAccord.Isced },
+    component: { comp_shortname: newAccord.Composante },
+    partnercountry: { parco_name: newAccord.Pays }
+  }));
+
+  console.log('Accords à ajouter :', importFinalAccord.value);
+  console.log('Nombre d\'accords à ajouter :', importFinalAccord.value.length);
+
+  // Trouver les accords qui sont marqués pour ajout mais qui ne sont pas ajoutés
+  const notAddedAccords = newAccords.filter(newAccord => {
+    return !importFinalAccord.value.some(finalAccord => {
+      return (
+        isSimilar(finalAccord.university.univ_name, newAccord.Universite) &&
+        isSimilar(finalAccord.isced.isc_code, newAccord.Isced) &&
+        isSimilar(finalAccord.component.comp_shortname, newAccord.Composante) &&
+        isSimilar(finalAccord.partnercountry.parco_name, newAccord.Pays)
+      );
+    });
+  });
+
+  console.log('Accords non ajoutés :', notAddedAccords);
+  console.log('Nombre d\'accords non ajoutés :', notAddedAccords.length);
+}
+
+
+
+
+
+
+
+
 
     // Sélectionner tous les accords
     const selectAll = () => {

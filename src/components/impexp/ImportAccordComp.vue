@@ -110,6 +110,12 @@ const handleFileUpload = async (event) => {
 
       // Émet l'événement après que les données ont été mises à jour
       emit('csv-imported', result.value);
+
+      // Réinitialiser le champ de fichier
+      fileInput.value.value = null;
+      
+      // Réinitialiser les données traitées
+      result.value = [];
     } catch (error) {
       console.error('Erreur lors de la lecture du fichier :', error);
     }
