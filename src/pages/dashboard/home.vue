@@ -154,10 +154,16 @@
                             <!-- Liste des favoris -->
                             <div v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center elementDrag h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
                                 <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
-                                    <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
-                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
-                                    </span>
-                                    <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
+                                    <span class="relative inline-block mr-2">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord.partnercountry?.parco_code)"></span>
+
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                ?
+                                            </span>
+                                        </span>
+                                    <p class="w-full select-none xl:text-base text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                     
                                 </div>
                             </div>
@@ -181,10 +187,16 @@
                                 <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 w-full flex items-center justify-center transition-all duration-100 ease-in-out">
                                     <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
                                         <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 flex items-center justify-center h-20 select-none w-full">
-                                            <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
-                                                <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
+                                            <span class="relative inline-block mr-2">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (localVoeux[i].partnercountry?.parco_code)"></span>
+
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <span v-if="!localVoeux[i].partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                ?
                                             </span>
-                                            <p class="w-full select-none xl:text-md text-sm transition-all duration-100 ease-in-out">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
+                                        </span>
+                                            <p class="w-full select-none xl:text-md text-sm transition-all duration-100 ease-in-out">({{ localVoeux[i].partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{localVoeux[i].university?.univ_city || 'Ville indisponible'}} - {{ localVoeux[i].university?.univ_name || 'Université indisponible' }}</span> ({{ localVoeux[i].isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                             
                                         </div>
                                         <button @click="removeVoeu(localVoeux[i].agree_id, i)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer">
@@ -219,10 +231,16 @@
                                     <!-- Liste des favoris -->
                                     <div v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center w-full h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
                                         <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none ">
-                                            <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
-                                                <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
+                                            <span class="relative inline-block mr-1">
+                                                <!-- Drapeau -->
+                                                <span class="fi text-lg xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
+
+                                                <!-- Point d'interrogation si pas de drapeau -->
+                                                <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white select-none">
+                                                    ?
+                                                </span>
                                             </span>
-                                            <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
+                                            <p class="w-full select-none text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                             
                                         </div>
                                     </div>
@@ -241,10 +259,16 @@
                             <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300  select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
                                 <div class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full"
                                 :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'">
-                                    <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
-                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
-                                    </span>
-                                    <p class="w-full select-none">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
+                                <span class="relative inline-block mr-1">
+                                                <!-- Drapeau -->
+                                                <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (localVoeux[i].partnercountry?.parco_code || '')"></span>
+
+                                                <!-- Point d'interrogation si pas de drapeau -->
+                                                <span v-if="!localVoeux[i].partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white select-none">
+                                                    ?
+                                                </span>
+                                            </span>
+                                    <p class="w-full select-none text-xs">({{ localVoeux[i].partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{localVoeux[i].university?.univ_city || 'Ville indisponible'}} - {{ localVoeux[i].university?.univ_name || 'Université indisponible' }}</span> ({{ localVoeux[i].isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                 </div>
                                 <button @click="removeVoeu(localVoeux[i].agree_id, i)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -265,10 +289,16 @@
                             <!-- Liste des favoris -->
                             <div @click="setAccordToVoeu(accord.agree_id)" v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="my-1 select-none flex justify-between items-center w-full h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
                                 <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
-                                    <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
-                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+accord.partnercountry.parco_code "></span>
-                                    </span>
-                                    <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{accord.university.univ_city}} - {{ accord.university.univ_name }}</span> ({{ accord.isced.isc_code }})</p>
+                                    <span class="relative inline-block">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
+
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                ?
+                                            </span>
+                                        </span>
+                                    <p class="w-full select-none text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                 </div>
                             </div>
                             <!-- Aucun favoris -->

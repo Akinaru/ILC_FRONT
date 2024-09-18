@@ -84,8 +84,6 @@
                         <!-- Si il y a des accords -->
                         <div v-if="filteredAccords && filteredAccords.length > 0">
 
-
-
                             <div class="z-10">
                                 <div v-for="(accord, index) in paginatedAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden transition-all hover:scale-102">
                                 <RouterLink :to="{ name: 'Accord', params: { agree_id: accord.agree_id }}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
