@@ -7,7 +7,7 @@
             <p class="py-4">Avancement des étapes actuelles:</p>
             <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
                 <li class="step step-primary">Inscription</li>
-                <li class="step step-primary">Choix des voeux</li>
+                <li class="step step-primary">Choix des vœux</li>
                 <li class="step" :class="{'step-primary' : destination.agree_id || joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
                 <li class="step" :class="{'step-primary' : destination.agree_id}">Validation</li>
             </ul>
@@ -175,7 +175,7 @@
                     <!-- Partie de droite avec les voeux -->
                     <div class="flex flex-col items-center justify-start w-3/5">
                         <p class="font-bold text-xl flex *:mx-1 py-2 items-center">
-                            <span>Vos voeux</span>
+                            <span>Vos vœux</span>
                             <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                             </svg>
@@ -183,7 +183,7 @@
                         <div id="right" class="bg-base-200 flex flex-col *:m-3 w-full">
 
                             <span class="flex items-center min-h-20 w-full px-5 xl:px-10 transition-all duration-100 ease-in-out" v-for="(i, index) in 6" :key="index">
-                                <p class="font-bold xl:pr-5 pr-3 xl:text-lg transition-all duration-100 ease-in-out min-w-fit">Voeu n°{{ i }}</p>
+                                <p class="font-bold xl:pr-5 pr-3 xl:text-lg transition-all duration-100 ease-in-out min-w-fit">Vœu n°{{ i }}</p>
                                 <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 w-full flex items-center justify-center transition-all duration-100 ease-in-out">
                                     <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
                                         <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 flex items-center justify-center h-20 select-none w-full">
@@ -203,7 +203,7 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         </button>
                                     </div>
-                                    <p v-else class="opacity-45 select-none w-96 flex items-center justify-center">Emplacement voeu n°{{ i }}</p>
+                                    <p v-else class="opacity-45 select-none w-96 flex items-center justify-center">Emplacement vœu n°{{ i }}</p>
                                 </div>
                             </span>
 
@@ -276,7 +276,7 @@
                             </div>
                             <!-- Pas d'accord dans la case -->
                             <label for="modal_ajout_accord" @click="changeVoeuLocal(i)" v-else class="hover:opacity-80 select-none w-full flex flex-col items-center justify-center bg-base-300  p-2">
-                                <p class="text-lg">Emplacement voeu n°{{ i }}</p>
+                                <p class="text-lg">Emplacement vœu n°{{ i }}</p>
                                 <p class="opacity-50">Cliquez pour ajouter un accord</p>
                             </label>
                         </div>
@@ -285,7 +285,7 @@
                     <input type="checkbox" id="modal_ajout_accord" class="modal-toggle" />
                     <div class="modal" role="dialog">
                         <div class="modal-box">
-                            <h3 class="font-bold text-lg pb-3">Choisissez un accord pour le voeu n°{{ selectedChangeVoeu }}</h3>
+                            <h3 class="font-bold text-lg pb-3">Choisissez un accord pour le vœu n°{{ selectedChangeVoeu }}</h3>
                             <!-- Liste des favoris -->
                             <div @click="setAccordToVoeu(accord.agree_id)" v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class="my-1 select-none flex justify-between items-center w-full h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
                                 <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
@@ -317,20 +317,20 @@
         <div v-else>
             <div class="flex flex-col items-center justify-start pt-10">
                 <p class="font-bold text-xl flex *:mx-1 py-2 items-center">
-                    <span>Vos voeux</span>
+                    <span>Vos vœux</span>
                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                     </svg>
                 </p>
                 <div class="py-5 text-center">
-                    <p>Vous ne pouvez plus modifier vos voeux car la date limite a été atteinte.</p>
-                    <p>Si votre destination finale correspond à un de vos voeux, alors la case sera entourée en jaune.</p>
+                    <p>Vous ne pouvez plus modifier vos vœux car la date limite a été atteinte.</p>
+                    <p>Si votre destination finale correspond à un de vos vœux, alors la case sera entourée en jaune.</p>
                 </div>
 
                 <div id="right" class="bg-base-200 flex flex-col *:m-3">
 
                     <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
-                        <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Voeu n°{{ i }}</p>
+                        <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Vœu n°{{ i }}</p>
                         <div  class="bg-base-100 h-20 xl:w-130 w-105 flex items-center justify-center transition-all duration-100 ease-in-out">
                             <div v-if="localVoeux[i]" :draggable="true" class=" select-none flex justify-between items-center xl:w-150 w-120 transition-all duration-100 ease-in-out h-20 hover:opacity-80">
                                 <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full">
@@ -341,7 +341,7 @@
                                     
                                 </div>
                             </div>
-                            <p v-else class="opacity-45 select-none w-96 flex items-center justify-center">Emplacement voeu n°{{ i }} vide</p>
+                            <p v-else class="opacity-45 select-none w-96 flex items-center justify-center">Emplacement vœu n°{{ i }} vide</p>
                         </div>
                     </span>
 

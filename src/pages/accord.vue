@@ -128,6 +128,7 @@
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accord, config.apiUrl+'api/agreement/getbyid/'+route.params.agree_id);
+        document.title = `ILC - ${accord.value.university.univ_name} (${accord.value.partnercountry.parco_name} [${accord.value.isced.isc_code} - ${accord.value.isced.isc_name}])`
         if(accountStore.isLogged)
             await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         const requestData = {}
