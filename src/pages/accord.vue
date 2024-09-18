@@ -1,5 +1,5 @@
 <template>
-    <div class="" v-if="isLoaded">
+    <div v-if="isLoaded" class="min-h-screen">
         <div v-if="accord && accord.agreement?.agree_id">
             <div class="flex justify-end pb-20">
                 <!-- Favoris -->
@@ -94,8 +94,11 @@
 
             </div>
         </div>
-        <div v-else>
-            <p class="flex font-bold items-center justify-center py-64">Accord introuvable...</p>
+        <div v-else class="h-full min-h-screen flex flex-col justify-center items-center">
+            <p class="flex font-bold items-center justify-center text-xl md:text-2xl pb-10">Accord introuvable...</p>
+            <div class="flex flex-col items-center space-y-4">
+                <Vue3Lottie :animationData="notFound" :height="animationWidth" :width="animationWidth" />
+            </div>
         </div>
     </div>
     <div v-else>
@@ -104,12 +107,14 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, watch } from 'vue';
+    import { ref, onMounted, watch,onBeforeUnmount, computed } from 'vue';
     import { useRoute } from 'vue-router';
     import { request } from '../composables/httpRequest';
     import config from '../config';
     import LoadingComp from '../components/utils/LoadingComp.vue';
     import { useAccountStore } from '../stores/accountStore';
+    import { Vue3Lottie } from 'vue3-lottie'
+    import notfound from '../animations/notfound.json'
     const accountStore = useAccountStore();
 
     const route = useRoute();
@@ -172,5 +177,31 @@
     watch(() => route.params.agree_id, () => {
         fetchAll();
     });
+
+
+    //Animations
+
+    const notFound = notfound
+  
+  const screenWidth = ref(window.innerWidth)
+  
+  const updateDimensions = () => {
+    screenWidth.value = window.innerWidth
+  }
+  
+  onMounted(() => {
+    window.addEventListener('resize', updateDimensions)
+    // Initial calculation
+    updateDimensions()
+  })
+  
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', updateDimensions)
+  })
+  
+  const animationWidth = computed(() => {
+    // Ajuste la largeur en fonction de la taille de l'écran, avec une largeur minimale et maximale
+    return Math.min(Math.max(screenWidth.value * 0.6, 200), 500)
+  })
     
 </script>
