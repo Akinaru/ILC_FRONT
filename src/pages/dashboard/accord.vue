@@ -374,6 +374,28 @@
                         </div>
                     </div>
                 </dialog>
+
+                <!-- Modal de confirmation suppression -->
+                <dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
+                    <div class="modal-box max-w-full w-150">
+                        <h3 class="text-lg font-bold">Import d'accord</h3>
+                        <div class="py-3">
+                            <p>Ajout d'accord</p>
+                            <div>
+                                <div v-for="(accord, index) in exportModal" :key="index" class="flex bg-base-300 my-2">
+                                    <span class="mr-2">
+                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.Pays) "></span>
+                                    </span>
+                                    <p class="w-full select-none">({{ accord.Pays }}) <span class="font-bold">{{accord.Ville}} - {{ accord.Universite }}</span> ({{ accord.Isced }})</p>    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-action">
+                            <button class="btn btn-error" @click="closeModal">Annuler</button>
+                            <button class="btn btn-success" >Confirmer</button>
+                        </div>
+                    </div>
+                </dialog>
             </div>
             
         </div>
@@ -454,6 +476,8 @@
     function importCsv(data){
         exportModal.value = data;
         console.log(data)
+        const modal = document.getElementById('modalAjoutAccords')
+        modal.showModal()
     }
     // Fonction pour trouver le pays
     function getCountryCode(pays) {
