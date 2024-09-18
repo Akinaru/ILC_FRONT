@@ -20,7 +20,7 @@
                     </label>
                 </div>
                 <div class="flex items-center justify-center *:mx-1 ">
-                    <button v-if="!isEditing" class="btn btn-primary w-96" type="submit">Ajouter l'article</button>
+                    <button v-if="!isEditing" class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'article</button>
                     <div v-else>
                         <button class="btn btn-success mr-1" type="button" @click="confirmModifArticle">Enregistrer les modifications</button>
                         <button class="btn btn-neutral ml-1" type="button" @click="cancelModifArticle">Annuler les modifications</button>
@@ -40,21 +40,24 @@
                     <div v-for="(article, index) in articles.articles" :key="index" class="relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
                         <!-- Modification / Suppression -->
                         <div class="flex absolute top-0 right-0 ">
-                                <!-- Bouton de modification -->
-                                <label class="hover:opacity-70 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
-                                    <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                        <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    </svg>
-                                </label>
-                                <!-- Bouton de suppression -->
-                                <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300 " @click="removeArticle(article.art_title, article.art_id)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </button>
-                            </div>
+                            <!-- Bouton de modification -->
+                            <label class="hover:opacity-70 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </label>
+                            <!-- Bouton de suppression -->
+                            <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300 " @click="openConfirmModal(article)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+
                         <!-- Affichage -->
                         <RouterLink  :to="{name: 'Article', params: {art_id: article.art_id}}" >
-                            <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
+                            <div class="p-2">
+                                <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
+                            </div>
                             <span v-if="article.art_pin" class="badge badge-primary absolute top-1 left-1">📌Épinglé</span>
                             <div class="p-4 flex flex-col justify-start h-52">
                                 <div class="mb-2">
@@ -65,6 +68,20 @@
                             </div>
                         </RouterLink>
                     </div>
+                    <!-- Modal de confirmation suppression -->
+                    <dialog id="confirmModal" ref="confirmModal" class="modal">
+                        <div class="modal-box">
+                            <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                            <div class="py-3">
+                                <p>Confirmez vous la supression de l'article: <strong>{{confirmDeleteArticle.art_title}}</strong></p>
+                                <div :style="{ backgroundImage: `url(${confirmDeleteArticle.art_image ? config.apiUrl + 'api/article/image/' + confirmDeleteArticle.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48 my-2"></div>
+                            </div>
+                        <div class="modal-action">
+                            <button class="btn btn-error" @click="closeModal">Annuler</button>
+                            <button class="btn btn-success" @click="removeArticle(confirmDeleteArticle.art_title, confirmDeleteArticle.art_id)">Confirmer</button>
+                        </div>
+                        </div>
+                    </dialog>
                 </div>
                 <div v-else>
                     <p>Aucun article trouvé.</p>
@@ -91,6 +108,8 @@ const response = ref([]);
 const articles = ref([]);
 const newArticle = ref({ title: null, description: null, pinned: false, image: null });
 const isEditing = ref(false)
+const confirmDeleteArticle = ref([])
+
 
 const currentArticleModif = ref([]);
 const imagePreview = ref(null);
@@ -137,6 +156,19 @@ const backgroundImageModif = computed(() => {
         ? `${config.apiUrl}api/article/image/${currentArticleModif.value.art_id}`
         : `${config.apiUrl}images/no_image.jpg`;
 });
+
+//ouvrir le modal de confirmation de suppression
+function openConfirmModal(article) {
+  
+    confirmDeleteArticle.value = article;
+    const modal = document.getElementById('confirmModal')
+    modal.showModal()
+}
+//Fermer le modal de confirmation de suppression
+function closeModal() {
+    const modal = document.getElementById('confirmModal')
+    modal.close()
+}
 
 // Ajout d'article
 async function addArticle(){
@@ -217,6 +249,7 @@ function removeBackgroundColors(html) {
 
 // Suppression d'article
 async function removeArticle(title, id){
+    closeModal()
     await request('DELETE', true, response, config.apiUrl+'api/article/deletebyid/'+id);
     if(response.value.status == 202){
         const requestDataAction = {

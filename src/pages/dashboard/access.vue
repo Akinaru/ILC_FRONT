@@ -1,12 +1,16 @@
 <template>
     <div v-if="isLoaded">
-        <!-- Partie accès de haut niveau -->
+
         <p class="text-xl font-bold">Accès</p>
+
+        <!-- Partie accès de haut niveau -->
         <div class="m-5 flex items-center justify-center md:flex-row flex-col">
             <div class="md:w-1/2 w-4/5 flex items-center flex-col">
                 <p class="text-lg font-bold">Liste des accès de haut niveau</p>
                 <div v-if="access && access.count" class="w-full my-2">
                     <div v-if="access && access.count > 0">
+
+                        <!-- Relations Internationales -->
                         <p>RI (Relations Internationales)</p>
                         <div class="md:m-5 m-1">
                             <!-- Liste acces ADMIN -->
@@ -26,11 +30,13 @@
                                     </div>
                                     <span>Dernière connexion: <span v-if="acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Inconnu</span></span>
                                 </div>
-                                <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeAccess(acc.acc_id)">
+                                <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(acc)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
                         </div>
+
+                        <!-- Departement -->
                         <p>Dept (Département)</p>
                         <div class="md:m-5 m-1">
                             <!-- Liste access chef DEPT -->
@@ -65,7 +71,7 @@
                                         
                                     </div>
                                     
-                                    <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="removeAccess(acc.acc_id)">
+                                    <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(acc)">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
@@ -100,12 +106,35 @@
                             </div>
                             
                         </div>
+
+                        <!-- Modal de confirmation suppression access -->
+                        <dialog id="confirmModal" ref="confirmModal" class="modal">
+                            <div class="modal-box">
+                                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                                <div class="py-3">
+                                    <p>Confirmez vous la supression de l'accès pour: </p>
+                                    <p v-if="confirmDeleteAccess.account"  class="mt-1">
+                                        <span class="md:p-1 rounded-lg w-fit" :style="{ backgroundColor: `${confirmDeleteAccess.account.role.color ? confirmDeleteAccess.account.role.color : '#aaaaaa'}` }">{{ confirmDeleteAccess.account.role.role }}</span>
+                                        {{confirmDeleteAccess.account.acc_fullname}}
+                                    </p>
+                                    <p v-else class="mt-1">
+                                        <span class="badge badge-neutral p-3">Introuvable</span>
+                                        {{ confirmDeleteAccess.acc_id }}
+                                    </p>
+                                </div>
+                            <div class="modal-action">
+                                <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                <button class="btn btn-success" @click="removeAccess(confirmDeleteAccess.acc_id)">Confirmer</button>
+                            </div>
+                            </div>
+                        </dialog>
                     </div>
                     <div v-else>
                         <p>Aucun accès n'a été trouvé.</p>
                     </div>
                 </div>
             </div>
+            <!-- Partie ajoute access -->
             <div class="md:w-1/2 w-full flex items-center flex-col">
                 <p class="text-lg font-bold">Ajouter/modifier un utilisateur</p>
                 <form @submit.prevent="addAccess" class="w-2/5 *:my-2">
@@ -116,12 +145,16 @@
                         <option value="2">2 (Département)</option>
                     </select>
                     <div class="flex items-center justify-center">
-                        <button class="btn btn-primary" type="submit">Ajouter l'accès</button>
+                        <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70 w-full" type="submit">Ajouter l'accès</button>
                     </div>
                 </form>
             </div>
         </div>
+
+        <!-- Séparateur -->
         <div class="bg-base-200 w-full h-4"></div>
+
+
         <!-- Partie autorisation au site -->
         <div class="m-5 flex items-start justify-center md:flex-row flex-col">
             <div class="md:w-1/2 w-4/5 flex items-center flex-col">
@@ -139,7 +172,7 @@
                         </div>
 
                         <!-- Liste utilisateurs -->
-                        <div class="overflow-x-auto max-h-125" v-if="filteredEtudiants.length > 0">
+                        <div class="overflow-x-auto max-h-125 " v-if="filteredEtudiants.length > 0">
                             <table class="table table-zebra w-full">
                                 <!-- head -->
                                 <thead>
@@ -153,10 +186,14 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="(acc, index) in filteredEtudiants" :key="index">
+                                        <!-- Numéro -->
                                         <th>{{ index }}</th>
+                                        <!-- Login -->
                                         <th>{{ acc.acc_id }}</th>
+                                        <!-- Nom Prénom -->
                                         <th class="min-w-44" v-if="acc.account">{{ acc.account.acc_fullname }}</th>
                                         <th class="min-w-44" v-else>Nom introuvable</th>
+                                        <!-- Département -->
                                         <th>
                                             <span class="flex items-center justify-center">
                                                 <span v-if="acc.department" class="badge p-3 min-w-40" :style="{backgroundColor: acc.department.dept_color}">{{ acc.department.dept_shortname }}</span>
@@ -164,7 +201,9 @@
                                                 <span v-else class="badge badge-neutral p-3 min-w-40">Introuvable</span>
                                             </span>
                                         </th>
+                                        <!-- Actions -->
                                         <th>
+                                            <!-- Ouvrir le profil -->
                                             <RouterLink target="_blank" :to="{name: 'Profile', params: {acc_id: acc.acc_id}}" class="tooltip" data-tip="Afficher le profil">
                                                 <button class="hover:opacity-60 hover:cursor-pointer p-2">
                                                     <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
@@ -178,21 +217,47 @@
                                                     </svg>
                                                 </button>
                                             </RouterLink>
+                                            <!-- Supprimer -->
                                             <span class="tooltip" data-tip="Supprimer de la liste">
-                                                <button class="hover:opacity-60 hover:cursor-pointer p-2" @click="removeAccepted(acc.acc_id)" >
+                                                <button class="hover:opacity-60 hover:cursor-pointer p-2" @click="openConfirmModalAccepted(acc)" >
                                                     <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" class="stroke-current" fill="none" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                     </svg>
                                                 </button>
                                             </span>
+
                                         </th>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+
                         <div v-else>
                             <p class="text-center p-5">Aucun étudiant trouvé.</p>
                         </div>
+
+                        <!-- Modal de confirmation suppression accepted -->
+                        <dialog id="confirmModalAccepted" ref="confirmModalAccepted" class="modal">
+                            <div class="modal-box">
+                                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                                <div class="py-3">
+                                    <p>Confirmez vous la supression de l'accès pour: </p>
+                                    <p v-if="confirmDeleteAccepted.account" class="mt-1 font-bold">
+                                        <span v-if="confirmDeleteAccepted.department" class="badge p-3 font-bold" :style="{backgroundColor: confirmDeleteAccepted.department.dept_color}">{{ confirmDeleteAccepted.department.dept_shortname }}</span>
+                                        <span v-else class="badge badge-neutral p-3">Aucun</span>
+                                        {{confirmDeleteAccepted.account.acc_fullname}}
+                                    </p>
+                                    <p v-else class="mt-1 font-bold">
+                                        <span class="badge badge-neutral p-3">Introuvable</span>
+                                        {{ confirmDeleteAccepted.acc_id }}
+                                    </p>
+                                </div>
+                            <div class="modal-action">
+                                <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                <button class="btn btn-success" @click="removeAccepted(confirmDeleteAccepted.acc_id)">Confirmer</button>
+                            </div>
+                            </div>
+                        </dialog>
                     </div>
                     <div v-else>
                         <p>Aucun utilisateur n'a été trouvé.</p>
@@ -201,13 +266,11 @@
             </div>
             <!-- Formulaire ajout accepted etudiant -->
             <div class="md:w-1/2 w-full flex items-center justify-center flex-col">
-                <div class="w-96 flex items-center flex-col justify-center">
+                <div class="w-full flex items-center flex-col justify-center mb-3">
                     <p class="text-lg font-bold">Ajouter un utilisateur</p>
                     <form @submit.prevent="addAccepted" class="w-2/5 *:my-2">
-                        <input type="text" placeholder="Login" v-model="newAccepted.login" class="input input-bordered w-full " />
-                        <div class="flex items-center justify-center">
-                            <button class="btn btn-primary" type="submit">Ajouter l'utilisateur</button>
-                        </div>
+                        <input type="text" placeholder="Login" v-model="newAccepted.login" class="input input-bordered w-full" />
+                            <button class="btn btn-primary w-full hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'utilisateur</button>
                     </form>
                 </div>
                 <ImportComp text="Importer des étudiants en csv" @csv-imported="handleCsvImported"></ImportComp>
@@ -247,6 +310,7 @@
 
             </div>
         </div>
+
     </div>
     <div v-else>
         <LoadingComp></LoadingComp>
@@ -270,6 +334,8 @@
     const newAccepted = ref({ login: ''});
     const response = ref([]);
     const components = ref([]);
+    const confirmDeleteAccess = ref([])
+    const confirmDeleteAccepted = ref([])
 
     const isLoaded = ref(false);
     
@@ -288,6 +354,27 @@
             return names[0].substring(0, 2).toUpperCase();
         }
         return (names[0][0] + names[1][0]).toUpperCase();
+    }
+
+    //ouvrir le modal de confirmation de suppression
+    function openConfirmModal(acc) {
+    
+        confirmDeleteAccess.value = acc;
+        const modal = document.getElementById('confirmModal')
+        modal.showModal()
+    }
+    function openConfirmModalAccepted(acc) {
+    
+        confirmDeleteAccepted.value = acc;
+        const modal = document.getElementById('confirmModalAccepted')
+        modal.showModal()
+    }
+    //Fermer le modal de confirmation de suppression
+    function closeModal() {
+        const modal = document.getElementById('confirmModal')
+        modal.close()
+        const modal2 = document.getElementById('confirmModalAccepted')
+        modal2.close()
     }
 
     async function addAccess(){
@@ -338,6 +425,7 @@
     }
 
     async function removeAccess(acc_id){
+        closeModal();
         const requestData = {
             acc_id: acc_id,
             acc_id_action: accountStore.login

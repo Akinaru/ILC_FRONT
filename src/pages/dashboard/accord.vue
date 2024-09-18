@@ -5,7 +5,9 @@
         <div class="flex justify-between">
             <p class="text-xl font-bold">Accord</p>
             <div class="flex *:mx-1">
-                <ImportComp texte="Importer des accords en csv"></ImportComp>
+                <ImportAccordComp texte="Importer des accords en csv" @csv-imported="importCsv"></ImportAccordComp>
+
+
                 <ExportComp texte="Exporter des accords en csv" :link="config.apiUrl+'api/agreement/export'"></ExportComp>
             </div>
         </div>
@@ -114,7 +116,7 @@
                             <input type="text" placeholder="Description de l'accord" class="input input-bordered w-full" v-model="newAgreement.description"/>
                         </label>
                         <div class="flex items-center justify-center">
-                            <button class="btn btn-primary" type="submit">Ajouter l'accord</button>
+                            <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'accord</button>
                         </div>
                     </form>
                 </div>
@@ -191,25 +193,50 @@
                     </div>
                 </div>
 
+                <!-- Liste -->
                 <div>
                     <div v-if="filteredAccords.length > 0">
                         <!-- Affichage des accords -->
-                        <div href="" v-for="(accord, indexAccord) in filteredAccords" :key="indexAccord" class="m-5 p-3 flex">
-                            <div class="w-full bg-base-300 p-2 ">
+                        <div v-for="(accord, indexAccord) in filteredAccords" :key="indexAccord" class="m-5 p-3 flex">
+                            <div class="w-full bg-base-300 p-2">
                                 <div class="flex">
+                                    <span class="tooltip mr-2" :data-tip="accord.partnercountry?.parco_name || 'Introuvable'">
+                                        <span class="relative inline-block">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-5xl" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
 
-                                    <span class="tooltip mr-2" :data-tip="accord.partnercountry.parco_name">
-                                        <span class="fi text-5xl" :class="'fi-'+accord.partnercountry.parco_code"></span>
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <template v-if="!accord.partnercountry?.parco_code">
+                                                <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                    ?
+                                                </span>
+                                            </template>
+                                        </span>
                                     </span>
+
                                     <div>
-                                        <p><span class="font-bold">{{accord.university.univ_name}}</span> à {{ accord.university.univ_city }} ({{ accord.partnercountry.parco_name }}) <span><span>Nombre de place: {{ accord.agree_nbplace }}</span>, <span>Type accord: {{ accord.agree_typeaccord }}</span></span></p>
-                                        <p>[{{ accord.isced.isc_code }} - {{ accord.isced.isc_name }}] Composante: {{ accord.component.comp_name }}</p>
+                                        <p>
+                                            <span class="font-bold">{{ accord.university?.univ_name || 'Nom université non disponible' }}</span>
+                                            à {{ accord.university?.univ_city || 'Ville non disponible' }}
+                                            ({{ accord.partnercountry?.parco_name || 'Pays non disponible' }})
+                                            <span>
+                                                <span>Nombre de place: {{ accord.agree_nbplace || 'Non spécifié' }}</span>,
+                                                <span>Type accord: {{ accord.agree_typeaccord || 'Non spécifié' }}</span>
+                                            </span>
+                                        </p>
+                                        <p>
+                                            [{{ accord.isced?.isc_code || 'Code ISCED non disponible' }} - {{ accord.isced?.isc_name || 'Nom ISCED non disponible' }}]
+                                            Composante: {{ accord.component?.comp_name || 'Nom composante non disponible' }}
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="flex">
-                                    <p >Lien: <span v-if='!accord.agree_lien'>Aucun</span></p>
-                                    <a v-if="accord.agree_lien" :href="accord.agree_lien" class="pt-5 hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">Cliquez ici pour acceder au site de l'université</a>
-                                    
+                                    <p>
+                                        Lien: <span v-if="!accord.agree_lien">Aucun</span>
+                                    </p>
+                                    <a v-if="accord.agree_lien" :href="accord.agree_lien" class="pt-5 hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">
+                                        Cliquez ici pour accéder au site de l'université
+                                    </a>
                                 </div>
                                 <div>
                                     <p>Description: <span v-if="!accord.agree_description">Aucune</span></p>
@@ -220,10 +247,18 @@
                                 <p>Les départements: </p>
                                 <div class="flex items-center justify-start">
                                     <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
-                                        <div class="w-fit p-2 flex  items-center justify-center mx-1 tooltip select-none font-bold" :data-tip="(dept.pivot.deptagree_valide == 0 ? '(INVISIBLE) ' : '')+'Département '+ dept.dept_name" :style="{backgroundColor: dept.dept_color}" >
-                                            <p>{{ dept.dept_shortname }}<span class="font-bold">{{ dept.pivot.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span></p>
-                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot.deptagree_valide, dept.dept_shortname)">
-                                                <svg v-if="dept.pivot.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
+                                        <div class="w-fit p-2 flex items-center justify-center mx-1 tooltip select-none font-bold"
+                                            :data-tip="(dept.pivot?.deptagree_valide === 0 ? '(INVISIBLE) ' : '') + 'Département ' + (dept.dept_name || 'Nom département non disponible')"
+                                            :style="{ backgroundColor: dept.dept_color || '#FFFFFF' }">
+                                            <p>
+                                                {{ dept.dept_shortname || 'Abréviation département non disponible' }}
+                                                <span class="font-bold">{{ dept.pivot?.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span>
+                                            </p>
+                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2"
+                                                    @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot?.deptagree_valide, dept.dept_shortname)">
+                                                <svg v-if="dept.pivot?.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
+                                                    version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85"
+                                                    xml:space="preserve">
                                                     <g>
                                                         <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
                                                             s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
@@ -232,7 +267,9 @@
                                                             c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
                                                     </g>
                                                 </svg>
-                                                <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85" xml:space="preserve">
+                                                <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1"
+                                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85"
+                                                    xml:space="preserve">
                                                     <g>
                                                         <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
                                                             s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
@@ -244,8 +281,11 @@
                                                 </svg>
                                             </button>
 
-                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2" @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2"
+                                                    @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
                                             </button>
                                         </div>
                                     </div>
@@ -258,42 +298,84 @@
                                         <div class="flex items-center justify-start *:m-1">
                                             <select class="select select-bordered w-full max-w-xs" :id="'form_dept_select_'+accord.agree_id" v-model="selectedDepartment[accord.agree_id]">
                                                 <option disabled selected>Selectionnez un département</option>
-                                                <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">{{ dept.dept_shortname }} ({{dept.component.comp_name}})</option>
+                                                <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">
+                                                    {{ dept.dept_shortname || 'Abréviation département non disponible' }} ({{ dept.component?.comp_name || 'Nom composante non disponible' }})
+                                                </option>
                                             </select>
 
                                             <div class="flex items-center justify-center">
                                                 <button class="btn btn-primary" type="submit">Ajouter le département</button>
                                             </div>
                                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="showForm(accord.agree_id)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
                                             </button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                             <!-- Bouton de modification -->
-                            <label :for="'my_modal_'+ accord.agree_id" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
+                            <label :for="'my_modal_' + accord.agree_id" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
                                 <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                 </svg>
                             </label>
-        
+
                             <!-- Modal de modification d'accord -->
-                            <ModifAccordComp  @agreementUpdated="fetchAll" :accord="accord" :isceds="isceds" :composantes="composantes.components" :universites="universites" :partnercountrys="partnercountry"></ModifAccordComp>
-        
+                            <ModifAccordComp @agreementUpdated="fetchAll" :accord="accord" :isceds="isceds" :composantes="composantes.components" :universites="universites" :partnercountrys="partnercountry"></ModifAccordComp>
+
                             <!-- Bouton de suppression -->
-                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="deleteAgreement(accord.university.univ_name, accord.agree_id)">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(accord)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
                             </button>
                         </div>
+
                     </div>
                 
                     <div v-else>
-                        <p>Aucun accord trouvé.</p>
+                        <p class="text-center py-20">Aucun accord trouvé.</p>
                     </div>
                 </div>
+                <!-- Modal de confirmation suppression -->
+                <dialog id="confirmModal" ref="confirmModal" class="modal">
+                    <div class="modal-box max-w-full w-150">
+                        <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                        <div class="py-3">
+                            <p>Confirmez vous la suppression de l'accord:</p>
+                                <div class="select-none flex justify-between items-center w-full h-20 mt-3">
+                                    <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                                        <span class="tooltip mr-2" :data-tip="confirmDeleteAccord.partnercountry?.parco_name || 'Introuvable'">
+                                            <span class="relative inline-block">
+                                                <!-- Drapeau -->
+                                                <span class="fi text-5xl" :class="'fi-' + (confirmDeleteAccord.partnercountry?.parco_code || '')"></span>
+
+                                                <!-- Point d'interrogation si pas de drapeau -->
+                                                <template v-if="!confirmDeleteAccord.partnercountry?.parco_code">
+                                                    <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                        ?
+                                                    </span>
+                                                </template>
+                                            </span>
+                                        </span>
+                                        <div class="flex flex-col w-full">
+                                            <p class="w-full select-none"><strong>{{ confirmDeleteAccord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ confirmDeleteAccord?.university?.univ_city || 'Ville indisponible' }} ({{ confirmDeleteAccord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
+                                            <p>[{{ confirmDeleteAccord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ confirmDeleteAccord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ confirmDeleteAccord?.component?.comp_name || 'Indisponible' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="modal-action">
+                            <button class="btn btn-error" @click="closeModal">Annuler</button>
+                            <button class="btn btn-success" @click="deleteAgreement(confirmDeleteAccord.university.univ_name, confirmDeleteAccord.agree_id)">Confirmer</button>
+                        </div>
+                    </div>
+                </dialog>
             </div>
+            
         </div>
         <LoadingComp v-else></LoadingComp>
     </div>
@@ -307,7 +389,7 @@
     import { useAccountStore } from '../../stores/accountStore';
     import { addAlert } from '../../composables/addAlert';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
-    import ImportComp from '../../components/impexp/ImportComp.vue';
+    import ImportAccordComp from '../../components/impexp/ImportAccordComp.vue';
     import ExportComp from '../../components/impexp/ExportComp.vue';
     const accountStore = useAccountStore();
     const response = ref([]);
@@ -318,7 +400,10 @@
     const selectedDepartments = ref([]);
     const selectedComponent = ref([]);
     const selectedCountries = ref([]);
+
+    const confirmDeleteAccord = ref([])
     
+    const exportModal = ref([])
     const isLoaded = ref(false)
     const isceds = ref([]);
     const composantes = ref([]);
@@ -354,6 +439,28 @@
         isOpen.value[section] = !isOpen.value[section];
     }
 
+    //ouvrir le modal de confirmation de suppression
+    function openConfirmModal(accord) {
+        confirmDeleteAccord.value = accord;
+        const modal = document.getElementById('confirmModal')
+        modal.showModal()
+    }
+    //Fermer le modal de confirmation de suppression
+    function closeModal() {
+        const modal = document.getElementById('confirmModal')
+        modal.close()
+    }
+
+    function importCsv(data){
+        exportModal.value = data;
+        console.log(data)
+    }
+    // Fonction pour trouver le pays
+    function getCountryCode(pays) {
+        const country = partnercountry.value.find(country => country.parco_name === pays);
+        return country ? country.parco_code : 'Code non disponible';
+        }
+
     const filteredAccords = computed(() => {
         return accords.value.agreements.filter(accord => {
             const matchesDepartments = selectedDepartments.value.length === 0 || accord.departments.some(dept => selectedDepartments.value.includes(dept.dept_shortname));
@@ -363,83 +470,85 @@
         });
     });
 
+    // Ajouter un accord
     async function addAgreement() {
-    const requestData = { 
-        typeaccord: newAgreement.value.typeaccord,
-        nbplace: newAgreement.value.nbplace,
-    };
-
-    // Vérification du nombre de places
-    if (newAgreement.value.nbplace <= 0) {
-        addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
-        return;
-    }
-
-    if (newAgreement.value.lien != null) {
-        requestData.agree_lien = newAgreement.value.lien;
-    }
-    if (newAgreement.value.description != null) {
-        requestData.agree_description = newAgreement.value.description;
-    }
-
-    // Gestion du nouveau isced
-    if (newAgreement.value.isced !== 'addNew') {
-        requestData.isc_id = newAgreement.value.isced;
-    } else {
-        requestData.newisced = {
-            isc_code: '0' + newAgreement.value.newisced.code.toString(),
-            isc_name: newAgreement.value.newisced.name
+        const requestData = { 
+            agree_typeaccord: newAgreement.value.typeaccord,
+            agree_nbplace: newAgreement.value.nbplace,
         };
-    }
 
-    // Gestion de la nouvelle composante
-    if (newAgreement.value.compo !== 'addNew') {
-        requestData.comp_id = newAgreement.value.compo;
-    } else {
-        requestData.newcompo = {
-            comp_name: newAgreement.value.newcompo.name,
-            comp_shortname: newAgreement.value.newcompo.shortname.toUpperCase()
-        };
-    }
-
-    // Gestion de la nouvelle université
-    if (newAgreement.value.univ !== 'addNew') {
-        requestData.univ_id = newAgreement.value.univ;
-    } else {
-        requestData.newuniv = {
-            univ_name: newAgreement.value.newuniv.name,
-            univ_city: newAgreement.value.newuniv.city,
-        };
-        if (newAgreement.value.newuniv.partnercountry !== 'addNew') {
-            requestData.newuniv.parco_id = newAgreement.value.newuniv.partnercountry;
-        } else {
-            requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry;
-            requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode;
+        // Vérification du nombre de places
+        if (newAgreement.value.nbplace <= 0) {
+            addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
+            return;
         }
+
+        if (newAgreement.value.lien != null) {
+            requestData.agree_lien = newAgreement.value.lien;
+        }
+        if (newAgreement.value.description != null) {
+            requestData.agree_description = newAgreement.value.description;
+        }
+
+        // Gestion du nouveau isced
+        if (newAgreement.value.isced !== 'addNew') {
+            requestData.isc_id = newAgreement.value.isced;
+        } else {
+            requestData.newisced = {
+                isc_code: '0' + newAgreement.value.newisced.code.toString(),
+                isc_name: newAgreement.value.newisced.name
+            };
+        }
+
+        // Gestion de la nouvelle composante
+        if (newAgreement.value.compo !== 'addNew') {
+            requestData.comp_id = newAgreement.value.compo;
+        } else {
+            requestData.newcompo = {
+                comp_name: newAgreement.value.newcompo.name,
+                comp_shortname: newAgreement.value.newcompo.shortname.toUpperCase()
+            };
+        }
+
+        // Gestion de la nouvelle université
+        if (newAgreement.value.univ !== 'addNew') {
+            requestData.univ_id = newAgreement.value.univ;
+        } else {
+            requestData.newuniv = {
+                univ_name: newAgreement.value.newuniv.name,
+                univ_city: newAgreement.value.newuniv.city,
+            };
+            if (newAgreement.value.newuniv.partnercountry !== 'addNew') {
+                requestData.newuniv.parco_id = newAgreement.value.newuniv.partnercountry;
+            } else {
+                requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry;
+                requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode;
+            }
+        }
+
+        // Vérification du type d'accord
+        if (requestData.typeaccord === 'Selectionnez un type d\'accord') {
+            addAlert('error', { data: { error: 'Vous devez choisir un type d\'accord.', message: 'Ajout de l\'accord annulé.' } });
+            return;
+        }
+
+        // Effectuer la requête POST pour ajouter l'accord
+
+        await request("POST", true, response, config.apiUrl + 'api/agreement', requestData);
+
+        // Vérification de la réponse et ajout d'une action si nécessaire
+        if (response.value.status === 201) {
+            const requestDataAction = {
+                act_description: 'Ajout de l\'accord avec ' + response.value.agreement.university.univ_name + ' (' + response.value.agreement.partnercountry.parco_name + ').',
+                acc_id: accountStore.login,
+                agree_id: response.value.agreement.agree_id
+            };
+            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+        }
+
+        // Rafraîchir les données après l'ajout
+        await fetchAll();
     }
-
-    // Vérification du type d'accord
-    if (requestData.typeaccord === 'Selectionnez un type d\'accord') {
-        addAlert('error', { data: { error: 'Vous devez choisir un type d\'accord.', message: 'Ajout de l\'accord annulé.' } });
-        return;
-    }
-
-    // Effectuer la requête POST pour ajouter l'accord
-    await request("POST", true, response, config.apiUrl + 'api/agreement', requestData);
-
-    // Vérification de la réponse et ajout d'une action si nécessaire
-    if (response.value.status === 201) {
-        const requestDataAction = {
-            act_description: 'Ajout de l\'accord avec ' + response.value.agreement.university.univ_name + ' (' + response.value.agreement.partnercountry.parco_name + ').',
-            acc_id: accountStore.login,
-            agree_id: response.value.agreement.agree_id
-        };
-        await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
-    }
-
-    // Rafraîchir les données après l'ajout
-    await fetchAll();
-}
 
     async function fetchAll(){
         isLoaded.value = false;
@@ -457,11 +566,16 @@
         selectedDepartment.value = Array(accords.value.length).fill('');
         resetInput();
     }
+
+
     async function removeDeptFromAgreement(agree_id, dept_id){
         await request('DELETE', true, response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
         fetchAll();
     }
+
+    // Supprimer un accord
     async function deleteAgreement(univ_name, agree_id){
+        closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/agreement/deletebyid/'+agree_id);
         if(response.value.status == 202){
             const requestDataAction = {
@@ -487,6 +601,7 @@
         newAgreement.value.compo = document.querySelector('#compo_select').options[0].value;
         newAgreement.value.univ = document.querySelector('#univ_select').options[0].value;
         newAgreement.value.typeaccord = document.querySelector('#typeaccord_select').options[0].value;  
+        newAgreement.value.nbplace = 0;
         newAgreement.value.newuniv.name = '';
         newAgreement.value.newuniv.city = '';
         newAgreement.value.newuniv.newpartnercountry = '';
@@ -533,10 +648,11 @@
         await request('POST', true, response, config.apiUrl+'api/departmentagreement', requestData);
         if(response.value.status == 201){
             const requestDataAction = {
-                act_description: 'Ajout du département '+response.value.department.dept_shortname+' à l\'accord '+response.value.agreement.university.univ_name + ' ('+response.value.agreement.partnercountry.parco_name+').',
+                act_description: `Ajout du département ${response.value.department?.dept_shortname || 'Inconnu'} à l'accord ${response.value.agreement?.university?.univ_name || 'Inconnu'} (${response.value.agreement?.partnercountry?.parco_name || 'Inconnu'}).`,
                 acc_id: accountStore.login,
-                agree_id: response.value.agreement.agree_id
-            }
+                agree_id: response.value.agreement?.agree_id || 'Inconnu'
+            };
+
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
         fetchAll();

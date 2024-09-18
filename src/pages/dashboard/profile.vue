@@ -17,10 +17,17 @@
                     <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
                         <div class="border-warning border-2 bg-base-300 p-1 flex items-center justify-center w-full h-20 select-none">
-                            <span class="tooltip mr-2" :data-tip="destination.agreement.partnercountry.parco_name">
-                                <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+destination.agreement.partnercountry.parco_code "></span>
-                            </span>
-                            <p class="w-full select-none">({{ destination.agreement.partnercountry.parco_name }}) <span class="font-bold">{{destination.agreement.university.univ_city}} - {{ destination.agreement.university.univ_name }}</span> ({{ destination.agreement.isced.isc_code }})</p>    
+                            <span class="relative inline-block tooltip mr-2" :data-tip="destination.agreement?.partnercountry?.parco_name || 'Introuvable'">
+    <!-- Drapeau -->
+    <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-' + (destination.agreement?.partnercountry?.parco_code || '')"></span>
+
+    <!-- Point d'interrogation si pas de drapeau -->
+    <span v-if="!destination.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+        ?
+    </span>
+</span>
+
+                            <p class="w-full select-none">({{ destination.agreement.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{destination.agreement.university?.univ_city || 'Ville indisponible'}} - {{ destination.agreement.university?.univ_name || 'Université indisponible' }}</span> ({{ destination.agreement.isced?.isc_code || 'Code ISCED indisponible' }})</p>    
                         </div>
                     </RouterLink>
                 </div>
@@ -36,10 +43,16 @@
                             <p class="font-bold text-sm xl:text-lg min-w-fit p-5 transition-all duration-100 ease-in-out">Voeu n° {{ index+1 }}</p>
                             <div v-if="wishes && wishes.count > 0 && wishes.wishes[label]" class=" select-none flex justify-between items-center elementDrag w-96 h-20">
                                 <div class=" flex items-center justify-center h-20 select-none">
-                                    <span class="tooltip mr-2" :data-tip="wishes.wishes[label].partnercountry.parco_name">
-                                        <span class="fi text-3xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-'+wishes.wishes[label].partnercountry.parco_code "></span>
-                                    </span>
-                                    <p class="w-full select-none">({{ wishes.wishes[label].partnercountry.parco_name }}) <span class="font-bold">{{wishes.wishes[label].university.univ_city}} - {{ wishes.wishes[label].university.univ_name }}</span> ({{ wishes.wishes[label].isced.isc_code }})</p>
+                                    <span class="relative inline-block mr-2">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (wishes.wishes[label].partnercountry?.parco_code)"></span>
+
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <span v-if="!wishes.wishes[label].partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                ?
+                                            </span>
+                                        </span>
+                                    <p class="w-full select-none">({{ wishes.wishes[label].partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{wishes.wishes[label].university?.univ_city || 'Ville indisponible'}} - {{ wishes.wishes[label].university?.univ_name || 'Université indisponible' }}</span> ({{ wishes.wishes[label].isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                     
                                 </div>
                             </div>
@@ -125,7 +138,7 @@
                                         v-model="modifCompte.dept_id"
                                         >
                                             <option value="no_dept">Aucun département</option>
-                                            <option v-for="department in department.departments" :key="department.dept_id" :value="department.dept_id">
+                                            <option v-for="department in department.departments" :key="department.dept_id" :value="department.dept_id" :style="{color: department.dept_color}">
                                                 {{ department.dept_shortname }}
                                             </option>
                                         </select>
@@ -190,10 +203,10 @@
     async function confirmModifCompte(){
         const requestData = {
             acc_id: account.value.acc_id,
-            acc_studentnum: modifCompte.value.acc_studentnum != '' ? modifCompte.value.acc_studentnum : 0,
+            acc_studentnum: modifCompte.value.acc_studentnum != null ? modifCompte.value.acc_studentnum : 0,
             dept_id: modifCompte.value.dept_id != 'no_dept' ? modifCompte.value.dept_id : null,
-            acc_mail: modifCompte.value.acc_mail != '' ? modifCompte.value.acc_mail : 'Aucun mail' ,
-            acc_toeic: modifCompte.value.acc_toeic != '' ? modifCompte.value.acc_toeic : 0, 
+            acc_mail: modifCompte.value.acc_mail != null ? modifCompte.value.acc_mail : 'Aucun mail' ,
+            acc_toeic: modifCompte.value.acc_toeic != null ? modifCompte.value.acc_toeic : 0, 
         }
         await request('PUT', true, response, config.apiUrl+'api/account/modif', requestData);
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);

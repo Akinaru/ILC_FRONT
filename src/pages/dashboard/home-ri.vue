@@ -28,7 +28,7 @@
               <p class="font-bold">{{ formatDate(admin.adm_datelimite) }}</p>
               <p class="mx-2">{{ getJoursRestants(admin.adm_datelimite) }}</p>
             </div>
-            <label for="modal_date" class="btn btn-primary">Modifier</label>
+            <label for="modal_date" class="btn btn-primary hover:scale-105 transition-all hover:opacity-70">Modifier</label>
 
 
             <!-- Modal modification date -->

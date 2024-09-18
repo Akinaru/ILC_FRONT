@@ -20,7 +20,7 @@
           <ul class="menu menu-horizontal">
             <li>
               <details>
-                <summary class="p-0">
+                <summary>
                   <!-- Affichage du rôle uniquement pour les grands écrans -->
                   <span class="md:p-1 hidden sm:block rounded-lg" :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">
                     {{ role.role }}
@@ -42,7 +42,7 @@
                   </span>
                 </summary>
                 <ul class="bg-base-100 rounded-t-none">
-                  <li><a @click="profil">Profil</a></li>
+                  <li><a @click="profil">{{ accountStore.access == 0 ? 'Profil étudiant' : 'Dashboard' }}</a></li>
                   <li><a @click="logout" class="text-red-600">Déconnexion</a></li>
                 </ul>
               </details>
