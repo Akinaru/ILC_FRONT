@@ -383,10 +383,13 @@
                             <p>Ajout d'accord</p>
                             <div>
                                 <div v-for="(accord, index) in exportModal" :key="index" class="flex bg-base-300 my-2">
-                                    <span class="mr-2">
+                                    <span class="mr-2 flex items-center justify-center">
                                         <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.Pays) "></span>
                                     </span>
-                                    <p class="w-full select-none">({{ accord.Pays }}) <span class="font-bold">{{accord.Ville}} - {{ accord.Universite }}</span> ({{ accord.Isced }})</p>    
+                                    <div class="flex flex-col">
+                                        <p class="w-full select-none">({{ accord.Pays }}) <span class="font-bold">{{accord.Ville ? accord.Ville : 'Aucune ville'}} - {{ accord.Universite ? accord.Universite : 'Aucune université' }}</span> </p>
+                                        <p>({{ accord.Isced ? accord.Isced : 'Aucun ISCED' }})</p>    
+                                    </div>
                                 </div>
                             </div>
                         </div>
