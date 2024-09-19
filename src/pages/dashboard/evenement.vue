@@ -147,6 +147,20 @@
                             </div>
                             <input type="text"  class="input input-bordered w-full" v-model="currentEventModif.evt_name"/>
                         </label>
+                        <!-- Thématique -->
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Thématique</span>
+                            </div>
+                            <!-- Utilisation de v-model pour lier la valeur sélectionnée à la propriété currentEventModif.value.evthm_id -->
+                            <select class="select select-bordered w-full" v-model="currentEventModif.evthm_id">
+                                <option disabled value="">Sélectionnez une thématique</option>
+                                <option v-for="(theme, index) in thematiques" :key="index" :value="theme.evthm_id">
+                                    {{ theme.evthm_name }}
+                                </option>
+                                <option value="addNew">Créer une thématique</option>
+                            </select>
+                        </label>
                         <!-- Datetime -->
                         <label class="form-control w-full">
                             <div class="label">
@@ -389,6 +403,7 @@
     function modifEvent(event){
         currentEventModif.value.evt_id = event.evt_id;
         currentEventModif.value.evt_name = event.evt_name;
+        currentEventModif.value.evthm_id = event.theme.evthm_id;
         currentEventModif.value.evt_description = event.evt_description;
         currentEventModif.value.evt_datetime = formatDateModif(event.evt_datetime);
     }
@@ -429,6 +444,7 @@
         const requestData = { 
             evt_id: currentEventModif.value.evt_id,
             evt_name: currentEventModif.value.evt_name,
+            evthm_id: currentEventModif.value.evthm_id,
             evt_description: currentEventModif.value.evt_description,
             evt_datetime: currentEventModif.value.evt_datetime,
         };
