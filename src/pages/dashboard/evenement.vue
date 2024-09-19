@@ -158,7 +158,6 @@
                                 <option v-for="(theme, index) in thematiques" :key="index" :value="theme.evthm_id">
                                     {{ theme.evthm_name }}
                                 </option>
-                                <option value="addNew">Créer une thématique</option>
                             </select>
                         </label>
                         <!-- Datetime -->
