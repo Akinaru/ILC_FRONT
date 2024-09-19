@@ -370,7 +370,7 @@
                         </div>
                         <div class="modal-action">
                             <button class="btn btn-error" @click="closeModal">Annuler</button>
-                            <button class="btn btn-success" @click="deleteAgreement(confirmDeleteAccord.university.univ_name, confirmDeleteAccord.agree_id)">Confirmer</button>
+                            <button class="btn btn-success" @click="deleteAgreement(confirmDeleteAccord.university?.univ_name || 'Univeristé indisponible' , confirmDeleteAccord.agree_id)">Confirmer</button>
                         </div>
                     </div>
                 </dialog>
