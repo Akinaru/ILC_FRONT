@@ -18,7 +18,7 @@
                         <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.departments">
-                        <button class="hover:opacity-70" @click="deselectAllDept">Tout désélectionner</button>
+                        <button class="hover:opacity-70 underline" @click="deselectAllDept">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
                             <input id="filt_dept_zero" type="checkbox" class="checkbox " value="Aucun" v-model="selectedDepartment">
                             <label for="filt_dept_zero" class="flex items-center justify-center w-full cursor-pointer pl-2">
@@ -45,7 +45,7 @@
                         <span :class="isOpen.voeux ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.voeux">
-                        <button class="hover:opacity-70" @click="deselectAllVoeux">Tout désélectionner</button>
+                        <button class="hover:opacity-70 underline" @click="deselectAllVoeux">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
                             <input id="filt_voeux_1" type="checkbox" class="checkbox " value="Aucun" v-model="selectedVoeux">
                             <label for="filt_voeux_1" class="select-none w-full cursor-pointer pl-2">Aucun</label>
@@ -63,7 +63,7 @@
                         <span :class="isOpen.document ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.document">
-                        <button class="hover:opacity-70" @click="deselectAllDocuments">Tout désélectionner</button>
+                        <button class="hover:opacity-70 underline" @click="deselectAllDocuments">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
                             <input id="filt_document_1" type="checkbox" class="checkbox" value="0" v-model="selectedDocument">
                             <label for="filt_document_1" class="select-none w-full cursor-pointer pl-2">0</label>

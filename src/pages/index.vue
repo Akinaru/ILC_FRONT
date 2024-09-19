@@ -17,7 +17,7 @@
                             <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.pays">
-                            <button class="hover:opacity-70" @click="deselectAllCountry">Tout désélectionner</button>
+                            <button class="hover:opacity-70 underline" @click="deselectAllCountry">Tout désélectionner</button>
 
                             <div class="lg:block flex flex-wrap">
                                 
@@ -39,7 +39,7 @@
                             <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                         </div>
                         <div class="p-1" v-show="isOpen.departments">
-                            <button class="hover:opacity-70" @click="deselectAllDept">Tout désélectionner</button>
+                            <button class="hover:opacity-70 underline" @click="deselectAllDept">Tout désélectionner</button>
 
                             <div v-for="(comp, index) in components.components" :key="index">
                                 <div class="lg:block flex flex-wrap">
@@ -63,7 +63,7 @@
                             <span :class="isOpen.component ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.component">
-                            <button class="hover:opacity-70" @click="deselectAllComp">Tout désélectionner</button>
+                            <button class="hover:opacity-70 underline" @click="deselectAllComp">Tout désélectionner</button>
 
                             <div class="lg:block flex flex-wrap">
                                 <div v-for="(compo,index) in components.components" :key="index" class="flex items-center hover:opacity-60 my-1 w-full">

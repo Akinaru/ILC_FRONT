@@ -18,7 +18,7 @@
                                 <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                             </div>
                             <div class="p-1" v-show="isOpen.departments">
-                                <button class="hover:opacity-70" @click="deselectAllDept">Tout désélectionner</button>
+                                <button class="hover:opacity-70 underline" @click="deselectAllDept">Tout désélectionner</button>
                                 <div v-for="(comp, index) in components.components" :key="index">
                                     <div class="lg:block flex flex-wrap">
                                         <p>- {{ comp.comp_name }}</p>
@@ -40,7 +40,7 @@
                                 <span :class="isOpen.voeux ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                             </div>
                             <div class="p-1" v-show="isOpen.voeux">
-                                <button class="hover:opacity-70" @click="deselectAllVoeux">Tout désélectionner</button>
+                                <button class="hover:opacity-70 underline" @click="deselectAllVoeux">Tout désélectionner</button>
                                 
                                 <div v-for="(voeu,index) in voeuxNoms" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
                                     <input :id="'filt_voeux_'+index" type="checkbox" class="checkbox" :value="voeu.val" v-model="selectedVoeux">
@@ -57,7 +57,7 @@
                                 <span :class="isOpen.accords ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                             </div>
                             <div class="p-1" v-show="isOpen.accords">
-                                <button class="hover:opacity-70" @click="deselectAllAccord">Tout désélectionner</button>
+                                <button class="hover:opacity-70 underline" @click="deselectAllAccord">Tout désélectionner</button>
 
                                 <div v-for="(accord,index) in accords.agreements" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
                                     <input :id="'filt_accord_'+index" type="checkbox" class="checkbox" :value="accord.agree_id" v-model="selectedAccord">
@@ -148,7 +148,7 @@
                                 <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                             </div>
                             <div class="p-1" v-show="isOpen.pays">
-                                <button class="hover:opacity-70" @click="deselectAllCountry">Tout désélectionner</button>
+                                <button class="hover:opacity-70 underline" @click="deselectAllCountry">Tout désélectionner</button>
                                 <div class="flex flex-wrap items-center justify-start">
 
                                     <div v-for="(country,index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 md:w-2/6 xl:w-1/6 hover:cursor-pointer">

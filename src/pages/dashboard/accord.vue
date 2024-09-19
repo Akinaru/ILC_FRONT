@@ -137,7 +137,7 @@
                             <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.pays">
-                            <button class="hover:opacity-70" @click="deselectAllCountry">Tout désélectionner</button>
+                            <button class="hover:opacity-70 underline" @click="deselectAllCountry">Tout désélectionner</button>
                             <div class="flex flex-wrap">
                                 <div v-for="(country, index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 w-1/2 sm:w-1/3 lg:w-1/4 xl:w-1/5">
                                     <input :id="'filt_pays_' + index" type="checkbox" class="checkbox" :value="country.parco_name" v-model="selectedCountries">
@@ -156,7 +156,7 @@
                             <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                         </div>
                         <div class="p-1" v-show="isOpen.departments">
-                            <button class="hover:opacity-70" @click="deselectAllDept">Tout désélectionner</button>
+                            <button class="hover:opacity-70 underline" @click="deselectAllDept">Tout désélectionner</button>
                             <div v-for="(comp, index) in composantes.components" :key="index">
                                 <div class="lg:block flex flex-wrap">
                                     <p>{{ comp.comp_name }}</p>
@@ -181,7 +181,7 @@
                             <span :class="isOpen.component ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                         </div>
                         <div class="p-1" v-show="isOpen.component">
-                            <button class="hover:opacity-70" @click="deselectAllComp">Tout désélectionner</button>
+                            <button class="hover:opacity-70 underline" @click="deselectAllComp">Tout désélectionner</button>
                             <div class="lg:block flex flex-wrap">
                                 <div v-for="(compo,index) in composantes.components" :key="index" class="flex items-center hover:opacity-60 my-1 w-fit">
                                     <input :id="'filt_compo_'+index" type="checkbox" class="checkbox" :value="compo.comp_name" v-model="selectedComponent">
@@ -375,7 +375,7 @@
                     </div>
                 </dialog>
 
-                <!-- Modal de confirmation suppression -->
+                <!-- Modal d'import d'accord -->
                 <dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
                     <div class="modal-box max-w-full w-150">
                         <h3 class="text-lg font-bold">Import d'accord</h3>
@@ -387,8 +387,8 @@
 
                             <!-- Boutons pour sélectionner ou désélectionner tous les accords -->
                             <div class="my-4">
-                                <button class="hover:opacity-70" @click="selectAll">Tout sélectionner</button>
-                                <button class="hover:opacity-70 ml-2" @click="deselectAll">Tout désélectionner</button>
+                                <button class="hover:opacity-70 underline" @click="selectAll">Tout sélectionner</button>
+                                <button class="hover:opacity-70 ml-2 underline" @click="deselectAll">Tout désélectionner</button>
                             </div>
 
                             <div>
@@ -536,58 +536,81 @@
 
 
 
-    function confirmImportAccord() {
-  // Filtrer les accords importés qui sont marqués pour ajout
-  const newAccords = exportModal.value.filter(accord => accord.add);
+    async function confirmImportAccord() {
 
-  console.log('New Accords à comparer:', newAccords);
+    // Filtrer les accords importés qui sont marqués pour ajout
+    const newAccords = exportModal.value.filter(accord => accord.add);
 
-  importFinalAccord.value = newAccords.filter(newAccord => {
-    return !accords.value.agreements.some(existingAccord => {
-      // Vérifier que les champs ne sont pas null ou vides
-      const existingUnivName = existingAccord.university?.univ_name?.trim() || '';
-      const existingIscedCode = (existingAccord.isced?.isc_code?.split(' - ')[0] || '').trim();
-      const existingCompShortname = existingAccord.component?.comp_shortname?.trim() || '';
-      const existingCountry = existingAccord.partnercountry?.parco_name?.trim() || '';
+    console.log('New Accords à comparer:', newAccords);
 
-      const newUnivName = newAccord.Universite?.trim() || '';
-      const newIscedCode = (newAccord.Isced?.split(' - ')[0] || '').trim();
-      const newCompShortname = newAccord.Composante?.trim() || '';
-      const newCountry = newAccord.Pays?.trim() || '';
+    // Mapper les données existantes pour obtenir des ID
+    const existingUniversities = universites.value.reduce((acc, uni) => {
+        acc[uni.univ_name.trim().toLowerCase()] = uni.univ_id;
+        return acc;
+    }, {});
 
-      // Comparer les champs avec la fonction isSimilar
-      return (
-        isSimilar(existingUnivName, newUnivName) &&
-        isSimilar(existingIscedCode, newIscedCode) &&
-        isSimilar(existingCompShortname, newCompShortname) &&
-        isSimilar(existingCountry, newCountry)
-      );
+    const existingIsceds = isceds.value.reduce((acc, isc) => {
+        // Inclure à la fois le code et le nom ISCED pour une comparaison plus flexible
+        acc[isc.isc_code.trim().toLowerCase()] = isc.isc_id;
+        acc[isc.isc_name.trim().toLowerCase()] = isc.isc_id;
+        return acc;
+    }, {});
+
+    const existingComponents = composantes.value.components.reduce((acc, comp) => {
+        acc[comp.comp_shortname.trim().toLowerCase()] = comp.comp_id;
+        return acc;
+    }, {});
+
+    const existingPartnerCountries = partnercountry.value.reduce((acc, country) => {
+        acc[country.parco_name.trim().toLowerCase()] = country.parco_id;
+        return acc;
+    }, {});
+
+    // Trouver les nouveaux accords à ajouter
+    importFinalAccord.value = newAccords.map(newAccord => {
+        // Extraire le code ISCED et le nom ISCED
+        const extractedIscedCode = (newAccord.Isced?.split(' - ')[0] || '').trim().toLowerCase();
+        const extractedIscedName = (newAccord.Isced?.split(' - ')[1] || '').trim().toLowerCase();
+
+        // Trouver les IDs existants en vérifiant le code ISCED et le nom ISCED
+        const existingUniId = Object.keys(existingUniversities).find(key => isSimilar(newAccord.Universite?.trim().toLowerCase(), key)) || null;
+        const existingIscedId = Object.keys(existingIsceds).find(key => 
+            isSimilar(extractedIscedCode, key) || isSimilar(extractedIscedName, key)
+        ) || null;
+        const existingCompId = Object.keys(existingComponents).find(key => isSimilar(newAccord.Composante?.trim().toLowerCase(), key)) || null;
+        const existingCountryId = Object.keys(existingPartnerCountries).find(key => isSimilar(newAccord.Pays?.trim().toLowerCase(), key)) || null;
+
+        return {
+            university: { id: existingUniversities[existingUniId] || null, univ_name: newAccord.Universite },
+            isced: { id: existingIscedId, isc_code: newAccord.Isced },
+            component: { id: existingComponents[existingCompId] || null, comp_shortname: newAccord.Composante },
+            partnercountry: { id: existingPartnerCountries[existingCountryId] || null, parco_name: newAccord.Pays }
+        };
     });
-  }).map(newAccord => ({
-    university: { univ_name: newAccord.Universite },
-    isced: { isc_code: newAccord.Isced },
-    component: { comp_shortname: newAccord.Composante },
-    partnercountry: { parco_name: newAccord.Pays }
-  }));
 
-  console.log('Accords à ajouter :', importFinalAccord.value);
-  console.log('Nombre d\'accords à ajouter :', importFinalAccord.value.length);
+    console.log('Accords à ajouter :', importFinalAccord.value);
+    console.log('Nombre d\'accords à ajouter :', importFinalAccord.value.length);
 
-  // Trouver les accords qui sont marqués pour ajout mais qui ne sont pas ajoutés
-  const notAddedAccords = newAccords.filter(newAccord => {
-    return !importFinalAccord.value.some(finalAccord => {
-      return (
-        isSimilar(finalAccord.university.univ_name, newAccord.Universite) &&
-        isSimilar(finalAccord.isced.isc_code, newAccord.Isced) &&
-        isSimilar(finalAccord.component.comp_shortname, newAccord.Composante) &&
-        isSimilar(finalAccord.partnercountry.parco_name, newAccord.Pays)
-      );
+    // Trouver les accords qui sont marqués pour ajout mais qui ne sont pas ajoutés
+    const notAddedAccords = newAccords.filter(newAccord => {
+        return !importFinalAccord.value.some(finalAccord => {
+            return (
+                isSimilar(finalAccord.university.univ_name, newAccord.Universite) &&
+                (isSimilar(finalAccord.isced.isc_code, newAccord.Isced) ||
+                isSimilar(finalAccord.isced.isc_code, newAccord.Isced?.split(' - ')[0])) &&
+                isSimilar(finalAccord.component.comp_shortname, newAccord.Composante) &&
+                isSimilar(finalAccord.partnercountry.parco_name, newAccord.Pays)
+            );
+        });
     });
-  });
 
-  console.log('Accords non ajoutés :', notAddedAccords);
-  console.log('Nombre d\'accords non ajoutés :', notAddedAccords.length);
+    console.log('Accords non ajoutés :', notAddedAccords);
+    console.log('Nombre d\'accords non ajoutés :', notAddedAccords.length);
 }
+
+
+
+
 
 
 
