@@ -62,7 +62,28 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
-                    </div>                    
+                    </div>   
+                    <div v-if="addThematique.open" class="flex items-center my-2 bg-base-300 w-fit rounded-lg shadow-lg p-3">
+                        <input 
+                        type="text" 
+                        class="badge badge-warning text-black custom-placeholder-input outline-none"   
+                        v-model="addThematique.name" 
+                        placeholder="Écrivez la thématique ici" 
+                        />
+                        <button class="hover:opacity-60 p-2 cursor-pointer" @click="ajouterThematique()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </button>
+
+                        <!-- Bouton de suppression -->
+                        <button class="hover:opacity-60 p-2 cursor-pointer" @click="addThematique.open = !addThematique.open">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                    </div>
+                    <div v-if="!addThematique.open" class="flex items-center my-2 bg-base-300 w-fit rounded-lg shadow-lg p-3 hover:opacity-70 transition-all cursor-pointer hover:scale-105" @click="addThematique.open = !addThematique.open">Ajouter</div>                 
                 </div>
             </div>
 
@@ -282,6 +303,11 @@
     const confirmDeleteThematique = ref([])
     const confirmDeleteEvenement = ref([])
 
+    const addThematique = ref({
+        open: false,
+        name: ''
+    })
+
 
     // Ajout d'evenement
     async function addEvent(){
@@ -332,6 +358,33 @@
         }
         resetInput()
 
+    }
+
+    //Ajouter une thématique
+    async function ajouterThematique(){
+        if(addThematique.value.name == ''){
+            addAlert('error', {data:{error: 'Vous devez mettre un nom de thématique.', message:'Ajout de la thématique annulé.'}})
+            return;
+        }   
+        const requestData = {
+            evthm_name: addThematique.value.name
+        }
+        var rep = ref();
+        await request("POST", true, rep, config.apiUrl+'api/eventtheme', requestData);
+
+        if(rep.value.status == 201){
+            addThematique.value = {
+                open: false,
+                name: ''
+            }
+            const requestDataAction = {
+                act_description: 'Ajout de la thématique '+requestData.evthm_name+'.',
+                acc_id: accountStore.login,
+                evt_id: 1
+            }
+            await request('POST', false, rep, config.apiUrl+'api/action', requestDataAction)
+            await fetchAll();
+        }
     }
 
     //ouvrir le modal de confirmation de suppression des thematiques
@@ -497,6 +550,11 @@
 
     .modal-box{
         z-index: 50 !important;
+    }
+
+    .custom-placeholder-input::placeholder {
+        color: black; /* Remplacez 'gray' par la couleur de votre choix */
+        opacity: 1; /* Pour rendre le placeholder bien visible */
     }
 
 </style>
