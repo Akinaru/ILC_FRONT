@@ -11,6 +11,7 @@
           <!-- Afficher le portail de connexion -->
           <p class=" hover:opacity-70 transition-all mr-2">
             <RouterLink :to="{ name: 'Login' }">Portail connexion</RouterLink>
+            <a :href="config.apiUrl+'cas.php'">LCAS</a>
           </p>
         </div>
 
