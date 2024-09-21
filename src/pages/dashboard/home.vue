@@ -818,30 +818,30 @@
     
 
     async function openMyFileInNewTab(filePath) {
-    // Diviser le chemin du fichier en segments pour obtenir le nom du fichier
-    const segments = filePath.split('/');
-    const fileName = segments[segments.length - 1]; // Dernier segment est le nom du fichier
+        // Diviser le chemin du fichier en segments pour obtenir le nom du fichier
+        const segments = filePath.split('/');
+        const fileName = segments[segments.length - 1]; // Dernier segment est le nom du fichier
 
-    // Obtenir le dossier (suppressions des derniers segments pour obtenir le dossier parent)
-    const folder = segments[2]; // Supposons que "etu" est toujours à l'index 2
-    const username = fileName.split('_')[2].split('.')[0]; // Obtenir le login depuis le nom de fichier
+        // Obtenir le dossier (suppressions des derniers segments pour obtenir le dossier parent)
+        const folder = segments[2]; // Supposons que "etu" est toujours à l'index 2
+        const username = fileName.split('_')[2].split('.')[0]; // Obtenir le login depuis le nom de fichier
 
-    // Construire l'URL complète pour accéder au fichier
-    const fileUrl = `${config.apiUrl}api/documents/getperso/etu/${folder}/${fileName}`;
+        // Construire l'URL complète pour accéder au fichier
+        const fileUrl = `${config.apiUrl}api/documents/getperso/etu/${folder}/${fileName}`;
 
-    // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
-    if (fileName.toLowerCase().endsWith('.pdf')) {
-        window.open(fileUrl, '_blank');
-    } else {
-        // Si ce n'est pas un PDF, forcer le téléchargement du fichier
-        const link = document.createElement('a');
-        link.href = fileUrl;
-        link.download = fileName;  // Propose le téléchargement avec le nom du fichier
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
+        if (fileName.toLowerCase().endsWith('.pdf')) {
+            window.open(fileUrl, '_blank');
+        } else {
+            // Si ce n'est pas un PDF, forcer le téléchargement du fichier
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.download = fileName;  // Propose le téléchargement avec le nom du fichier
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     }
-}
 
     // Enregistrer un fichier
     async function saveFile(title, folder, file){

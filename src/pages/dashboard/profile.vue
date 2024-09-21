@@ -18,14 +18,14 @@
 
                         <div class="border-warning border-2 bg-base-300 p-1 flex items-center justify-center w-full h-20 select-none">
                             <span class="relative inline-block tooltip mr-2" :data-tip="destination.agreement?.partnercountry?.parco_name || 'Introuvable'">
-    <!-- Drapeau -->
-    <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-' + (destination.agreement?.partnercountry?.parco_code || '')"></span>
+                                <!-- Drapeau -->
+                                <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-' + (destination.agreement?.partnercountry?.parco_code || '')"></span>
 
-    <!-- Point d'interrogation si pas de drapeau -->
-    <span v-if="!destination.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-        ?
-    </span>
-</span>
+                                <!-- Point d'interrogation si pas de drapeau -->
+                                <span v-if="!destination.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                    ?
+                                </span>
+                            </span>
 
                             <p class="w-full select-none">({{ destination.agreement.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{destination.agreement.university?.univ_city || 'Ville indisponible'}} - {{ destination.agreement.university?.univ_name || 'Université indisponible' }}</span> ({{ destination.agreement.isced?.isc_code || 'Code ISCED indisponible' }})</p>    
                         </div>
@@ -163,7 +163,114 @@
                     </div>
                 </div>
             </div>
-            <!-- Envoyer une notification -->
+            <div class="w-full flex items-center justify-center flex-col">
+                <div class="w-1/2">
+                    <p class="text-xl font-bold w-full">Documents</p>
+
+
+                        <!-- Choix de cours -->
+                        <div class="form-control w-full py-3">
+                            <div class="label">
+                                <span class="label-text">Choix de cours</span>
+                            </div>
+                            <div class="w-full flex flex-col" v-if="myfiles.choixCours.exist">
+                                <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.choixCours.path)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+                                    </svg>
+                                    <span class="text-warning">Voir votre fichier</span>
+                                </button>
+                                
+                                <button class="btn btn-neutral mb-1" @click="openConfirmModal('choix_cours', 'choixCours')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="text-error">Supprimer le fichier</span>
+                                </button>
+                            </div>
+                            <button class="btn btn-neutral mb-1" v-else disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+                                    </svg>
+                                    <span >Aucun fichier</span>
+                                </button>
+                        </div>
+                        <!-- Contrat pédagogique -->
+                        <div class="form-control w-full py-3">
+                            <div class="label">
+                                <span class="label-text">Contrat pédagogique</span>
+                            </div>
+                            <div class="w-full flex flex-col" v-if="myfiles.contratPeda.exist">
+                                <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.contratPeda.path)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+                                    </svg>
+                                    <span class="text-warning">Voir votre fichier</span>
+                                </button>
+                                
+                                <button class="btn btn-neutral mb-1" @click="openConfirmModal('contrat_peda', 'contratPeda')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="text-error">Supprimer le fichier</span>
+                                </button>
+                            </div>
+                            <button class="btn btn-neutral mb-1" v-else disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+                                    </svg>
+                                    <span >Aucun fichier</span>
+                                </button>
+                        </div>
+                        <!-- Relevé de notes -->
+                        <div class="form-control w-full py-3">
+                            <div class="label">
+                                <span class="label-text">Relevé des notes</span>
+                            </div>
+                            <div class="w-full flex flex-col" v-if="myfiles.releveNote.exist">
+                                <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.releveNote.path)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+                                    </svg>
+                                    <span class="text-warning">Voir votre fichier</span>
+                                </button>
+                                
+                                <button class="btn btn-neutral mb-1" @click="openConfirmModal('releve_note', 'releveNote')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="text-error">Supprimer le fichier</span>
+                                </button>
+                            </div>
+                            <button class="btn btn-neutral mb-1" v-else disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+                                    </svg>
+                                    <span >Aucun fichier</span>
+                                </button>
+                        </div>
+                </div>
+                        <!-- Modal de confirmation suppression -->
+                        <dialog id="confirmModalDoc" ref="confirmModalDoc" class="modal">
+                            <div class="modal-box">
+                                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                                <div class="py-3">
+                                    <p>Confirmez vous la suppression du fichier: <strong>{{ confirmDeleteDocument.title }}</strong></p>
+                                </div>
+                                <div class="modal-action">
+                                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                    <button class="btn btn-success" @click="deleteFile(confirmDeleteDocument.folder, confirmDeleteDocument.title, confirmDeleteDocument.type)">Confirmer</button>
+                                </div>
+                            </div>
+                        </dialog>
+            </div>
+
 
         </div>
     </div>
@@ -189,6 +296,26 @@
     const destination = ref([])
     const labels = ref(['agree_one', 'agree_two', 'agree_three', 'agree_four', 'agree_five', 'agree_six']);
 
+    const myfiles = ref({
+        choixCours: {
+            exist: false,
+            path: ''
+        },
+        contratPeda: {
+            exist: false,
+            path: ''
+        },
+        releveNote: {
+            exist: false,
+            path: ''
+        },
+    });
+    const confirmDeleteDocument = ref({
+        folder: '',
+        title: '',
+        type: ''
+    });
+
     const modifCompte = ref([])
 
     async function fetchAll(){
@@ -197,8 +324,75 @@
         await request('GET', false, wishes, config.apiUrl+'api/wishagreement/getbylogin/'+acc_id);
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
         await request('GET', false, department, config.apiUrl+'api/department');
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/choix_cours/'+acc_id)
+        if(response.value.status == 200){
+            myfiles.value.choixCours.exist = true;
+            myfiles.value.choixCours.path = response.value.path;
+        }
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/contrat_peda/'+acc_id)
+        if(response.value.status == 200){
+            myfiles.value.contratPeda.exist = true;
+            myfiles.value.contratPeda.path = response.value.path;
+        }
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/releve_note/'+acc_id)
+        if(response.value.status == 200){
+            myfiles.value.releveNote.exist = true;
+            myfiles.value.releveNote.path = response.value.path;
+        }
     }
 
+    // Ouvrir le modal de confirmation de suppression
+    function openConfirmModal(fileFolder, fileTitle, fileType) {
+        confirmDeleteDocument.value.folder = fileFolder;
+        confirmDeleteDocument.value.title = fileTitle;
+        confirmDeleteDocument.value.type = fileType;
+        const modal = document.getElementById('confirmModalDoc');
+        modal.showModal();
+    }
+
+    // Fermer le modal de confirmation de suppression
+    function closeModal() {
+        const modal = document.getElementById('confirmModalDoc');
+        modal.close();
+    }
+
+
+    // Supprimer un fichier
+    async function deleteFile(fileFolder, fileTitle, fileType) {
+        closeModal();
+        await request('GET', true, response, `${config.apiUrl}api/documents/deleteperso/${fileFolder}/${fileFolder}_${acc_id}`);
+        
+        if (response.value.status == 200) {
+            myfiles.value[fileTitle].exist = false;
+            myfiles.value[fileTitle].path = '';
+        }
+    }
+
+    async function openMyFileInNewTab(filePath) {
+        // Diviser le chemin du fichier en segments pour obtenir le nom du fichier
+        const segments = filePath.split('/');
+        const fileName = segments[segments.length - 1]; // Dernier segment est le nom du fichier
+
+        // Obtenir le dossier (suppressions des derniers segments pour obtenir le dossier parent)
+        const folder = segments[2]; // Supposons que "etu" est toujours à l'index 2
+        const username = fileName.split('_')[2].split('.')[0]; // Obtenir le login depuis le nom de fichier
+
+        // Construire l'URL complète pour accéder au fichier
+        const fileUrl = `${config.apiUrl}api/documents/getperso/etu/${folder}/${fileName}`;
+
+        // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
+        if (fileName.toLowerCase().endsWith('.pdf')) {
+            window.open(fileUrl, '_blank');
+        } else {
+            // Si ce n'est pas un PDF, forcer le téléchargement du fichier
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.download = fileName;  // Propose le téléchargement avec le nom du fichier
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
 
     async function confirmModifCompte(){
         const requestData = {
