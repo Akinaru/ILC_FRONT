@@ -51,6 +51,12 @@
                           <input type="checkbox" class="checkbox" v-model="complDossier.consent"/>
                       </label>
                   </div>
+                  <div class="form-control">
+                      <label class="label cursor-pointer">
+                          <span class="label-text">Acceptez-vous d’apparaître dans l’annuaire des anciens étudiants conformément à notre politique de confidentialité ?</span> 
+                          <input type="checkbox" class="checkbox" v-model="complDossier.consentancien"/>
+                      </label>
+                  </div>
                   <div class="flex items-center justify-center mt-10">
                       <button class="btn btn-primary" type="button" @click="openConfirmModal">Valider</button>
                   </div>
@@ -74,6 +80,7 @@
                 <p v-else>Département : <strong>Aucun</strong></p>
                 <p>Aménagements : <strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></p>
                 <p>Consentement utilisation image : <strong>{{ complDossier.consent ? 'Oui' : 'Non' }}</strong></p>
+                <p>Consentement liste anciens étudiants : <strong>{{ complDossier.consentancien ? 'Oui' : 'Non' }}</strong></p>
             </div>
           <div class="modal-action">
             <button class="btn btn-error" @click="closeModal">Annuler</button>
@@ -101,6 +108,7 @@
     department: '',
     amenagement: false,
     consent: false,
+    consentancien: true,
     amenagementdesc: ''
   })
   

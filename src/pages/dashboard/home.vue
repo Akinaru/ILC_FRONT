@@ -84,25 +84,15 @@
                             <div class="label">
                                 <span class="label-text">Choix de cours</span>
                             </div>
-                            <div class="btn btn-success">
-                                <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            <div class="btn btn-neutral text-success mb-1" v-if="files.choixCours.exist" @click="openFileInNewTab(files.choixCours.path)">
+                                <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                 </svg>
                                 Telecharger le fichier disponible
                             </div>
-                            <input type="file" class="file-input file-input-bordered w-full" />
-                            <div class="btn btn-primary">
-                                Envoyer votre fichier
-                            </div>
-                        </div>
-                        <!-- Contrat pédagogique -->
-                        <div class="form-control w-full py-3">
-                            <div class="label">
-                                <span class="label-text">Contrat pédagogique</span>
-                            </div>
-                                <div class="btn" disabled>
+                            <div class="btn mb-1" disabled v-else>
                                     <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -110,23 +100,50 @@
                                     </svg>                                
                                     Aucun fichier disponible
                                 </div>
-                                <input type="file" class="file-input file-input-bordered w-full" />
-                        </div>
-                        <!-- Relevé de notes -->
-                        <div class="form-control w-full py-3">
-                            <div class="label">
-                                <span class="label-text">Relevés de notes avant départ</span>
+                            <input accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'choixCours')" type="file" class="file-input file-input-bordered w-full mb-1"/>
+
+                            <div v-if="files.choixCours.file != null" class="btn btn-neutral text-primary mb-1 flex items-center space-x-2" @click="saveFile('choix_cours_'+accountStore.login, 'documents/etu/choix_cours', files.choixCours.file)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3l9 9-9 9v-7H3V10h10z" />
+                                </svg>
+                                <span>Envoyer votre fichier</span>
                             </div>
-                                <div class="btn" disabled>
-                                    <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            <div class="w-full flex flex-col" v-if="myfiles.choixCours.exist">
+                                <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.choixCours.path)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
                                     </svg>
-                                    Aucun fichier disponible
-                                </div>
-                                <input type="file" class="file-input file-input-bordered w-full" />
+                                    <span class="text-warning">Voir votre fichier</span>
+                                </button>
+                                
+                                <button class="btn btn-neutral mb-1" @click="openConfirmModal('choix_cours', 'choixCours')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="text-error">Supprimer votre fichier</span>
+                                </button>
+                            </div>
                         </div>
+                        <!-- Contrat pédagogique -->
+
+                        <!-- Relevé de notes -->
+
+
+                        <!-- Modal de confirmation suppression -->
+                        <dialog id="confirmModalDoc" ref="confirmModalDoc" class="modal">
+                            <div class="modal-box">
+                                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                                <div class="py-3">
+                                    <p>Confirmez vous la suppression du fichier: <strong>{{ confirmDeleteDocument.title }}</strong></p>
+                                </div>
+                                <div class="modal-action">
+                                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                    <button class="btn btn-success" @click="deleteFile(confirmDeleteDocument.folder, confirmDeleteDocument.title, confirmDeleteDocument.type)">Confirmer</button>
+                                </div>
+                            </div>
+                        </dialog>
+
                     </div>
                 </div>
             </div>
@@ -381,6 +398,30 @@
     const isOpen = ref({
         favoris: false,
     });
+    const files = ref({
+        choixCours: {
+            file: null,
+            exist: false,
+            path: ''
+        },
+        contratPeda: {
+            file: null,
+            exist: false,
+            path: ''
+        }
+    });
+    const myfiles = ref({
+        choixCours: {
+            exist: false,
+            path: ''
+        },
+    });
+    const confirmDeleteDocument = ref({
+        folder: '',
+        title: '',
+        type: ''
+    });
+
     const selectedChangeVoeu = ref(null);
     
     function toggleCollapse(section) {
@@ -534,6 +575,21 @@
         await request('GET', false, favoris, config.apiUrl + 'api/favoris');
         await request('GET', false, admin, config.apiUrl + 'api/admin');
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+accountStore.login);
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexist/admin/choix_cours')
+        if(response.value.status == 200){
+            files.value.choixCours.exist = true;
+            files.value.choixCours.path = response.value.path;
+        }
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexist/admin/contrat_peda')
+        if(response.value.status == 200){
+            files.value.contratPeda.exist = true;
+            files.value.contratPeda.path = response.value.path;
+        }
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/choix_cours/'+accountStore.login)
+        if(response.value.status == 200){
+            myfiles.value.choixCours.exist = true;
+            myfiles.value.choixCours.path = response.value.path;
+        }
         isLoaded.value = true;
 
         initPage();
@@ -603,6 +659,108 @@
         } else {
             return false;
         }
+    }
+
+    // Ouvrir le modal de confirmation de suppression
+    function openConfirmModal(fileFolder, fileTitle, fileType) {
+        confirmDeleteDocument.value.folder = fileFolder;
+        confirmDeleteDocument.value.title = fileTitle;
+        confirmDeleteDocument.value.type = fileType;
+        const modal = document.getElementById('confirmModalDoc');
+        modal.showModal();
+    }
+
+    // Fermer le modal de confirmation de suppression
+    function closeModal() {
+        const modal = document.getElementById('confirmModalDoc');
+        modal.close();
+    }
+
+    // Supprimer un fichier
+    async function deleteFile(fileFolder, fileTitle, fileType) {
+        closeModal();
+        await request('GET', true, response, `${config.apiUrl}api/documents/deleteperso/${fileFolder}/${fileFolder}_${accountStore.login}`);
+        
+        if (response.value.status == 200) {
+            myfiles.value[fileTitle].exist = false;
+            myfiles.value[fileTitle].path = '';
+        }
+    }
+
+    //Gérer la séléction d'un fichier en fonction du nom
+    const handleFileInputChange = (event, fileType) => {
+        const file = event.target.files[0];
+        if (file) {
+            files.value[fileType].file = file;
+        } else {
+            files.value[fileType].file = null;
+        }
+    };
+    
+    // Ouvrir le fichier ou le télécharger
+    function openFileInNewTab(filePath) {
+        // Diviser le chemin du fichier en segments et obtenir le dernier segment (nom du fichier)
+        const segments = filePath.split('/');
+        const fileName = segments[segments.length - 1];
+
+        // Construire l'URL complète pour accéder au fichier
+        const fileUrl = config.apiUrl + `api/documents/get/admin/${fileName}`;
+
+        // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
+        if (fileName.toLowerCase().endsWith('.pdf')) {
+            window.open(fileUrl, '_blank');
+        } else {
+            // Si ce n'est pas un PDF, forcer le téléchargement du fichier
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.download = fileName;  // Propose le téléchargement avec le nom du fichier
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    
+
+    async function openMyFileInNewTab(filePath) {
+    // Diviser le chemin du fichier en segments pour obtenir le nom du fichier
+    const segments = filePath.split('/');
+    const fileName = segments[segments.length - 1]; // Dernier segment est le nom du fichier
+
+    // Obtenir le dossier (suppressions des derniers segments pour obtenir le dossier parent)
+    const folder = segments[2]; // Supposons que "etu" est toujours à l'index 2
+    const username = fileName.split('_')[2].split('.')[0]; // Obtenir le login depuis le nom de fichier
+
+    // Construire l'URL complète pour accéder au fichier
+    const fileUrl = `${config.apiUrl}api/documents/getperso/etu/${folder}/${fileName}`;
+
+    // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
+    if (fileName.toLowerCase().endsWith('.pdf')) {
+        window.open(fileUrl, '_blank');
+    } else {
+        // Si ce n'est pas un PDF, forcer le téléchargement du fichier
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = fileName;  // Propose le téléchargement avec le nom du fichier
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
+    // Enregistrer un fichier
+    async function saveFile(title, folder, file){
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('title', title);
+        formData.append('folder', folder);
+
+        await request('POST', true, response, config.apiUrl+'api/documents', formData);
+        if(response.value.status == 200){
+            files.value.choixCours.file = null;
+            files.value.contratPeda.file = null;
+        }
+        fetch();
     }
 
     // Supprime de la liste des favoris l'accord passé en param
