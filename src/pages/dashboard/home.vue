@@ -126,9 +126,81 @@
                             </div>
                         </div>
                         <!-- Contrat pédagogique -->
+                        <div class="form-control w-full py-3">
+                            <div class="label">
+                                <span class="label-text">Contrat pédagogique</span>
+                            </div>
+                            <div class="btn btn-neutral text-success mb-1" v-if="files.contratPeda.exist" @click="openFileInNewTab(files.contratPeda.path)">
+                                <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                                Telecharger le fichier disponible
+                            </div>
+                            <div class="btn mb-1" disabled v-else>
+                                    <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3,12.3v7a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2v-7" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polyline points="7.9 12.3 12 16.3 16.1 12.3" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <line x1="12" x2="12" y1="2.7" y2="14.2" fill="none" stroke="#777777" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    </svg>                                
+                                    Aucun fichier disponible
+                                </div>
+                            <input accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'contratPeda')" type="file" class="file-input file-input-bordered w-full mb-1"/>
 
+                            <div v-if="files.contratPeda.file != null" class="btn btn-neutral text-primary mb-1 flex items-center space-x-2" @click="saveFile('contrat_peda_'+accountStore.login, 'documents/etu/contrat_peda', files.contratPeda.file)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3l9 9-9 9v-7H3V10h10z" />
+                                </svg>
+                                <span>Envoyer votre fichier</span>
+                            </div>
+                            <div class="w-full flex flex-col" v-if="myfiles.contratPeda.exist">
+                                <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.contratPeda.path)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+                                    </svg>
+                                    <span class="text-warning">Voir votre fichier</span>
+                                </button>
+                                
+                                <button class="btn btn-neutral mb-1" @click="openConfirmModal('contrat_peda', 'contratPeda')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="text-error">Supprimer votre fichier</span>
+                                </button>
+                            </div>
+                        </div>
                         <!-- Relevé de notes -->
+                        <div class="form-control w-full py-3">
+                            <div class="label">
+                                <span class="label-text">Relevé des notes</span>
+                            </div>
+                            <input accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'releveNote')" type="file" class="file-input file-input-bordered w-full mb-1"/>
 
+                            <div v-if="files.releveNote.file != null" class="btn btn-neutral text-primary mb-1 flex items-center space-x-2" @click="saveFile('releve_note_'+accountStore.login, 'documents/etu/releve_note', files.releveNote.file)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3l9 9-9 9v-7H3V10h10z" />
+                                </svg>
+                                <span>Envoyer votre fichier</span>
+                            </div>
+                            <div class="w-full flex flex-col" v-if="myfiles.releveNote.exist">
+                                <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.releveNote.path)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+                                    </svg>
+                                    <span class="text-warning">Voir votre fichier</span>
+                                </button>
+                                
+                                <button class="btn btn-neutral mb-1" @click="openConfirmModal('releve_note', 'releveNote')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="text-error">Supprimer votre fichier</span>
+                                </button>
+                            </div>
+                        </div>
 
                         <!-- Modal de confirmation suppression -->
                         <dialog id="confirmModalDoc" ref="confirmModalDoc" class="modal">
@@ -408,10 +480,23 @@
             file: null,
             exist: false,
             path: ''
+        },
+        releveNote: {
+            file: null,
+            exist: false,
+            path: ''
         }
     });
     const myfiles = ref({
         choixCours: {
+            exist: false,
+            path: ''
+        },
+        contratPeda: {
+            exist: false,
+            path: ''
+        },
+        releveNote: {
             exist: false,
             path: ''
         },
@@ -590,6 +675,16 @@
             myfiles.value.choixCours.exist = true;
             myfiles.value.choixCours.path = response.value.path;
         }
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/contrat_peda/'+accountStore.login)
+        if(response.value.status == 200){
+            myfiles.value.contratPeda.exist = true;
+            myfiles.value.contratPeda.path = response.value.path;
+        }
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/releve_note/'+accountStore.login)
+        if(response.value.status == 200){
+            myfiles.value.releveNote.exist = true;
+            myfiles.value.releveNote.path = response.value.path;
+        }
         isLoaded.value = true;
 
         initPage();
@@ -759,6 +854,7 @@
         if(response.value.status == 200){
             files.value.choixCours.file = null;
             files.value.contratPeda.file = null;
+            files.value.releveNote.file = null;
         }
         fetch();
     }
