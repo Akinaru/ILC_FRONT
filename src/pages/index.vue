@@ -143,8 +143,8 @@
 
                         </div>
                         <!-- Sil y n'y a pas d'accords -->
-                        <div v-else class="flex items-center justify-center">
-                            <p>Aucun accord n'a été trouvé.</p>
+                        <div v-else class="flex items-center justify-center ">
+                            <p class="my-52">Aucun accord n'a été trouvé.</p>
                         </div>
                     </div>
                 </div>

@@ -5,9 +5,28 @@
         <div class="flex justify-between">
             <p class="text-xl font-bold">Accord</p>
             <div class="flex *:mx-1">
+                <button class="btn btn-error" @click="openConfirmModalDeleteAll">
+                    <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                        width="20px" height="20px" viewBox="0 0 408.483 408.483"
+                        xml:space="preserve">
+                        <g>
+                            <g>
+                                <path d="M87.748,388.784c0.461,11.01,9.521,19.699,20.539,19.699h191.911c11.018,0,20.078-8.689,20.539-19.699l13.705-289.316
+                                    H74.043L87.748,388.784z M247.655,171.329c0-4.61,3.738-8.349,8.35-8.349h13.355c4.609,0,8.35,3.738,8.35,8.349v165.293
+                                    c0,4.611-3.738,8.349-8.35,8.349h-13.355c-4.61,0-8.35-3.736-8.35-8.349V171.329z M189.216,171.329
+                                    c0-4.61,3.738-8.349,8.349-8.349h13.355c4.609,0,8.349,3.738,8.349,8.349v165.293c0,4.611-3.737,8.349-8.349,8.349h-13.355
+                                    c-4.61,0-8.349-3.736-8.349-8.349V171.329L189.216,171.329z M130.775,171.329c0-4.61,3.738-8.349,8.349-8.349h13.356
+                                    c4.61,0,8.349,3.738,8.349,8.349v165.293c0,4.611-3.738,8.349-8.349,8.349h-13.356c-4.61,0-8.349-3.736-8.349-8.349V171.329z"/>
+                                <path d="M343.567,21.043h-88.535V4.305c0-2.377-1.927-4.305-4.305-4.305h-92.971c-2.377,0-4.304,1.928-4.304,4.305v16.737H64.916
+                                    c-7.125,0-12.9,5.776-12.9,12.901V74.47h304.451V33.944C356.467,26.819,350.692,21.043,343.567,21.043z"/>
+                            </g>
+                        </g>
+                    </svg>
+
+
+                    Supprimer tous les accords
+                </button>
                 <ImportAccordComp texte="Importer des accords en csv" @csv-imported="importCsv"></ImportAccordComp>
-
-
                 <ExportComp texte="Exporter des accords en csv" :link="config.apiUrl+'api/agreement/export'"></ExportComp>
             </div>
         </div>
@@ -340,6 +359,23 @@
                         <p class="text-center py-20">Aucun accord trouvé.</p>
                     </div>
                 </div>
+
+                <!-- Modal de confirmation suppression -->
+                <dialog id="confirmModalDeleteAll" ref="confirmModalDeleteAll" class="modal">
+                    <div class="modal-box max-w-full w-150">
+                        <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                        <div class="py-3">
+                            <p>Confirmez vous la suppression de tous les accords ?</p>
+                            <p>Cela entraînera la suppression de l'arbitrage actuel ainsi que de tous les vœux des étudiants.</p>
+                            <p v-if="isConfirmDisabled.bool">Veuillez patienter {{ isConfirmDisabled.time }} secondes avant de confirmer.</p>
+                        </div>
+                        <div class="modal-action">
+                            <button class="btn btn-error" @click="closeModal">Annuler</button>
+                            <button class="btn btn-success" @click="deleteAll()" :disabled="isConfirmDisabled.bool">Confirmer</button>
+                        </div>
+                    </div>
+                </dialog>
+
                 <!-- Modal de confirmation suppression -->
                 <dialog id="confirmModal" ref="confirmModal" class="modal">
                     <div class="modal-box max-w-full w-150">
@@ -442,6 +478,11 @@
     
     const exportModal = ref([])
     const importFinalAccord = ref([])
+    const isConfirmDisabled = ref({
+        time: 0,
+        bool: true,
+        countdown: null
+    });
 
     const isLoaded = ref(false)
     const isceds = ref([]);
@@ -484,10 +525,30 @@
         const modal = document.getElementById('confirmModal')
         modal.showModal()
     }
+    
+    //ouvrir le modal de confirmation de suppression
+    function openConfirmModalDeleteAll() {
+        const modal = document.getElementById('confirmModalDeleteAll')
+        modal.showModal()
+        isConfirmDisabled.value.bool = true;
+        isConfirmDisabled.value.time = 3;
+
+        isConfirmDisabled.value.countdown = setInterval(() => {
+            isConfirmDisabled.value.time -= 1;
+
+            if (isConfirmDisabled.value.time <= 0) {
+                clearInterval(isConfirmDisabled.value.countdown);
+                isConfirmDisabled.value.bool = false;
+            }
+        }, 1000);
+    }
     //Fermer le modal de confirmation de suppression
     function closeModal() {
         const modal = document.getElementById('confirmModal')
         modal.close()
+        const modal2 = document.getElementById('confirmModalDeleteAll')
+        modal2.close()
+        clearInterval(isConfirmDisabled.value.countdown)
     }
 
     //Fermer le modal de confirmation de suppression
@@ -578,18 +639,17 @@
 
     console.log(importFinalAccord.value);
     await request('POST', true, response, config.apiUrl + 'api/agreementexp', importFinalAccord.value);
+    if (response.value.status === 201) {
+        const requestDataAction = {
+            act_description: 'Importation de ' + importFinalAccord.value.agreements.length + ' accords.',
+            acc_id: accountStore.login,
+            agree_id: 1
+        };
+        await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+    }
     closeModalImport();
     fetchAll();
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -727,6 +787,21 @@
         await request('DELETE', true, response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
         fetchAll();
     }
+
+    // Supprimer tous les accords
+    async function deleteAll(){
+        await request('DELETE', true, response, config.apiUrl+'api/agreement/deleteall');
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression de tous les accords',
+                acc_id: accountStore.login,
+                agree_id: 1
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
+        fetchAll();
+    }
+    
 
     // Supprimer un accord
     async function deleteAgreement(univ_name, agree_id){
