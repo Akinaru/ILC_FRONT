@@ -507,57 +507,27 @@
         modal.showModal();
     };
 
-    // Calcul de la distance de Levenshtein
-    const levenshtein = (a, b) => {
-        const alen = a.length;
-        const blen = b.length;
-        let row = Array(blen + 1).fill(0).map((_, i) => i); // Utiliser `let` ici
-        let current = Array(blen + 1); // Utiliser `let` ici
 
-        for (let i = 0; i < alen; i++) {
-            current[0] = i + 1;
-            for (let j = 0; j < blen; j++) {
-            const cost = a[i] === b[j] ? 0 : 1;
-            current[j + 1] = Math.min(
-                current[j] + 1, // Suppression
-                row[j + 1] + 1, // Insertion
-                row[j] + cost    // Substitution
-            );
-            }
-            [row, current] = [current, row]; // Cela est maintenant valide avec `let`
-        }
-        return row[blen];
-        };
-
-    // Fonction pour comparer deux chaînes avec une tolérance de ressemblance
-    const isSimilar = (str1, str2, threshold = 3) => {
-        return levenshtein(str1.toLowerCase(), str2.toLowerCase()) <= threshold;
-    };
 
 
 
     async function confirmImportAccord() {
-
-    // Filtrer les accords importés qui sont marqués pour ajout
     const newAccords = exportModal.value.filter(accord => accord.add);
-
     console.log('New Accords à comparer:', newAccords);
 
-    // Mapper les données existantes pour obtenir des ID
     const existingUniversities = universites.value.reduce((acc, uni) => {
         acc[uni.univ_name.trim().toLowerCase()] = uni.univ_id;
         return acc;
     }, {});
 
     const existingIsceds = isceds.value.reduce((acc, isc) => {
-        // Inclure à la fois le code et le nom ISCED pour une comparaison plus flexible
-        acc[isc.isc_code.trim().toLowerCase()] = isc.isc_id;
-        acc[isc.isc_name.trim().toLowerCase()] = isc.isc_id;
+        acc[isc.isc_code.trim().toLowerCase()] = acc[isc.isc_code.trim().toLowerCase()] || [];
+        acc[isc.isc_code.trim().toLowerCase()].push(isc);
         return acc;
     }, {});
 
     const existingComponents = composantes.value.components.reduce((acc, comp) => {
-        acc[comp.comp_shortname.trim().toLowerCase()] = comp.comp_id;
+        acc[comp.comp_shortname.trim().toLowerCase()] = comp;
         return acc;
     }, {});
 
@@ -566,46 +536,48 @@
         return acc;
     }, {});
 
-    // Trouver les nouveaux accords à ajouter
-    importFinalAccord.value = newAccords.map(newAccord => {
-        // Extraire le code ISCED et le nom ISCED
-        const extractedIscedCode = (newAccord.Isced?.split(' - ')[0] || '').trim().toLowerCase();
-        const extractedIscedName = (newAccord.Isced?.split(' - ')[1] || '').trim().toLowerCase();
+    // Fonction pour vérifier la similarité
+    function isSimilar(a, b) {
+        if (!a || !b) return false;
+        const normalizedA = a.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normalizedB = b.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        return normalizedA === normalizedB;
+    }
 
-        // Trouver les IDs existants en vérifiant le code ISCED et le nom ISCED
-        const existingUniId = Object.keys(existingUniversities).find(key => isSimilar(newAccord.Universite?.trim().toLowerCase(), key)) || null;
-        const existingIscedId = Object.keys(existingIsceds).find(key => 
-            isSimilar(extractedIscedCode, key) || isSimilar(extractedIscedName, key)
-        ) || null;
-        const existingCompId = Object.keys(existingComponents).find(key => isSimilar(newAccord.Composante?.trim().toLowerCase(), key)) || null;
-        const existingCountryId = Object.keys(existingPartnerCountries).find(key => isSimilar(newAccord.Pays?.trim().toLowerCase(), key)) || null;
+    importFinalAccord.value = newAccords.map(newAccord => {
+        const extractedIscedParts = (newAccord.Isced || '').split(' - ');
+        const extractedIscedCode = extractedIscedParts[0]?.trim().toLowerCase();
+
+        const existingUniId = existingUniversities[newAccord.Universite?.trim().toLowerCase()] || null;
+
+        const existingIscedId = existingIsceds[extractedIscedCode]?.[0]?.isc_id || null;
+
+        // Recherche approximative pour la composante
+        let existingCompId = null;
+        const existingComp = Object.values(existingComponents).find(comp =>
+            isSimilar(newAccord.Composante?.trim().toLowerCase(), comp.comp_shortname.trim().toLowerCase())
+        );
+
+        if (existingComp) {
+            existingCompId = existingComp.comp_id;
+        }
+
+        const existingCountryId = existingPartnerCountries[newAccord.Pays?.trim().toLowerCase()] || null;
 
         return {
-            university: { id: existingUniversities[existingUniId] || null, univ_name: newAccord.Universite },
-            isced: { id: existingIscedId, isc_code: newAccord.Isced },
-            component: { id: existingComponents[existingCompId] || null, comp_shortname: newAccord.Composante },
-            partnercountry: { id: existingPartnerCountries[existingCountryId] || null, parco_name: newAccord.Pays }
+            agree_lien: newAccord.Lien || null,
+            agree_nbplace: parseInt(newAccord.Nombre_de_place, 10) || 0,
+            agree_typeaccord: newAccord.Type_accord || null,
+            agree_description: newAccord.Description || null,
+            isced: { isc_id: existingIscedId, isc_code: extractedIscedCode, isc_name: extractedIscedParts[1]?.trim() || null },
+            university: { univ_id: existingUniId, univ_name: newAccord.Universite, univ_city: newAccord.Ville, parco_id: existingCountryId },
+            component: { comp_id: existingCompId || null, comp_shortname: newAccord.Composante },
+            partnercountry: { parco_id: existingCountryId, parco_name: newAccord.Pays }
         };
     });
 
     console.log('Accords à ajouter :', importFinalAccord.value);
     console.log('Nombre d\'accords à ajouter :', importFinalAccord.value.length);
-
-    // Trouver les accords qui sont marqués pour ajout mais qui ne sont pas ajoutés
-    const notAddedAccords = newAccords.filter(newAccord => {
-        return !importFinalAccord.value.some(finalAccord => {
-            return (
-                isSimilar(finalAccord.university.univ_name, newAccord.Universite) &&
-                (isSimilar(finalAccord.isced.isc_code, newAccord.Isced) ||
-                isSimilar(finalAccord.isced.isc_code, newAccord.Isced?.split(' - ')[0])) &&
-                isSimilar(finalAccord.component.comp_shortname, newAccord.Composante) &&
-                isSimilar(finalAccord.partnercountry.parco_name, newAccord.Pays)
-            );
-        });
-    });
-
-    console.log('Accords non ajoutés :', notAddedAccords);
-    console.log('Nombre d\'accords non ajoutés :', notAddedAccords.length);
 }
 
 
