@@ -513,7 +513,6 @@
 
     async function confirmImportAccord() {
     const newAccords = exportModal.value.filter(accord => accord.add);
-    console.log('New Accords à comparer:', newAccords);
 
     const existingUniversities = universites.value.reduce((acc, uni) => {
         acc[uni.univ_name.trim().toLowerCase()] = uni.univ_id;
@@ -544,41 +543,45 @@
         return normalizedA === normalizedB;
     }
 
-    importFinalAccord.value = newAccords.map(newAccord => {
-        const extractedIscedParts = (newAccord.Isced || '').split(' - ');
-        const extractedIscedCode = extractedIscedParts[0]?.trim().toLowerCase();
+    importFinalAccord.value = {
+        agreements: newAccords.map(newAccord => {
+            const extractedIscedParts = (newAccord.Isced || '').split(' - ');
+            const extractedIscedCode = extractedIscedParts[0]?.trim().toLowerCase();
 
-        const existingUniId = existingUniversities[newAccord.Universite?.trim().toLowerCase()] || null;
+            const existingUniId = existingUniversities[newAccord.Universite?.trim().toLowerCase()] || null;
+            const existingIscedId = existingIsceds[extractedIscedCode]?.[0]?.isc_id || null;
 
-        const existingIscedId = existingIsceds[extractedIscedCode]?.[0]?.isc_id || null;
+            // Recherche approximative pour la composante
+            let existingCompId = null;
+            const existingComp = Object.values(existingComponents).find(comp =>
+                isSimilar(newAccord.Composante?.trim().toLowerCase(), comp.comp_shortname.trim().toLowerCase())
+            );
 
-        // Recherche approximative pour la composante
-        let existingCompId = null;
-        const existingComp = Object.values(existingComponents).find(comp =>
-            isSimilar(newAccord.Composante?.trim().toLowerCase(), comp.comp_shortname.trim().toLowerCase())
-        );
+            if (existingComp) {
+                existingCompId = existingComp.comp_id;
+            }
 
-        if (existingComp) {
-            existingCompId = existingComp.comp_id;
-        }
+            const existingCountryId = existingPartnerCountries[newAccord.Pays?.trim().toLowerCase()] || null;
 
-        const existingCountryId = existingPartnerCountries[newAccord.Pays?.trim().toLowerCase()] || null;
+            return {
+                agree_lien: newAccord.Lien || null,
+                agree_nbplace: parseInt(newAccord.Nombre_de_place, 10) || 0,
+                agree_typeaccord: newAccord.Type_accord || null,
+                agree_description: newAccord.Description || null,
+                isced: { isc_id: existingIscedId, isc_code: extractedIscedCode, isc_name: extractedIscedParts[1]?.trim() || null },
+                university: { univ_id: existingUniId, univ_name: newAccord.Universite, univ_city: newAccord.Ville, parco_id: existingCountryId },
+                component: { comp_id: existingCompId || null, comp_shortname: newAccord.Composante },
+                partnercountry: { parco_id: existingCountryId, parco_name: newAccord.Pays }
+            };
+        })
+    };
 
-        return {
-            agree_lien: newAccord.Lien || null,
-            agree_nbplace: parseInt(newAccord.Nombre_de_place, 10) || 0,
-            agree_typeaccord: newAccord.Type_accord || null,
-            agree_description: newAccord.Description || null,
-            isced: { isc_id: existingIscedId, isc_code: extractedIscedCode, isc_name: extractedIscedParts[1]?.trim() || null },
-            university: { univ_id: existingUniId, univ_name: newAccord.Universite, univ_city: newAccord.Ville, parco_id: existingCountryId },
-            component: { comp_id: existingCompId || null, comp_shortname: newAccord.Composante },
-            partnercountry: { parco_id: existingCountryId, parco_name: newAccord.Pays }
-        };
-    });
-
-    console.log('Accords à ajouter :', importFinalAccord.value);
-    console.log('Nombre d\'accords à ajouter :', importFinalAccord.value.length);
+    console.log(importFinalAccord.value);
+    await request('POST', true, response, config.apiUrl + 'api/agreementexp', importFinalAccord.value);
+    closeModalImport();
+    fetchAll();
 }
+
 
 
 
