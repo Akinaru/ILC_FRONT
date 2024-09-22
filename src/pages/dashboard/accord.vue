@@ -596,7 +596,11 @@
         return acc;
     }, {});
 
-    // Fonction pour vérifier la similarité
+    const existingDepartments = departments.value.departments.reduce((acc, dept) => {
+        acc[dept.dept_shortname.trim().toLowerCase()] = dept;
+        return acc;
+    }, {});
+
     function isSimilar(a, b) {
         if (!a || !b) return false;
         const normalizedA = a.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -612,7 +616,6 @@
             const existingUniId = existingUniversities[newAccord.Universite?.trim().toLowerCase()] || null;
             const existingIscedId = existingIsceds[extractedIscedCode]?.[0]?.isc_id || null;
 
-            // Recherche approximative pour la composante
             let existingCompId = null;
             const existingComp = Object.values(existingComponents).find(comp =>
                 isSimilar(newAccord.Composante?.trim().toLowerCase(), comp.comp_shortname.trim().toLowerCase())
@@ -624,6 +627,20 @@
 
             const existingCountryId = existingPartnerCountries[newAccord.Pays?.trim().toLowerCase()] || null;
 
+            // Traitement des départements
+            const extractedDepartments = (newAccord.Departements || '').split(' - ').map(dept => dept.trim().toLowerCase());
+            const departmentList = extractedDepartments.map(deptShortname => {
+                const existingDept = Object.values(existingDepartments).find(department =>
+                    isSimilar(deptShortname, department.dept_shortname.trim().toLowerCase())
+                );
+
+                if (existingDept) {
+                    return { dept_id: existingDept.dept_id }; // Utiliser l'ID existant
+                } else {
+                    return { dept_id: null, dept_shortname: deptShortname }; // Nouveau département
+                }
+            });
+
             return {
                 agree_lien: newAccord.Lien || null,
                 agree_nbplace: parseInt(newAccord.Nombre_de_place, 10) || 0,
@@ -632,7 +649,8 @@
                 isced: { isc_id: existingIscedId, isc_code: extractedIscedCode, isc_name: extractedIscedParts[1]?.trim() || null },
                 university: { univ_id: existingUniId, univ_name: newAccord.Universite, univ_city: newAccord.Ville, parco_id: existingCountryId },
                 component: { comp_id: existingCompId || null, comp_shortname: newAccord.Composante },
-                partnercountry: { parco_id: existingCountryId, parco_name: newAccord.Pays }
+                partnercountry: { parco_id: existingCountryId, parco_name: newAccord.Pays },
+                departments: departmentList // Liste des départements formatée
             };
         })
     };
@@ -650,6 +668,9 @@
     closeModalImport();
     fetchAll();
 }
+
+
+
 
 
 
