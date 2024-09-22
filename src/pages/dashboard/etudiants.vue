@@ -80,14 +80,6 @@
                             <input id="filt_document_3" type="checkbox" class="checkbox " value="3" v-model="selectedDocument">
                             <label for="filt_document_3" class="select-none w-full cursor-pointer pl-2">3</label>
                         </div>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_4" type="checkbox" class="checkbox " value="4" v-model="selectedDocument">
-                            <label for="filt_document_4" class="select-none w-full cursor-pointer pl-2">4</label>
-                        </div>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_5" type="checkbox" class="checkbox" value="5" v-model="selectedDocument">
-                            <label for="filt_document_5" class="select-none w-full cursor-pointer pl-2">5</label>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -158,7 +150,7 @@
                                     <div class="mt-4">
                                         <p class="text-sm text-gray-400">
                                             <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
-                                            <strong>Documents ajouté(s):</strong> 0<br>
+                                            <strong>Documents ajouté(s):</strong> {{ etu.documents?.count || 0 }}/{{ etu.documents?.countmax }}<br>
                                             <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}
                                         </p>
                                     </div>
@@ -222,13 +214,19 @@ const filteredEtudiants = computed(() => {
             // Filtrer par nom d'étudiant s'il y a une recherche en cours
             const matchesSearchQuery = !searchQuery.value || etu.acc_fullname.toLowerCase().includes(searchQuery.value.toLowerCase());
 
-            return matchesDepartments && hasAccess && matchesVoeux && matchesSearchQuery;
+            // Vérification du nombre de documents
+            const documentCount = etu.documents.count || 0; // Utiliser 0 par défaut si undefined
+            const matchesDocuments = selectedDocument.value.length === 0 || 
+                selectedDocument.value.includes(documentCount.toString());
+
+            return matchesDepartments && hasAccess && matchesVoeux && matchesSearchQuery && matchesDocuments;
         })
         .sort((a, b) => {
             // Trier les étudiants par leur nom complet
             return a.acc_fullname.localeCompare(b.acc_fullname);
         });
 });
+
 
 
 async function fetch() {
