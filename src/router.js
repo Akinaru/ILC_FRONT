@@ -70,7 +70,6 @@ const routes = [
     { path: '/', name: 'Accueil', component: Index, meta: { title: 'Accueil' } },
     { path: '/not-found', name: 'NotFound', component: () => import('./pages/notfound.vue'), meta: { title: 'Not Found' } },
     { path: '/:pathMatch(.*)*', redirect: '/not-found' },
-    { path: '/convert', name: 'Convert', component: () => import('./pages/convert.vue'), meta: { title: 'Convert' } },
     { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin, meta: { title: 'Login' } },
     { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete, meta: { title: 'Compléter Dossier' } },
     { path: '/articles', name: 'Articles', component: () => import('./pages/articles.vue'), meta: { title: 'Liste des articles' } },
@@ -113,11 +112,11 @@ const routes = [
                 meta: { title: 'Dashboard - Departement' }
             },
             { 
-                path: 'modifbase', 
-                name: 'ModifBaseDash', 
-                component: () => import('./pages/dashboard/modifbase.vue'),
+                path: 'universite', 
+                name: 'UniversiteDash', 
+                component: () => import('./pages/dashboard/universite.vue'),
                 beforeEnter: requireAccess(1),
-                meta: { title: 'Dashboard - ModifBase' } 
+                meta: { title: 'Dashboard - Université' } 
             },
             { 
                 path: 'accord', 

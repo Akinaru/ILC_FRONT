@@ -43,13 +43,13 @@
         {routeName: 'ArticleDash', name: '📄 Article'},
         {routeName: 'DepartementDash', name: '📍 Departement'},
         {routeName: 'AccordDash', name: '🔗 Accord'},
+        {routeName: 'UniversiteDash', name: '🎓 Université'},
         {routeName: 'AccessDash', name: '🛡️ Accès'},
         {routeName: 'EvenementDash', name: '📆 Evenements'},
         {routeName: 'HistoriqueDash', name: '🕵️‍♀️ Historique'},
         {routeName: 'EtudiantsDash', name: '👩‍🎓 Etudiants'},
         {routeName: 'DocumentsDash', name: '📜 Documents'},
         {routeName: 'Arbitrage', name: '🖥️ Arbitrage'},
-        {routeName: 'ModifBaseDash', name: '⚙️ Modif base'},
     ]
 
     const routesDept = [

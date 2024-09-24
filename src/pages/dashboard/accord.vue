@@ -31,7 +31,7 @@
             </div>
         </div>
             <!-- Partie ajout d'un accord -->
-            <div class="m-5">
+            <div class="m-5 my-20">
                 <div class="m-5 flex justify-center items-center flex-col" >
                     <p class="text-lg font-bold">Ajout accord</p>
                     <form @submit.prevent="addAgreement" class="w-2/5 *:my-2">
@@ -113,10 +113,10 @@
                                 <option>Erasmus</option>
                             </select>
                         </label>
-                        <!-- Formulaire Nombre de place -->
+                        <!-- Formulaire Nombre de places -->
                         <label class="form-control w-full items-center justify-center">
                             <div class="label">
-                                <span class="label-text">Nombre de place</span>
+                                <span class="label-text">Nombre de places</span>
                             </div>
                             <input type="number" class="input input-bordered w-full" v-model="newAgreement.nbplace"/>
                         </label>
@@ -141,9 +141,11 @@
                 </div>
 
             </div>
+
+
             <!-- Partie liste des accords -->
             <div>
-                <p class="font-bold">Liste des accords:</p>
+                <p class="font-bold text-xl mb-5">Liste des accords:</p>
 
                 <!-- Partie filtre -->
                 <div class="bg-base-200 w-full drop-shadow-lg block" v-if="accords && accords.agreements">
@@ -239,7 +241,7 @@
                                             à {{ accord.university?.univ_city || 'Ville non disponible' }}
                                             ({{ accord.partnercountry?.parco_name || 'Pays non disponible' }})
                                             <span>
-                                                <span>Nombre de place: {{ accord.agree_nbplace || 'Non spécifié' }}</span>,
+                                                <span>Nombre de places: {{ accord.agree_nbplace || 'Non spécifié' }}</span>,
                                                 <span>Type accord: {{ accord.agree_typeaccord || 'Non spécifié' }}</span>
                                             </span>
                                         </p>
@@ -712,9 +714,9 @@
             agree_nbplace: newAgreement.value.nbplace,
         };
 
-        // Vérification du nombre de places
+        // Vérification du Nombre de placess
         if (newAgreement.value.nbplace <= 0) {
-            addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
+            addAlert('error', { data: { error: 'Le Nombre de placess doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
             return;
         }
 

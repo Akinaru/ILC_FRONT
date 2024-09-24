@@ -10,17 +10,9 @@
                         <span class="label-text">Isced</span>
                     </div>
                     <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
-                        <option disabled value="">Sélectionnez un isced</option>
+                        <option value="">Aucun isced</option>
                         <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{ isced.isc_code }}) {{ isced.isc_name }}</option>
-                        <option value="addNew">Créer un isced</option>
                     </select>
-                    <label class="form-control w-5/6 my-1" v-if="newAgreement.isced === 'addNew'">
-                        <div class="label">
-                            <span class="label-text">Créer un Isced</span>
-                        </div>
-                        <input type="number" placeholder="Code (ex: 061)" v-model="newAgreement.newisced.code" class="input input-bordered w-full" />
-                        <input type="text" placeholder="Nom (ex: Information and Communication Technologies)" v-model="newAgreement.newisced.name" class="input input-bordered w-full" />
-                    </label>
                 </label>
                 <!-- Formulaire composante -->
                 <label class="form-control w-full items-center justify-center">
@@ -28,17 +20,9 @@
                         <span class="label-text">Composante</span>
                     </div>
                     <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
-                        <option disabled value="">Sélectionnez une composante</option>
+                        <option value="">Aucune composante</option>
                         <option v-for="(compo, index) in composantes" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
-                        <option value="addNew">Créer une composante</option>
                     </select>
-                    <label class="form-control w-5/6 my-1" v-if="newAgreement.compo === 'addNew'">
-                        <div class="label">
-                            <span class="label-text">Créer une composante</span>
-                        </div>
-                        <input type="text" placeholder="Nom (ex: IUT Annecy)" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
-                        <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full" />
-                    </label>
                 </label>
                 <!-- Formulaire université -->
                 <label class="form-control w-full items-center justify-center">
@@ -46,27 +30,9 @@
                         <span class="label-text">Université</span>
                     </div>
                     <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
-                        <option disabled value="">Sélectionnez une université</option>
+                        <option value="">Aucune université</option>
                         <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
-                        <option value="addNew">Créer une université</option>
                     </select>
-                    <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
-                        <div class="label">
-                            <span class="label-text">Créer une université</span>
-                        </div>
-                        <span class="my-1">
-                            <input type="text" placeholder="Nom (ex: Université Savoie Mont Blanc)" v-model="newAgreement.newuniv.name" class="input input-bordered w-full" />
-                            <input type="text" placeholder="Ville (ex: Annecy)" v-model="newAgreement.newuniv.city" class="input input-bordered w-full" />
-                        </span>
-                        <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
-                            <option disabled value="">Sélectionnez un pays</option>
-                            <option v-for="(parco, index) in partnercountrys" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
-                            <option value="addNew">Créer un pays</option>
-                        </select>
-                        <span class="flex items-center justify-center">
-                            <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.newpartnercountry" class="input input-bordered w-5/6 my-1" />
-                        </span>
-                    </label>
                 </label>
                 <!-- Formulaire Typeaccord -->
                 <label class="form-control w-full items-center justify-center">
@@ -74,7 +40,7 @@
                         <span class="label-text">Type accord</span>
                     </div>
                     <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="newAgreement.typeaccord">
-                        <option disabled value="">Sélectionnez un type d'accord</option>
+                        <option value="">Aucun type d'accord</option>
                         <option>Bilatéral</option>
                         <option>Erasmus</option>
                     </select>
@@ -178,67 +144,13 @@ async function editAgreement(agree_id) {
     }
 
     // Gestion du nouveau isced
-    if (newAgreement.value.isced !== 'addNew') {
-        requestData.isc_id = newAgreement.value.isced;
-    } else {
-        if (newAgreement.value.newisced.code === 0 || newAgreement.value.newisced.code === '0') {
-            addAlert('error', { data: { error: 'Vous devez choisir un code ISCED.', message: 'Modification de l\'accord annulée.' } });
-            return;
-        }
-        if (newAgreement.value.newisced.name === '') {
-            addAlert('error', { data: { error: 'Vous devez choisir un nom ISCED.', message: 'Modification de l\'accord annulée.' } });
-            return;
-        }
-        requestData.newisced = {
-            isc_code: '0' + newAgreement.value.newisced.code.toString(),
-            isc_name: newAgreement.value.newisced.name
-        };
-    }
+    requestData.isc_id = newAgreement.value.isced;
 
     // Gestion de la nouvelle composante
-    if (newAgreement.value.compo !== 'addNew') {
         requestData.comp_id = newAgreement.value.compo;
-    } else {
-        if (newAgreement.value.newcompo.name === '') {
-            addAlert('error', { data: { error: 'Vous devez choisir un nom de composante.', message: 'Modification de l\'accord annulée.' } });
-            return;
-        }
-        if (newAgreement.value.newcompo.shortname === '') {
-            addAlert('error', { data: { error: 'Vous devez choisir une abréviation de composante.', message: 'Modification de l\'accord annulée.' } });
-            return;
-        }
-        requestData.newcompo = {
-            comp_name: newAgreement.value.newcompo.name,
-            comp_shortname: newAgreement.value.newcompo.shortname.toUpperCase()
-        };
-    }
 
     // Gestion de la nouvelle université
-    if (newAgreement.value.univ !== 'addNew') {
         requestData.univ_id = newAgreement.value.univ;
-    } else {
-        if (newAgreement.value.newuniv.name === '') {
-            addAlert('error', { data: { error: 'Vous devez choisir un nom d\'université.', message: 'Modification de l\'accord annulée.' } });
-            return;
-        }
-        if (newAgreement.value.newuniv.city === '') {
-            addAlert('error', { data: { error: 'Vous devez choisir une ville pour l\'université.', message: 'Modification de l\'accord annulée.' } });
-            return;
-        }
-        if (newAgreement.value.newuniv.partnercountry === '') {
-            addAlert('error', { data: { error: 'Vous devez choisir un pays d\'université.', message: 'Modification de l\'accord annulée.' } });
-            return;
-        }
-        requestData.newuniv = {
-            univ_name: newAgreement.value.newuniv.name,
-            univ_city: newAgreement.value.newuniv.city,
-            parco_id: newAgreement.value.newuniv.partnercountry
-        };
-        if (newAgreement.value.newuniv.partnercountry === 'addNew') {
-            requestData.newuniv.parco_name = newAgreement.value.newuniv.newpartnercountry;
-            requestData.newuniv.parco_code = newAgreement.value.newuniv.newpartnercountrycode;
-        }
-    }
 
     // Effectuer la requête PUT pour mettre à jour l'accord
     await request('PUT', true, response, config.apiUrl + 'api/agreement/' + props.accord.agree_id, requestData);
