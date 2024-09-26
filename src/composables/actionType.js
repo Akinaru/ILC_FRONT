@@ -5,6 +5,7 @@ export const types = [
     { name: 'Access', color: 'badge-info', condition: 'access' },
     { name: 'Evenement', color: 'badge-error', condition: 'event' },
     { name: 'Admin', color: 'badge-secondary', condition: 'admin' },
+    { name: 'Université', color: 'badge-success', condition: 'university' },
     { name: 'Autre', color: 'badge-warning', condition: 'other' },
 ];
 
