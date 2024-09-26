@@ -103,11 +103,34 @@
                 <div class="modal-box">
                     <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
                     <div class="py-3">
-                        <p>Confirmez vous la supression de l'université: <strong>{{confirmDeleteUniv}}</strong></p>
+                        <p>Confirmez vous la supression de l'université:</p>
+                        <p>Cette action aura pour effet de </p>
+                        <div class="bg-base-300 min-h-40 p-3 my-2 relative">
+                            <span class="relative flex items—center justify-between">
+                                <div class="flex items-center">
+
+                                    <!-- Drapeau -->
+                                    <span class="fi text-2xl" :class="'fi-' + (confirmDeleteUniv.partnercountry?.parco_code || '')"></span>
+                                    
+                                    <!-- Point d'interrogation si pas de drapeau -->
+                                    <template v-if="!confirmDeleteUniv.partnercountry?.parco_code">
+                                        <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                            ?
+                                        </span>
+                                    </template>
+                                    
+                                    
+                                    <p class="ml-2">{{ confirmDeleteUniv.partnercountry?.parco_name ?? 'Pays indisponible' }}</p>
+                                </div>
+                            </span>
+                            <p class="mt-1"><strong>{{ confirmDeleteUniv.univ_name ? confirmDeleteUniv.univ_name : 'Nom université indisponible'  }}</strong> à {{ confirmDeleteUniv.univ_city ? confirmDeleteUniv.univ_city : 'Nom ville indisponible' }}</p>
+                        
+
+                        </div>
                     </div>
                 <div class="modal-action">
                     <button class="btn btn-error" @click="closeModal">Annuler</button>
-                    <button class="btn btn-success">Confirmer</button>
+                    <button class="btn btn-success" @click="deleteUniv(confirmDeleteUniv.univ_id, confirmDeleteUniv.univ_name, confirmDeleteUniv.univ_city)">Confirmer</button>
                 </div>
                 </div>
             </dialog>
@@ -205,13 +228,27 @@
             // Rafraîchir les données après l'ajout
             await fetchAll();
             const requestDataAction = {
-                act_description: 'Ajout de l\'université avec ' + newUniv.value.univ_name + ' (' + newUniv.value.parco_name + ').',
+                act_description: 'Ajout de l\'université ' + requestData.univ_name + ' (' + requestData.univ_city + ').',
                 acc_id: accountStore.login,
                 univ_id: 1
             };
             await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
         }
 
+    }
+
+    // Supprimer une université
+    async function deleteUniv(univ_id, univ_name, univ_city){
+        await request('DELETE', true, response, config.apiUrl+'api/university/deletebyid/'+univ_id);
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression de l\'université '+univ_name+' (' + univ_city + ').',
+                acc_id: accountStore.login,
+                univ_id: univ_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
+        fetchAll();
     }
 
     //ouvrir le modal de confirmation de suppression
@@ -238,9 +275,6 @@
         newUniv.value.parco_id = document.querySelector('#partnercountry_select').options[0].value;
     }
 
-    async function deleteUniv(univ_id, univ_name){
-
-    }
 
     async function fetchAll(){
         isLoaded.value = false;
