@@ -64,6 +64,7 @@
             <div class="flex flex-wrap justify-center gap-2">
                 <div v-for="(univ, index) in filteredUniversities" :key="index" class="bg-base-300 min-h-40 p-3 my-2 min-w-96 max-w-96 relative">
                     <span class="relative flex items—center justify-between">
+                        <!-- Drapeau -->
                         <div class="flex items-center">
 
                             <!-- Drapeau -->
@@ -81,7 +82,7 @@
                         </div>
                         <div class="flex">
                         <!-- Bouton de modification -->
-                        <label class="hover:opacity-70 hover:cursor-pointer bg-base-300 flex items-center justify-center p-3" @click="modifUniv(univ)">
+                        <label for="modal_modif" class="hover:opacity-70 hover:cursor-pointer bg-base-300 flex items-center justify-center p-3" @click="modifUniv(univ)">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                 <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -96,6 +97,46 @@
                     <p class="mt-1"><strong>{{ univ.univ_name ? univ.univ_name : 'Nom université indisponible'  }}</strong> à {{ univ.univ_city ? univ.univ_city : 'Nom ville indisponible' }}</p>
                 
 
+                </div>
+            </div>
+
+            <!-- Modal modification -->
+            <input type="checkbox" id="modal_modif" class="modal-toggle" />
+            <div class="modal modal-bottom sm:modal-middle" role="dialog">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg">Modification de l'université n° {{ currentUnivModif.univ_id }}</h3>
+                    <form @submit.prevent="confirmModifUniv" class="w-full">
+                        <!-- Nom -->
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Nom</span>
+                            </div>
+                            <input type="text"  class="input input-bordered w-full" v-model="currentUnivModif.univ_name"/>
+                        </label>
+                        <!-- Ville -->
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Ville</span>
+                            </div>
+                            <input type="text"  class="input input-bordered w-full" v-model="currentUnivModif.univ_city"/>
+                        </label>
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Pays</span>
+                            </div>
+
+                            <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="currentUnivModif.parco_id">
+                                <option disabled selected value="selectACountry">Selectionnez un pays</option>
+                                <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
+                            </select>
+                        </label>
+                        <div class="modal-action">
+                            <label for="modal_modif" class="btn ">Annuler</label>
+                            <button type="submit">
+                                <label for="modal_modif" class="btn btn-success">Enregistrer</label>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
             <!-- Modal de confirmation suppression -->
@@ -154,6 +195,7 @@
     const confirmDeleteUniv = ref([])
     const selectedCountries = ref([]);
     const response = ref([])
+    const currentUnivModif = ref([]);
 
     const newUniv = ref({
         univ_name: '',
@@ -186,6 +228,35 @@
 
     function toggleCollapse(section) {
         isOpen.value[section] = !isOpen.value[section];
+    }
+
+    // Modal modif univ
+    function modifUniv(univ){
+        currentUnivModif.value.univ_id = univ.univ_id;
+        currentUnivModif.value.univ_name = univ.univ_name;
+        currentUnivModif.value.univ_city = univ.univ_city;
+        currentUnivModif.value.parco_id = univ.partnercountry.parco_id;
+    }
+
+    // Confirm modification univ
+    async function confirmModifUniv(){
+        const requestData = { 
+            univ_id: currentUnivModif.value.univ_id,
+            univ_name: currentUnivModif.value.univ_name,
+            univ_city: currentUnivModif.value.univ_city,
+            parco_id: currentUnivModif.value.parco_id,
+
+        };
+        await request('PUT', true, response, config.apiUrl+'api/university', requestData);
+        if(response.value.status == 200){
+            const requestDataAction = {
+                act_description: 'Modification de l\'université '+requestData.univ_name+' (' + requestData.univ_city + ').',
+                acc_id: accountStore.login,
+                univ_id: requestData.univ_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
+        fetchAll();
     }
 
     // Ajouter une université
