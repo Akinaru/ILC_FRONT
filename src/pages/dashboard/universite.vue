@@ -95,6 +95,7 @@
                     </div>
                     </span>
                     <p class="mt-1"><strong>{{ univ.univ_name ? univ.univ_name : 'Nom université indisponible'  }}</strong> à {{ univ.univ_city ? univ.univ_city : 'Nom ville indisponible' }}</p>
+                    <p>Nombre d'accords relié à cette Université: {{ countAgreementsByUniv(univ.univ_id) }}</p>
                 
 
                 </div>
@@ -146,7 +147,7 @@
                     <div class="py-3">
                         <p>Confirmez vous la supression de l'université:</p>
                         <p>Cette action entraînera la suppression de l'université dans tous les accords qui y sont liés.</p>
-                        <div class="bg-base-300 min-h-40 p-3 my-2 relative">
+                        <div class="bg-base-300 p-3 my-2 relative">
                             <span class="relative flex items—center justify-between">
                                 <div class="flex items-center">
 
@@ -168,6 +169,24 @@
                         
 
                         </div>
+                        <!-- Liste des accords liés -->
+                        <div class="py-3">
+                                <h4 class="text-lg font-bold">Accords liés à cette université ({{ filteredAgreements.length }}):</h4>
+                                <div class="flex flex-col w-full max-h-64 overflow-y-auto">
+                                    <div v-if="filteredAgreements.length > 0" v-for="(accord, index) in filteredAgreements" :key="index" class="bg-base-300 my-1 p-3">
+                                        <span class="mr-2 flex items-center justify-start">
+                                            <span class="fi text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name) "></span>
+                                        </span>
+                                        <div class="flex flex-col">
+                                            <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{ accord.university?.univ_city ?? 'Aucune ville' }} - {{ accord.university?.univ_name ?? 'Aucune université' }}</span> </p>
+                                            <p>({{ accord.isced?.isc_code ?? '??' }}) - {{ accord.isced?.isc_name ?? 'ISCED indisponible' }} | {{ accord.component?.comp_name ?? 'Aucune composante' }}</p>    
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <p class="text-center my-5">Aucun accords</p>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
                 <div class="modal-action">
                     <button class="btn btn-error" @click="closeModal">Annuler</button>
@@ -191,6 +210,7 @@
 
     const isLoaded = ref(false);
     const universites = ref([]);
+    const accords = ref([]);
     const partnercountry = ref([]);
     const confirmDeleteUniv = ref([])
     const selectedCountries = ref([]);
@@ -230,6 +250,8 @@
         isOpen.value[section] = !isOpen.value[section];
     }
 
+
+    
     // Modal modif univ
     function modifUniv(univ){
         currentUnivModif.value.univ_id = univ.univ_id;
@@ -257,6 +279,14 @@
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
         fetchAll();
+    }
+
+
+    // Retourne le nombre d'unv lié à l'accord
+    function countAgreementsByUniv(univ_id) {
+        return accords.value.agreements.filter(agreement => 
+            agreement.university && agreement.university.univ_id === univ_id
+        ).length;
     }
 
     // Ajouter une université
@@ -321,6 +351,19 @@
         fetchAll();
     }
 
+    // Liste des accords concerné par l'univ qu'on supprime
+    const filteredAgreements = computed(() => {
+        return accords.value.agreements.filter(agreement => 
+            agreement.university && agreement.university.univ_id === confirmDeleteUniv.value.univ_id
+        );
+    });
+    
+    // Fonction pour trouver le pays
+    function getCountryCode(pays) {
+        const country = partnercountry.value.find(country => country.parco_name === pays);
+        return country ? country.parco_code : 'Code non disponible';
+    }
+
     //ouvrir le modal de confirmation de suppression
     function openConfirmModal(univ) {
     
@@ -350,6 +393,7 @@
         isLoaded.value = false;
         await request('GET', false, universites, config.apiUrl + 'api/university');
         await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry');
+        await request('GET', false, accords, config.apiUrl+'api/agreement');
         isLoaded.value = true;
         await nextTick()
         resetInput()
