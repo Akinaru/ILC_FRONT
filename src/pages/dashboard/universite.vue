@@ -145,7 +145,7 @@
                     <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
                     <div class="py-3">
                         <p>Confirmez vous la supression de l'université:</p>
-                        <p>Cette action aura pour effet de </p>
+                        <p>Cette action entraînera la suppression de l'université dans tous les accords qui y sont liés.</p>
                         <div class="bg-base-300 min-h-40 p-3 my-2 relative">
                             <span class="relative flex items—center justify-between">
                                 <div class="flex items-center">
@@ -289,7 +289,6 @@
         }else{
             requestData.parco_id = `${newUniv.value.parco_id}`;
         }
-        console.log(requestData)
         // Effectuer la requête POST pour ajouter l'accord
         await request("POST", true, response, config.apiUrl + 'api/university', requestData);
 

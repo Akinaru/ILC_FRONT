@@ -44,6 +44,7 @@
         {routeName: 'DepartementDash', name: '📍 Departement'},
         {routeName: 'AccordDash', name: '🔗 Accord'},
         {routeName: 'UniversiteDash', name: '🎓 Université'},
+        {routeName: 'IscedDash', name: '🔢 ISCED'},
         {routeName: 'AccessDash', name: '🛡️ Accès'},
         {routeName: 'EvenementDash', name: '📆 Evenements'},
         {routeName: 'HistoriqueDash', name: '🕵️‍♀️ Historique'},

@@ -119,6 +119,13 @@ const routes = [
                 meta: { title: 'Dashboard - Université' } 
             },
             { 
+                path: 'isced', 
+                name: 'IscedDash', 
+                component: () => import('./pages/dashboard/isced.vue'),
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - ISCED' } 
+            },
+            { 
                 path: 'accord', 
                 name: 'AccordDash', 
                 component: () => import('./pages/dashboard/accord.vue'),
