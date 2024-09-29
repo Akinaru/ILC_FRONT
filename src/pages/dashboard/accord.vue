@@ -573,107 +573,103 @@
 
 
 
-
+    // Confirmer l'import d'accords
     async function confirmImportAccord() {
-    const newAccords = exportModal.value.filter(accord => accord.add);
+        const newAccords = exportModal.value.filter(accord => accord.add);
 
-    const existingUniversities = universites.value.reduce((acc, uni) => {
-        acc[uni.univ_name.trim().toLowerCase()] = uni.univ_id;
-        return acc;
-    }, {});
+        const existingUniversities = universites.value.reduce((acc, uni) => {
+            acc[uni.univ_name.trim().toLowerCase()] = uni.univ_id;
+            return acc;
+        }, {});
 
-    const existingIsceds = isceds.value.reduce((acc, isc) => {
-        acc[isc.isc_code.trim().toLowerCase()] = acc[isc.isc_code.trim().toLowerCase()] || [];
-        acc[isc.isc_code.trim().toLowerCase()].push(isc);
-        return acc;
-    }, {});
+        const existingIsceds = isceds.value.reduce((acc, isc) => {
+            acc[isc.isc_code.trim().toLowerCase()] = acc[isc.isc_code.trim().toLowerCase()] || [];
+            acc[isc.isc_code.trim().toLowerCase()].push(isc);
+            return acc;
+        }, {});
 
-    const existingComponents = composantes.value.components.reduce((acc, comp) => {
-        acc[comp.comp_shortname.trim().toLowerCase()] = comp;
-        return acc;
-    }, {});
+        const existingComponents = composantes.value.components.reduce((acc, comp) => {
+            acc[comp.comp_shortname.trim().toLowerCase()] = comp;
+            return acc;
+        }, {});
 
-    const existingPartnerCountries = partnercountry.value.reduce((acc, country) => {
-        acc[country.parco_name.trim().toLowerCase()] = country.parco_id;
-        return acc;
-    }, {});
+        const existingPartnerCountries = partnercountry.value.reduce((acc, country) => {
+            acc[country.parco_name.trim().toLowerCase()] = country.parco_id;
+            return acc;
+        }, {});
 
-    const existingDepartments = departments.value.departments.reduce((acc, dept) => {
-        acc[dept.dept_shortname.trim().toLowerCase()] = dept;
-        return acc;
-    }, {});
+        const existingDepartments = departments.value.departments.reduce((acc, dept) => {
+            acc[dept.dept_shortname.trim().toLowerCase()] = dept;
+            return acc;
+        }, {});
 
-    function isSimilar(a, b) {
-        if (!a || !b) return false;
-        const normalizedA = a.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-        const normalizedB = b.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-        return normalizedA === normalizedB;
-    }
+        function isSimilar(a, b) {
+            if (!a || !b) return false;
+            const normalizedA = a.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            const normalizedB = b.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            return normalizedA === normalizedB;
+        }
 
-    importFinalAccord.value = {
-        agreements: newAccords.map(newAccord => {
-            const extractedIscedParts = (newAccord.Isced || '').split(' - ');
-            const extractedIscedCode = extractedIscedParts[0]?.trim().toLowerCase();
+        importFinalAccord.value = {
+            agreements: newAccords.map(newAccord => {
+                const extractedIscedParts = (newAccord.Isced || '').split(' - ');
+                const extractedIscedCode = extractedIscedParts[0]?.trim().toLowerCase();
 
-            const existingUniId = existingUniversities[newAccord.Universite?.trim().toLowerCase()] || null;
-            const existingIscedId = existingIsceds[extractedIscedCode]?.[0]?.isc_id || null;
+                const existingUniId = existingUniversities[newAccord.Universite?.trim().toLowerCase()] || null;
+                const existingIscedId = existingIsceds[extractedIscedCode]?.[0]?.isc_id || null;
 
-            let existingCompId = null;
-            const existingComp = Object.values(existingComponents).find(comp =>
-                isSimilar(newAccord.Composante?.trim().toLowerCase(), comp.comp_shortname.trim().toLowerCase())
-            );
-
-            if (existingComp) {
-                existingCompId = existingComp.comp_id;
-            }
-
-            const existingCountryId = existingPartnerCountries[newAccord.Pays?.trim().toLowerCase()] || null;
-
-            // Traitement des départements
-            const extractedDepartments = (newAccord.Departements || '').split(' - ').map(dept => dept.trim().toLowerCase());
-            const departmentList = extractedDepartments.map(deptShortname => {
-                const existingDept = Object.values(existingDepartments).find(department =>
-                    isSimilar(deptShortname, department.dept_shortname.trim().toLowerCase())
+                let existingCompId = null;
+                const existingComp = Object.values(existingComponents).find(comp =>
+                    isSimilar(newAccord.Composante?.trim().toLowerCase(), comp.comp_shortname.trim().toLowerCase())
                 );
 
-                if (existingDept) {
-                    return { dept_id: existingDept.dept_id }; // Utiliser l'ID existant
-                } else {
-                    return { dept_id: null, dept_shortname: deptShortname }; // Nouveau département
+                if (existingComp) {
+                    existingCompId = existingComp.comp_id;
                 }
-            });
 
-            return {
-                agree_lien: newAccord.Lien || null,
-                agree_nbplace: parseInt(newAccord.Nombre_de_place, 10) || 0,
-                agree_typeaccord: newAccord.Type_accord || null,
-                agree_description: newAccord.Description || null,
-                isced: { isc_id: existingIscedId, isc_code: extractedIscedCode, isc_name: extractedIscedParts[1]?.trim() || null },
-                university: { univ_id: existingUniId, univ_name: newAccord.Universite, univ_city: newAccord.Ville, parco_id: existingCountryId },
-                component: { comp_id: existingCompId || null, comp_shortname: newAccord.Composante },
-                partnercountry: { parco_id: existingCountryId, parco_name: newAccord.Pays },
-                departments: departmentList // Liste des départements formatée
-            };
-        })
-    };
+                const existingCountryId = existingPartnerCountries[newAccord.Pays?.trim().toLowerCase()] || null;
 
-    console.log(importFinalAccord.value);
-    await request('POST', true, response, config.apiUrl + 'api/agreementexp', importFinalAccord.value);
-    if (response.value.status === 201) {
-        const requestDataAction = {
-            act_description: 'Importation de ' + importFinalAccord.value.agreements.length + ' accords.',
-            acc_id: accountStore.login,
-            agree_id: 1
+                // Traitement des départements
+                const extractedDepartments = (newAccord.Departements || '').split(' - ').map(dept => dept.trim().toLowerCase());
+                const departmentList = extractedDepartments.map(deptShortname => {
+                    const existingDept = Object.values(existingDepartments).find(department =>
+                        isSimilar(deptShortname, department.dept_shortname.trim().toLowerCase())
+                    );
+
+                    if (existingDept) {
+                        return { dept_id: existingDept.dept_id }; // Utiliser l'ID existant
+                    } else {
+                        return { dept_id: null, dept_shortname: deptShortname }; // Nouveau département
+                    }
+                });
+
+                return {
+                    agree_lien: newAccord.Lien || null,
+                    agree_nbplace: parseInt(newAccord.Nombre_de_place, 10) || 0,
+                    agree_typeaccord: newAccord.Type_accord || null,
+                    agree_description: newAccord.Description || null,
+                    isced: { isc_id: existingIscedId, isc_code: extractedIscedCode, isc_name: extractedIscedParts[1]?.trim() || null },
+                    university: { univ_id: existingUniId, univ_name: newAccord.Universite, univ_city: newAccord.Ville, parco_id: existingCountryId },
+                    component: { comp_id: existingCompId || null, comp_shortname: newAccord.Composante },
+                    partnercountry: { parco_id: existingCountryId, parco_name: newAccord.Pays },
+                    departments: departmentList // Liste des départements formatée
+                };
+            })
         };
-        await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+
+        console.log(importFinalAccord.value);
+        await request('POST', true, response, config.apiUrl + 'api/agreementexp', importFinalAccord.value);
+        if (response.value.status === 201) {
+            const requestDataAction = {
+                act_description: 'Importation de ' + importFinalAccord.value.agreements.length + ' accords.',
+                acc_id: accountStore.login,
+                agree_id: 1
+            };
+            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+        }
+        closeModalImport();
+        fetchAll();
     }
-    closeModalImport();
-    fetchAll();
-}
-
-
-
-
 
 
 
@@ -696,8 +692,9 @@
     function getCountryCode(pays) {
         const country = partnercountry.value.find(country => country.parco_name === pays);
         return country ? country.parco_code : 'Code non disponible';
-        }
+    }
 
+    // Liste dynamique des accords
     const filteredAccords = computed(() => {
         return accords.value.agreements.filter(accord => {
             const matchesDepartments = selectedDepartments.value.length === 0 || accord.departments.some(dept => selectedDepartments.value.includes(dept.dept_shortname));
