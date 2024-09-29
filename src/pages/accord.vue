@@ -128,7 +128,7 @@
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accord, config.apiUrl+'api/agreement/getbyid/'+route.params.agree_id);
-        document.title = `ILC - ${accord.value.university.univ_name} (${accord.value.partnercountry.parco_name} [${accord.value.isced.isc_code} - ${accord.value.isced.isc_name}])`
+        document.title = `ILC - ${accord.value.agreement.university?.univ_name ?? 'Université indisponible'} (${accord.value.agreement.partnercountry?.parco_name ?? 'Pays indisponible'} [${accord.value.agreement.isced?.isc_code ?? '??'} - ${accord.value.agreement.isced?.isc_name ?? 'Isced indisponible'}])`
         if(accountStore.isLogged)
             await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         const requestData = {}
