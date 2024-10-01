@@ -28,7 +28,7 @@
                                         <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
                                         <span v-else>(Nom introuvable)</span> 
                                     </div>
-                                    <span>Dernière connexion: <span v-if="acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Inconnu</span></span>
+                                    <span>Dernière connexion: <span v-if="acc.account && acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Inconnu</span></span>
                                 </div>
                                 <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(acc)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
