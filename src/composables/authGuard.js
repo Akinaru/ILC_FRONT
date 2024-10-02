@@ -5,8 +5,10 @@ import { useAccountStore } from "../stores/accountStore";
 import config from '../config';
 
 export async function authLogAccount(login, router) {
+    console.log('lgoin: ' + login)
     const response = ref([]);
     await request('GET', false, response, config.apiUrl + 'api/account/getbylogin/' + login);
+    console.log(response.value)
     if (response.value.response && response.value.response.status == 404) {
         await authRegisterAccount(login, router);
     } else {

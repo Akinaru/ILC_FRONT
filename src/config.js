@@ -1,4 +1,4 @@
 export default{
-    apiUrl: 'https://gallotta.fr/ILC/',
+    apiUrl: 'https://ilc.iut-acy.univ-smb.fr/BACK/',
     alertTimeBeforeRemove: 5
 }

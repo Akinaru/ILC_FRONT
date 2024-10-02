@@ -10,8 +10,7 @@
         <div v-if="!accountStore.isLogged()">
           <!-- Afficher le portail de connexion -->
           <p class=" hover:opacity-70 transition-all mr-2">
-            <RouterLink :to="{ name: 'Login' }">Portail connexion</RouterLink>
-            <a :href="config.apiUrl+'cas.php'">LCAS</a>
+            <a :href="config.apiUrl+'cas.php'">Connexion</a>
           </p>
         </div>
 
@@ -140,8 +139,18 @@ const response = ref([])
 const menuAlreadyOpen = ref(false)
 
 function logout() {
+  // Effacer localStorage
+  localStorage.removeItem('login');
+  localStorage.removeItem('auth');
+  
+  // Déconnexion de l'utilisateur
   accountStore.logoutAccount();
-  router.push({ name: 'Login' });
+  
+  // Ouvrir la page de déconnexion de PHP CAS dans un nouvel onglet
+  window.open(config.apiUrl + 'cas.php?logout=true', '_blank');
+  
+  // Redirection vers l'accueil
+  router.push({ name: 'Accueil' });
 }
 
 function closeMenu() {
