@@ -372,8 +372,8 @@
                             <p v-if="isConfirmDisabled.bool">Veuillez patienter {{ isConfirmDisabled.time }} secondes avant de confirmer.</p>
                         </div>
                         <div class="modal-action">
-                            <button class="btn btn-error" @click="closeModal">Annuler</button>
-                            <button class="btn btn-success" @click="deleteAll()" :disabled="isConfirmDisabled.bool">Confirmer</button>
+                            <button class="btn" @click="closeModal">Annuler</button>
+                            <button class="btn btn-error" @click="deleteAll()" :disabled="isConfirmDisabled.bool">Confirmer</button>
                         </div>
                     </div>
                 </dialog>

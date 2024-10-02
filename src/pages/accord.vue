@@ -96,6 +96,9 @@
         </div>
         <div v-else class="h-full min-h-screen flex flex-col justify-center items-center">
             <p class="flex font-bold items-center justify-center text-xl md:text-2xl pb-10">Accord introuvable...</p>
+            <RouterLink :to="{ name: 'Accueil' }" class="hover:opacity-80 transition-all hover:scale-105">
+                <button class="btn btn-primary">Revenir à l'accueil</button>
+            </RouterLink>
             <div class="flex flex-col items-center space-y-4">
                 <Vue3Lottie :animationData="notFound" :height="animationWidth" :width="animationWidth" />
             </div>
@@ -128,7 +131,6 @@
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accord, config.apiUrl+'api/agreement/getbyid/'+route.params.agree_id);
-        document.title = `ILC - ${accord.value.agreement.university?.univ_name ?? 'Université indisponible'} (${accord.value.agreement.partnercountry?.parco_name ?? 'Pays indisponible'} [${accord.value.agreement.isced?.isc_code ?? '??'} - ${accord.value.agreement.isced?.isc_name ?? 'Isced indisponible'}])`
         if(accountStore.isLogged)
             await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         const requestData = {}
@@ -141,10 +143,18 @@
         if (requestData.dept_id) {
             apiUrl += 'dept_id=' + requestData.dept_id + '&';
         }
-        apiUrl += requestData.dept_id ? 'agree_id=' + accord.value.agree_id + '&' : '';
-        apiUrl += requestData.dept_id ? 'univ_id=' + accord.value.university.univ_id : '';
+        if (requestData.dept_id) {
+            if (accord.value.agree_id) {
+                apiUrl += 'agree_id=' + accord.value.agree_id + '&';
+            }
+            if (accord.value.university && accord.value.university.univ_id) {
+                apiUrl += 'univ_id=' + accord.value.university.univ_id;
+            }
+        }
 
         await request('GET', true, accords, apiUrl);
+        document.title = `ILC - ${accord.value.agreement?.university?.univ_name ?? 'Université indisponible'} (${accord.value.agreement?.partnercountry?.parco_name ?? 'Pays indisponible'} [${accord.value.agreement?.isced?.isc_code ?? '??'} - ${accord.value.agreement?.isced?.isc_name ?? 'Isced indisponible'}])`
+
         isLoaded.value = true;
     }
     function isFavorited(agree_id) {

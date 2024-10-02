@@ -1,6 +1,10 @@
 <template>
     <div class="overflow-x-auto min-h-screen">
-        <p class="font-bold text-xl">Historique</p>
+        <div class="flex w-full justify-between">
+            <p class="font-bold text-xl">Historique</p>
+            <!-- bouton supprimer -->
+            <label for="delete" class="btn btn-error">Supprimer l'historique</label>
+        </div>
         <div class="py-4">
             <p>Filtres: <span>{{ filteredActions.length }} résultat{{ filteredActions.length > 1 ? 's' : '' }} 
                 avec {{ selectedTypes.length + (searchQuery !== '' ? 1 : 0) }} 
@@ -8,7 +12,7 @@
             </p>
             <div class="flex justify-between items-center">
                 <!-- Partie gauche -->
-                <div class="flex items-start flex-col w-fit ">
+                <div class="flexitems-start flex-col w-fit ">
                     <!-- Type à cocher -->
                     <div class="flex py-3">
                         <label :for="'filt_type_'+index" class="flex items-center justify-center mr-2 hover:cursor-pointer" v-for="(type, index) in types" :key="index">
@@ -21,10 +25,10 @@
                         <input type="text" class="grow" placeholder="Recherche par login" v-model="searchQuery">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>
                     </label>
+
+
                 </div>
 
-                <!-- bouton supprimer -->
-                <label for="delete" class="btn btn-error">Supprimer l'historique</label>
 
                 <!-- modal -->
                 <input type="checkbox" id="delete" class="modal-toggle" />

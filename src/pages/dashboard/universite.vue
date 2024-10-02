@@ -5,7 +5,7 @@
             <!-- Partie ajout d'un accord -->
             <div class="m-5 my-20">
                 <div class="m-5 flex justify-center items-center flex-col" >
-                    <p class="text-lg font-bold">Ajout accord</p>
+                    <p class="text-lg font-bold">Ajout université</p>
                     <form @submit.prevent="addUniv" class="w-2/5 *:my-2">
                         <!-- Formulaire université -->
                         <label class="form-control w-full items-center justify-center">

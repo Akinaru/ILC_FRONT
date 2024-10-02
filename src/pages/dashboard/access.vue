@@ -414,7 +414,7 @@
         await request("POST", true, response, config.apiUrl+'api/acceptedaccount', requestData);
         if(response.value.status == 201){
             const requestDataAction = {
-                act_description: 'Ajout de l\'autorisation pour l\'utilisateur '+newAccess.value.login+'.',
+                act_description: 'Ajout de l\'autorisation pour l\'utilisateur '+requestData.acc_id+'.',
                 acc_id: accountStore.login,
                 access: 1
             }
