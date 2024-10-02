@@ -29,7 +29,11 @@ const accountStore = useAccountStore();
 accountStore.$subscribe((mutation, state) => {
   const simplifiedState = {
     last_login: state.last_login,
-    // Ajoutez ici d'autres propriétés que vous souhaitez stocker
+    login: state.login,
+    fullname: state.fullname,
+    logged: state.logged,
+    acc_validateacc: state.acc_validateacc,
+    access: state.access
   };
   localStorage.setItem("account", JSON.stringify(simplifiedState));
 });
@@ -44,12 +48,6 @@ function checkLoginExpiry() {
 
   // Calculate the elapsed time
   const elapsedTime = currentTime - lastLoginTime;
-
-  // Debugging logs
-  console.log("last: " + lastLoginTime);
-  console.log("current: " + currentTime);
-  console.log("elapsed: " + elapsedTime);
-  console.log("oneHour: " + oneHour);
 
   if (elapsedTime > oneHour) {
     accountStore.logoutAccount();
@@ -69,7 +67,6 @@ onMounted(() => {
   
   if (accountStorage) {
     const parsedAccount = JSON.parse(accountStorage);
-    console.log(parsedAccount)
     accountStore.$patch(parsedAccount); // Utilisez uniquement les propriétés nécessaires
     checkLoginExpiry();
   }
