@@ -13,18 +13,18 @@ export const useAccountStore = defineStore("account", {
     loginAccount(data) {
       this.login = data.acc_id;
       this.fullname = data.acc_fullname;
-      this.last_login = data.acc_lastlogin;
+      this.last_login = new Date().toISOString(); // Met à jour last_login lors de la connexion
       this.logged = true;
       this.acc_validateacc = data.acc_validateacc;
       this.access = data.acc_access;
     },
-    setAccess(level){
+    setAccess(level) {
       this.access = level;
     },
-    setValidate(val){
+    setValidate(val) {
       this.acc_validateacc = val;
     },
-
+    
     logoutAccount() {
       this.login = null;
       this.fullname = null;
@@ -37,16 +37,21 @@ export const useAccountStore = defineStore("account", {
     isLogged() {
       return this.logged;
     },
-    isStudent(){
-      return this.access == 0;
+    isStudent() {
+      return this.access === 0;
     },
 
-    getAccessLevel(){
+    getAccessLevel() {
       return this.access;
     },
 
-    getAccountValidate(){
+    getAccountValidate() {
       return this.acc_validateacc;
+    },
+
+    // Nouvelle méthode pour mettre à jour last_login
+    updateLastLogin() {
+      this.last_login = new Date().toISOString(); // Met à jour avec le timestamp actuel
     }
   },
 });

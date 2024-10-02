@@ -17,32 +17,50 @@
 
 <script setup>
 
- 
+import HeaderComp from './components/utils/HeaderComp.vue';
+import FooterComp from './components/utils/FooterComp.vue';
+import AlertContainer from './components/utils/AlertContainer.vue';
+import { useAccountStore } from './stores/accountStore';
+import { onMounted } from 'vue';
 
-  import HeaderComp from './components/utils/HeaderComp.vue';
-  import FooterComp from './components/utils/FooterComp.vue';
-  import AlertContainer from './components/utils/AlertContainer.vue'
-  import { useAccountStore } from './stores/accountStore';
-  import { onMounted } from 'vue';
-
-  const accountStore = useAccountStore();
+const accountStore = useAccountStore();
 
 // Subscribe to store changes and save to localStorage
 accountStore.$subscribe((mutation, state) => {
-  localStorage.setItem("account", JSON.stringify(state));
+  const simplifiedState = {
+    last_login: state.last_login,
+    // Ajoutez ici d'autres propriétés que vous souhaitez stocker
+  };
+  localStorage.setItem("account", JSON.stringify(simplifiedState));
 });
 
-// Function to check if last_login is more than 24 hours ago
+// Function to check if last_login is more than the specified duration
 function checkLoginExpiry() {
   const currentTime = new Date().getTime();
   const lastLoginTime = new Date(accountStore.last_login).getTime();
 
-  // 24 hours in milliseconds
-  const hours24 = 24 * 60 * 60 * 1000;
+  // 1 hour in milliseconds
+  const oneHour = 24 * 60 * 1000; // Corrected to 3600000
 
-  if (currentTime - lastLoginTime > hours24) {
+  // Calculate the elapsed time
+  const elapsedTime = currentTime - lastLoginTime;
+
+  // Debugging logs
+  console.log("last: " + lastLoginTime);
+  console.log("current: " + currentTime);
+  console.log("elapsed: " + elapsedTime);
+  console.log("oneHour: " + oneHour);
+
+  if (elapsedTime > oneHour) {
     accountStore.logoutAccount();
     localStorage.removeItem('account'); // Optionally clear localStorage
+  } else {
+    // Calculate remaining time
+    const remainingTime = oneHour - elapsedTime;
+    const remainingMinutes = Math.floor(remainingTime / (60 * 1000));
+    const remainingSeconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
+
+    console.log(`Temps restant avant déconnexion: ${remainingMinutes} min ${remainingSeconds} s`);
   }
 }
 
@@ -50,11 +68,14 @@ onMounted(() => {
   const accountStorage = localStorage.getItem('account');
   
   if (accountStorage) {
-    accountStore.$patch(JSON.parse(accountStorage));
+    const parsedAccount = JSON.parse(accountStorage);
+    console.log(parsedAccount)
+    accountStore.$patch(parsedAccount); // Utilisez uniquement les propriétés nécessaires
     checkLoginExpiry();
   }
 });
 </script>
+
 
 <style>
 
