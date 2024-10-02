@@ -21,54 +21,52 @@ import HeaderComp from './components/utils/HeaderComp.vue';
 import FooterComp from './components/utils/FooterComp.vue';
 import AlertContainer from './components/utils/AlertContainer.vue';
 import { useAccountStore } from './stores/accountStore';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+import config from './config';
+import { request } from './composables/httpRequest';
 
 const accountStore = useAccountStore();
+const account = ref([])
 
-// Subscribe to store changes and save to localStorage
-accountStore.$subscribe((mutation, state) => {
-  const simplifiedState = {
-    last_login: state.last_login,
-    login: state.login,
-    fullname: state.fullname,
-    logged: state.logged,
-    acc_validateacc: state.acc_validateacc,
-    access: state.access
-  };
-  localStorage.setItem("account", JSON.stringify(simplifiedState));
-});
 
-// Function to check if last_login is more than the specified duration
-function checkLoginExpiry() {
-  const currentTime = new Date().getTime();
-  const lastLoginTime = new Date(accountStore.last_login).getTime();
+async function checkUserLogin() {
+  try {
+    const response = await fetch(config.apiUrl+'cas.php'+'?check_login=true');
+    if (response.ok) {
+      const data = await response.json();
+      const isLogged = data.logged_in; // Renommez cette variable pour correspondre à ce que vous voulez retourner
+      const userLogin = data.login; // Renommez cette variable pour correspondre à ce que vous voulez retourner
 
-  // 1 hour in milliseconds
-  const oneHour = 24 * 60 * 1000; // Corrected to 3600000
+      // Mettez à jour le store si nécessaire
+      if (isLogged) {
+        accountStore.$patch({ logged: true, login: userLogin });
+      }
 
-  // Calculate the elapsed time
-  const elapsedTime = currentTime - lastLoginTime;
-
-  if (elapsedTime > oneHour) {
-    accountStore.logoutAccount();
-    localStorage.removeItem('account'); // Optionally clear localStorage
-  } else {
-    // Calculate remaining time
-    const remainingTime = oneHour - elapsedTime;
-    const remainingMinutes = Math.floor(remainingTime / (60 * 1000));
-    const remainingSeconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
-
-    console.log(`Temps restant avant déconnexion: ${remainingMinutes} min ${remainingSeconds} s`);
+      return [isLogged, userLogin]; // Retournez un tableau avec isLogged et userLogin
+    } else {
+      console.error('Erreur lors de la vérification de l\'état de connexion.');
+      return [false, null]; // Si la réponse n'est pas OK, retournez false et null
+    }
+  } catch (error) {
+    console.error('Erreur réseau :', error);
+    return [false, null]; // Si une erreur se produit, retournez false et null
   }
 }
 
-onMounted(() => {
-  const accountStorage = localStorage.getItem('account');
-  
-  if (accountStorage) {
-    const parsedAccount = JSON.parse(accountStorage);
-    accountStore.$patch(parsedAccount); // Utilisez uniquement les propriétés nécessaires
-    checkLoginExpiry();
+
+onMounted(async () => {
+  const [isLogged, userLogin] = await checkUserLogin()
+  if(isLogged && userLogin != null){
+    await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+userLogin);
+    const patchedValues = {
+      login: account.value.acc_id,
+      fullname: account.value.acc_fullname,
+      logged: true,
+      last_login: new Date().toISOString(),
+      access: account.value.access ? account.value.access.acs_accounttype : 0,
+      acc_validateacc: account.acc_validateacc
+    }
+    accountStore.$patch(patchedValues); // Utilisez uniquement les propriétés nécessaires
   }
 });
 </script>
