@@ -51,7 +51,8 @@ async function loginUser() {
         addAlert('error', { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: error.message } });
         console.log(error);
         router.push({ name: 'Accueil' }); // Redirection vers l'accueil en cas d'erreur
-    }
+    } 
+    
 }
 </script>
 
