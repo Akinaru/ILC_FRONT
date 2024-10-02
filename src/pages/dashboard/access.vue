@@ -20,15 +20,22 @@
 
                                         <!-- Image -->
                                         <div class="avatar placeholder h-12 my-1 mr-2">
-                                            <div class="text-neutral-content w-12 rounded-full select-none bg-neutral" >
-                                                <span>{{ getInitials(acc.account?.acc_fullname) }}</span>
+                                            <div
+                                            v-if="acc.account" 
+                                            :style="{ backgroundColor: getColorFromName(acc.account.acc_fullname) }"
+                                            class="text-neutral-content w-12 rounded-full select-none"
+                                            >
+                                                <span>{{ getInitials(acc.account.acc_fullname) }}</span>
+                                            </div>
+                                            <div v-else class="text-neutral-content w-12 rounded-full select-none bg-neutral">
+                                                <span>ILC</span>  <!-- Affichage par défaut si acc.account est null -->
                                             </div>
                                         </div>
                                         <span class="font-bold mr-1">{{ acc.acc_id }}</span>
                                         <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
                                         <span v-else>(Nom introuvable)</span> 
                                     </div>
-                                    <span>Dernière connexion: <span v-if="acc.account && acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Inconnu</span></span>
+                                    <span>Dernière connexion: <span v-if="acc.account && acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Jamais</span></span>
                                 </div>
                                 <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(acc)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -347,7 +354,7 @@
 
     function getInitials(fullname) {
         if (!fullname) {
-            return 'Sys';
+            return 'ILC';
         }
         const names = fullname.split(' ');
         if (names.length === 1) {
@@ -355,6 +362,15 @@
         }
         return (names[0][0] + names[1][0]).toUpperCase();
     }
+    function getColorFromName(name) {
+        // Créez un hachage simple basé sur le nom
+        const hash = Array.from(name).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        
+        // Utilisez le hachage pour déterminer une couleur
+        const hue = hash % 360; // Choisissez une teinte entre 0 et 359
+        return `hsl(${hue}, 70%, 50%)`; // Utilisez HSL pour une couleur vibrante
+    }
+
 
     //ouvrir le modal de confirmation de suppression
     function openConfirmModal(acc) {
@@ -402,7 +418,23 @@
         await fetch();
         resetInput();
     }
-
+    async function removeAccess(acc_id){
+        closeModal();
+        const requestData = {
+            acc_id: acc_id,
+            acc_id_action: accountStore.login
+        }
+        await request('DELETE', true, response, config.apiUrl+'api/access/delete', requestData);
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression de l\'access pour '+acc_id+'.',
+                acc_id: accountStore.login,
+                access: 1
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
+        fetch();
+    }
     async function addAccepted(){
         if(newAccepted.value.login == ''){
             addAlert('error', {data:{error: 'Vous devez entrer un login.', message:'L\'ajout de l\'autorisation a été annulée.'}})
@@ -423,35 +455,6 @@
         await fetch();
         resetInput();
     }
-
-    async function removeAccess(acc_id){
-        closeModal();
-        const requestData = {
-            acc_id: acc_id,
-            acc_id_action: accountStore.login
-        }
-        await request('DELETE', true, response, config.apiUrl+'api/access/delete', requestData);
-        if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de l\'access pour '+acc_id+'.',
-                acc_id: accountStore.login,
-                access: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
-        }
-        fetch();
-    }
-
-    const filteredEtudiants = computed(() => {
-        if (!searchQuery.value) {
-            return accepted.value.accounts;
-        }
-        return accepted.value.accounts.filter(acc =>
-            acc.account?.acc_fullname?.toLowerCase().includes(searchQuery.value.toLowerCase())
-        );
-    });
-
-
     async function removeAccepted(acc_id){
         const requestData = {
             acc_id: acc_id,
@@ -467,6 +470,20 @@
         }
         fetch();
     }
+
+
+
+    const filteredEtudiants = computed(() => {
+        if (!searchQuery.value) {
+            return accepted.value.accounts;
+        }
+        return accepted.value.accounts.filter(acc =>
+            acc.account?.acc_fullname?.toLowerCase().includes(searchQuery.value.toLowerCase())
+        );
+    });
+
+
+
 
     function resetInput(){
         newAccess.value.login = '';

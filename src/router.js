@@ -2,6 +2,9 @@ import { useAccountStore } from './stores/accountStore';
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Index from './pages/index.vue'
 import { addAlert } from './composables/addAlert';
+import { ref } from 'vue';
+import config from './config';
+import { request } from './composables/httpRequest';
 
 const requireAuth = (to, from, next) => {
     const accountStore = useAccountStore();
@@ -208,12 +211,61 @@ const routes = [
     },
 ];
 
+
+const account = ref([])
+async function checkUserLogin() {
+    try {
+    const accountStore = useAccountStore();
+      const response = await fetch(config.apiUrl+'cas.php'+'?check_login=true');
+      if (response.ok) {
+        const data = await response.json();
+        const isLogged = data.logged_in; // Renommez cette variable pour correspondre à ce que vous voulez retourner
+        const userLogin = data.login; // Renommez cette variable pour correspondre à ce que vous voulez retourner
+  
+        // Mettez à jour le store si nécessaire
+        if (isLogged) {
+          accountStore.$patch({ logged: true, login: userLogin });
+        }
+  
+        return [isLogged, userLogin]; // Retournez un tableau avec isLogged et userLogin
+      } else {
+        console.error('Erreur lors de la vérification de l\'état de connexion.');
+        return [false, null]; // Si la réponse n'est pas OK, retournez false et null
+      }
+    } catch (error) {
+      console.error('Erreur réseau :', error);
+      return [false, null]; // Si une erreur se produit, retournez false et null
+    }
+  }
+
 const router = createRouter({
     history: createWebHashHistory(),
     routes,
     scrollBehavior(to, from, savedPosition) {
         return { top: 0 }
     },
+});
+
+router.isReady().then(async () => {
+    const accountStore = useAccountStore();
+    
+    try {
+        const [isLogged, userLogin] = await checkUserLogin()
+        if(isLogged && userLogin != null){
+          await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+userLogin);
+          const patchedValues = {
+            login: account.value.acc_id,
+            fullname: account.value.acc_fullname,
+            logged: true,
+            last_login: new Date().toISOString(),
+            access: account.value.access ? account.value.access.acs_accounttype : 0,
+            acc_validateacc: account.acc_validateacc
+          }
+          accountStore.$patch(patchedValues); // Utilisez uniquement les propriétés nécessaires
+        }
+    } catch (error) {
+        console.error('Erreur lors de la vérification de la connexion :', error);
+    }
 });
 
 router.beforeEach((to, from, next) => {
