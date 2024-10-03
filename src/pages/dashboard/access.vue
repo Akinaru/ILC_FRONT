@@ -559,19 +559,15 @@
         const requestData = csvData.map(item => ({
             acc_id: item.login,
         }));
-        for (const data of requestData) {
-            if (data && data.acc_id) {
-                
-                await request("POST", true, response, config.apiUrl+'api/acceptedaccount', data);
-                if (response.value && response.value.status === 201) {
-                    const requestDataAction = {
-                        act_description: `Ajout de l'accès pour ${data.acc_id}.`,
-                        acc_id: accountStore.login,
-                        access: 1, 
-                    };
-                    await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
-                }
-            }
+
+        await request("POST", true, response, config.apiUrl+'api/acceptedaccount/import', requestData);
+        if (response.value && response.value.status === 201) {
+            const requestDataAction = {
+                act_description: `Importation de ${response.value.added_accounts.length} étudiants.`,
+                acc_id: accountStore.login,
+                access: 1, 
+            };
+            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
         }
         
         fetch();
