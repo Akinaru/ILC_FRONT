@@ -35,7 +35,7 @@ async function authRegisterAccount(login, router) {
     // Récupération des informations de l'utilisateur depuis le LDAP
     const decomposedInfo = ref([]);
     const response = ref([]);
-    await request('GET', false, response, 'http://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
+    await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
     decomposedInfo.value = decomposeDN(login, response.value[0].dn);
 
     // Création de l'utilisateur dans la base

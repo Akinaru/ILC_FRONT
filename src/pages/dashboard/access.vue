@@ -333,9 +333,11 @@
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { addAlert } from '../../composables/addAlert';
     import ImportComp from '../../components/impexp/ImportComp.vue';
+    import { decomposeDN } from '../../composables/destructLDAP';
 
     const accountStore = useAccountStore();
     const access = ref([]);
+    const account = ref([]);
     const accepted = ref([]);
     const newAccess = ref({ login: '', access: ''});
     const newAccepted = ref({ login: ''});
@@ -406,6 +408,22 @@
             acc_id: newAccess.value.login,
             acs_accounttype: newAccess.value.access,
             }; 
+
+        const accountExists = account.value.accounts.some(acc => acc.acc_id === requestData.acc_id);
+        
+        if(!accountExists) {
+            const decomposedInfo = ref([]);
+            await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + requestData.acc_id);
+            decomposedInfo.value = decomposeDN(requestData.acc_id, response.value[0].dn);
+
+            // Création de l'utilisateur dans la base
+            var requestDataAccount = {
+                acc_id: decomposedInfo.value.login,
+                acc_fullname: decomposedInfo.value.fullname,
+            };
+            await request("POST", false, response, config.apiUrl+'api/account', requestDataAccount);
+        }
+
         await request("POST", true, response, config.apiUrl+'api/access', requestData);
         if(response.value.status == 201){
             const requestDataAction = {
@@ -546,6 +564,7 @@
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
         await request('GET', false, accepted, config.apiUrl+'api/acceptedaccount');
         await request('GET', false, components, config.apiUrl+'api/component');
+        await request('GET', false, account, config.apiUrl+'api/account');
         isLoaded.value = true;
         if(access.value.access && access.value.access[2]){
             showForms.value = Array(access.value.access[2].length).fill(false);

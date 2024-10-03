@@ -107,7 +107,7 @@
                                     <div class="flex items-center flex-wrap">
                                     <div v-if="accord.departments?.length > 0" class="flex flex-col md:flex-row items-center  h-full z-0">
                                         <div v-for="(dept, index) in accord.departments" :key="index">
-                                            <p v-if="dept.pivot?.deptagree_valide" class=" md:p-3 min-w-11 p-1 m-1 font-bold md:text-xl text-xs text-center select-none z-0" :style="{ backgroundColor: dept.dept_color }">{{ dept.dept_shortname }}</p>
+                                            <p v-if="dept.pivot?.deptagree_valide" class="transition-all duration-100 ease-in-out xl:p-3 min-w-11 p-1 m-1 font-bold xl:text-xl text-xs text-center select-none z-0" :style="{ backgroundColor: dept.dept_color }">{{ dept.dept_shortname }}</p>
                                         </div>
                                     </div>
                                     <div v-else class="hidden md:block">
