@@ -308,7 +308,7 @@
                             </tr>
                             <!-- row 4 -->
                             <tr>
-                                <th>martmate</th>
+                                <th>taillezb</th>
                             </tr>
                             </tbody>
                         </table>
@@ -414,14 +414,16 @@
         if(!accountExists) {
             const decomposedInfo = ref([]);
             await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + requestData.acc_id);
-            decomposedInfo.value = decomposeDN(requestData.acc_id, response.value[0].dn);
+            if(!response.value.count == 0){
+                decomposedInfo.value = decomposeDN(requestData.acc_id, response.value[0].dn);
 
-            // Création de l'utilisateur dans la base
-            var requestDataAccount = {
-                acc_id: decomposedInfo.value.login,
-                acc_fullname: decomposedInfo.value.fullname,
-            };
-            await request("POST", false, response, config.apiUrl+'api/account', requestDataAccount);
+                // Création de l'utilisateur dans la base
+                var requestDataAccount = {
+                    acc_id: decomposedInfo.value.login,
+                    acc_fullname: decomposedInfo.value.fullname,
+                };
+                await request("POST", false, response, config.apiUrl+'api/account', requestDataAccount);
+            }
         }
 
         await request("POST", true, response, config.apiUrl+'api/access', requestData);

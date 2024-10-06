@@ -79,7 +79,7 @@
                             <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
                                 <option disabled selected>Selectionnez une université</option>
                                 <option value="addNew"> + Créer une université</option>
-                                <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - <span v-if="univ.partnercountry && univ.partnercountry.parco_id">{{ univ.partnercountry.parco_name }}</span>)</option>
+                                <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">(<span v-if="univ.partnercountry && univ.partnercountry.parco_id">{{ univ.partnercountry.parco_name }}</span>) {{ univ.univ_name }} à {{ univ.univ_city }}</option>
                             </select>
                             <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
                                 <div class="label">
@@ -793,6 +793,24 @@
         await request('GET', false, universites, config.apiUrl+'api/university');
         await request('GET', false, departments, config.apiUrl+'api/department');
         await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry');
+        universites.value.sort((a, b) => {
+        // Comparer parco_name en premier
+        if (a.partnercountry.parco_name < b.partnercountry.parco_name) {
+            return -1;
+        }
+        if (a.partnercountry.parco_name > b.partnercountry.parco_name) {
+            return 1;
+        }
+        // Si parco_name est identique, comparer par univ_name
+        if (a.univ_name < b.univ_name) {
+            return -1;
+        }
+        if (a.univ_name > b.univ_name) {
+            return 1;
+        }
+
+        return 0;
+        });
         isLoaded.value = true;
 
         await nextTick()
