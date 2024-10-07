@@ -136,9 +136,13 @@
                 <div class="flex flex-wrap gap-4 items-center justify-center py-5">
                     <div v-for="(etu, index) in filteredEtudiants" :key="index" v-if="filteredEtudiants && filteredEtudiants.length > 0" class="">
                         <template class="w-full md:w-1/3 lg:w-1/4 py-2" v-if="etu.acc_id">
-                            <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}">
-                                <div class="bg-base-300 shadow-lg rounded-lg p-4 hover:scale-105 transform transition-transform duration-200 h-full flex flex-col"
+                                
+                                <div class="bg-base-300 shadow-lg rounded-lg p-4 transform transition-transform duration-200 h-full flex flex-col"
                                     :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">
+                                    <!-- Bouton de suppression -->
+                                    <button class="hover:opacity-70 p-3 hover:cursor-pointer absolute top-0 right-0 hover:scale-120 scale-100 transition-all duration-100 ease-in-out" @click="openConfirmModal(etu)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
                                     <div class="flex-1">
                                         <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ etu.acc_fullname }}</h5>
                                         <h6 class="text-gray-600 mb-2 truncate">
@@ -154,8 +158,11 @@
                                             <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}
                                         </p>
                                     </div>
+                                <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}" class="mt-3">
+                                    <button class="btn w-full">Voir le profil</button>
+                                </RouterLink>
+
                                 </div>
-                            </RouterLink>
                         </template>
                     </div>
 
@@ -163,6 +170,41 @@
                         <p>Aucun résultat</p>
                     </div>
                 </div>
+                <!-- Modal de confirmation suppression -->
+                <dialog id="confirmModal" ref="confirmModal" class="modal">
+                    <div class="modal-box">
+                        <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                        <div class="py-3">
+                            <p>Confirmez vous la supression de l'étudiant:</p>
+                            <p>Cela entraînera la suppression de ses vœux et de son emplacement dans l'arbitrage.</p>
+                            <div class="w-full py-2">
+                                
+                                    <div class="bg-base-300 shadow-lg rounded-lg p-4 h-full flex flex-col"
+                                        :style="{ borderBottom: `4px solid ${confirmDeleteEtu.department ? confirmDeleteEtu.department.dept_color : '#aaaaaa'}` }">
+                                        <div class="flex-1">
+                                            <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ confirmDeleteEtu.acc_fullname }}</h5>
+                                            <h6 class="text-gray-600 mb-2 truncate">
+                                                {{ confirmDeleteEtu.acc_id }} 
+                                                <span v-if="confirmDeleteEtu.department" :style="{color: confirmDeleteEtu.department.dept_color}">({{ confirmDeleteEtu.department.dept_shortname }})</span>
+                                                <span v-else>(Aucun département)</span>
+                                            </h6>
+                                        </div>
+                                        <div class="mt-4">
+                                            <p class="text-sm text-gray-400">
+                                                <strong>Nombre de vœux:</strong> {{ confirmDeleteEtu.wishes ? confirmDeleteEtu.wishes.count : 0 }}<br>
+                                                <strong>Documents ajouté(s):</strong> {{ confirmDeleteEtu.documents?.count || 0 }}/{{ confirmDeleteEtu.documents?.countmax }}<br>
+                                                <strong>Dernière connexion:</strong> {{ formatDate(confirmDeleteEtu.acc_lastlogin) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    <div class="modal-action">
+                        <button class="btn btn-error" @click="closeModal">Annuler</button>
+                        <button class="btn btn-success" @click="deleteEtu(confirmDeleteEtu.acc_id, confirmDeleteEtu.acc_fullname, confirmDeleteEtu.department?.dept_shortname || 'Aucun département')">Confirmer</button>
+                    </div>
+                    </div>
+                </dialog>
             </div>
         </div>
         <div v-else>
@@ -185,6 +227,8 @@ const account = ref([]);
 const components = ref([]);
 const isLoaded = ref(false);
 const searchQuery = ref('');
+const confirmDeleteEtu = ref([])
+const response = ref([])
 
 const selectedDepartment = ref([]);
 const selectedVoeux = ref([]);
@@ -239,6 +283,34 @@ async function fetch() {
     await request('GET', false, components, config.apiUrl + 'api/component');
     isLoaded.value = true;
 }
+
+//ouvrir le modal de confirmation de suppression
+function openConfirmModal(etu) {
+    
+    confirmDeleteEtu.value = etu;
+    const modal = document.getElementById('confirmModal')
+    modal.showModal()
+}
+//Fermer le modal de confirmation de suppression
+function closeModal() {
+    const modal = document.getElementById('confirmModal')
+    modal.close()
+}
+
+    // Supprimer un étudiant
+    async function deleteEtu(acc_id, acc_fullname, dept_shortname){
+        closeModal();
+        await request('DELETE', true, response, config.apiUrl+'api/account/deletebyid/'+acc_id);
+        if(response.value.status == 202){
+            const requestDataAction = {
+                act_description: 'Suppression de l\'étudiant '+acc_fullname+' (' + dept_shortname + ').',
+                acc_id: accountStore.login,
+                acc_id: acc_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
+        fetch();
+    }
 
 function formatDate(date) {
         const d = new Date(date);
