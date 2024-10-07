@@ -1,8 +1,6 @@
 <template>
     <div class="m-5 flex justify-center items-center flex-col pt-72">
-        <p class="text-lg font-bold">Connexion</p>
-        <p v-if="login">Login: {{ login }}</p>
-        <p v-if="auth">Auth: {{ auth }}</p>
+        <p class="text-2xl font-bold">Redirection en cours...</p>
     </div>
 </template>
 
@@ -13,27 +11,37 @@ import { useRouter } from 'vue-router';
 import { request } from '../composables/httpRequest';
 import config from '../config';
 import { addAlert } from '../composables/addAlert';
+import { useAccountStore } from '../stores/accountStore';
 
 const router = useRouter();
 const login = ref(null);
 const auth = ref(null);
 const acceptedResponse = ref([])
 const accessResponse = ref([])
+const accountStore = useAccountStore();
 
 onMounted(() => {
+
     // Récupérer les valeurs de localStorage
     login.value = localStorage.getItem('login');
     auth.value = localStorage.getItem('auth');
     if(auth.value == 'success'){
-
         loginUser();
+        
+    }else{
+        if(accountStore.isLogged()){
+            router.push({ name: 'Dashboard' });
+        }else{
+            router.push({ name: 'Accueil' });
+        }
     }
 
 });
 
 async function loginUser() {
+
     try {
-        // Effectue des requêtes pour vérifier si le login existe dans acceptedaccount ou access
+        
         await request('GET', false, acceptedResponse, config.apiUrl + 'api/acceptedaccount/getbylogin/' + login.value);
         await request('GET', false, accessResponse, config.apiUrl + 'api/access/getbylogin/' + login.value);
 
@@ -45,15 +53,14 @@ async function loginUser() {
             await authLogAccount(login.value, router);
         } else {
             addAlert('error', { data: { error: 'Vous n\'êtes pas autorisé à accéder à la partie connectée.', message: 'Veuillez vous renseigner auprès du service ILC.' } });
-            router.push({ name: 'Accueil' }); // Redirection vers l'accueil
+            router.push({ name: 'Accueil' });
         }
     } catch (error) {
         addAlert('error', { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: error.message } });
-        console.log(error);
-        router.push({ name: 'Accueil' }); // Redirection vers l'accueil en cas d'erreur
+        router.push({ name: 'Accueil' });
     } 
-    
 }
+
 </script>
 
 <style scoped>

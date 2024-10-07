@@ -37,7 +37,6 @@ async function authRegisterAccount(login, router) {
     const response = ref([]);
     await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
     decomposedInfo.value = decomposeDN(login, response.value[0].dn);
-
     // Création de l'utilisateur dans la base
     var requestData = {
         acc_id: decomposedInfo.value.login,

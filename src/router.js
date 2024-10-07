@@ -30,14 +30,6 @@ function checkMultipleAccess(...levels) {
     };
   }
 
-const isAlreadyLogin = (to, from, next) => {
-    const accountStore = useAccountStore();
-    if(accountStore.isLogged()){
-        next({name: 'Dashboard'})
-    }else{
-        next();
-    }
-}
 
 const isAlreadyComplete = (to, from, next) => {
     const accountStore = useAccountStore();
@@ -52,7 +44,7 @@ const routes = [
     { path: '/', name: 'Accueil', component: Index, meta: { title: 'Accueil', requiresAuth: false } },
     { path: '/not-found', name: 'NotFound', component: () => import('./pages/notfound.vue'), meta: { title: 'Not Found', requiresAuth: false } },
     { path: '/:pathMatch(.*)*', redirect: '/not-found' },
-    { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), beforeEnter: isAlreadyLogin, meta: { title: 'Login', requiresAuth: false } },
+    { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), meta: { title: 'Login', requiresAuth: false } },
     { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete, meta: { title: 'Compléter Dossier', requiresAuth: true } },
     { path: '/articles', name: 'Articles', component: () => import('./pages/articles.vue'), meta: { title: 'Liste des articles', requiresAuth: true } },
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: { title: route => `Article n° ${route.params.art_id}`, requiresAuth: true } },
@@ -222,37 +214,46 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const accountStore = useAccountStore();
-    
-    // Vérifiez si l'utilisateur est connecté
+
     const [isLogged, userLogin] = await checkUserLogin();
 
     // Si la route nécessite une authentification
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (!isLogged) {
-            next({ name: 'Accueil' });
             addAlert('error', {
                 data: { error: 'Vous devez être connecté pour accéder à cette page.' }
             });
-            return; // Assurez-vous de sortir de la fonction
+            return next({ name: 'Accueil' });
         } else {
             // Mettez à jour le store si l'utilisateur est connecté
             if (userLogin != null) {
-                await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + userLogin);
-                
-                const patchedValues = {
-                    login: account.value.acc_id,
-                    fullname: account.value.acc_fullname,
-                    logged: true,
-                    last_login: new Date().toISOString(),
-                    access: account.value.access ? account.value.access.acs_accounttype : 0,
-                    acc_validateacc: account.value.acc_validateacc
-                };
-                accountStore.$patch(patchedValues);
-                
-                // Vérifiez la validation du compte ici
-                if (accountStore.getAccessLevel() === 0 && !accountStore.getAccountValidate()) {
-                    next({ name: 'ComplDossier' });
-                    return; // Assurez-vous de sortir de la fonction
+                try {
+                    await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + userLogin);
+
+                    if (account.value) {
+                        const patchedValues = {
+                            login: account.value.acc_id,
+                            fullname: account.value.acc_fullname,
+                            logged: true,
+                            last_login: new Date().toISOString(),
+                            access: account.value.access ? account.value.access.acs_accounttype : 0,
+                            acc_validateacc: account.value.acc_validateacc
+                        };
+                        accountStore.$patch(patchedValues);
+
+                        // Vérifiez la validation du compte ici
+                        const accessLevel = accountStore.getAccessLevel();
+                        const isValidated = accountStore.getAccountValidate();
+
+                        if (accessLevel === 0 && !isValidated) {
+                            if (to.name !== 'ComplDossier') {
+                                return next({ name: 'ComplDossier' });
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.log("Erreur lors de la récupération du compte:", error);
+                    return next({ name: 'Accueil' });
                 }
             }
         }
@@ -264,5 +265,6 @@ router.beforeEach(async (to, from, next) => {
     
     next();
 });
+
 
 export default router;
