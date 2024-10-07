@@ -141,7 +141,6 @@ watch(fullname, async (newVal) => {
 
 watch(logged, async (newVal) => {
   isUserLoggedIn.value = logged.value;
-  console.log("value de logged:"+logged.value)
 });
 
 watch(acc_validateacc, async (newVal) => {
