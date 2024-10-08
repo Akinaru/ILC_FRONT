@@ -35,29 +35,36 @@ async function authRegisterAccount(login, router) {
     // Récupération des informations de l'utilisateur depuis le LDAP
     const decomposedInfo = ref([]);
     const response = ref([]);
-    await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
-    decomposedInfo.value = decomposeDN(login, response.value[0].dn);
-    // Création de l'utilisateur dans la base
-    var requestData = {
-        acc_id: decomposedInfo.value.login,
-        acc_fullname: decomposedInfo.value.fullname,
-    };
-    await request('POST', false, response, config.apiUrl + 'api/account', requestData);
 
-    
-    if (response.value.status && response.value.status == 201) {
-        requestData = {
-            acc_id: response.value.account.acc_id,
-            acc_fullname: response.value.account.acc_fullname,
-            acc_lastlogin: response.value.account.acc_lastlogin,
-            acc_validateacc: response.value.account.acc_validateacc,
-            acc_access: response.value.access
+    try {
+        await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
+        decomposedInfo.value = decomposeDN(login, response.value[0].dn);
+
+        // Création de l'utilisateur dans la base
+        const requestData = {
+            acc_id: decomposedInfo.value.login,
+            acc_fullname: decomposedInfo.value.fullname,
         };
+        await request('POST', false, response, config.apiUrl + 'api/account', requestData);
 
-        authStoreUser(requestData);
-        router.push({ name: 'Dashboard' });
+        if (response.value.status && response.value.status === 201) {
+            const userData = {
+                acc_id: response.value.account.acc_id,
+                acc_fullname: response.value.account.acc_fullname,
+                acc_lastlogin: response.value.account.acc_lastlogin,
+                acc_validateacc: response.value.account.acc_validateacc,
+                acc_access: response.value.access
+            };
+
+            authStoreUser(userData);
+            router.push({ name: 'Dashboard' });
+        }
+    } catch (error) {
+        console.error("Une erreur est survenue :", error);
+        // Vous pouvez également afficher un message d'erreur à l'utilisateur ici
     }
 }
+
 
 function authStoreUser(data) {
     const accountStore = useAccountStore();
