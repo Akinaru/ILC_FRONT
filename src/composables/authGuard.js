@@ -3,11 +3,12 @@ import { decomposeDN } from '../composables/destructLDAP';
 import { ref } from 'vue';
 import { useAccountStore } from "../stores/accountStore";
 import config from '../config';
+import { addAlert } from '../composables/addAlert';
 
 export async function authLogAccount(login, router) {
     const response = ref([]);
     await request('GET', false, response, config.apiUrl + 'api/account/getbylogin/' + login);
-    if (response.value.response && response.value.response.status == 404) {
+    if (response.value && response.value.status == 404) {
         await authRegisterAccount(login, router);
     } else {
         await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
@@ -38,6 +39,11 @@ async function authRegisterAccount(login, router) {
 
     try {
         await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
+        if(!response.value.count || response.value.count == 0 ){
+            addAlert('error', { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: "Impossible de récupérer les informations de l'utilisateur." } });
+            router.push({ name: 'Accueil' });
+            return
+        }
         decomposedInfo.value = decomposeDN(login, response.value[0].dn);
 
         // Création de l'utilisateur dans la base
@@ -60,8 +66,12 @@ async function authRegisterAccount(login, router) {
             router.push({ name: 'Dashboard' });
         }
     } catch (error) {
-        console.error("Une erreur est survenue :", error);
+        console.error("Une erreur est survenue (register_acc_auth):", error);
         // Vous pouvez également afficher un message d'erreur à l'utilisateur ici
+        addAlert('error', { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: error.message } });
+        router.push({ name: 'Accueil' });
+        return
+
     }
 }
 
