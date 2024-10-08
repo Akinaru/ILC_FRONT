@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isLoaded" class="min-h-screen">
+    <div v-if="isLoaded">
         <div v-if="accord && accord.agreement?.agree_id">
             <div class="flex justify-end pb-20">
                 <!-- Favoris -->
@@ -36,7 +36,7 @@
                 </div>
 
                 <!-- Informations -->
-                <div class="flex items-center flex-col py-10">
+                <div class="flex items-center flex-col my-20">
                     <p><span class="font-bold ">{{ accord.agreement?.university?.univ_name || 'Université indisponible' }}</span> à {{ accord.agreement?.university?.univ_city || 'Ville indisponible' }} en ({{ accord.agreement?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
 
                     <!-- Departement -->

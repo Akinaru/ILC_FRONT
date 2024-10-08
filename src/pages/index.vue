@@ -85,54 +85,58 @@
                         <div v-if="filteredAccords && filteredAccords.length > 0">
 
                             <div class="z-10">
-                                <div v-for="(accord, index) in paginatedAccords" :key="index" class="bg-base-300 mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden transition-all hover:scale-102">
-                                <RouterLink :to="{ name: 'Accord', params: { agree_id: accord.agree_id }}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
-                                    <div class="flex items-center flex-wrap">
-                                        <span class="relative inline-block">
-                                            <!-- Drapeau -->
-                                            <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
+                                <div v-for="(accord, index) in paginatedAccords" :key="index" class=" mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden transition-all hover:scale-102">
+                                    <div class="w-full bg-base-300">
 
-                                            <!-- Point d'interrogation si pas de drapeau -->
-                                            <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                                ?
-                                            </span>
+                                        <RouterLink :to="{ name: 'Accord', params: { agree_id: accord.agree_id }}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
+                                            <div class="flex items-center flex-wrap">
+                                                <span class="relative inline-block">
+                                                    <!-- Drapeau -->
+                                                    <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
+
+                                                    <!-- Point d'interrogation si pas de drapeau -->
+                                                    <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                        ?
+                                                    </span>
+                                                </span>
+                                            <div class="md:ml-2 ml-1 flex flex-col">
+                                                <p>
+                                                <span class="font-bold">{{ accord.university?.univ_name || 'Université indisponible' }}</span> à {{ accord.university?.univ_city || 'Ville indisponible' }} ({{accord.partnercountry?.parco_name || 'Pays indisponible' }})
+                                                </p>
+                                                <p>[{{ accord.isced?.isc_code || 'Code ISCED indisponible' }} {{ accord.isced?.isc_name || 'Nom ISCED indisponible' }}] pour {{ accord.component?.comp_name || 'Composante indisponible' }}</p>
+                                            </div>
+                                            </div>
+                                            <div class="flex items-center flex-wrap">
+                                            <div v-if="accord.departments?.length > 0" class="flex flex-col md:flex-row items-center  h-full z-0">
+                                                <div v-for="(dept, index) in accord.departments" :key="index">
+                                                    <p v-if="dept.pivot?.deptagree_valide" class="transition-all duration-100 ease-in-out xl:p-3 min-w-11 p-1 m-1 font-bold text-xs text-center select-none z-0" :style="{ backgroundColor: dept.dept_color }">{{ dept.dept_shortname }}</p>
+                                                </div>
+                                            </div>
+                                            <div v-else class="hidden md:block">
+                                                <p class="p-3 m-1">Aucun département</p>
+                                            </div>
+                                            </div>
+                                            <span class="hidden xs:absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
+                                        </RouterLink>
+                                        <span v-if="accountStore.isLogged() && accountStore.isStudent()">
+                                            <div @click="toggleFavoris(accord.agree_id)" class="group md:p-5 p-2 flex items-center justify-center  hover:cursor-pointer" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
+                                                <svg 
+                                                    class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" 
+                                                    viewBox="0 0 24 24" 
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path 
+                                                        :class="{'fill-current': isFavorited(accord.agree_id), 'group-hover:fill-current': !isFavorited(accord.agree_id)}" 
+                                                        :fill="isFavorited(accord.agree_id) ? 'currentColor' : 'none'" 
+                                                        stroke="currentColor" 
+                                                        stroke-width="2" 
+                                                        d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z" />
+                                                </svg>
+                                            </div>
+
+
                                         </span>
-                                    <div class="md:ml-2 ml-1 flex flex-col">
-                                        <p>
-                                        <span class="font-bold">{{ accord.university?.univ_name || 'Université indisponible' }}</span> à {{ accord.university?.univ_city || 'Ville indisponible' }} ({{accord.partnercountry?.parco_name || 'Pays indisponible' }})
-                                        </p>
-                                        <p>[{{ accord.isced?.isc_code || 'Code ISCED indisponible' }} {{ accord.isced?.isc_name || 'Nom ISCED indisponible' }}] pour {{ accord.component?.comp_name || 'Composante indisponible' }}</p>
-                                    </div>
-                                    </div>
-                                    <div class="flex items-center flex-wrap">
-                                    <div v-if="accord.departments?.length > 0" class="flex flex-col md:flex-row items-center  h-full z-0">
-                                        <div v-for="(dept, index) in accord.departments" :key="index">
-                                            <p v-if="dept.pivot?.deptagree_valide" class="transition-all duration-100 ease-in-out xl:p-3 min-w-11 p-1 m-1 font-bold text-xs text-center select-none z-0" :style="{ backgroundColor: dept.dept_color }">{{ dept.dept_shortname }}</p>
-                                        </div>
-                                    </div>
-                                    <div v-else class="hidden md:block">
-                                        <p class="p-3 m-1">Aucun département</p>
-                                    </div>
-                                    </div>
-                                    <span class="hidden xs:absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75">Voir plus</span>
-                                </RouterLink>
-                                <span v-if="accountStore.isLogged() && accountStore.isStudent()">
-                                    <div @click="toggleFavoris(accord.agree_id)" class="group md:p-5 p-2 flex items-center justify-center  hover:cursor-pointer" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
-                                        <svg 
-                                            class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" 
-                                            viewBox="0 0 24 24" 
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path 
-                                                :class="{'fill-current': isFavorited(accord.agree_id), 'group-hover:fill-current': !isFavorited(accord.agree_id)}" 
-                                                :fill="isFavorited(accord.agree_id) ? 'currentColor' : 'none'" 
-                                                stroke="currentColor" 
-                                                stroke-width="2" 
-                                                d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z" />
-                                        </svg>
                                     </div>
 
-
-                                </span>
                                 </div>
                                 <div class="flex items-center justify-center">
                                     <button v-if="canShowMore" @click="showMore" class="btn btn-primary mt-4 w-52 hover:opacity-80 transition-all hover:scale-105" >Voir plus d'accords</button>
