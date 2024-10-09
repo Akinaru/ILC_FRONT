@@ -838,10 +838,16 @@
     // Liste dynamique des accords
     const filteredAccords = computed(() => {
         return accords.value.agreements.filter(accord => {
-            const matchesDepartments = selectedDepartments.value.length === 0 || accord.departments.some(dept => selectedDepartments.value.includes(dept.dept_shortname));
-            const matchesCountries = selectedCountries.value.length === 0 || selectedCountries.value.includes(accord.partnercountry.parco_name);
+            const matchesDepartments = selectedDepartments.value.length === 0 || 
+                accord.departments.some(dept => selectedDepartments.value.includes(dept.dept_shortname));
             
-            return matchesDepartments && matchesCountries;
+            const matchesCountries = selectedCountries.value.length === 0 || 
+                selectedCountries.value.includes(accord.partnercountry.parco_name);
+
+            const matchesComponents = selectedComponent.value.length === 0 || 
+                (accord.component && selectedComponent.value.includes(accord.component.comp_name)); // Filtre composante
+
+            return matchesDepartments && matchesCountries && matchesComponents; // Ajout du filtre composante
         });
     });
 
