@@ -238,7 +238,7 @@
 
 <script setup>
     import { onMounted } from 'vue';
-    import { ref, computed } from 'vue';
+    import { ref, computed, watch } from 'vue';
     import { request } from '../composables/httpRequest';
     import config from '../config';
 
@@ -267,6 +267,29 @@
     const selectedDepartment = ref([]);
     const selectedComponent = ref([]);
     const selectedCountries = ref([]);
+    // Fonction pour charger les filtres depuis sessionStorage
+    function loadFilters() {
+        const savedDepartments = sessionStorage.getItem('selectedDepartment');
+        const savedComponents = sessionStorage.getItem('selectedComponent');
+        const savedCountries = sessionStorage.getItem('selectedCountries');
+
+        if (savedDepartments) {
+            selectedDepartment.value = JSON.parse(savedDepartments);
+        }
+        if (savedComponents) {
+            selectedComponent.value = JSON.parse(savedComponents);
+        }
+        if (savedCountries) {
+            selectedCountries.value = JSON.parse(savedCountries);
+        }
+    }
+
+    // Fonction pour sauvegarder les filtres dans sessionStorage
+    function saveFilters() {
+        sessionStorage.setItem('selectedDepartment', JSON.stringify(selectedDepartment.value));
+        sessionStorage.setItem('selectedComponent', JSON.stringify(selectedComponent.value));
+        sessionStorage.setItem('selectedCountries', JSON.stringify(selectedCountries.value));
+    }
 
     const isOpen = ref({
         pays: false,
@@ -300,21 +323,26 @@
             // Gestion des valeurs nulles ou undefined
             const departments = accord.departments || [];
             const partnercountry = accord.partnercountry || {};
+            const component = accord.component || {};
             const deptShortnames = selectedDepartment.value || [];
             const countryNames = selectedCountries.value || [];
+            const componentNames = selectedComponent.value || []; // Ajout du filtre composante
 
-            // Les accords doivent être filtrés en fonction des départements et des pays sélectionnés
+            // Les accords doivent être filtrés en fonction des départements, pays et composantes sélectionnés
             const matchesDepartments = deptShortnames.length === 0 || 
                 departments.some(dept => dept && dept.dept_shortname && deptShortnames.includes(dept.dept_shortname));
             
             const matchesCountries = countryNames.length === 0 || 
                 (partnercountry && partnercountry.parco_name && countryNames.includes(partnercountry.parco_name));
 
+            const matchesComponents = componentNames.length === 0 || 
+                (component && component.comp_name && componentNames.includes(component.comp_name)); // Filtre composante
+
             // Assurez-vous que departments est un tableau et vérifiez sa longueur
             const hasDepartments = Array.isArray(departments) && departments.length > 0;
 
             // Retourner les accords qui correspondent aux filtres ou qui ont des départements
-            return matchesDepartments && matchesCountries && (hasDepartments || deptShortnames.length === 0);
+            return matchesDepartments && matchesCountries && matchesComponents && (hasDepartments || deptShortnames.length === 0);
         });
     });
 
@@ -381,9 +409,16 @@
     function deselectAllComp() {
         selectedComponent.value = [];
     }
+    // Surveiller les changements et sauvegarder les filtres
+    watch(selectedDepartment, saveFilters);
+    watch(selectedComponent, saveFilters);
+    watch(selectedCountries, saveFilters);
+
     onMounted(() => {
         fetchAll();
         updateIsOpenState();
+        loadFilters();
     });
+
 
 </script>
