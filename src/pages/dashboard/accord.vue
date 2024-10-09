@@ -251,17 +251,16 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="flex">
-                                    <p>
-                                        Lien: <span v-if="!accord.agree_lien">Aucun</span>
-                                    </p>
-                                    <a v-if="accord.agree_lien" :href="accord.agree_lien" class="pt-5 hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">
+
+                                <div class="flex mt-3">
+                                    <a v-if="accord.agree_lien" :href="accord.agree_lien" class="hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">
                                         Cliquez ici pour accéder au site de l'université
                                     </a>
                                 </div>
+
                                 <div>
-                                    <p>Description: <span v-if="!accord.agree_description">Aucune</span></p>
-                                    <pre v-if="accord.agree_description">{{ accord.agree_description }}</pre>
+                                    <p>Description: <span v-if="accord.agree_description">{{ accord.agree_description }}</span><span v-if="!accord.agree_description">Aucune</span></p>
+                                    
                                 </div>
                                 
                                 <!-- Liste des départements d'un accord -->
@@ -269,6 +268,7 @@
                                 <div class="flex items-center justify-start">
                                     <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
                                         <div class="w-fit p-2 flex items-center justify-center mx-1 tooltip select-none font-bold"
+                                            :class="{ 'opacity-50': dept.pivot?.deptagree_valide === 0 }"
                                             :data-tip="(dept.pivot?.deptagree_valide === 0 ? '(INVISIBLE) ' : '') + 'Département ' + (dept.dept_name || 'Nom département non disponible')"
                                             :style="{ backgroundColor: dept.dept_color || '#FFFFFF' }">
                                             <p>
@@ -319,19 +319,17 @@
                                         <div class="flex items-center justify-start *:m-1">
                                             <select class="select select-bordered w-full max-w-xs" :id="'form_dept_select_'+accord.agree_id" v-model="selectedDepartment[accord.agree_id]">
                                                 <option disabled selected>Selectionnez un département</option>
-                                                <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id">
-                                                    {{ dept.dept_shortname || 'Abréviation département non disponible' }} ({{ dept.component?.comp_name || 'Nom composante non disponible' }})
+                                                <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id" :style="{ color: dept.dept_color + ' !important' }">
+                                                    ({{ dept.component?.comp_name || 'Nom composante non disponible' }}) {{ dept.dept_shortname || 'Abréviation département non disponible' }}
                                                 </option>
                                             </select>
 
                                             <div class="flex items-center justify-center">
                                                 <button class="btn btn-primary" type="submit">Ajouter le département</button>
                                             </div>
-                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="showForm(accord.agree_id)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                </svg>
-                                            </button>
+                                            <div class="flex items-center justify-center" @click="showForm(accord.agree_id)">
+                                                <button class="btn btn-neutral">Annuler</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -784,7 +782,7 @@
         await fetchAll();
     }
 
-
+    //Récupération des données et tri des universités par ordre alphabétique (Nom pays puis Nom univ)
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accords, config.apiUrl+'api/agreement');
@@ -821,9 +819,10 @@
     }
 
 
+    // Supprimer un département d'un accord
     async function removeDeptFromAgreement(agree_id, dept_id){
         await request('DELETE', true, response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
-        fetchAll();
+        await request('GET', false, accords, config.apiUrl+'api/agreement');
     }
 
     // Supprimer tous les accords
@@ -855,15 +854,24 @@
         }
         fetchAll();
     }
-    function filteredDepartments(accord) {
-        if(accord.departments.length > 0){
 
+    // renvoie les départements d'un accord filtré dans l'ordre alphabétique
+    function filteredDepartments(accord) {
+        if (accord.departments.length > 0) {
             const accordDepartmentIds = accord.departments.map(dept => dept.dept_id);
-            return departments.value.departments.filter(dept => !accordDepartmentIds.includes(dept.dept_id));
-        }else{
-            return departments.value.departments;
+            
+            // Filtrer et trier par dept_shortname
+            return departments.value.departments
+                .filter(dept => !accordDepartmentIds.includes(dept.dept_id))
+                .sort((a, b) => a.dept_shortname.localeCompare(b.dept_shortname));
+        } else {
+            // Trier directement si aucun department dans accord
+            return departments.value.departments
+                .sort((a, b) => a.dept_shortname.localeCompare(b.dept_shortname));
         }
     }
+
+
     function resetInput(){
         newAgreement.value.isced = document.querySelector('#isced_select').options[0].value;
         newAgreement.value.compo = document.querySelector('#compo_select').options[0].value;
@@ -878,6 +886,7 @@
         newAgreement.value.lien = null;
     }
 
+    //Changer la visibilité d'un département dans un accord
     async function changeVisibility(accordId, deptId, deptagree_valide, deptShortName) {
         const newVisibility = deptagree_valide === 0 ? 1 : 0;
 
@@ -906,6 +915,8 @@
     async function showForm(agree_id) {
         showForms.value[agree_id] = !showForms.value[agree_id];
     }
+
+    //Ajout d'un département à un accord
     async function submitForm(agree_id) {
         showForms.value[agree_id] = false;
         const requestData = {
@@ -923,7 +934,7 @@
 
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
-        fetchAll();
+        await request('GET', false, accords, config.apiUrl+'api/agreement');
     }
 
     function deselectAllDept() {
