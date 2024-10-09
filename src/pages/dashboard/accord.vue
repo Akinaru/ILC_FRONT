@@ -266,7 +266,7 @@
                                 
                                 <!-- Liste des départements d'un accord -->
                                 <p>Les départements: </p>
-                                <div class="flex items-center justify-start">
+                                <div class="flex flex-wrap items-center justify-start">
                                     <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
                                         <div class="w-fit p-2 flex items-center justify-center mx-1 tooltip select-none font-bold"
                                             :class="{ 'opacity-50': dept.pivot?.deptagree_valide === 0 }"
@@ -276,6 +276,7 @@
                                                 {{ dept.dept_shortname || 'Abréviation département non disponible' }}
                                                 <span class="font-bold">{{ dept.pivot?.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span>
                                             </p>
+                                            <!-- Bouton de changement de visibilité des départements -->
                                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2"
                                                     @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot?.deptagree_valide, dept.dept_shortname)">
                                                 <svg v-if="dept.pivot?.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
@@ -335,7 +336,7 @@
                                     </form>
                                 </div>
                             </div>
-                            <!-- Bouton de modification -->
+                            <!-- Bouton de modification de l'accord -->
                             <label @click="ModifAccord(accord)" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
                                 <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -345,7 +346,7 @@
 
 
                             
-                            <!-- Bouton de suppression -->
+                            <!-- Bouton de suppression de l'accord -->
                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(accord)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -554,7 +555,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, computed, nextTick  } from 'vue';
+    import { ref, onMounted, computed, nextTick, watch  } from 'vue';
     import config from '../../config'
     import { request } from '../../composables/httpRequest';
     import { useAccountStore } from '../../stores/accountStore';
@@ -813,6 +814,30 @@
         }
         closeModalImport();
         fetchAll();
+    }
+
+    // Fonction pour charger les filtres depuis sessionStorage
+    function loadFilters() {
+        const savedDepartments = sessionStorage.getItem('selectedDepartment');
+        const savedComponents = sessionStorage.getItem('selectedComponent');
+        const savedCountries = sessionStorage.getItem('selectedCountries');
+
+        if (savedDepartments) {
+            selectedDepartment.value = JSON.parse(savedDepartments);
+        }
+        if (savedComponents) {
+            selectedComponent.value = JSON.parse(savedComponents);
+        }
+        if (savedCountries) {
+            selectedCountries.value = JSON.parse(savedCountries);
+        }
+    }
+
+    // Fonction pour sauvegarder les filtres dans sessionStorage
+    function saveFilters() {
+        sessionStorage.setItem('selectedDepartment', JSON.stringify(selectedDepartment.value));
+        sessionStorage.setItem('selectedComponent', JSON.stringify(selectedComponent.value));
+        sessionStorage.setItem('selectedCountries', JSON.stringify(selectedCountries.value));
     }
 
     // Sélectionner tous les accords dans l'importation
@@ -1091,6 +1116,15 @@
         selectedComponent.value = [];
     }
 
-    onMounted(fetchAll)
+    // Surveiller les changements et sauvegarder les filtres
+    watch(selectedDepartment, saveFilters);
+    watch(selectedComponent, saveFilters);
+    watch(selectedCountries, saveFilters);
+
+    onMounted(() => {
+        fetchAll();
+        loadFilters();
+
+    });
 
 </script>
