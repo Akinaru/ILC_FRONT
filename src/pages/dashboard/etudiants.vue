@@ -65,12 +65,12 @@
                     <div class="p-1" v-show="isOpen.document">
                         <button class="hover:opacity-70 underline" @click="deselectAllDocuments">Tout désélectionner</button>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_1" type="checkbox" class="checkbox" value="0" v-model="selectedDocument">
-                            <label for="filt_document_1" class="select-none w-full cursor-pointer pl-2">0</label>
+                            <input id="filt_document_0" type="checkbox" class="checkbox" value="0" v-model="selectedDocument">
+                            <label for="filt_document_0" class="select-none w-full cursor-pointer pl-2">0</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_2" type="checkbox" class="checkbox " value="1" v-model="selectedDocument">
-                            <label for="filt_document_2" class="select-none w-full cursor-pointer pl-2">1</label>
+                            <input id="filt_document_1" type="checkbox" class="checkbox " value="1" v-model="selectedDocument">
+                            <label for="filt_document_1" class="select-none w-full cursor-pointer pl-2">1</label>
                         </div>
                         <div class="flex items-center hover:opacity-60 my-1">
                             <input id="filt_document_2" type="checkbox" class="checkbox " value="2" v-model="selectedDocument">
@@ -305,7 +305,6 @@ function closeModal() {
             const requestDataAction = {
                 act_description: 'Suppression de l\'étudiant '+acc_fullname+' (' + dept_shortname + ').',
                 acc_id: accountStore.login,
-                acc_id: acc_id
             }
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
