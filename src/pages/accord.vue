@@ -27,8 +27,7 @@
                     <!-- Départements -->
                     <p class="pt-5">Les départements disponibles pour cet accord:</p>
                     <div class="flex items-center flex-wrap">
-                        {{ accord.agreement }}
-                        <div v-if="getNumberOfRealDept(accord.agreement.agree_id) > 0" class="flex flex-row items-center transition-all duration-100 ease-in-out pt-3 overflow-x-auto">
+                        <div v-if="accord.agreement?.departments?.length > 0" class="flex flex-row items-center transition-all duration-100 ease-in-out pt-3 overflow-x-auto">
                             <div v-for="(dept, index) in accord.agreement?.departments" :key="index">
                                 <p v-if="dept.pivot.deptagree_valide" class="transition-all duration-100 ease-in-out md:p-3 min-w-11 p-1 ml-0 m-1 font-bold drop-shadow-lg select-none text-lg" :style="{backgroundColor: dept.dept_color}">{{ dept.dept_shortname }}</p>
                             </div>
@@ -144,20 +143,18 @@
       );
     }
 
-    function getNumberOfRealDept() {
+    function getNumberOfRealDept(agree_id) {
+        // Vérifiez d'abord si l'accord existe
+        const accord = this.accord; // Remplacez par votre méthode d'accès si nécessaire
 
-    // Trouver l'accord correspondant à agree_id
-    const matchedAccord = accord.value.agreement;
+        // Si l'accord n'existe pas ou n'a pas de départements, retournez 0
+        if (!accord || !accord.agreement || !accord.agreement.departments) {
+            return 0;
+        }
 
-    // Si aucun accord correspondant, retourner 0
-    if (!matchedAccord || !matchedAccord.departments) {
-        return 0;
+        // Filtrer et compter les départements valides
+        return accord.agreement.departments.filter(dept => dept.pivot.deptagree_valide).length;
     }
-
-    // Filtrer et compter les départements valides
-    return matchedAccord.departments.filter(dept => dept.pivot.deptagree_valide).length;
-}
-
 
     async function toggleFavoris(agree_id) {
         if(!isFavorited(agree_id)){
