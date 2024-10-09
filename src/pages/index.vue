@@ -260,7 +260,7 @@
     const eventspf = ref([]);
     const favoris = ref([]);
 
-    const itemsToShow = ref(20);
+    const itemsToShow = ref(30);
 
     const isLoaded = ref(false);
 

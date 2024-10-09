@@ -93,7 +93,7 @@
                         {{ filteredEtudiants.length }} résultat{{ filteredEtudiants.length > 1 ? 's' : '' }}
                     </p>
                     <div class="flex items-center justify-center">
-
+                        <!--  Bulle information -->
                         <div class="dropdown dropdown-end mx-2">
                             <div tabindex="0" role="button" class="btn btn-circle btn-ghost btn-xs text-info">
                                 <svg
@@ -136,7 +136,6 @@
                 <div class="flex flex-wrap gap-4 items-center justify-center py-5">
                     <div v-for="(etu, index) in filteredEtudiants" :key="index" v-if="filteredEtudiants && filteredEtudiants.length > 0" class="">
                         <template class="w-full md:w-1/3 lg:w-1/4 py-2" v-if="etu.acc_id">
-                                
                                 <div class="bg-base-300 shadow-lg rounded-lg p-4 transform transition-transform duration-200 h-full flex flex-col"
                                     :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">
                                     <!-- Bouton de suppression -->
@@ -155,7 +154,8 @@
                                         <p class="text-sm text-gray-400">
                                             <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
                                             <strong>Documents ajouté(s):</strong> {{ etu.documents?.count || 0 }}/{{ etu.documents?.countmax }}<br>
-                                            <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}
+                                            <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}<br>
+                                            <strong>Aménagement aux éxams:</strong> {{ etu.acc_amenagement == true ? 'Oui' : 'Non' }}
                                         </p>
                                     </div>
                                 <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}" class="mt-3">
