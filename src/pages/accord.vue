@@ -143,18 +143,6 @@
       );
     }
 
-    function getNumberOfRealDept(agree_id) {
-        // Vérifiez d'abord si l'accord existe
-        const accord = this.accord; // Remplacez par votre méthode d'accès si nécessaire
-
-        // Si l'accord n'existe pas ou n'a pas de départements, retournez 0
-        if (!accord || !accord.agreement || !accord.agreement.departments) {
-            return 0;
-        }
-
-        // Filtrer et compter les départements valides
-        return accord.agreement.departments.filter(dept => dept.pivot.deptagree_valide).length;
-    }
 
     async function toggleFavoris(agree_id) {
         if(!isFavorited(agree_id)){
