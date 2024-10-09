@@ -247,7 +247,8 @@
                                         </p>
                                         <p>
                                             [{{ accord.isced?.isc_code || 'Code ISCED non disponible' }} - {{ accord.isced?.isc_name || 'Nom ISCED non disponible' }}]
-                                            Composante: {{ accord.component?.comp_name || 'Nom composante non disponible' }}
+                                            Composante: {{ accord.component?.comp_name || 'Nom composante non disponible' }} 
+                                            N°: {{ accord.agree_id }}
                                         </p>
                                     </div>
                                 </div>
@@ -335,16 +336,15 @@
                                 </div>
                             </div>
                             <!-- Bouton de modification -->
-                            <label :for="'my_modal_' + accord.agree_id" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
+                            <label @click="ModifAccord(accord)" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
                                 <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                     <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                                 </svg>
                             </label>
 
-                            <!-- Modal de modification d'accord -->
-                            <ModifAccordComp @agreementUpdated="fetchAll" :accord="accord" :isceds="isceds" :composantes="composantes.components" :universites="universites" :partnercountrys="partnercountry"></ModifAccordComp>
 
+                            
                             <!-- Bouton de suppression -->
                             <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(accord)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
@@ -352,7 +352,6 @@
                                 </svg>
                             </button>
                         </div>
-
                     </div>
                 
                     <div v-else>
@@ -376,33 +375,133 @@
                     </div>
                 </dialog>
 
-                <!-- Modal de confirmation suppression -->
+                <!-- Modal de modification d'accord -->
+                <dialog id="modifAccordModal" ref="modifAccordModal" class="modal">
+                    <div class="modal-box max-w-full w-150">
+                        <h3 class="text-lg font-bold">Modification de l'accord</h3>
+                            <!-- Affichage de l'accord -->
+                            <div class="select-none flex justify-between items-center w-full h-20 mt-3">
+                                <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                                    <span class="tooltip mr-2" :data-tip="currentAccordModif?.accord?.partnercountry?.parco_name || 'Introuvable'">
+                                        <span class="relative inline-block">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-5xl" :class="'fi-' + (currentAccordModif?.accord?.partnercountry?.parco_code || '')"></span>
+
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <template v-if="!currentAccordModif?.accord?.partnercountry?.parco_code">
+                                                <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                    ?
+                                                </span>
+                                            </template>
+                                        </span>
+                                    </span>
+                                    <div class="flex flex-col w-full">
+                                        <p class="w-full select-none"><strong>{{ currentAccordModif?.accord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ currentAccordModif?.accord?.university?.univ_city || 'Ville indisponible' }} ({{ currentAccordModif?.accord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
+                                        <p>[{{ currentAccordModif?.accord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ currentAccordModif?.accord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ currentAccordModif?.accord?.component?.comp_name || 'Indisponible' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- Formulaire -->
+                        <form class="w-full *:my-2">
+                            <!-- Formulaire Isced -->
+                            <label class="form-control w-full items-center justify-center">
+                                <div class="label">
+                                    <span class="label-text">Isced</span>
+                                </div>
+                                <select class="select select-bordered w-full select-primary" id="isced_select" v-model="currentAccordModif.isc_id">
+                                    <option :value="null">Aucun isced</option>
+                                    <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{ isced.isc_code }}) {{ isced.isc_name }}</option>
+                                </select>
+                            </label>
+                            <!-- Formulaire composante -->
+                            <label class="form-control w-full items-center justify-center">
+                                <div class="label">
+                                    <span class="label-text">Composante</span>
+                                </div>
+                                <select class="select select-bordered w-full select-primary" id="compo_select" v-model="currentAccordModif.comp_id">
+                                    <option :value="null">Aucune composante</option>
+                                    <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
+                                </select>
+                            </label>
+                            <!-- Formulaire université -->
+                            <label class="form-control w-full items-center justify-center">
+                                <div class="label">
+                                    <span class="label-text">Université</span>
+                                </div>
+                                <select class="select select-bordered w-full select-primary" id="univ_select" v-model="currentAccordModif.univ_id">
+                                    <option :value="null">Aucune université</option>
+                                    <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
+                                </select>
+                            </label>
+                            <!-- Formulaire Typeaccord -->
+                            <label class="form-control w-full items-center justify-center">
+                                <div class="label">
+                                    <span class="label-text">Type accord</span>
+                                </div>
+                                <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="currentAccordModif.agree_typeaccord">
+                                    <option :value="null">Aucun type d'accord</option>
+                                    <option>Bilatéral</option>
+                                    <option>Erasmus</option>
+                                </select>
+                            </label>
+                            <!-- Formulaire Nombre de place -->
+                            <label class="form-control w-full items-center justify-center">
+                                <div class="label">
+                                    <span class="label-text">Nombre de place</span>
+                                </div>
+                                <input type="number" class="input input-bordered w-full" v-model="currentAccordModif.agree_nbplace" />
+                            </label>
+                            <!-- Formulaire Lien -->
+                            <label class="form-control w-full items-center justify-center">
+                                <div class="label">
+                                    <span class="label-text">Lien (facultatif)</span>
+                                </div>
+                                <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_lien" />
+                            </label>
+                            <!-- Formulaire Description -->
+                            <label class="form-control w-full items-center justify-center">
+                                <div class="label">
+                                    <span class="label-text">Description (facultatif)</span>
+                                </div>
+                                <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_description" />
+                            </label>
+                        </form>
+                        <div class="modal-action">
+                            <button class="btn btn-neutral" @click="closeModal">Annuler</button>
+                            <button class="btn btn-success" @click="ConfirmModifAccord()">Confirmer</button>
+                        </div>
+                    </div>
+
+                </dialog>
+
+                <!-- Modal de confirmation suppression d'accord -->
                 <dialog id="confirmModal" ref="confirmModal" class="modal">
                     <div class="modal-box max-w-full w-150">
                         <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
                         <div class="py-3">
                             <p>Confirmez vous la suppression de l'accord:</p>
-                                <div class="select-none flex justify-between items-center w-full h-20 mt-3">
-                                    <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
-                                        <span class="tooltip mr-2" :data-tip="confirmDeleteAccord.partnercountry?.parco_name || 'Introuvable'">
-                                            <span class="relative inline-block">
-                                                <!-- Drapeau -->
-                                                <span class="fi text-5xl" :class="'fi-' + (confirmDeleteAccord.partnercountry?.parco_code || '')"></span>
+                            <!-- Affichage de l'accord -->
+                            <div class="select-none flex justify-between items-center w-full h-20 mt-3">
+                                <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                                    <span class="tooltip mr-2" :data-tip="confirmDeleteAccord.partnercountry?.parco_name || 'Introuvable'">
+                                        <span class="relative inline-block">
+                                            <!-- Drapeau -->
+                                            <span class="fi text-5xl" :class="'fi-' + (confirmDeleteAccord.partnercountry?.parco_code || '')"></span>
 
-                                                <!-- Point d'interrogation si pas de drapeau -->
-                                                <template v-if="!confirmDeleteAccord.partnercountry?.parco_code">
-                                                    <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                                        ?
-                                                    </span>
-                                                </template>
-                                            </span>
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <template v-if="!confirmDeleteAccord.partnercountry?.parco_code">
+                                                <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                    ?
+                                                </span>
+                                            </template>
                                         </span>
-                                        <div class="flex flex-col w-full">
-                                            <p class="w-full select-none"><strong>{{ confirmDeleteAccord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ confirmDeleteAccord?.university?.univ_city || 'Ville indisponible' }} ({{ confirmDeleteAccord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
-                                            <p>[{{ confirmDeleteAccord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ confirmDeleteAccord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ confirmDeleteAccord?.component?.comp_name || 'Indisponible' }}</p>
-                                        </div>
+                                    </span>
+                                    <div class="flex flex-col w-full">
+                                        <p class="w-full select-none"><strong>{{ confirmDeleteAccord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ confirmDeleteAccord?.university?.univ_city || 'Ville indisponible' }} ({{ confirmDeleteAccord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
+                                        <p>[{{ confirmDeleteAccord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ confirmDeleteAccord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ confirmDeleteAccord?.component?.comp_name || 'Indisponible' }}</p>
                                     </div>
                                 </div>
+                            </div>
                         </div>
                         <div class="modal-action">
                             <button class="btn btn-error" @click="closeModal">Annuler</button>
@@ -458,7 +557,6 @@
     import { ref, onMounted, computed, nextTick  } from 'vue';
     import config from '../../config'
     import { request } from '../../composables/httpRequest';
-    import ModifAccordComp from '../../components/modif/ModifAccordComp.vue';
     import { useAccountStore } from '../../stores/accountStore';
     import { addAlert } from '../../composables/addAlert';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
@@ -467,12 +565,13 @@
     const accountStore = useAccountStore();
     const response = ref([]);
 
-    const emit = defineEmits(['agreementUpdated']);
     
     const accords = ref([]);
     const selectedDepartments = ref([]);
     const selectedComponent = ref([]);
     const selectedCountries = ref([]);
+
+    const currentAccordModif = ref([]);
 
     const confirmDeleteAccord = ref([])
     
@@ -525,7 +624,55 @@
         const modal = document.getElementById('confirmModal')
         modal.showModal()
     }
+
+    // Modification d'accord et ouverture modal
+    function ModifAccord(accord){
+        currentAccordModif.value.accord = accord;
+        currentAccordModif.value.agree_id = accord.agree_id || null;
+        currentAccordModif.value.parco_id = accord.partnercountry ? accord.partnercountry.parco_id : null; 
+        currentAccordModif.value.univ_id = accord.university ? accord.university.univ_id : null; 
+        currentAccordModif.value.isc_id = accord.isced ? accord.isced.isc_id : null; 
+        currentAccordModif.value.comp_id = accord.component ? accord.component.comp_id : null;
+        currentAccordModif.value.agree_typeaccord = accord.agree_typeaccord || null;
+        currentAccordModif.value.agree_description = accord.agree_description || null;
+        currentAccordModif.value.agree_nbplace = accord.agree_nbplace || null;
+        currentAccordModif.value.agree_lien = accord.agree_lien || null;
+
+        const modal = document.getElementById('modifAccordModal')
+        modal.showModal();
+    }
     
+    //Confirmation de modification du modal
+    async function ConfirmModifAccord(){
+        const requestData = {
+            agree_typeaccord: currentAccordModif.value.agree_typeaccord,
+            agree_nbplace: currentAccordModif.value.agree_nbplace,
+        };
+
+        // Vérification du nombre de places
+        if (currentAccordModif.value.agree_nbplace <= 0) {
+            addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Modification de l\'accord annulée.' } });
+            return;
+        }
+
+        if (currentAccordModif.value.agree_lien != null) {
+            requestData.agree_lien = currentAccordModif.value.agree_lien;
+        }
+        if (currentAccordModif.value.agree_description != null) {
+            requestData.agree_description = currentAccordModif.value.agree_description;
+        }
+
+        requestData.isc_id = currentAccordModif.value.isc_id;
+        requestData.comp_id = currentAccordModif.value.comp_id;
+        requestData.univ_id = currentAccordModif.value.univ_id;
+
+        // Effectuer la requête PUT pour mettre à jour l'accord
+        await request('PUT', true, response, config.apiUrl + 'api/agreement/' + currentAccordModif.value.agree_id, requestData);
+        fetchAccords();
+        closeModal();
+
+    }
+
     //ouvrir le modal de confirmation de suppression
     function openConfirmModalDeleteAll() {
         const modal = document.getElementById('confirmModalDeleteAll')
@@ -542,16 +689,18 @@
             }
         }, 1000);
     }
-    //Fermer le modal de confirmation de suppression
+    //Fermer les modals
     function closeModal() {
         const modal = document.getElementById('confirmModal')
         modal.close()
         const modal2 = document.getElementById('confirmModalDeleteAll')
         modal2.close()
+        const modal3 = document.getElementById('modifAccordModal')
+        modal3.close()
         clearInterval(isConfirmDisabled.value.countdown)
     }
 
-    //Fermer le modal de confirmation de suppression
+    //Fermer le modal d'importation
     function closeModalImport() {
         const modal = document.getElementById('modalAjoutAccords')
         exportModal.value = [];
@@ -567,9 +716,6 @@
         const modal = document.getElementById('modalAjoutAccords');
         modal.showModal();
     };
-
-
-
 
     // Confirmer l'import d'accords
     async function confirmImportAccord() {
@@ -669,17 +815,14 @@
         fetchAll();
     }
 
-
-
-
-    // Sélectionner tous les accords
+    // Sélectionner tous les accords dans l'importation
     const selectAll = () => {
         exportModal.value.forEach(accord => {
             accord.add = true;
         });
     };
 
-    // Désélectionner tous les accords
+    // Désélectionner tous les accords dans l'importation
     const deselectAll = () => {
         exportModal.value.forEach(accord => {
             accord.add = false;
@@ -792,22 +935,14 @@
         await request('GET', false, departments, config.apiUrl+'api/department');
         await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry');
         universites.value.sort((a, b) => {
-        // Comparer parco_name en premier
-        if (a.partnercountry.parco_name < b.partnercountry.parco_name) {
-            return -1;
-        }
-        if (a.partnercountry.parco_name > b.partnercountry.parco_name) {
-            return 1;
-        }
-        // Si parco_name est identique, comparer par univ_name
-        if (a.univ_name < b.univ_name) {
-            return -1;
-        }
-        if (a.univ_name > b.univ_name) {
-            return 1;
-        }
+            // Comparer parco_name en premier
+            const comparisonParco = a.partnercountry.parco_name.localeCompare(b.partnercountry.parco_name, undefined, { sensitivity: 'base' });
+            if (comparisonParco !== 0) {
+                return comparisonParco;
+            }
 
-        return 0;
+            // Si parco_name est identique, comparer univ_name
+            return a.univ_name.localeCompare(b.univ_name, undefined, { sensitivity: 'base' });
         });
         isLoaded.value = true;
 
@@ -818,11 +953,14 @@
         resetInput();
     }
 
+    async function fetchAccords(){
+        await request('GET', false, accords, config.apiUrl+'api/agreement');
+    }
 
     // Supprimer un département d'un accord
     async function removeDeptFromAgreement(agree_id, dept_id){
         await request('DELETE', true, response, config.apiUrl+'api/departmentagreement/delete/'+agree_id+'/'+dept_id);
-        await request('GET', false, accords, config.apiUrl+'api/agreement');
+        fetchAccords();
     }
 
     // Supprimer tous les accords
@@ -852,7 +990,7 @@
             }
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
-        fetchAll();
+        fetchAccords();
     }
 
     // renvoie les départements d'un accord filtré dans l'ordre alphabétique
@@ -934,7 +1072,7 @@
 
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
-        await request('GET', false, accords, config.apiUrl+'api/agreement');
+        fetchAccords();
     }
 
     function deselectAllDept() {

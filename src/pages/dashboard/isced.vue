@@ -147,9 +147,9 @@
 
     // Modal modif isced
     function modifIsced(isced){
-        currentIscedModif.value.isc_id = isced.isc_id;
-        currentIscedModif.value.isc_name = isced.isc_name;
-        currentIscedModif.value.isc_code = isced.isc_code;
+        currentIscedModif.value.isc_id = isced.isc_id || null;
+        currentIscedModif.value.isc_name = isced.isc_name || null;
+        currentIscedModif.value.isc_code = isced.isc_code || null;
     }
 
     // Confirm modification isced

@@ -254,10 +254,10 @@
     
     // Modal modif univ
     function modifUniv(univ){
-        currentUnivModif.value.univ_id = univ.univ_id;
-        currentUnivModif.value.univ_name = univ.univ_name;
-        currentUnivModif.value.univ_city = univ.univ_city;
-        currentUnivModif.value.parco_id = univ.partnercountry.parco_id;
+        currentUnivModif.value.univ_id = univ.univ_id || null;
+        currentUnivModif.value.univ_name = univ.univ_name || null;
+        currentUnivModif.value.univ_city = univ.univ_city || null;
+        currentUnivModif.value.parco_id = univ.partnercountry.parco_id || null;
     }
 
     // Confirm modification univ
