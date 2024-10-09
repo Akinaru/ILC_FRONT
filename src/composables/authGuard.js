@@ -1,6 +1,6 @@
 import { request } from "./httpRequest";
 import { decomposeDN } from '../composables/destructLDAP';
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useAccountStore } from "../stores/accountStore";
 import config from '../config';
 import { addAlert } from '../composables/addAlert';
@@ -39,8 +39,12 @@ async function authRegisterAccount(login, router) {
 
     try {
         await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
-        if(!response.value.count || response.value.count == 0 ){
+        await nextTick();
+        if(response.value.message == "Network Error"){
             addAlert('error', { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: "Impossible de récupérer les informations de l'utilisateur." } });
+            const accountStore = useAccountStore();
+            accountStore.logoutAccount();
+            window.open(config.apiUrl + 'cas.php?logout=true', '_blank');
             router.push({ name: 'Accueil' });
             return
         }

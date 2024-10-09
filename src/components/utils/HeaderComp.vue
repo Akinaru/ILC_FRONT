@@ -33,15 +33,15 @@
                     :style="{ borderBottomColor: `${role.color ? role.color : '#000000'}` }"
                     class="block sm:hidden text-xs font-semibold"
                   >
-                    {{ fullname }}
+                    {{ fullname != null ? fullname : 'Compte Inconnu' }}
                   </span>
                   <!-- Nom d'utilisateur affiché sur les grands écrans -->
                   <span class="hidden sm:inline font-semibold">
-                    {{ fullname }}
+                    {{ fullname != null ? fullname : 'Compte Inconnu' }}
                   </span>
                 </summary>
                 <ul class="bg-base-100 rounded-t-none">
-                  <li><a @click="profil">{{ accountStore.access == 0 ? 'Profil étudiant' : 'Dashboard' }}</a></li>
+                  <li v-if="fullname != null"><a @click="profil">{{ accountStore.access == 0 ? 'Profil étudiant' : 'Dashboard' }}</a></li>
                   <li><a @click="logout" class="text-red-600">Déconnexion</a></li>
                 </ul>
               </details>

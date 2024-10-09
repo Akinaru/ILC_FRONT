@@ -85,10 +85,10 @@
                         <div v-if="filteredAccords && filteredAccords.length > 0">
 
                             <div class="z-10">
-                                <div v-for="(accord, index) in paginatedAccords" :key="index" class=" mb-3 mx-2 list-disc flex justify-between items-center overflow-hidden transition-all hover:scale-102">
-                                    <div class="w-full bg-base-300">
+                                <div v-for="(accord, index) in paginatedAccords" :key="index" class=" mb-3 mx-2 list-disc overflow-hidden transition-all hover:scale-102">
+                                    <div class="w-full bg-base-300 flex justify-between items-center ">
 
-                                        <RouterLink :to="{ name: 'Accord', params: { agree_id: accord.agree_id }}" class="flex w-full justify-between hover:opacity-60 transition-all duration-100 ease-in-out relative group">
+                                        <RouterLink :to="{ name: 'Accord', params: { agree_id: accord.agree_id }}" class="flex w-full justify-between transition-all duration-100 ease-in-out relative group">
                                             <div class="flex items-center flex-wrap">
                                                 <span class="relative inline-block">
                                                     <!-- Drapeau -->
