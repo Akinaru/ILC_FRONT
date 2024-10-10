@@ -83,4 +83,5 @@ async function authRegisterAccount(login, router) {
 function authStoreUser(data) {
     const accountStore = useAccountStore();
     accountStore.loginAccount(data);
+    console.log(accountStore.toString());
 }

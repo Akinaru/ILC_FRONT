@@ -185,22 +185,18 @@ async function checkUserLogin() {
       const response = await fetch(config.apiUrl+'cas.php'+'?check_login=true');
       if (response.ok) {
         const data = await response.json();
-        const isLogged = data.logged_in; // Renommez cette variable pour correspondre à ce que vous voulez retourner
-        const userLogin = data.login; // Renommez cette variable pour correspondre à ce que vous voulez retourner
+        const isLogged = data.logged_in;
+        const userLogin = data.login;
   
-        // Mettez à jour le store si nécessaire
-        if (isLogged) {
-          accountStore.$patch({ logged: true, login: userLogin });
-        }
   
-        return [isLogged, userLogin]; // Retournez un tableau avec isLogged et userLogin
+        return [isLogged, userLogin];
       } else {
         console.error('Erreur lors de la vérification de l\'état de connexion.');
-        return [false, null]; // Si la réponse n'est pas OK, retournez false et null
+        return [false, null];
       }
     } catch (error) {
       console.error('Erreur réseau :', error);
-      return [false, null]; // Si une erreur se produit, retournez false et null
+      return [false, null];
     }
   }
 
@@ -214,8 +210,10 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const accountStore = useAccountStore();
-
     const [isLogged, userLogin] = await checkUserLogin();
+    if(isLogged){
+        accountStore.loadAccountFromLocal();
+    }
 
     // Si la route nécessite une authentification
     if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -245,7 +243,7 @@ router.beforeEach(async (to, from, next) => {
                         const accessLevel = accountStore.getAccessLevel();
                         const isValidated = accountStore.getAccountValidate();
 
-                        if (accessLevel === 0 && !isValidated) {
+                        if (accessLevel == 0 && !isValidated) {
                             if (to.name !== 'ComplDossier') {
                                 return next({ name: 'ComplDossier' });
                             }

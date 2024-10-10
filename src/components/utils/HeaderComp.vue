@@ -21,7 +21,7 @@
               <details>
                 <summary>
                   <!-- Affichage du rôle uniquement pour les grands écrans -->
-                  <span class="md:p-1 hidden sm:block rounded-lg" :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">
+                  <span v-if="role.role != 'Aucun'" class="md:p-1 hidden sm:block rounded-lg" :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">
                     {{ role.role }}
                   </span>
                   <!-- Nom d'utilisateur avec bordure inférieure pour les petits écrans -->
@@ -81,8 +81,6 @@ const { fullname, logged, acc_validateacc } = storeToRefs(accountStore); // Rend
 const theme = ref(localStorage.getItem('theme') || 'light');
 
 const role = ref([]);
-const response = ref([]);
-const menuAlreadyOpen = ref(false);
 
 // Propriété computed pour vérifier l'état de connexion
 const isUserLoggedIn = computed(() => logged.value);
@@ -92,14 +90,9 @@ function logout() {
   localStorage.removeItem('login');
   localStorage.removeItem('auth');
   
-  // Déconnexion de l'utilisateur
-  accountStore.logoutAccount();
-  
-  // Ouvrir la page de déconnexion de PHP CAS dans un nouvel onglet
-  window.open(config.apiUrl + 'cas.php?logout=true', '_blank');
-  
-  // Redirection vers l'accueil
+  window.open(config.apiUrl + 'cas.php?logout=true', '_blank');  
   router.push({ name: 'Accueil' });
+  accountStore.logoutAccount();
 }
 
 function closeMenu() {
@@ -128,6 +121,7 @@ async function load() {
   await nextTick();
   await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
   applyTheme(theme.value);
+  
 }
 
 // Watcher sur le changement de connexion
