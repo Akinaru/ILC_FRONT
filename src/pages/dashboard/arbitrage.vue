@@ -164,6 +164,25 @@
 
                             </div>
                         </div>
+                        <!-- Isced -->
+                        <div>
+                            <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('isced')">
+                                <p class="select-none">Isced ({{ selectedIsced.length }} séléctionné{{ selectedIsced.length > 1 ? 's' : '' }})</p>
+                                <span :class="isOpen.isced ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
+                            </div>
+                            <div class="p-1" v-show="isOpen.isced">
+                                <button class="hover:opacity-70 underline" @click="deselectAllIsced">Tout désélectionner</button>
+                                <div class="flex flex-wrap items-center justify-start">
+                                    <div v-for="(isced,index) in isceds" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer md:w-3/6 xl:w-2/6">
+                                        <input :id="'filt_isced_'+index" type="checkbox" class="checkbox" :value="isced.isc_id" v-model="selectedIsced">
+                                        <label :for="'filt_isced_'+index" class="cursor-pointer w-full pl-2">
+                                            
+                                            <label :for="'filt_isced_'+index" class="select-none w-full hover:cursor-pointer">{{ isced.isc_code || 'XX' }} - {{ isced.isc_name || 'Sans code' }}</label>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -230,11 +249,13 @@
     const response = ref([])
     const accords = ref([])
     const etudiants = ref([])
+    const isceds = ref([])
     const components = ref([])
     const partnercountry = ref([])
     const isLoaded = ref(false)
 
     const selectedDepartment = ref([]);
+    const selectedIsced = ref([]);
     const selectedAccord = ref([]);
     const selectedVoeux = ref([]);
     const selectedCountries = ref([]);
@@ -258,6 +279,7 @@
         pays: false,
         departments: false,
         accords: false,
+        isced: false,
         voeux: false,
         etudiants: [], 
     });
@@ -274,6 +296,7 @@
         await request('GET', false, accords, config.apiUrl+'api/agreement');
         await request('GET', false, components, config.apiUrl+'api/component');
         await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry');
+        await request('GET', false, isceds, config.apiUrl+'api/isced');
         await request('GET', false, etudiants, config.apiUrl+'api/account/students');
         await request('GET', false, arbitrage, config.apiUrl+'api/arbitrage');
         isLoaded.value = true;
@@ -333,21 +356,21 @@
 
 
     async function saveArbitrage(){
-    const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
-        arbitrage.accounts.forEach(accountInfo => {
-            if (accountInfo.account) {
-                acc.push({
-                    acc_id: accountInfo.account.acc_id,
-                    agree_id: arbitrage.agreement.agree_id,
-                    arb_pos: accountInfo.arb_pos
-                });
-            }
-        });
-        return acc;
-    }, []);
+        const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
+            arbitrage.accounts.forEach(accountInfo => {
+                if (accountInfo.account) {
+                    acc.push({
+                        acc_id: accountInfo.account.acc_id,
+                        agree_id: arbitrage.agreement.agree_id,
+                        arb_pos: accountInfo.arb_pos
+                    });
+                }
+            });
+            return acc;
+        }, []);
 
-    await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
-}
+        await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
+    }
 
 
     const filteredEtus = computed(() => {
@@ -384,7 +407,11 @@
     const filteredArbitrage = computed(() => {
         return Object.values(localArbitrage.value)
             .filter(arbitrage => {
-                return selectedCountries.value.length === 0 || selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
+                const countryFilter = selectedCountries.value.length === 0 || selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
+                const iscedFilter = selectedIsced.value.length === 0 || 
+                                    (arbitrage.agreement.isced && selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
+
+                return countryFilter && iscedFilter;
             });
     });
     
@@ -445,36 +472,33 @@
 }
 
 
-function getNumberOfPlace(agreeId) {
-    const agreements = accords.value.agreements;
-    
-    const agreement = agreements.find(agreement => agreement.agree_id === agreeId);
-    
-    if (!agreement) {
-        console.error(`Accord avec agreeId ${agreeId} non trouvé.`);
-        return [];
+    function getNumberOfPlace(agreeId) {
+        const agreements = accords.value.agreements;
+        
+        const agreement = agreements.find(agreement => agreement.agree_id === agreeId);
+        
+        if (!agreement) {
+            console.error(`Accord avec agreeId ${agreeId} non trouvé.`);
+            return [];
+        }
+        
+        const numberOfPlaces = agreement.agree_nbplace;
+        
+        const studentPositions = arbitrage.value.filter(entry => entry.agree_id === agreeId);
+        
+        
+        const maxPosition = studentPositions.reduce((max, student) => {
+            return student.arb_pos > max ? student.arb_pos : max;
+        }, numberOfPlaces - 1);
+        
+        
+        const totalPlaces = Math.max(numberOfPlaces, maxPosition );
+        
+        
+        const places = Array.from({ length: totalPlaces }, (v, k) => k);
+        
+        return places;
     }
-    
-    const numberOfPlaces = agreement.agree_nbplace;
-    
-    const studentPositions = arbitrage.value.filter(entry => entry.agree_id === agreeId);
-    
-    
-    const maxPosition = studentPositions.reduce((max, student) => {
-        return student.arb_pos > max ? student.arb_pos : max;
-    }, numberOfPlaces - 1);
-    
-    
-    const totalPlaces = Math.max(numberOfPlaces, maxPosition );
-    
-    
-    const places = Array.from({ length: totalPlaces }, (v, k) => k);
-    
-    return places;
-}
-
-
-
 
 
     async function handleFiltreEtu() {
@@ -487,118 +511,120 @@ function getNumberOfPlace(agreeId) {
     watch(selectedDepartment, handleFiltreEtu);
     watch(selectedAccord, handleFiltreEtu);
     watch(selectedVoeux, handleFiltreEtu);
+    watch(selectedCountries, handleFiltreEtu);
+    watch(selectedIsced, handleFiltreEtu);
 
 
     async function refreshDrop() {
-    let dropZones = document.getElementsByClassName('dropZones');
-    for (let dropZone of dropZones) {
-        dropZone.addEventListener("dragover", function(e) {
-            e.preventDefault();
-        });
-        dropZone.addEventListener("drop", function(e) {
-            e.preventDefault();
-            let id = e.dataTransfer.getData("text/plain");
-            let selected = document.getElementById(id);
-            if (selected) {
-                const etuId = selected.id.replace('etu_drag_', '');
-                const idMatch = dropZone.id.match(/^drop_(\d+)_(\d+)$/);
-                if (idMatch) {
-                    const agree_id = parseInt(idMatch[1]); // Convertir en entier si nécessaire
-                    const pos = parseInt(idMatch[2]); // Convertir en entier si nécessaire
+        let dropZones = document.getElementsByClassName('dropZones');
+        for (let dropZone of dropZones) {
+            dropZone.addEventListener("dragover", function(e) {
+                e.preventDefault();
+            });
+            dropZone.addEventListener("drop", function(e) {
+                e.preventDefault();
+                let id = e.dataTransfer.getData("text/plain");
+                let selected = document.getElementById(id);
+                if (selected) {
+                    const etuId = selected.id.replace('etu_drag_', '');
+                    const idMatch = dropZone.id.match(/^drop_(\d+)_(\d+)$/);
+                    if (idMatch) {
+                        const agree_id = parseInt(idMatch[1]); // Convertir en entier si nécessaire
+                        const pos = parseInt(idMatch[2]); // Convertir en entier si nécessaire
 
-                    let etu = localEtus.value[etuId];
+                        let etu = localEtus.value[etuId];
 
 
 
-                    if (etu) {
-                        // Vérifier si l'étudiant est déjà dans localArbitrage.value
-                        const existingStudent = localArbitrage.value[agree_id].accounts[pos];
-                        if (existingStudent && existingStudent.account != null) {
-
-                            // Échanger les étudiants si celui en cours de drag n'est pas déjà dans la dropzone
-                            const currentEtuId = existingStudent.account.acc_id;
-                            if (currentEtuId !== etu.acc_id) {
-                                // Remettre l'étudiant existant dans localEtus.value
-                                localEtus.value[currentEtuId] = existingStudent.account;
-                            }
-                        }
-
-                        // Supprimer l'étudiant de localEtus.value s'il est là
-                        if (localEtus.value[etuId]) {
-                            delete localEtus.value[etuId];
-                        }
-
-                        // Mettre l'étudiant dans la dropzone actuelle de l'arbitrage
-                        localArbitrage.value[agree_id].accounts[pos].account = etu;
-                        refreshDrag();
-                        saveArbitrage();
-                    // Si l'étudiant n'est pas trouvé dans localEtus.value, chercher dans localArbitrage.value
-                    }else if (!etu) {
-                        etu = findStudentInArbitrage(etuId);
-                        if((findStudentPositionInArbitrage(etuId)-1) != pos || getCurrentAgreeIdByAccId(etuId) != agree_id){
+                        if (etu) {
+                            // Vérifier si l'étudiant est déjà dans localArbitrage.value
                             const existingStudent = localArbitrage.value[agree_id].accounts[pos];
                             if (existingStudent && existingStudent.account != null) {
-                                localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1].account = existingStudent.account 
-                                localArbitrage.value[agree_id].accounts[pos].account = etu
-                                refreshDrag();
-                                saveArbitrage();
-                            }else{
-                                localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1].account = null;
-                                localArbitrage.value[agree_id].accounts[pos].account = etu;                       
-                                refreshDrag();
-                                saveArbitrage();
+
+                                // Échanger les étudiants si celui en cours de drag n'est pas déjà dans la dropzone
+                                const currentEtuId = existingStudent.account.acc_id;
+                                if (currentEtuId !== etu.acc_id) {
+                                    // Remettre l'étudiant existant dans localEtus.value
+                                    localEtus.value[currentEtuId] = existingStudent.account;
+                                }
                             }
-                            //Verifier si il y a deja un étudiant dans la dropzone
+
+                            // Supprimer l'étudiant de localEtus.value s'il est là
+                            if (localEtus.value[etuId]) {
+                                delete localEtus.value[etuId];
+                            }
+
+                            // Mettre l'étudiant dans la dropzone actuelle de l'arbitrage
+                            localArbitrage.value[agree_id].accounts[pos].account = etu;
+                            refreshDrag();
+                            saveArbitrage();
+                        // Si l'étudiant n'est pas trouvé dans localEtus.value, chercher dans localArbitrage.value
+                        }else if (!etu) {
+                            etu = findStudentInArbitrage(etuId);
+                            if((findStudentPositionInArbitrage(etuId)-1) != pos || getCurrentAgreeIdByAccId(etuId) != agree_id){
+                                const existingStudent = localArbitrage.value[agree_id].accounts[pos];
+                                if (existingStudent && existingStudent.account != null) {
+                                    localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1].account = existingStudent.account 
+                                    localArbitrage.value[agree_id].accounts[pos].account = etu
+                                    refreshDrag();
+                                    saveArbitrage();
+                                }else{
+                                    localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[findStudentPositionInArbitrage(etuId)-1].account = null;
+                                    localArbitrage.value[agree_id].accounts[pos].account = etu;                       
+                                    refreshDrag();
+                                    saveArbitrage();
+                                }
+                                //Verifier si il y a deja un étudiant dans la dropzone
+                            }
+                        } else {
+                            console.error("Étudiant non trouvé dans localEtus.value ou localArbitrage.value avec etuId :", etuId);
                         }
                     } else {
-                        console.error("Étudiant non trouvé dans localEtus.value ou localArbitrage.value avec etuId :", etuId);
+                        console.error("ID de dropZone non valide :", dropZone.id);
                     }
-                } else {
-                    console.error("ID de dropZone non valide :", dropZone.id);
+                }
+            });
+        }
+    }
+
+
+    function findStudentInArbitrage(etuId) {
+        for (let agreementId in localArbitrage.value) {
+            const accounts = localArbitrage.value[agreementId].accounts;
+            for (let accountInfo of accounts) {
+                if (accountInfo.account && accountInfo.account.acc_id == etuId) {
+                    return accountInfo.account;
                 }
             }
-        });
+        }
+        return null;
     }
-}
 
-
-function findStudentInArbitrage(etuId) {
-    for (let agreementId in localArbitrage.value) {
-        const accounts = localArbitrage.value[agreementId].accounts;
-        for (let accountInfo of accounts) {
-            if (accountInfo.account && accountInfo.account.acc_id == etuId) {
-                return accountInfo.account;
+    function findStudentPositionInArbitrage(accId) {
+        for (let agreementId in localArbitrage.value) {
+            const accounts = localArbitrage.value[agreementId].accounts;
+            for (let i = 0; i < accounts.length; i++) {
+                const accountInfo = accounts[i];
+                if (accountInfo.account && accountInfo.account.acc_id === accId) {
+                    return i + 1; // Return arb_pos (adjusted to 1-based index)
+                }
             }
         }
+        return null; // Return null if student not found
     }
-    return null;
-}
 
-function findStudentPositionInArbitrage(accId) {
-    for (let agreementId in localArbitrage.value) {
-        const accounts = localArbitrage.value[agreementId].accounts;
-        for (let i = 0; i < accounts.length; i++) {
-            const accountInfo = accounts[i];
-            if (accountInfo.account && accountInfo.account.acc_id === accId) {
-                return i + 1; // Return arb_pos (adjusted to 1-based index)
+    function getCurrentAgreeIdByAccId(accId) {
+        for (let agreementId in localArbitrage.value) {
+            const accounts = localArbitrage.value[agreementId].accounts;
+            for (let accountInfo of accounts) {
+                if (accountInfo.account && accountInfo.account.acc_id === accId) {
+                    return parseInt(agreementId);
+                }
             }
         }
+        console.error("Aucun accord trouvé pour l'acc_id :", accId);
+        return null;
     }
-    return null; // Return null if student not found
-}
-
-function getCurrentAgreeIdByAccId(accId) {
-    for (let agreementId in localArbitrage.value) {
-        const accounts = localArbitrage.value[agreementId].accounts;
-        for (let accountInfo of accounts) {
-            if (accountInfo.account && accountInfo.account.acc_id === accId) {
-                return parseInt(agreementId);
-            }
-        }
-    }
-    console.error("Aucun accord trouvé pour l'acc_id :", accId);
-    return null;
-}
 
 
 
@@ -628,6 +654,9 @@ function getCurrentAgreeIdByAccId(accId) {
     }
     function deselectAllVoeux() {
         selectedVoeux.value = [];
+    }
+    function deselectAllIsced() {
+        selectedIsced.value = [];
     }
     onMounted(fetch)
 
