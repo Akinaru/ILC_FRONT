@@ -194,7 +194,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Component -->
                     <div>
                         <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('component')">
@@ -209,6 +208,40 @@
                                     <label :for="'filt_compo_'+index" class="select-none w-full cursor-pointer pl-2">{{ compo.comp_name }}</label>
                                 </div>
                                 
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Unknowns -->
+                    <div>
+                        <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('unknown')">
+                            <p>Champs vides ({{ selectedUnknowns.length }} séléctionné{{ selectedUnknowns.length > 1 ? 's' : '' }})</p>
+                            <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                        </div>
+                        <div class="p-1" v-show="isOpen.unknown">
+                            <button class="hover:opacity-70 underline" @click="deselectAllUnkn">Tout désélectionner</button>
+                            <div class="flex items-center hover:opacity-60 my-1">
+                                <input id="filt_unknown_1" type="checkbox" class="checkbox " value="component.comp_id" v-model="selectedUnknowns">
+                                <label for="filt_unknown_1" class="select-none w-full cursor-pointer pl-2">Composante</label>
+                            </div>
+                            <div class="flex items-center hover:opacity-60 my-1">
+                                <input id="filt_unknown_2" type="checkbox" class="checkbox " value="university.univ_id" v-model="selectedUnknowns">
+                                <label for="filt_unknown_2" class="select-none w-full cursor-pointer pl-2">Université</label>
+                            </div>
+                            <div class="flex items-center hover:opacity-60 my-1">
+                                <input id="filt_unknown_3" type="checkbox" class="checkbox " value="departments" v-model="selectedUnknowns">
+                                <label for="filt_unknown_3" class="select-none w-full cursor-pointer pl-2">Départements</label>
+                            </div>
+                            <div class="flex items-center hover:opacity-60 my-1">
+                                <input id="filt_unknown_4" type="checkbox" class="checkbox " value="isced.isc_id" v-model="selectedUnknowns">
+                                <label for="filt_unknown_4" class="select-none w-full cursor-pointer pl-2">Isced</label>
+                            </div>
+                            <div class="flex items-center hover:opacity-60 my-1">
+                                <input id="filt_unknown_5" type="checkbox" class="checkbox " value="agree_lien" v-model="selectedUnknowns">
+                                <label for="filt_unknown_5" class="select-none w-full cursor-pointer pl-2">Lien</label>
+                            </div>
+                            <div class="flex items-center hover:opacity-60 my-1">
+                                <input id="filt_unknown_6" type="checkbox" class="checkbox " value="agree_description" v-model="selectedUnknowns">
+                                <label for="filt_unknown_6" class="select-none w-full cursor-pointer pl-2">Description</label>
                             </div>
                         </div>
                     </div>
@@ -571,6 +604,7 @@
     const selectedDepartments = ref([]);
     const selectedComponent = ref([]);
     const selectedCountries = ref([]);
+    const selectedUnknowns = ref([]);
 
     const currentAccordModif = ref([]);
 
@@ -613,6 +647,7 @@
         pays: false,
         departments: false,
         component: false,
+        unknown: false,
     });
 
     function toggleCollapse(section) {
@@ -816,28 +851,38 @@
         fetchAll();
     }
 
-    // Fonction pour charger les filtres depuis sessionStorage
+    // Fonction pour charger les filtres depuis sessionStorage sous acc_dashboard
     function loadFilters() {
-        const savedDepartments = sessionStorage.getItem('selectedDepartment');
-        const savedComponents = sessionStorage.getItem('selectedComponent');
-        const savedCountries = sessionStorage.getItem('selectedCountries');
+        const accDashboardFilters = sessionStorage.getItem('acc_dashboard');
+        
+        if (accDashboardFilters) {
+            const filters = JSON.parse(accDashboardFilters);
 
-        if (savedDepartments) {
-            selectedDepartment.value = JSON.parse(savedDepartments);
-        }
-        if (savedComponents) {
-            selectedComponent.value = JSON.parse(savedComponents);
-        }
-        if (savedCountries) {
-            selectedCountries.value = JSON.parse(savedCountries);
+            if (filters.selectedDepartment) {
+                selectedDepartment.value = filters.selectedDepartment;
+            }
+            if (filters.selectedComponent) {
+                selectedComponent.value = filters.selectedComponent;
+            }
+            if (filters.selectedCountries) {
+                selectedCountries.value = filters.selectedCountries;
+            }
+            if (filters.selectedUnknowns) {
+                selectedUnknowns.value = filters.selectedUnknowns;
+            }
         }
     }
 
-    // Fonction pour sauvegarder les filtres dans sessionStorage
+    // Fonction pour sauvegarder les filtres dans sessionStorage sous acc_dashboard
     function saveFilters() {
-        sessionStorage.setItem('selectedDepartment', JSON.stringify(selectedDepartment.value));
-        sessionStorage.setItem('selectedComponent', JSON.stringify(selectedComponent.value));
-        sessionStorage.setItem('selectedCountries', JSON.stringify(selectedCountries.value));
+        const filters = {
+            selectedDepartment: selectedDepartment.value,
+            selectedComponent: selectedComponent.value,
+            selectedCountries: selectedCountries.value,
+            selectedUnknowns: selectedUnknowns.value
+        };
+
+        sessionStorage.setItem('acc_dashboard', JSON.stringify(filters));
     }
 
     // Sélectionner tous les accords dans l'importation
@@ -860,19 +905,34 @@
         return country ? country.parco_code : 'Code non disponible';
     }
 
-    // Liste dynamique des accords
     const filteredAccords = computed(() => {
         return accords.value.agreements.filter(accord => {
             const matchesDepartments = selectedDepartments.value.length === 0 || 
                 accord.departments.some(dept => selectedDepartments.value.includes(dept.dept_shortname));
-            
+
             const matchesCountries = selectedCountries.value.length === 0 || 
                 selectedCountries.value.includes(accord.partnercountry.parco_name);
 
             const matchesComponents = selectedComponent.value.length === 0 || 
-                (accord.component && selectedComponent.value.includes(accord.component.comp_name)); // Filtre composante
+                (accord.component && selectedComponent.value.includes(accord.component.comp_name));
 
-            return matchesDepartments && matchesCountries && matchesComponents; // Ajout du filtre composante
+            // Filtre unknowns pour les champs vides
+            const matchesUnknowns = selectedUnknowns.value.every(unknown => {
+                // S'il y a un point dans la clé, on fait un split et on réduit
+                if (unknown.includes('.')) {
+                    const keys = unknown.split('.');
+                    return keys.reduce((obj, key) => obj && obj[key], accord) === null;
+                } else {
+                    // Cas particulier pour departments
+                    if (unknown === 'departments') {
+                        return accord.departments.length === 0; // Vérifie si departments est vide
+                    }
+                    // Vérification pour les autres champs sans sous-propriétés
+                    return accord[unknown] === null;
+                }
+            });
+
+            return matchesDepartments && matchesCountries && matchesComponents && matchesUnknowns;
         });
     });
 
@@ -1115,11 +1175,15 @@
     function deselectAllComp() {
         selectedComponent.value = [];
     }
+    function deselectAllUnkn() {
+        selectedUnknowns.value = [];
+    }
 
     // Surveiller les changements et sauvegarder les filtres
     watch(selectedDepartment, saveFilters);
     watch(selectedComponent, saveFilters);
     watch(selectedCountries, saveFilters);
+    watch(selectedUnknowns, saveFilters);
 
     onMounted(() => {
         fetchAll();

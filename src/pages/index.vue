@@ -267,11 +267,11 @@
     const selectedDepartment = ref([]);
     const selectedComponent = ref([]);
     const selectedCountries = ref([]);
-    // Fonction pour charger les filtres depuis sessionStorage
+    // Fonction pour charger les filtres depuis sessionStorage pour la page d'accueil
     function loadFilters() {
-        const savedDepartments = sessionStorage.getItem('selectedDepartment');
-        const savedComponents = sessionStorage.getItem('selectedComponent');
-        const savedCountries = sessionStorage.getItem('selectedCountries');
+        const savedDepartments = sessionStorage.getItem('home_dashboard.selectedDepartment');
+        const savedComponents = sessionStorage.getItem('home_dashboard.selectedComponent');
+        const savedCountries = sessionStorage.getItem('home_dashboard.selectedCountries');
 
         if (savedDepartments) {
             selectedDepartment.value = JSON.parse(savedDepartments);
@@ -284,11 +284,11 @@
         }
     }
 
-    // Fonction pour sauvegarder les filtres dans sessionStorage
+    // Fonction pour sauvegarder les filtres dans sessionStorage pour la page d'accueil
     function saveFilters() {
-        sessionStorage.setItem('selectedDepartment', JSON.stringify(selectedDepartment.value));
-        sessionStorage.setItem('selectedComponent', JSON.stringify(selectedComponent.value));
-        sessionStorage.setItem('selectedCountries', JSON.stringify(selectedCountries.value));
+        sessionStorage.setItem('home_dashboard.selectedDepartment', JSON.stringify(selectedDepartment.value));
+        sessionStorage.setItem('home_dashboard.selectedComponent', JSON.stringify(selectedComponent.value));
+        sessionStorage.setItem('home_dashboard.selectedCountries', JSON.stringify(selectedCountries.value));
     }
 
     const isOpen = ref({
