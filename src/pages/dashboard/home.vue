@@ -660,7 +660,7 @@
         await request('GET', false, favoris, config.apiUrl + 'api/favoris');
         await request('GET', false, admin, config.apiUrl + 'api/admin');
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+accountStore.login);
-        await request('GET', false, response, config.apiUrl+'api/documents/checkexist/admin/choix_cours')
+        await request('GET', false, response, config.apiUrl + 'api/documents/checkexist/admin/choix_cours' + (account.value.department != null ? `_${account.value.department.dept_id}` : ''));
         if(response.value.status == 200){
             files.value.choixCours.exist = true;
             files.value.choixCours.path = response.value.path;
