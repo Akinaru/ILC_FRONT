@@ -45,7 +45,6 @@ const routes = [
     { path: '/not-found', name: 'NotFound', component: () => import('./pages/notfound.vue'), meta: { title: 'Not Found', requiresAuth: false } },
     { path: '/:pathMatch(.*)*', redirect: '/not-found' },
     { path: '/login', name: 'Login', component: () => import('./pages/login.vue'), meta: { title: 'Login', requiresAuth: false } },
-    { path: '/testetu', name: 'Test Etu', component: () => import('./pages/testetu.vue'), meta: { title: 'Test Etu', requiresAuth: false } },
     { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete, meta: { title: 'Compléter Dossier', requiresAuth: false } },
     { path: '/articles', name: 'Articles', component: () => import('./pages/articles.vue'), meta: { title: 'Liste des articles', requiresAuth: false } },
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: { title: route => `Article n° ${route.params.art_id}`, requiresAuth: false } },
