@@ -432,6 +432,7 @@
       }).filter(item => item.agreement !== undefined);
     }
 
+
     function removeEtuFromPlace(agree_id, pos) {
         const etu = localArbitrage.value[agree_id].accounts[pos].account
         localEtus.value[etu.acc_id] = etu;
@@ -471,7 +472,7 @@
     }
 }
 
-
+    
     function getNumberOfPlace(agreeId) {
         const agreements = accords.value.agreements;
         

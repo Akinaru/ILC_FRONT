@@ -38,7 +38,7 @@ async function authRegisterAccount(login, router) {
     const response = ref([]);
 
     try {
-        await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + login);
+        await request('GET', false, response, config.apiUrl+'ldap.php/?login=' + login);
         await nextTick();
         if(response.value.message == "Network Error"){
             addAlert('error', { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: "Impossible de récupérer les informations de l'utilisateur." } });
@@ -83,5 +83,4 @@ async function authRegisterAccount(login, router) {
 function authStoreUser(data) {
     const accountStore = useAccountStore();
     accountStore.loginAccount(data);
-    console.log(accountStore.toString());
 }
