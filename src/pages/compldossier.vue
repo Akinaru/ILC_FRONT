@@ -25,6 +25,14 @@
                   <input type="text" placeholder="XXXXXXXX" class="input input-bordered w-full max-w-lg" v-model="complDossier.ine"/>
               </label>
 
+              <!-- Email -->
+              <label class="form-control w-full max-w-lg">
+                  <div class="label">
+                      <span class="label-text">Email</span>
+                  </div>
+                  <input type="text" placeholder="ex: maxime.gallotta@etu.univ-smb.fr" class="input input-bordered w-full max-w-lg" v-model="complDossier.email"/>
+              </label>
+
               <!-- Département -->
               <label class="form-control w-full max-w-lg">
                   <div class="label">
@@ -101,6 +109,7 @@
                 </p>
                 <p v-else>Département : <strong>Aucun</strong></p>
                 <p>Années de mobilité : <strong>{{ complDossier.anneesmobilite ? complDossier.anneesmobilite : 'Aucune' }}</strong></p>
+                <p>Email : <strong>{{ complDossier.email ? complDossier.email : 'Aucun' }}</strong></p>
                 <p>Aménagements : <strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></p>
                 <p>Consentement utilisation image : <strong>{{ complDossier.consent ? 'Oui' : 'Non' }}</strong></p>
                 <p>Consentement liste anciens étudiants : <strong>{{ complDossier.consentancien ? 'Oui' : 'Non' }}</strong></p>
@@ -130,6 +139,7 @@
   const complDossier = ref({
     ine: '',
     department: '',
+    email: '',
     anneesmobilite: '',
     amenagement: false,
     consent: false,
@@ -143,16 +153,20 @@
       addAlert('error', { data: { error: 'Veuillez renseigner le numéro étudiant (INE).' } })
       closeModal()
       return
+    } else if (!complDossier.value.email || complDossier.value.email === '') {
+      addAlert('error', { data: { error: 'Veuillez renseigner votre email.' } })
+      closeModal()
+      return
     } else if (!complDossier.value.department || complDossier.value.department === '') {
       addAlert('error', { data: { error: 'Veuillez renseigner votre département.' } })
       closeModal()
       return
-    } else if (!complDossier.value.consent) {
-      addAlert('error', { data: { error: 'Votre consentement au droit à l\'image est obligatoire.', message: 'Veuillez vous renseigner auprès du service ILC en cas de soucis.' } })
+    } else if (!complDossier.value.anneesmobilite || complDossier.value.anneesmobilite === '') {
+      addAlert('error', { data: { error: 'Veuillez renseigner vos années de mobilité.' } })
       closeModal()
       return
-    } else if (!complDossier.value.anneesmobilite) {
-      addAlert('error', { data: { error: 'Veuillez renseigner vos années de mobilité.' } })
+    } else if (!complDossier.value.consent) {
+      addAlert('error', { data: { error: 'Votre consentement au droit à l\'image est obligatoire.', message: 'Veuillez vous renseigner auprès du service ILC en cas de soucis.' } })
       closeModal()
       return
     }
@@ -162,6 +176,7 @@
       acc_studentnum: complDossier.value.ine,
       dept_id: complDossier.value.department,
       acc_amenagement: complDossier.value.amenagement,
+      acc_mail: complDossier.value.email,
       acc_anneemobilite: complDossier.value.anneesmobilite,
       acc_consent: complDossier.value.consent
     }
