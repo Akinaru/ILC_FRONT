@@ -161,7 +161,7 @@
         <div class="w-full ">
             <p class="text-3xl font-bold text-center py-10">Espace communication</p>
             <!-- Articles -->
-                <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
+            <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
                     <div v-if="articles.count > 0" class="flex flex-wrap justify-center xl:justify-start max-w-7xl gap-5 ">
                         <RouterLink v-for="(article, index) in articles.articles.slice(0, 6)" :key="index" :to="{ name: 'Article', params: { art_id: article.art_id } }" class="rounded-lg relative bg-base-300 w-80 md:w-96 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105 mb-5">
                             <div class="p-2">
@@ -183,16 +183,13 @@
                     <RouterLink v-if="articles.count > 0" :to="{ name: 'Articles' }" class="my-12 flex justify-center">
                         <button class="btn btn-primary w-96 hover:opacity-80 transition-all hover:scale-105">Voir tous les articles</button>
                     </RouterLink>
-                </div>
-                <div v-else class="flex items-center justify-center my-20">
-                    <span class="loading loading-dots loading-lg"></span>
-                </div>
-
+            </div>
 
             <!-- Agenda -->
             <p class="text-3xl font-bold text-center py-10">Agenda des événements</p>
                 <div class="m-5 flex items-center justify-center flex-col">
                     <div class="flex h-full items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
+                        <!-- Calendrier -->
                         <div class="flex flex-col items-center justify-center w-full">
                             <CalendarComp :events="events"></CalendarComp>
                             <div class="flex items-center justify-center py-5 w-full">
@@ -200,6 +197,7 @@
                             </div>
                         </div>
 
+                        <!-- Evenements -->
                         <div class="p-5 flex flex-col">
                             <div v-if="events && events.count > 0" class="flex-1 flex flex-col">
                                 <p class="text-center">Les 4 prochains événements</p>
@@ -215,7 +213,7 @@
                                 </RouterLink>
                                 <div v-if="eventspf.events.length < 4" class="flex flex-col">
                                     <div v-for="(n, index) in (4 - eventspf.events.length)" :key="index" class="opacity-60 transition-all flex items-center justify-center flex-1 w-full">
-                                        <p class="md:p-4 p-1 md:text-xl text-xs font-bold">XX:XX</p>
+                                        <p class="md:p-4 p-1 md:text-xl text-xs font-bold">XX/XX/XX</p>
                                         <div class="bg-base-300 p-6 xl:w-110 md:w-100 w-80 my-3 drop-shadow-lg flex flex-col transition-all duration-100 ease-in-out rounded-lg">
                                             <div class="flex justify-between">
                                                 <p class="font-bold truncate md:text-md text-xs">Aucun évenement...</p>
@@ -313,9 +311,10 @@
         isLoaded.value = true;
     }
 
+    // Renvoie la date formatée
     function formatDate(date) {
-      const options = { day: '2-digit', month: '2-digit' };
-      return new Date(date).toLocaleDateString('fr-FR', options);
+        const options = { day: '2-digit', month: '2-digit', year: '2-digit' };
+        return new Date(date).toLocaleDateString('fr-FR', options);
     }
 
     const filteredAccords = computed(() => {
