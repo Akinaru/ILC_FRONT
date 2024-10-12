@@ -12,15 +12,20 @@
       <p class="font-bold">Bienvenue sur votre espace personnel dédié aux relations internationales.</p>
       <p class="font-bold">Votre dossier est incomplet,</p>
       <p class="font-bold">veuillez remplir les informations ci-dessous pour compléter votre dossier.</p>
-  
+      
+      <!-- Formulaire -->
       <form @submit.prevent="confirmCompl" class="m-5 md:w-4/6 w-full flex items-center justify-center flex-col mt-10">
               <p>Formulaire</p>
+
+              <!-- Numéro étudiant -->
               <label class="form-control w-full max-w-lg">
                   <div class="label">
                       <span class="label-text">Numéro étudiant (INE)</span>
                   </div>
                   <input type="text" placeholder="XXXXXXXX" class="input input-bordered w-full max-w-lg" v-model="complDossier.ine"/>
               </label>
+
+              <!-- Département -->
               <label class="form-control w-full max-w-lg">
                   <div class="label">
                       <span class="label-text">Département</span>
@@ -33,34 +38,51 @@
                           </optgroup>
                       </template>
                   </select>
-                  <div class="form-control">
-                      <label class="label cursor-pointer">
-                          <span class="label-text">Avez-vous des aménagements aux examens ?</span> 
-                          <input type="checkbox" class="checkbox" v-model="complDossier.amenagement"/>
-                      </label>
-                  </div>
-                  <label class="form-control w-full max-w-lg" v-if="complDossier.amenagement">
-                      <div class="label">
-                          <span class="label-text">Description (facultatif)</span>
-                      </div>
-                      <input type="text" placeholder="Description de l'aménagement" class="input input-bordered w-full max-w-lg" v-model="complDossier.amenagementdesc"/>
-                  </label>
-                  <div class="form-control">
-                      <label class="label cursor-pointer">
-                          <span class="label-text">Consentez-vous à l'utilisation de votre image selon notre politique de confidentialité et de protection des données ?</span> 
-                          <input type="checkbox" class="checkbox" v-model="complDossier.consent"/>
-                      </label>
-                  </div>
-                  <div class="form-control">
-                      <label class="label cursor-pointer">
-                          <span class="label-text">Acceptez-vous d’apparaître dans l’annuaire des anciens étudiants conformément à notre politique de confidentialité ?</span> 
-                          <input type="checkbox" class="checkbox" v-model="complDossier.consentancien"/>
-                      </label>
-                  </div>
-                  <div class="flex items-center justify-center mt-10">
-                      <button class="btn btn-primary" type="button" @click="openConfirmModal">Valider</button>
-                  </div>
               </label>
+
+              <!-- Années mobilité -->
+              <label class="form-control w-full max-w-lg">
+                  <div class="label">
+                      <span class="label-text">Années de mobilité</span>
+                  </div>
+                  <select class="select select-bordered" v-model="complDossier.anneesmobilite">
+                      <option disabled selected value="">Séléctionnez une paire d'années</option>
+                              <option v-for="(annee, index) in anneesmobilite" :key="index" :value="annee">{{ annee }}</option>
+                  </select>
+              </label>
+
+              <!-- Aménagement -->
+              <div class="form-control w-full max-w-lg">
+                  <label class="label cursor-pointer">
+                      <span class="label-text">Avez-vous des aménagements aux examens ?</span> 
+                      <input type="checkbox" class="checkbox" v-model="complDossier.amenagement"/>
+                  </label>
+              </div>
+              <label class="form-control w-full max-w-lg" v-if="complDossier.amenagement">
+                  <div class="label">
+                      <span class="label-text">Description (facultatif)</span>
+                  </div>
+                  <input type="text" placeholder="Description de l'aménagement" class="input input-bordered w-full max-w-lg" v-model="complDossier.amenagementdesc"/>
+              </label>
+
+              <!-- Consentement image -->
+              <div class="form-control  w-full max-w-lg">
+                  <label class="label cursor-pointer">
+                      <span class="label-text">Consentez-vous à l'utilisation de votre image selon notre politique de confidentialité et de protection des données ?</span> 
+                      <input type="checkbox" class="checkbox" v-model="complDossier.consent"/>
+                  </label>
+              </div>
+
+              <!-- Annuaire des anciens -->
+              <div class="form-control max-w-lg">
+                  <label class="label cursor-pointer">
+                      <span class="label-text">Acceptez-vous d’apparaître dans l’annuaire des anciens étudiants conformément à notre politique de confidentialité ?</span> 
+                      <input type="checkbox" class="checkbox" v-model="complDossier.consentancien"/>
+                  </label>
+              </div>
+              <div class="flex items-center justify-center mt-10">
+                  <button class="btn btn-primary" type="button" @click="openConfirmModal">Valider</button>
+              </div>
           </form>
   
       <!-- Modal de confirmation -->
@@ -78,6 +100,7 @@
                      {{ getDeptName(complDossier.department) }}</strong>
                 </p>
                 <p v-else>Département : <strong>Aucun</strong></p>
+                <p>Années de mobilité : <strong>{{ complDossier.anneesmobilite ? complDossier.anneesmobilite : 'Aucune' }}</strong></p>
                 <p>Aménagements : <strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></p>
                 <p>Consentement utilisation image : <strong>{{ complDossier.consent ? 'Oui' : 'Non' }}</strong></p>
                 <p>Consentement liste anciens étudiants : <strong>{{ complDossier.consentancien ? 'Oui' : 'Non' }}</strong></p>
@@ -103,9 +126,11 @@
   const accountStore = useAccountStore()
   const components = ref([])
   const response = ref([])
+  const anneesmobilite = ref([]);
   const complDossier = ref({
     ine: '',
     department: '',
+    anneesmobilite: '',
     amenagement: false,
     consent: false,
     consentancien: true,
@@ -126,6 +151,10 @@
       addAlert('error', { data: { error: 'Votre consentement au droit à l\'image est obligatoire.', message: 'Veuillez vous renseigner auprès du service ILC en cas de soucis.' } })
       closeModal()
       return
+    } else if (!complDossier.value.anneesmobilite) {
+      addAlert('error', { data: { error: 'Veuillez renseigner vos années de mobilité.' } })
+      closeModal()
+      return
     }
   
     const requestData = {
@@ -133,6 +162,7 @@
       acc_studentnum: complDossier.value.ine,
       dept_id: complDossier.value.department,
       acc_amenagement: complDossier.value.amenagement,
+      acc_anneemobilite: complDossier.value.anneesmobilite,
       acc_consent: complDossier.value.consent
     }
   
@@ -176,6 +206,13 @@ function getDeptColor(deptId) {
   
   async function fetch() {
     await request('GET', false, components, config.apiUrl + 'api/component')
+    const currentYear = new Date().getFullYear();
+  
+    for (let i = 0; i < 3; i++) {
+      const startYear = currentYear + i;
+      const endYear = startYear + 1;
+      anneesmobilite.value.push(`${startYear}-${endYear}`);
+    }
     resetInput()
   }
   

@@ -37,24 +37,32 @@
                     <p class="text-lg font-bold w-full max-w-xl mb-5">Vos informations:</p>
                     <p class="w-full max-w-xl">Vos informations ne peuvent pas être modifiées. Renseignez-vous auprès d'ILC si besoin.</p>
                     <div class="w-full max-w-xl">
+
+                        <!-- Fullname -->
                         <label class="form-control w-full items-center justify-center">
                             <div class="label w-full">
                                 <span class="label-text">Identitée</span>
                             </div>
                             <input type="text" :value="account.acc_fullname" class="input input-bordered w-full" disabled />
                         </label>
+
+                        <!-- Email -->
                         <label class="form-control w-full items-center justify-center" >
                             <div class="label w-full">
                                 <span class="label-text">Email</span>
                             </div>
                             <input type="text" :value="account.acc_mail" class="input input-bordered w-full " disabled/>
                         </label>
+
+                        <!-- Numéro étudiant -->
                         <label class="form-control w-full items-center justify-center">
                             <div class="label w-full">
                                 <span class="label-text">Numéro étudiant</span>
                             </div>
                             <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full " disabled />
                         </label>
+
+                        <!-- Département -->
                         <label class="form-control w-full items-center justify-center " >
                             <div class="label w-full">
                                 <span class="label-text">Département</span>
@@ -66,11 +74,21 @@
        disabled />
 
                         </label>
+
+                        <!-- Score toeic -->
                         <label class="form-control w-full items-center justify-center" >
                             <div class="label w-full">
                                 <span class="label-text">Score TOEIC</span>
                             </div>
                             <input type="text" :value="account.acc_toeic" class="input input-bordered w-full " disabled/>
+                        </label>
+
+                        <!-- Années mobilite -->
+                        <label class="form-control w-full items-center justify-center" >
+                            <div class="label w-full">
+                                <span class="label-text">Années de mobilité</span>
+                            </div>
+                            <input type="text" :value="account.acc_anneemobilite" class="input input-bordered w-full " disabled/>
                         </label>
                     </div>
                 </div>
@@ -230,6 +248,7 @@
                 <p class="text-center">Ajoutez des accords aux favoris pour ensuite les choisir comme vœux.</p>
                 <p class="text-center">Date limite avant la fermeture des vœux : <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span> ({{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }})</p>
                 <div class="flex *:mr-5 py-5 justify-center">
+                    
                     <!-- Partie de gauche avec liste des favoris -->
                     <div class="flex flex-col justify-center items-center w-2/5">
                         <p class="font-bold text-xl flex *:mx-1 py-2  items-center">
@@ -261,6 +280,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <!-- Partie de droite avec les voeux -->
                     <div class="flex flex-col items-center justify-start w-3/5">
                         <p class="font-bold text-xl flex *:mx-1 py-2 items-center">
@@ -269,9 +289,9 @@
                                 <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                             </svg>
                         </p>
-                        <div id="right" class="bg-base-200 flex flex-col *:m-3 w-full">
+                        <div id="right" class="bg-base-200 flex flex-col w-full">
 
-                            <span class="flex items-center min-h-20 w-full px-5 xl:px-10 transition-all duration-100 ease-in-out" v-for="(i, index) in 6" :key="index">
+                            <div class="flex items-center min-h-20 w-full px-5 xl:px-10 transition-all duration-100 ease-in-out m-3" v-for="(i, index) in 6" :key="index">
                                 <p class="font-bold xl:pr-5 pr-3 xl:text-lg transition-all duration-100 ease-in-out min-w-fit">Vœu n°{{ i }}</p>
                                 <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 w-full flex items-center justify-center transition-all duration-100 ease-in-out">
                                     <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
@@ -292,9 +312,9 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         </button>
                                     </div>
-                                    <p v-else class="opacity-45 select-none w-96 flex items-center justify-center">Emplacement vœu n°{{ i }}</p>
+                                    <p v-else class="opacity-45 select-none flex items-center justify-center">Emplacement vœu n°{{ i }}</p>
                                 </div>
-                            </span>
+                            </div>
 
                         </div>
                     </div>
