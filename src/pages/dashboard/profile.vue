@@ -32,11 +32,12 @@
                     </RouterLink>
                 </div>
             </div>
-            <!-- Page -->
+
+            <!-- Voeux & Informations -->
             <div class="flex md:flex-row flex-col justify-between w-full pt-5">
                 <!-- Liste des voeux -->
-                <div class="w-fit">
-                    <p class="font-bold text-xl py-5">Liste des voeux:</p>
+                <div class="w-full flex items-center justify-start flex-col">
+                    <p class="font-bold text-xl py-5 flex justify-start items-center">Liste des voeux:</p>
                     <div v-for="(label, index) in labels" :key="index">
                         <div class="w-fit flex items-center justify-start my-1 bg-base-300 border-2 "
                         :class="destination.agreement && wishes?.count > 0 && wishes.wishes[label] && destination.agreement.agree_id == wishes.wishes[label].agree_id ? ' border-warning' : 'border-base-300'">
@@ -63,9 +64,9 @@
                     </div>
                 </div>
                 <!-- Informations -->
-                <div class="w-full flex items-center justify-center flex-col ">
+                <div class="w-full flex items-center justify-start flex-col ">
                     <div class="w-3/5 flex items-center justify-center flex-col">
-                        <p class="font-bold text-xl py-5 w-full">Informations:</p>
+                        <p class="font-bold text-xl py-5 w-full flex items-center justify-center">Informations:</p>
                         <label class="form-control w-full">
                             <div class="label">
                                 <span class="label-text">Identitée</span>
@@ -179,6 +180,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Documents -->
             <div class="w-full flex items-center justify-center flex-col">
                 <div class="w-1/2">
                     <p class="text-xl font-bold w-full">Documents</p>
