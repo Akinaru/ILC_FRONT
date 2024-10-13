@@ -1,5 +1,5 @@
 <template>
-    <div class="overflow-x-auto min-h-screen">
+    <div v-if="isLoaded" class="overflow-x-auto min-h-screen">
         <div class="flex w-full justify-between">
             <p class="font-bold text-xl">Historique</p>
             <!-- bouton supprimer -->
@@ -70,7 +70,7 @@
             <tbody>
                 <tr v-for="(act, actIndex) in filteredActions" :key="actIndex">
                     <th>{{ act.act_id }}</th>
-                    <td>{{ act.acc_id }}</td>
+                    <td class="min-w-64">{{ getFullName(act.acc_id) }}</td>
                     <td class="w-full">{{ act.act_description }}</td>
                     <td class="min-w-56 flex items-center justify-center">{{ formatDate(act.act_date) }}</td>
                     <td>
@@ -87,10 +87,15 @@
             <p>Aucune action n'a été trouvée.</p>
         </div>
     </div>
+
+    <div v-else>
+        <LoadingComp></LoadingComp>
+    </div>
 </template>
 
 <script setup>
 import { request } from '../../composables/httpRequest';
+import LoadingComp from '../../components/utils/LoadingComp.vue';
 import { onMounted, ref, computed } from 'vue';
 
 import { getType } from '../../composables/actionType'
@@ -100,16 +105,25 @@ import { useAccountStore } from '../../stores/accountStore';
 const accountStore = useAccountStore();
 
 const actions = ref([]);
+const accounts = ref([]);
 const selectedTypes = ref([]);
 const searchQuery = ref('');
-
+const isLoaded = ref(false);
 const response = ref([]);
 
 
 const sortByDateAsc = ref(false);
 
 async function fetch() {
+    isLoaded.value = false;
     await request('GET', false, actions, config.apiUrl + 'api/action');
+    await request('GET', false, accounts, config.apiUrl + 'api/account');
+    isLoaded.value = true;
+}
+
+function getFullName(acc_id) {
+  const account = accounts.value.accounts.find(acc => acc.acc_id === acc_id);
+  return account ? account.acc_fullname : null;
 }
 
 const filteredActions = computed(() => {

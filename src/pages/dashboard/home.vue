@@ -90,6 +90,42 @@
                             </div>
                             <input type="text" :value="account.acc_anneemobilite" class="input input-bordered w-full " disabled/>
                         </label>
+
+                        <label for="modal_modif" class="btn btn-primary w-full mt-3" @click="modifEtu(account)">Modifier</label>
+                    </div>
+                </div>
+
+                <!-- Modal modification -->
+                <input type="checkbox" id="modal_modif" class="modal-toggle" />
+                <div class="modal modal-bottom sm:modal-middle" role="dialog">
+                    <div class="modal-box">
+                        <h3 class="font-bold text-lg">Modification de vos information</h3>
+                        <form @submit.prevent="confirmModifEtu" class="w-full">
+
+                            <!-- Mail -->
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">Email</span>
+                                </div>
+                                <input type="text" placeholder="ex: maxime.gallotta@etu.univ-smb.fr" class="input input-bordered w-full" v-model="currentUnivEtu.acc_mail"/>
+                            </label>
+
+                            <!-- Numéro étudiant -->
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">Numéro étudiant (INE)</span>
+                                </div>
+                                <input type="text" placeholder="XXXXXXXX" class="input input-bordered w-full" v-model="currentUnivEtu.acc_studentnum"/>
+                            </label>
+
+                            
+                            <div class="modal-action">
+                                <label for="modal_modif" class="btn ">Annuler</label>
+                                <button type="submit">
+                                    <label for="modal_modif" class="btn btn-success">Enregistrer</label>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -469,6 +505,7 @@
     import config from '../../config';
     import { useAccountStore } from '../../stores/accountStore';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
+    import { addAlert } from '../../composables/addAlert';
 
     const response = ref([]);
     const account = ref([]);
@@ -479,6 +516,7 @@
     const isLoaded = ref(false);
     const accountStore = useAccountStore();
     const localFavoris = ref([]);
+    const currentUnivEtu = ref([]);
     const localVoeux = ref({
         1: null,
         2: null,
@@ -537,6 +575,13 @@
         selectedChangeVoeu.value = voeu;
     }
 
+    // Modal modif etu
+    function modifEtu(account){
+        currentUnivEtu.value.acc_id = account.acc_id || null;
+        currentUnivEtu.value.acc_mail = account.acc_mail || null;
+        currentUnivEtu.value.acc_studentnum = account.acc_studentnum || null;
+    }
+
     function setAccordToVoeu(agree_id) {
         const dropZoneId = `voeu${selectedChangeVoeu.value}`;
         const dropZone = document.getElementById(dropZoneId);
@@ -565,6 +610,27 @@
         }
     }
 
+    // Confirm modification etu
+    async function confirmModifEtu(){
+
+        if (currentUnivEtu.value.acc_studentnum == '') {
+            addAlert('error', { data: { error: 'Vous devez renseigner votre numéro étudiant.', message: 'Modification du dossier annulée.' } });
+            return;
+        }
+        if (currentUnivEtu.value.acc_mail == '') {
+            addAlert('error', { data: { error: 'Vous devez renseigner votre mail.', message: 'Modification du dossier annulée.' } });
+            return;
+        }
+
+        const requestData = { 
+            acc_id: currentUnivEtu.value.acc_id,
+            acc_mail: currentUnivEtu.value.acc_mail,
+            acc_studentnum: currentUnivEtu.value.acc_studentnum,
+
+        };
+        await request('PUT', true, response, config.apiUrl+'api/account/modifetu', requestData);
+        await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
+    }
 
     async function initPage(){
         localFavoris.value = favoris.value

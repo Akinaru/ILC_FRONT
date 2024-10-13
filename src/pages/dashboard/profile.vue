@@ -84,6 +84,12 @@
                             </div>
                             <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full " disabled />
                         </label>
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Années de mobilité</span>
+                            </div>
+                            <input type="text" :value="account.acc_anneemobilite" class="input input-bordered w-full " disabled />
+                        </label>
                         <label class="form-control w-full " >
                             <div class="label">
                                 <span class="label-text">Département</span>
@@ -126,6 +132,16 @@
                                             <span class="label-text">Numéro étudiant</span>
                                         </div>
                                         <input type="text"  class="input input-bordered w-full" v-model="modifCompte.acc_studentnum"/>
+                                    </label>
+                                    <!-- Années mobilité -->
+                                    <label class="form-control w-full max-w-lg">
+                                        <div class="label">
+                                            <span class="label-text">Années de mobilité</span>
+                                        </div>
+                                        <select class="select select-bordered" v-model="modifCompte.acc_anneemobilite">
+                                            <option disabled selected value="">Séléctionnez une paire d'années</option>
+                                                    <option v-for="(annee, index) in anneesmobilite" :key="index" :value="annee">{{ annee }}</option>
+                                        </select>
                                     </label>
                                     <!-- Département -->
                                     <label class="form-control w-full">
@@ -295,6 +311,8 @@
     const response = ref([])
     const destination = ref([])
     const labels = ref(['agree_one', 'agree_two', 'agree_three', 'agree_four', 'agree_five', 'agree_six']);
+    const anneesmobilite = ref([]);
+
 
     const myfiles = ref({
         choixCours: {
@@ -338,6 +356,13 @@
         if(response.value.status == 200){
             myfiles.value.releveNote.exist = true;
             myfiles.value.releveNote.path = response.value.path;
+        }
+
+        const currentYear = new Date().getFullYear();
+        for (let i = 0; i < 3; i++) {
+            const startYear = currentYear + i;
+            const endYear = startYear + 1;
+            anneesmobilite.value.push(`${startYear}-${endYear}`);
         }
     }
 
@@ -399,10 +424,20 @@
             acc_id: account.value.acc_id,
             acc_studentnum: modifCompte.value.acc_studentnum != null ? modifCompte.value.acc_studentnum : 0,
             dept_id: modifCompte.value.dept_id != 'no_dept' ? modifCompte.value.dept_id : null,
+            acc_anneemobilite: modifCompte.value.acc_anneemobilite != null ? modifCompte.value.acc_anneemobilite : null,
             acc_mail: modifCompte.value.acc_mail != null ? modifCompte.value.acc_mail : 'Aucun mail' ,
             acc_toeic: modifCompte.value.acc_toeic != null ? modifCompte.value.acc_toeic : 0, 
         }
         await request('PUT', true, response, config.apiUrl+'api/account/modif', requestData);
+        if (response.value.status === 200) {
+            
+            // Rafraîchir les données après l'ajout
+            const requestDataAction = {
+                act_description: 'Modification des informations de '+ account.value.acc_fullname +'.',
+                acc_id: accountStore.login,
+            };
+            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+        }
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
         resetModif();
     }
@@ -411,6 +446,7 @@
         modifCompte.value.acc_studentnum = account.value.acc_studentnum;
         modifCompte.value.acc_mail = account.value.acc_mail;
         modifCompte.value.acc_toeic = account.value.acc_toeic;
+        modifCompte.value.acc_anneemobilite = account.value.acc_anneemobilite;
         modifCompte.value.dept_id = account.value.department ? account.value.department.dept_id : 'no_dept' 
     }
 
