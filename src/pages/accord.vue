@@ -3,9 +3,21 @@
         <div v-if="accord && accord.agreement?.agree_id">
             <div class="flex justify-end pb-20">
                 <!-- Favoris -->
-                <div v-if="accountStore.isLogged() && accountStore.isStudent()" @click="toggleFavoris(accord.agree_id)" class="w-fit group p-2 flex items-center justify-center hover:cursor-pointer hover:scale-105 transition-all" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
+                <div v-if="accountStore.isLogged() && accountStore.isStudent()" @click="toggleFavoris(accord.agreement.agree_id)" class="w-fit group p-2 flex items-center justify-center hover:cursor-pointer hover:scale-105 transition-all" :class="{'hover:opacity-60' : isFavorited(accord.agree_id)}">
                     <button class="btn btn-primary">
-                        <!-- SVG pour le bouton -->
+                        <svg 
+                                                    class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out" 
+                                                    viewBox="0 0 24 24" 
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path 
+                                                        :class="{'fill-current': isFavorited(accord.agreement.agree_id), 'group-hover:fill-current': !isFavorited(accord.agreement.agree_id)}" 
+                                                        :fill="isFavorited(accord.agreement.agree_id) ? 'currentColor' : 'none'" 
+                                                        stroke="currentColor" 
+                                                        stroke-width="2" 
+                                                        d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z" />
+                                                </svg>
+                        <p v-if="!isFavorited(accord.agreement.agree_id)">Ajouter aux favoris</p>
+                        <p v-else>Supprimer des favoris</p>
                     </button>
                 </div>
             </div>
@@ -139,7 +151,7 @@
     }
     function isFavorited(agree_id) {
       return favoris.value.favoris.some(
-        favori => favori.acc_id === accountStore.login && favori.agree_id === agree_id
+        favori => favori.agree_id === agree_id
       );
     }
 
