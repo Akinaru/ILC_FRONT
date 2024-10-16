@@ -9,7 +9,7 @@
                 <!-- Partie filtre -->
                 <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5 z-10" v-if="accords && accords.agreements">
                     <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg">Filtres des Accords</p>
-                    <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length + selectedComponent.length }} filtre{{ selectedCountries.length + selectedDepartment.length + selectedComponent.length > 1 ? 's' : '' }})</p>
+                    <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length }} filtre{{ selectedCountries.length + selectedDepartment.length > 1 ? 's' : '' }})</p>
                     <!-- Pays -->
                     <div>
                         <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
@@ -56,24 +56,6 @@
                         </div>
                     </div>
 
-                    <!-- Component -->
-                    <div>
-                        <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('component')">
-                            <p>Composante ({{ selectedComponent.length }} séléctionné{{ selectedComponent.length > 1 ? 's' : '' }})</p>
-                            <span :class="isOpen.component ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
-                        </div>
-                        <div class="p-1" v-show="isOpen.component">
-                            <button class="hover:opacity-70 underline" @click="deselectAllComp">Tout désélectionner</button>
-
-                            <div class="lg:block flex flex-wrap">
-                                <div v-for="(compo,index) in components.components" :key="index" class="flex items-center hover:opacity-60 my-1 w-full">
-                                    <input :id="'filt_compo_'+index" type="checkbox" class="checkbox" :value="compo.comp_name" v-model="selectedComponent">
-                                    <label :for="'filt_compo_'+index" class="select-none w-full hover:cursor-pointer pl-2">{{ compo.comp_name }}</label>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
 
@@ -263,12 +245,10 @@
     const isLoaded = ref(false);
 
     const selectedDepartment = ref([]);
-    const selectedComponent = ref([]);
     const selectedCountries = ref([]);
     // Fonction pour charger les filtres depuis sessionStorage pour la page d'accueil
     function loadFilters() {
         const savedDepartments = sessionStorage.getItem('home_dashboard.selectedDepartment');
-        const savedComponents = sessionStorage.getItem('home_dashboard.selectedComponent');
         const savedCountries = sessionStorage.getItem('home_dashboard.selectedCountries');
 
 
@@ -277,11 +257,6 @@
             if(selectedDepartment.value.length > 0)
                 isOpen.value.departments = true;
 
-        }
-        if (savedComponents) {
-            selectedComponent.value = JSON.parse(savedComponents);
-            if(selectedComponent.value.length > 0)
-                isOpen.value.component = true;
         }
         if (savedCountries) {
             selectedCountries.value = JSON.parse(savedCountries);
@@ -296,14 +271,12 @@
     // Fonction pour sauvegarder les filtres dans sessionStorage pour la page d'accueil
     function saveFilters() {
         sessionStorage.setItem('home_dashboard.selectedDepartment', JSON.stringify(selectedDepartment.value));
-        sessionStorage.setItem('home_dashboard.selectedComponent', JSON.stringify(selectedComponent.value));
         sessionStorage.setItem('home_dashboard.selectedCountries', JSON.stringify(selectedCountries.value));
     }
 
     const isOpen = ref({
         pays: false,
         departments: false,
-        component: false,
     });
 
     function toggleCollapse(section) {
@@ -336,7 +309,6 @@
             const component = accord.component || {};
             const deptShortnames = selectedDepartment.value || [];
             const countryNames = selectedCountries.value || [];
-            const componentNames = selectedComponent.value || []; // Ajout du filtre composante
 
             // Les accords doivent être filtrés en fonction des départements, pays et composantes sélectionnés
             const matchesDepartments = deptShortnames.length === 0 || 
@@ -345,14 +317,12 @@
             const matchesCountries = countryNames.length === 0 || 
                 (partnercountry && partnercountry.parco_name && countryNames.includes(partnercountry.parco_name));
 
-            const matchesComponents = componentNames.length === 0 || 
-                (component && component.comp_name && componentNames.includes(component.comp_name)); // Filtre composante
 
             // Assurez-vous que departments est un tableau et vérifiez sa longueur
             const hasDepartments = Array.isArray(departments) && departments.length > 0;
 
             // Retourner les accords qui correspondent aux filtres ou qui ont des départements
-            return matchesDepartments && matchesCountries && matchesComponents && (hasDepartments || deptShortnames.length === 0);
+            return matchesDepartments && matchesCountries && (hasDepartments || deptShortnames.length === 0);
         });
     });
 
@@ -416,12 +386,8 @@
     function deselectAllCountry() {
         selectedCountries.value = [];
     }
-    function deselectAllComp() {
-        selectedComponent.value = [];
-    }
     // Surveiller les changements et sauvegarder les filtres
     watch(selectedDepartment, saveFilters);
-    watch(selectedComponent, saveFilters);
     watch(selectedCountries, saveFilters);
 
     onMounted(() => {
