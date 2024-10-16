@@ -271,15 +271,26 @@
         const savedComponents = sessionStorage.getItem('home_dashboard.selectedComponent');
         const savedCountries = sessionStorage.getItem('home_dashboard.selectedCountries');
 
+
         if (savedDepartments) {
             selectedDepartment.value = JSON.parse(savedDepartments);
+            if(selectedDepartment.value.length > 0)
+                isOpen.value.departments = true;
+
         }
         if (savedComponents) {
             selectedComponent.value = JSON.parse(savedComponents);
+            if(selectedComponent.value.length > 0)
+                isOpen.value.component = true;
         }
         if (savedCountries) {
             selectedCountries.value = JSON.parse(savedCountries);
+            if(selectedCountries.value.length > 0)
+                isOpen.value.pays = true;
         }
+
+
+
     }
 
     // Fonction pour sauvegarder les filtres dans sessionStorage pour la page d'accueil
