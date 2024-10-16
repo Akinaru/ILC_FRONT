@@ -10,7 +10,7 @@
                 <div class="flex items-center justify-center py-5">
                     <div class="bg-base-200 drop-shadow-lg w-96" v-if="accords && accords.agreements">
                         <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg select-none">Filtres</p>
-                        <p class="select-none">{{ filteredEtus.length }} résultats ({{ selectedDepartment.length }} filtre{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
+                        <p class="select-none">{{ filteredEtus.length }} résultats</p>
                         <!-- Départements -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
@@ -23,10 +23,10 @@
                                     <div class="lg:block flex flex-wrap">
                                         <p>- {{ comp.comp_name }}</p>
                                         <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
-                                            <input :id="'filt_dept_'+index" type="checkbox" class="checkbox" :value="dept.dept_shortname" v-model="selectedDepartment">
-                                            <label :for="'filt_dept_'+index" class="w-full flex items-center justify-center cursor-pointer pl-2">
+                                            <input :id="'filt_dept_'+dept.dept_id" type="checkbox" class="checkbox" :value="dept.dept_shortname" v-model="selectedDepartment">
+                                            <label :for="'filt_dept_'+dept.dept_id" class="w-full flex items-center justify-center cursor-pointer pl-2">
                                                 <div class="lg:w-3 w-6 lg:h-3 h-3 mr-2" :style="{backgroundColor: dept.dept_color}"></div>
-                                                <label :for="'filt_dept_'+index" class="select-none w-full hover:cursor-pointer">{{ dept.dept_shortname }}</label>
+                                                <label :for="'filt_dept_'+dept.dept_id" class="select-none w-full hover:cursor-pointer">{{ dept.dept_shortname }}</label>
                                             </label>
                                         </div>
                                     </div>
@@ -77,6 +77,22 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Années de mobilité -->
+                        <div>
+                            <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('anneemobilite')">
+                                <p class="select-none">Années de mobilité ({{ selectedAnneeMobilite.length }} séléctionné{{ selectedAnneeMobilite.length > 1 ? 's' : '' }})</p>
+                                <span :class="isOpen.anneemobilite ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                            </div>
+                            <div class="p-1" v-show="isOpen.anneemobilite">
+                                <button class="hover:opacity-70 underline" @click="deselectAllAnneeMobilite">Tout désélectionner</button>
+                                <div v-for="(annee, index) in anneesmobilite" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
+                                    <input :id="'filt_annee_'+index" type="checkbox" class="checkbox" :value="annee" v-model="selectedAnneeMobilite">
+                                    <label :for="'filt_annee_'+index" class="cursor-pointer w-full pl-2">
+                                        <label :for="'filt_annee_'+index" class="select-none w-full hover:cursor-pointer">{{ annee }}</label>
+                                    </label>
+                                </div>
+                            </div>
+                        </div> 
                     </div>
                 </div>
 
@@ -93,15 +109,29 @@
                             <p v-else class="bg-gray-500 p-2 rounded-lg min-w-16 text-center">Aucun</p>
                             <div class="flex flex-col w-full items-center justify-start">
                                 <p class="w-full text-center">{{ etu.acc_fullname }}</p> 
-                                <p class="py-1" v-if="etu.wishes.count <= 0" >Aucun voeux enregistrés.</p>
                             </div>
+                            <label for="modal_info_etu" class="px-2 hover:opacity-70 btn btn-neutral" @click="changeEtuInfo(etu)">
+                                <svg class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
+                                    version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85"
+                                    xml:space="preserve">
+                                    <g>
+                                        <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
+                                            s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
+                                            c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
+                                            C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
+                                            c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                    </g>
+                                </svg>
+                            </label>
                         </div>
-
+                        
+                        <!-- Si létudiant a des voeux -->
                         <div v-if="etu.wishes.count > 0" class="bg-base-200 w-full p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapseEtu(etu.acc_id)">
                             <p>Voir les voeux</p>
                             <span :class="isOpen.etudiants[etu.acc_id] ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                         </div>
 
+                        <!-- Affichage des voeux -->
                         <div class="p-1 w-full" v-show="isOpen.etudiants[etu.acc_id]">
                             <div>
                                 <div>
@@ -129,6 +159,22 @@
    
 
                     </div>
+
+                    <!-- Modal informations étudiant -->
+                    <input type="checkbox" id="modal_info_etu" class="modal-toggle" />
+                    <div class="modal" role="dialog">
+                        <div class="modal-box">
+                            <form method="dialog">
+                                <label for="modal_info_etu" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+                            </form>
+                            <h3 class="text-lg font-bold">{{ infoetudiant.acc_fullname ? infoetudiant.acc_fullname : 'Inconnu' }}</h3>
+                            <p class="py-4">{{ infoetudiant }}</p>
+
+
+                        </div>
+                        <label class="modal-backdrop" for="modal_info_etu">Close</label>
+                    </div>
+
                 </div>
             </div>
 
@@ -140,7 +186,7 @@
                 <div class="flex items-center justify-center py-5 w-full">
                     <div class="bg-base-200 drop-shadow-lg w-11/12" v-if="accords && accords.agreements">
                         <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg select-none">Filtres</p>
-                        <p class="select-none">{{ filteredArbitrage.length }} résultats ({{ selectedCountries.length }} filtre{{ selectedCountries.length > 1 ? 's' : '' }})</p>
+                        <p class="select-none">{{ filteredArbitrage.length }} résultats </p>
                         <!-- Pays -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
@@ -178,6 +224,35 @@
                                         <label :for="'filt_isced_'+index" class="cursor-pointer w-full pl-2">
                                             
                                             <label :for="'filt_isced_'+index" class="select-none w-full hover:cursor-pointer">{{ isced.isc_code || 'XX' }} - {{ isced.isc_name || 'Sans code' }}</label>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Accords -->
+                        <div>
+                            <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('accordsarbitrage')">
+                                <p class="select-none">Accords (voeux) ({{ selectedAccordArbitrage.length }} séléctionné{{ selectedAccordArbitrage.length > 1 ? 's' : '' }})</p>
+                                <span :class="isOpen.accordsarbitrage ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                            </div>
+                            <div class="p-1" v-show="isOpen.accordsarbitrage">
+                                <button class="hover:opacity-70 underline" @click="deselectAllAccordArbitrage">Tout désélectionner</button>
+                                <div class="flex flex-wrap items-center justify-start">
+
+                                    <div v-for="(accord,index) in accords.agreements" :key="index" class="flex items-center hover:opacity-60 my-1 md:w-4/6 xl:w-3/6 hover:cursor-pointer">
+                                        <input :id="'filt_accordarbitrage_'+index" type="checkbox" class="checkbox" :value="accord.agree_id" v-model="selectedAccordArbitrage">
+                                        <label :for="'filt_accordarbitrage_'+index" class="cursor-pointer w-full pl-2">
+                                            <span class="relative inline-block mr-1">
+                                                <!-- Drapeau -->
+                                                <span class="fi" :class="'fi-' + (accord.partnercountry?.parco_code)"></span>
+
+                                                <!-- Point d'interrogation si pas de drapeau -->
+                                                <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                                    ?
+                                                </span>
+                                            </span>
+
+                                            <label :for="'filt_accordarbitrage_'+index" class="select-none w-full hover:cursor-pointer">{{ accord.university?.univ_name || 'Université indisponible' }} - {{ accord.isced?.isc_code || 'Code ISCED ?' }}</label>
                                         </label>
                                     </div>
                                 </div>
@@ -257,10 +332,16 @@
     const selectedDepartment = ref([]);
     const selectedIsced = ref([]);
     const selectedAccord = ref([]);
+    const selectedAccordArbitrage = ref([]);
     const selectedVoeux = ref([]);
     const selectedCountries = ref([]);
+    const selectedAnneeMobilite = ref([]);
+
+    const infoetudiant = ref([])
 
     const arbitrage = ref([])
+
+    const anneesmobilite = ref([])
 
     const localEtus = ref([]);
     const localArbitrage = ref([])
@@ -279,8 +360,10 @@
         pays: false,
         departments: false,
         accords: false,
+        accordsarbitrage: false,
         isced: false,
         voeux: false,
+        anneemobilite: false,
         etudiants: [], 
     });
 
@@ -299,6 +382,15 @@
         await request('GET', false, isceds, config.apiUrl+'api/isced');
         await request('GET', false, etudiants, config.apiUrl+'api/account/students');
         await request('GET', false, arbitrage, config.apiUrl+'api/arbitrage');
+        const currentYear = new Date().getFullYear();
+  
+        for (let i = 0; i < 4; i++) {
+            const startYear = currentYear + i;
+            const endYear = startYear + 1;
+            anneesmobilite.value.push(`${startYear}-${endYear}`);
+        }
+
+        
         isLoaded.value = true;
         init();
         if (etudiants.value && etudiants.value.accounts) {
@@ -307,6 +399,7 @@
                 return acc;
             }, {});
         }
+
     }
 
 
@@ -352,9 +445,11 @@
     refreshDrop();
 }
 
+    function changeEtuInfo(etu){
+        infoetudiant.value = etu;
+    }
 
-
-
+    // Enregistrement de l'arbitrage
     async function saveArbitrage(){
         const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
             arbitrage.accounts.forEach(accountInfo => {
@@ -372,7 +467,7 @@
         await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
     }
 
-
+    // Liste des étudiants après filtres
     const filteredEtus = computed(() => {
         return Object.values(localEtus.value)
             .filter(etu => {
@@ -392,6 +487,10 @@
                 const voeuxCount = etu.wishes.count;
                 return selectedVoeux.value.length === 0 || selectedVoeux.value.includes(voeuxCount);
             })
+            .filter(etu => {
+                // Filtre par année de mobilité
+                return selectedAnneeMobilite.value.length === 0 || selectedAnneeMobilite.value.includes(etu.acc_anneemobilite); // Utilisation de acc_anneemobilite
+            })
             .sort((a, b) => {
                 // Tri par position du vœu et alphabétiquement
                 const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
@@ -404,16 +503,22 @@
     });
 
 
+
+    // Liste des accords avec arbitrage après filtres
     const filteredArbitrage = computed(() => {
         return Object.values(localArbitrage.value)
             .filter(arbitrage => {
-                const countryFilter = selectedCountries.value.length === 0 || selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
+                const countryFilter = selectedCountries.value.length === 0 || 
+                                    selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
                 const iscedFilter = selectedIsced.value.length === 0 || 
                                     (arbitrage.agreement.isced && selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
+                const accordFilter = selectedAccordArbitrage.value.length === 0 || 
+                                    selectedAccordArbitrage.value.includes(arbitrage.agreement.agree_id); // Filtre par accord
 
-                return countryFilter && iscedFilter;
+                return countryFilter && iscedFilter && accordFilter; // Ajout du filtre d'accord
             });
     });
+
     
     function getFilteredAgreements(etu) {
       const wishes = etu.wishes;
@@ -441,38 +546,39 @@
         saveArbitrage();
     }
 
+    // Fonction pour ajouter une place temporaire
     async function addPlace(agreeId) {
-    // Trouver l'accord correspondant par son ID
-    let foundAgreement = accords.value.agreements.find(agreement => agreement.agree_id === agreeId);
-    let currentPlaces = getNumberOfPlace(agreeId).length;
+        // Trouver l'accord correspondant par son ID
+        let foundAgreement = accords.value.agreements.find(agreement => agreement.agree_id === agreeId);
+        let currentPlaces = getNumberOfPlace(agreeId).length;
 
-    if (foundAgreement) {
-        // Synchroniser les places si elles sont différentes
-        if (foundAgreement.agree_nbplace !== currentPlaces) {
-            foundAgreement.agree_nbplace = currentPlaces;
+        if (foundAgreement) {
+            // Synchroniser les places si elles sont différentes
+            if (foundAgreement.agree_nbplace !== currentPlaces) {
+                foundAgreement.agree_nbplace = currentPlaces;
+            }
+
+            // Ajouter temporairement une place en incrémentant agree_nbplace
+            foundAgreement.agree_nbplace += 1;
+
+            // Ajouter temporairement une place dans localArbitrage
+            if (!localArbitrage.value[agreeId]) {
+                localArbitrage.value[agreeId] = { accounts: [] };
+            }
+            if (!localArbitrage.value[agreeId].accounts) {
+                localArbitrage.value[agreeId].accounts = [];
+            }
+            localArbitrage.value[agreeId].accounts.push({
+                arb_pos: localArbitrage.value[agreeId].accounts.length + 1,
+                account: null
+            });
+
+            await nextTick();
+            refreshDrop();
         }
-
-        // Ajouter temporairement une place en incrémentant agree_nbplace
-        foundAgreement.agree_nbplace += 1;
-
-        // Ajouter temporairement une place dans localArbitrage
-        if (!localArbitrage.value[agreeId]) {
-            localArbitrage.value[agreeId] = { accounts: [] };
-        }
-        if (!localArbitrage.value[agreeId].accounts) {
-            localArbitrage.value[agreeId].accounts = [];
-        }
-        localArbitrage.value[agreeId].accounts.push({
-            arb_pos: localArbitrage.value[agreeId].accounts.length + 1,
-            account: null
-        });
-
-        await nextTick();
-        refreshDrop();
     }
-}
 
-    
+    // Renvoie le nombre de place d'un accord
     function getNumberOfPlace(agreeId) {
         const agreements = accords.value.agreements;
         
@@ -514,6 +620,8 @@
     watch(selectedVoeux, handleFiltreEtu);
     watch(selectedCountries, handleFiltreEtu);
     watch(selectedIsced, handleFiltreEtu);
+    watch(selectedAnneeMobilite, handleFiltreEtu);
+    watch(selectedAccordArbitrage, handleFiltreEtu);
 
 
     async function refreshDrop() {
@@ -658,6 +766,12 @@
     }
     function deselectAllIsced() {
         selectedIsced.value = [];
+    }
+    function deselectAllAnneeMobilite() {
+        selectedAnneeMobilite.value = [];
+    }
+    function deselectAllAccordArbitrage(){
+        selectedAccordArbitrage.value = [];
     }
     onMounted(fetch)
 
