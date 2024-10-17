@@ -149,15 +149,16 @@
                                         <div class="label">
                                             <span class="label-text">Département</span>
                                         </div>
-                                        <select 
+                                        <select
                                         :disabled="accountStore.access !== 1"
                                         class="select select-bordered w-full" 
-                                        v-model="modifCompte.dept_id"
-                                        >
-                                            <option value="no_dept">Aucun département</option>
-                                            <option v-for="department in department.departments" :key="department.dept_id" :value="department.dept_id" :style="{color: department.dept_color}">
-                                                {{ department.dept_shortname }}
-                                            </option>
+                                        v-model="modifCompte.dept_id">
+                                            
+                                            <template v-for="(compo, index) in components.components" :key="index">
+                                                <optgroup :label="compo.comp_name">
+                                                    <option v-for="(dept, index) in compo.departments" :key="index" :value="dept.dept_id" :style="{ color: dept.dept_color }">({{ dept.dept_shortname }}) {{ dept.dept_name }} </option>
+                                                </optgroup>
+                                            </template>
                                         </select>
                                         <p v-if="accountStore.access != 1">Seul les administrateurs peuvent modifier ce champ.</p>
                                     </label>
@@ -310,6 +311,7 @@
     const acc_id = route.params.acc_id;
     const account = ref([]);
     const department = ref([]);
+    const components = ref([]);
     const wishes = ref([])
     const response = ref([])
     const destination = ref([])
@@ -344,7 +346,7 @@
         resetModif();
         await request('GET', false, wishes, config.apiUrl+'api/wishagreement/getbylogin/'+acc_id);
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
-        await request('GET', false, department, config.apiUrl+'api/department');
+        await request('GET', false, components, config.apiUrl+'api/component');
         await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/choix_cours/'+acc_id)
         if(response.value.status == 200){
             myfiles.value.choixCours.exist = true;
