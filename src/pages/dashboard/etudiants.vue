@@ -84,7 +84,7 @@
                 </div>
             </div>
             <!-- Liste des étudiants -->
-            <div v-if="account && account.acc_id && etudiants && etudiants.accounts" class="w-full px-10">
+            <div v-if="account && account.acc_id && etudiants && etudiants.accounts" class="w-full px-2">
                 <div class="w-full flex items-center justify-between flex-col md:flex-row">
                     <p class="text-lg font-semibold">Liste des étudiants 
                         <span v-if="account.access.acs_accounttype == 2">dans le département 
@@ -133,7 +133,7 @@
                     </label>
                 </div>
                 <!-- Liste des etudiants -->
-                <div class="flex flex-wrap gap-4 items-center justify-center py-5">
+                <div class="flex flex-wrap gap-1 items-center justify-center py-5">
                     <div v-for="(etu, index) in filteredEtudiants" :key="index" v-if="filteredEtudiants && filteredEtudiants.length > 0" class="">
                         <template class="w-full md:w-1/3 lg:w-1/4 py-2" v-if="etu.acc_id">
                                 <div class="bg-base-300 shadow-lg rounded-lg p-4 transform transition-transform duration-200 h-full flex flex-col"
@@ -143,7 +143,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                     <div class="flex-1">
-                                        <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ etu.acc_fullname }}</h5>
+                                        <h5 class="text-lg font-bold mb-2 truncate min-w-72">{{ etu.acc_fullname }}</h5>
                                         <h6 class="text-gray-600 mb-2 truncate">
                                             {{ etu.acc_id }} 
                                             <span v-if="etu.department" :style="{color: etu.department.dept_color}">({{ etu.department.dept_shortname }})</span>

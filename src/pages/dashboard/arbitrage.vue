@@ -161,16 +161,65 @@
                     </div>
 
                     <!-- Modal informations étudiant -->
-                    <input type="checkbox" id="modal_info_etu" class="modal-toggle" />
+                    <input type="checkbox" id="modal_info_etu" class="select-none modal-toggle" />
                     <div class="modal" role="dialog">
-                        <div class="modal-box">
+                        <div class="modal-box w-170 max-w-full" :style="{ borderBottom: `4px solid ${infoetudiant.department ? infoetudiant.department.dept_color : '#aaaaaa'}` }">
                             <form method="dialog">
                                 <label for="modal_info_etu" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
                             </form>
-                            <h3 class="text-lg font-bold">{{ infoetudiant.acc_fullname ? infoetudiant.acc_fullname : 'Inconnu' }}</h3>
-                            <p class="py-4">{{ infoetudiant }}</p>
+                            <h3 class="text-xl font-bold">{{ infoetudiant.acc_fullname ? infoetudiant.acc_fullname : 'Inconnu' }} <span class="text-sm">({{ infoetudiant.acc_id ? infoetudiant.acc_id : 'Inconnu' }})</span></h3>
+                            
+                            <div class="mt-3">
+                                <div class="divider"></div>
+                                <h4 class="font-bold text-lg mb-2">Informations</h4>
+                                <div class="flex flex-col">
+                                    <p class=" text-gray-400">
+                                            <strong>Nombre de vœux:</strong> {{ infoetudiant.wishes ? infoetudiant.wishes.count : 0 }}<br>
+                                            <strong>Documents ajouté(s):</strong> {{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}<br>
+                                            <strong>Dernière connexion:</strong> {{ formatDate(infoetudiant.acc_lastlogin) }}<br>
+                                            <strong>Aménagement aux éxams:</strong> {{ infoetudiant.acc_amenagement == true ? 'Oui' : 'Non' }}
+                                    </p>  
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <div class="divider"></div>
+                                <div class="flex flex-col">
+                                    <p class=" text-gray-400">
+                                            <strong>Email:</strong> {{ infoetudiant.acc_mail ? infoetudiant.acc_mail : 'Aucun' }}<br>
+                                            <strong>Numéro étudiant:</strong> {{ infoetudiant.acc_studentnum ? infoetudiant.acc_studentnum : 'Aucun' }}<br>
+                                            <strong>Années de mobilité:</strong> {{ infoetudiant.acc_anneemobilite ? infoetudiant.acc_anneemobilite : 'Aucune' }}<br>
+                                            <strong>Score TOEIC:</strong> {{ infoetudiant.acc_toeic ? infoetudiant.acc_toeic : 'Aucun' }}
+                                    </p>  
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <div class="divider"></div>
+                                <h4 class="font-bold text-lg mb-2">Voeux</h4>
+                                <p v-if="infoetudiant.wishes && infoetudiant.wishes.count == 0">Aucun :(</p>
+                                <div v-for="(accord, index) in getFilteredAgreements(infoetudiant)" :key="index" class="flex justify-between">
+                                    <p class="min-w-fit">Voeu {{ accord.place }}</p>
+                                    <div class="flex w-full items-center justify-start ml-2">
+                                        <span class="relative inline-block mr-1">
+                                            <!-- Drapeau -->
+                                            <span class="fi" :class="'fi-' + (accord.agreement?.partnercountry?.parco_code)"></span>
 
+                                            <!-- Point d'interrogation si pas de drapeau -->
+                                            <span v-if="!accord.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                                ?
+                                            </span>
+                                        </span>
 
+                                        <p>{{accord.agreement.university?.univ_name || 'Université indisponible'}} {{ accord.agreement.isced?.isc_code || 'Code ISCED ?' }}</p>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="mt-3" v-if="infoetudiant && infoetudiant.acc_id">
+                                <div class="divider"></div>
+                                <a :href="$router.resolve({ name: 'Profile', params: { acc_id: infoetudiant.acc_id }}).href" target="_blank">
+                                    <button class="btn w-full">Voir le profil</button>
+                                </a>
+                            </div>
                         </div>
                         <label class="modal-backdrop" for="modal_info_etu">Close</label>
                     </div>
@@ -320,6 +369,7 @@
     import { request } from '../../composables/httpRequest'
     import config from '../../config'
     import LoadingComp from '../../components/utils/LoadingComp.vue';
+import { info } from 'autoprefixer';
 
     const response = ref([])
     const accords = ref([])
@@ -449,6 +499,19 @@
         infoetudiant.value = etu;
     }
 
+
+    function formatDate(date) {
+        const d = new Date(date);
+
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0
+        const year = d.getFullYear();
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+
+        return `${day}/${month}/${year} à ${hours}h${minutes}`;
+    }
+
     // Enregistrement de l'arbitrage
     async function saveArbitrage(){
         const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
@@ -521,6 +584,9 @@
 
     
     function getFilteredAgreements(etu) {
+        if (!etu || !etu.wishes) {
+            return [];
+        }
       const wishes = etu.wishes;
       const wishIds = [
         { place: 1, id: wishes.wsha_one },
