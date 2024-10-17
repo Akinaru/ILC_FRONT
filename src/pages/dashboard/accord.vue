@@ -274,7 +274,7 @@
                                             à {{ accord.university?.univ_city || 'Ville non disponible' }}
                                             ({{ accord.partnercountry?.parco_name || 'Pays non disponible' }})
                                             <span>
-                                                <span>Nombre de places: {{ accord.agree_nbplace || 'Non spécifié' }}</span>,
+                                                <span>Nombre de places: {{ accord.agree_nbplace != null ? accord.agree_nbplace : 'Non spécifié' }}</span>,
                                                 <span>Type accord: {{ accord.agree_typeaccord || 'Non spécifié' }}</span>
                                             </span>
                                         </p>
@@ -287,7 +287,7 @@
                                 </div>
 
                                 <div class="flex mt-3">
-                                    <a v-if="accord.agree_lien" :href="accord.agree_lien" class="hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">
+                                    <a v-if="accord.agree_lien" target="_blank"  :href="accord.agree_lien" class="hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">
                                         Cliquez ici pour accéder au site de l'université
                                     </a>
                                 </div>
@@ -413,28 +413,27 @@
                 <dialog id="modifAccordModal" ref="modifAccordModal" class="modal">
                     <div class="modal-box max-w-full w-150">
                         <h3 class="text-lg font-bold">Modification de l'accord</h3>
-                            <!-- Affichage de l'accord -->
-                            <div class="select-none flex justify-between items-center w-full h-20 mt-3">
-                                <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
-                                    <span class="tooltip mr-2" :data-tip="currentAccordModif?.accord?.partnercountry?.parco_name || 'Introuvable'">
-                                        <span class="relative inline-block">
-                                            <!-- Drapeau -->
-                                            <span class="fi text-5xl" :class="'fi-' + (currentAccordModif?.accord?.partnercountry?.parco_code || '')"></span>
-
-                                            <!-- Point d'interrogation si pas de drapeau -->
-                                            <template v-if="!currentAccordModif?.accord?.partnercountry?.parco_code">
-                                                <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                                    ?
-                                                </span>
-                                            </template>
-                                        </span>
+                        <!-- Affichage de l'accord -->
+                        <div class="select-none flex justify-between items-center w-full h-20 mt-3">
+                            <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                                <span class="tooltip mr-2" :data-tip="currentAccordModif?.accord?.partnercountry?.parco_name || 'Introuvable'">
+                                    <span class="relative inline-block">
+                                        <!-- Drapeau -->
+                                        <span class="fi text-5xl" :class="'fi-' + (currentAccordModif?.accord?.partnercountry?.parco_code || '')"></span>
+                                        <!-- Point d'interrogation si pas de drapeau -->
+                                        <template v-if="!currentAccordModif?.accord?.partnercountry?.parco_code">
+                                            <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                                ?
+                                            </span>
+                                        </template>
                                     </span>
-                                    <div class="flex flex-col w-full">
-                                        <p class="w-full select-none"><strong>{{ currentAccordModif?.accord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ currentAccordModif?.accord?.university?.univ_city || 'Ville indisponible' }} ({{ currentAccordModif?.accord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
-                                        <p>[{{ currentAccordModif?.accord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ currentAccordModif?.accord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ currentAccordModif?.accord?.component?.comp_name || 'Indisponible' }}</p>
-                                    </div>
+                                </span>
+                                <div class="flex flex-col w-full">
+                                    <p class="w-full select-none"><strong>{{ currentAccordModif?.accord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ currentAccordModif?.accord?.university?.univ_city || 'Ville indisponible' }} ({{ currentAccordModif?.accord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
+                                    <p>[{{ currentAccordModif?.accord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ currentAccordModif?.accord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ currentAccordModif?.accord?.component?.comp_name || 'Indisponible' }}</p>
                                 </div>
                             </div>
+                        </div>
                         <!-- Formulaire -->
                         <form class="w-full *:my-2">
                             <!-- Formulaire Isced -->
@@ -671,7 +670,7 @@
         currentAccordModif.value.comp_id = accord.component ? accord.component.comp_id : null;
         currentAccordModif.value.agree_typeaccord = accord.agree_typeaccord || null;
         currentAccordModif.value.agree_description = accord.agree_description || null;
-        currentAccordModif.value.agree_nbplace = accord.agree_nbplace || null;
+        currentAccordModif.value.agree_nbplace = accord.agree_nbplace != null ? accord.agree_nbplace : 0;
         currentAccordModif.value.agree_lien = accord.agree_lien || null;
 
         const modal = document.getElementById('modifAccordModal')
@@ -686,8 +685,8 @@
         };
 
         // Vérification du nombre de places
-        if (currentAccordModif.value.agree_nbplace <= 0) {
-            addAlert('error', { data: { error: 'Le nombre de places doit être supérieur à zéro.', message: 'Modification de l\'accord annulée.' } });
+        if (currentAccordModif.value.agree_nbplace < 0) {
+            addAlert('error', { data: { error: 'Le nombre de places doit être supérieur ou égal à zéro.', message: 'Modification de l\'accord annulée.' } });
             return;
         }
 
@@ -860,15 +859,23 @@
 
             if (filters.selectedDepartment) {
                 selectedDepartment.value = filters.selectedDepartment;
+                if(selectedDepartment.value != '')
+                    isOpen.value.departments = true; 
             }
             if (filters.selectedComponent) {
                 selectedComponent.value = filters.selectedComponent;
+                if(selectedComponent.value != '')
+                    isOpen.value.component = true; 
             }
             if (filters.selectedCountries) {
                 selectedCountries.value = filters.selectedCountries;
+                if(selectedCountries.value != '')
+                    isOpen.value.pays = true;
             }
             if (filters.selectedUnknowns) {
                 selectedUnknowns.value = filters.selectedUnknowns;
+                if(selectedUnknowns.value != '')
+                    isOpen.value.unknown = true; 
             }
         }
     }
@@ -944,8 +951,8 @@
         };
 
         // Vérification du Nombre de placess
-        if (newAgreement.value.nbplace <= 0) {
-            addAlert('error', { data: { error: 'Le Nombre de placess doit être supérieur à zéro.', message: 'Ajout de l\'accord annulé.' } });
+        if (newAgreement.value.nbplace < 0) {
+            addAlert('error', { data: { error: 'Le nombre de places doit être supérieur ou égal à zéro.', message: 'Ajout de l\'accord annulé.' } });
             return;
         }
 
