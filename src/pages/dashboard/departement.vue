@@ -6,42 +6,73 @@
                 <ExportComp texte="Exporter des départements en csv" :link="config.apiUrl+'api/department/export'"></ExportComp>
             </div>
         </div>
-        <!-- Ajout de département -->
-        <div class="m-5">
-            <div class="m-5 flex justify-center items-center flex-col">
-                <p class="text-lg font-bold">Ajout département</p>
-                <form @submit.prevent="addDepartment" class="w-2/5 *:my-2 flex flex-col justify-center items-center">
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text">Composante</span>
-                        </div>
-                        <select class="select select-bordered w-full" v-model="newDep.compo">
-                            <option disabled selected>Selectionnez une composante</option>
-                            <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }}</option>
-                            <option value="addNew">Créer une composante</option>
-                        </select>
-                    </label>
-                    <label class="form-control w-5/6 my-1 flex flex-col justify-center items-center" v-if="newDep.compo === 'addNew'">
-                        <div class="label">
-                            <span class="label-text">Créer une composante</span>
-                        </div>
-                        <input type="text" placeholder="Nom (ex: IUT Annecy)" v-model="newDep.newcompo.name" class="input input-bordered w-full" />
-                        <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newDep.newcompo.shortname" class="input input-bordered w-full " />
-                    </label>
 
+        <!-- Formulaires -->
+        <div class="w-full flex px-20 py-10">
+            <!-- Ajout de composante -->
+            <div class="m-5 w-full">
+                <div class="m-5 flex justify-center items-center flex-col">
+                    <p class="text-lg font-bold">Ajout composante</p>
+                    <form @submit.prevent="addComposante" class=" *:my-2 flex flex-col justify-center items-center">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Nom</span>
+                            </div>
+                            <input type="text" placeholder="Nom" v-model="newComp.name" class="input input-bordered w-full " />
 
-                    <div class="w-full flex items-center justify-between">
-                        <label for="colorPicker" class="label-text">Couleur</label> 
-                        <input type="color" id="colorPicker" v-model="newDep.color">
-                    </div>
-                    <input type="text" placeholder="Nom" v-model="newDep.name" class="input input-bordered w-full " />
-                    <input type="text" placeholder="Nom raccourci" v-model="newDep.shortname" class="input input-bordered w-full" />
-                    <div class="flex items-center justify-center">
-                        <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter le département</button>
-                    </div>
-                </form>
+                        </label>
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Nom raccourci</span>
+                            </div>
+                            <input type="text" placeholder="Nom raccourci" v-model="newComp.shortname" class="input input-bordered w-full" />
+
+                        </label>
+                        <div class="flex items-center justify-center">
+                            <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter la composante</button>
+                        </div>
+                    </form>
+                </div>
             </div>
+
+            <!-- Ajout de département -->
+            <div class="m-5 w-full">
+                <div class="m-5 flex justify-center items-center flex-col">
+                    <p class="text-lg font-bold">Ajout département</p>
+                    <form @submit.prevent="addDepartment" class="w-3/5 *:my-2 flex flex-col justify-center items-center">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Composante</span>
+                            </div>
+                            <select class="select select-bordered w-full" v-model="newDep.compo">
+                                <option disabled selected>Selectionnez une composante</option>
+                                <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }}</option>
+                            </select>
+                        </label>
+                        <label class="form-control w-5/6 my-1 flex flex-col justify-center items-center" v-if="newDep.compo === 'addNew'">
+                            <div class="label">
+                                <span class="label-text">Créer une composante</span>
+                            </div>
+                            <input type="text" placeholder="Nom (ex: IUT Annecy)" v-model="newDep.newcompo.name" class="input input-bordered w-full" />
+                            <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newDep.newcompo.shortname" class="input input-bordered w-full " />
+                        </label>
+
+
+                        <div class="w-full flex items-center justify-between">
+                            <label for="colorPicker" class="label-text">Couleur</label> 
+                            <input type="color" id="colorPicker" v-model="newDep.color">
+                        </div>
+                        <input type="text" placeholder="Nom" v-model="newDep.name" class="input input-bordered w-full " />
+                        <input type="text" placeholder="Nom raccourci" v-model="newDep.shortname" class="input input-bordered w-full" />
+                        <div class="flex items-center justify-center">
+                            <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter le département</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
+
 
         <!-- Liste de département -->
         <div>
@@ -233,6 +264,11 @@
         } 
     });
 
+    const newComp = ref({
+        name: '',
+        shortname: ''
+    })
+
     // Ajouter un département
     async function addDepartment(){
         const requestData = { 
@@ -247,19 +283,6 @@
             return;
         }else if (newDep.value.compo !== 'addNew') {
             requestData.comp_id = newDep.value.compo;
-        } else {
-            if(!newDep.value.newcompo.name || newDep.value.newcompo.name === ''){
-                addAlert('error', {data:{error: 'Vous devez mettre un nom à votre composante.', message:'Ajout du département annulé.'}})
-                return;
-            }
-            else if(!newDep.value.newcompo.shortname || newDep.value.newcompo.shortname === ''){
-                addAlert('error', {data:{error: 'Vous devez mettre un nom raccourci à votre composante.', message:'Ajout du département annulé.'}})
-                return;
-            }
-            requestData.newcompo = {
-                comp_name: newDep.value.newcompo.name,
-                comp_shortname: newDep.value.newcompo.shortname.toUpperCase()
-            };
         }
         
         if(newDep.value.name == ''){
@@ -277,6 +300,36 @@
                 act_description: 'Ajout du département '+newDep.value.shortname+'.',
                 acc_id: accountStore.login,
                 dept_id: response.value.department.dept_id
+            }
+            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        }
+        await fetchAll();
+        resetInput();
+
+    }
+
+    // Ajouter une composante
+    async function addComposante(){
+        const requestData = { 
+            comp_name: newComp.value.name,
+            comp_shortname: newComp.value.shortname.toUpperCase(),
+        };
+        
+        if(newComp.value.name == ''){
+            addAlert('error', {data:{error: 'Vous devez mettre un nom à votre composante.', message:'Ajout de la composante annulé.'}})
+            return;
+        }
+        if(newComp.value.shortname == ''){
+            addAlert('error', {data:{error: 'Vous devez mettre un nom raccourci à votre composante.', message:'Ajout de la composante annulé.'}})
+            return;
+        }
+        
+        await request("POST", true, response, config.apiUrl+'api/component', requestData);
+        if(response.value.status == 201){
+            const requestDataAction = {
+                act_description: 'Ajout de la composante '+newComp.value.shortname+'.',
+                acc_id: accountStore.login,
+                dept_id: 1
             }
             await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
         }
@@ -387,6 +440,9 @@
 
         newDep.value.newcompo.shortname = '';
         newDep.value.newcompo.name = '';
+
+        newComp.value.shortname = '';
+        newComp.value.name = '';
     }
 
     function copyColor(color){
