@@ -39,6 +39,7 @@
 
     async function fetchAll(){
         await request('GET', false, article, config.apiUrl+'api/article/getbyid/'+art_id);
+        document.title = `ILC - ${article.value.art_title}`
     }
 
     onMounted(fetchAll)
