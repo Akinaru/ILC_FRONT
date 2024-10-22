@@ -10,6 +10,9 @@
                 <div class="bg-base-200 drop-shadow-lg lg:w-96 w-full lg:my-0 my-5 z-10" v-if="accords && accords.agreements">
                     <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg">Filtres des Accords</p>
                     <p>{{ filteredAccords.length }} résultats ({{ selectedDepartment.length + selectedCountries.length }} filtre{{ selectedCountries.length + selectedDepartment.length > 1 ? 's' : '' }})</p>
+                    <button class="hover:opacity-70 underline" @click="deselectAll">Tout désélectionner</button>
+
+                    
                     <!-- Pays -->
                     <div>
                         <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
@@ -144,7 +147,7 @@
             <p class="text-3xl font-bold text-center py-10">Espace communication</p>
             <!-- Articles -->
             <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
-                    <div v-if="articles.count > 0" class="flex flex-wrap justify-center xl:justify-start max-w-7xl gap-5 ">
+                <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 max-w-7xl mx-auto">
                         <RouterLink v-for="(article, index) in articles.articles.slice(0, 6)" :key="index" :to="{ name: 'Article', params: { art_id: article.art_id } }" class="rounded-lg relative bg-base-300 w-80 md:w-96 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105 mb-5">
                             <div class="p-2">
                                 <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl + 'images/no_image.jpg'})` }" class=" bg-cover bg-center w-full h-48"></div>
@@ -380,6 +383,10 @@
         }
     }
 
+    function deselectAll() {
+        selectedDepartment.value = [];
+        selectedCountries.value = [];
+    }
     function deselectAllDept() {
         selectedDepartment.value = [];
     }

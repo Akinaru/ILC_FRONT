@@ -10,6 +10,7 @@
             <!-- Filtres -->
             <div class="bg-base-200 min-w-72 h-fit min-h-screen drop-shadow-lg" >
                 <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
+                <button class="hover:opacity-70 underline" @click="deselectAll">Tout désélectionner</button>
                 
                 <!-- Départements -->
                 <div v-if="account.access.acs_accounttype == 1">
@@ -331,6 +332,11 @@ const exportUrl = computed(() => {
 
 onMounted(fetch);
 
+    function deselectAll() {
+        selectedDepartment.value = [];
+        selectedVoeux.value = [];
+        selectedDocument.value = [];
+    }
     function deselectAllDept() {
         selectedDepartment.value = [];
     }

@@ -11,6 +11,8 @@
                     <div class="bg-base-200 drop-shadow-lg w-96" v-if="accords && accords.agreements">
                         <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg select-none">Filtres</p>
                         <p class="select-none">{{ filteredEtus.length }} résultats</p>
+                        <button class="hover:opacity-70 underline" @click="deselectAll">Tout désélectionner</button>
+
                         <!-- Départements -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
@@ -236,6 +238,7 @@
                     <div class="bg-base-200 drop-shadow-lg w-11/12" v-if="accords && accords.agreements">
                         <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg select-none">Filtres</p>
                         <p class="select-none">{{ filteredArbitrage.length }} résultats </p>
+                        <button class="hover:opacity-70 underline" @click="deselectAllArbitrage">Tout désélectionner</button>
                         <!-- Pays -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
@@ -816,6 +819,19 @@ import { info } from 'autoprefixer';
     }
     function dragStartHandler(e) {
         e.dataTransfer.setData("text/plain", e.target.id);
+    }
+
+    function deselectAll() {
+        selectedDepartment.value = [];
+        selectedVoeux.value = [];
+        selectedAnneeMobilite.value = [];
+        selectedAccord.value = [];
+    }
+
+    function deselectAllArbitrage() {
+        selectedCountries.value = [];
+        selectedIsced.value = [];
+        selectedAccordArbitrage.value = [];
     }
 
     function deselectAllDept() {
