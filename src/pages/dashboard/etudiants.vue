@@ -216,7 +216,7 @@
 
 <script setup>
 import { request } from '../../composables/httpRequest';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
 import LoadingComp from '../../components/utils/LoadingComp.vue';
@@ -330,7 +330,44 @@ const exportUrl = computed(() => {
     return `${config.apiUrl}api/account/export?${queryString}`;
 });
 
-onMounted(fetch);
+    // Fonction pour charger les filtres depuis sessionStorage pour la page d'accueil
+    function loadFilters() {
+        const savedDepartments = sessionStorage.getItem('etu_dashboard.selectedDepartment');
+        const savedDocument = sessionStorage.getItem('etu_dashboard.selectedDocument');
+        const savedVoeux = sessionStorage.getItem('etu_dashboard.selectedVoeux');
+
+
+
+        if (savedDepartments) {
+            selectedDepartment.value = JSON.parse(savedDepartments);
+
+        }
+        if (savedVoeux) {
+            selectedVoeux.value = JSON.parse(savedVoeux);
+
+        }
+        if (savedDocument) {
+            selectedDocument.value = JSON.parse(savedDocument);
+
+        }
+
+
+    }
+
+    function saveFilters() {
+        sessionStorage.setItem('etu_dashboard.selectedDepartment', JSON.stringify(selectedDepartment.value));
+        sessionStorage.setItem('etu_dashboard.selectedVoeux', JSON.stringify(selectedVoeux.value));
+        sessionStorage.setItem('etu_dashboard.selectedDocument', JSON.stringify(selectedDocument.value));
+    }
+
+    watch(selectedDepartment, saveFilters);
+    watch(selectedVoeux, saveFilters);
+    watch(selectedDocument, saveFilters);
+
+onMounted(() => {
+    fetch();
+    loadFilters();
+});
 
     function deselectAll() {
         selectedDepartment.value = [];
