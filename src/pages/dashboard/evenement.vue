@@ -58,7 +58,7 @@
                         
                         <!-- Bouton de suppression -->
                         <button class="hover:opacity-60 p-2 cursor-pointer" @click="openConfirmModalThematique(them)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-5 w-5" fill="none" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
@@ -132,10 +132,11 @@
                             
                             <!-- Bouton de suppression -->
                             <button class="hover:opacity-60 p-5 cursor-pointer bg-base-300" @click="openConfirmModalEvenement(event)">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
                             </button>
+
                         </div>
                     </div>
 

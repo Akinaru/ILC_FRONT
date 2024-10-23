@@ -95,7 +95,7 @@
                         <div class="py-3">
                             <h4 class="text-lg font-bold">Accords liés à cet ISCED ({{ filteredAgreements.length }}):</h4>
                             <div class="flex flex-col w-full max-h-64 overflow-y-auto">
-                                <div v-if="filteredAgreements.length > 0" v-for="(accord, index) in filteredAgreements" :key="index" class="bg-base-300 my-1 p-3">
+                                <div v-if="filteredAgreements.length > 0" v-for="(accord, index) in filteredAgreements" :key="index" class="bg-base-300 my-1 p-3 flex items-center justify-start">
                                     <span class="mr-2 flex items-center justify-start">
                                         <span class="fi text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name) "></span>
                                     </span>

@@ -67,42 +67,65 @@
                 <div class="w-full flex items-center justify-start flex-col ">
                     <div class="w-3/5 flex items-center justify-center flex-col">
                         <p class="font-bold text-xl py-5 w-full flex items-center justify-center">Informations:</p>
+                        
+                        <!-- Idéntitée -->
                         <label class="form-control w-full">
                             <div class="label">
                                 <span class="label-text">Identitée</span>
                             </div>
-                            <input type="text" :value="account.acc_fullname" class="input input-bordered w-full " disabled />
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_fullname }}</p>
                         </label>
+
+                        <!-- Mail -->
                         <label class="form-control w-full" >
                             <div class="label">
                                 <span class="label-text">Email</span>
                             </div>
-                            <input type="text" :value="account.acc_mail" class="input input-bordered w-full " disabled/>
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_mail }}</p>
                         </label>
+
+                        <!-- numéro étudiant -->
                         <label class="form-control w-full">
                             <div class="label">
                                 <span class="label-text">Numéro étudiant</span>
                             </div>
-                            <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full " disabled />
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_studentnum }}</p>
                         </label>
+
+                        <!-- Années de mobilités -->
                         <label class="form-control w-full">
                             <div class="label">
                                 <span class="label-text">Années de mobilité</span>
                             </div>
-                            <input type="text" :value="account.acc_anneemobilite" class="input input-bordered w-full " disabled />
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_anneemobilite }}</p>
                         </label>
+
+                        <!-- Département -->
                         <label class="form-control w-full " >
                             <div class="label">
                                 <span class="label-text">Département</span>
                             </div>
-                            <input type="text" :value="account.department ? account.department.dept_shortname : 'Aucun'" class="input input-bordered w-full " disabled/>
+                            <p class="w-full bg-base-300 p-3"
+                            :style="{ borderBottom: `4px solid ${account.department ? account.department.dept_color : '#aaaaaa'}` }"
+                            >{{ account.department ? account.department.dept_shortname : 'Aucun' }}</p>
                         </label>
+
+                        <!-- TOEIC -->
                         <label class="form-control w-full" >
                             <div class="label">
                                 <span class="label-text">Score TOEIC</span>
                             </div>
-                            <input type="text" :value="account.acc_toeic" class="input input-bordered w-full " disabled/>
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_toeic }}</p>
                         </label>
+
+                       <!-- Dernière connexion -->
+                       <label class="form-control w-full" >
+                            <div class="label">
+                                <span class="label-text">Dernière connexion</span>
+                            </div>
+                            <p class="w-full bg-base-300 p-3">{{ formatDate(account.acc_lastlogin) }}</p>
+                        </label>
+
                         <!-- Boutton de modification -->
                         <label for="my_modal_6" class="btn btn-primary w-full max-w-sm my-10" @click="resetModif">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -340,6 +363,18 @@
     });
 
     const modifCompte = ref([])
+
+    function formatDate(date) {
+        const d = new Date(date);
+
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0
+        const year = d.getFullYear();
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+
+        return `${day}/${month}/${year} à ${hours}h${minutes}`;
+    }
 
     async function fetchAll(){
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);

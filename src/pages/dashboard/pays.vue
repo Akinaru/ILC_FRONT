@@ -57,7 +57,7 @@
                     </span>
 
                     <p class="mt-1"><strong>{{ pays.parco_name }}</strong> ({{ pays.parco_code.toUpperCase() }})</p>
-                    <p>Nombre d'accords relié à ce pays: {{ countAgreementsByPays(pays.parco_id) }}</p>
+                    <p>Nombre d'universités relié à ce pays: {{ countUnivByPays(pays.parco_id) }}</p>
 
                 </div>
             </div>
@@ -114,21 +114,20 @@
                             <p class="mt-1 ml-1">({{ confirmDeletePays.parco_code }}) - {{ confirmDeletePays.parco_name }}</p>
                         </div>
 
-                        <!-- Liste des accords liés -->
+                        <!-- Liste des université liés -->
                         <div class="py-3">
-                            <h4 class="text-lg font-bold">Accords liés à cet ISCED ({{ filteredAgreements.length }}):</h4>
+                            <h4 class="text-lg font-bold">Universités liés à ce pays ({{ filteredUniveristy.length }}):</h4>
                             <div class="flex flex-col w-full max-h-64 overflow-y-auto">
-                                <div v-if="filteredAgreements.length > 0" v-for="(accord, index) in filteredAgreements" :key="index" class="bg-base-300 my-1 p-3">
+                                <div v-if="filteredUniveristy.length > 0" v-for="(univ, index) in filteredUniveristy" :key="index" class="bg-base-300 my-1 p-3 flex items-center justify-start">
                                     <span class="mr-2 flex items-center justify-start">
-                                        <span class="fi text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name) "></span>
+                                        <span class="fi text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(univ.partnercountry.parco_name) "></span>
                                     </span>
                                     <div class="flex flex-col">
-                                        <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{ accord.university?.univ_city ?? 'Aucune ville' }} - {{ accord.university?.univ_name ?? 'Aucune université' }}</span> </p>
-                                        <p>{{ accord.component?.comp_name ?? 'Aucune composante' }}</p>    
+                                        <p class="w-full select-none"><span class="font-bold">{{ univ.univ_city ?? 'Aucune ville' }} - {{ univ.univ_name ?? 'Aucune université' }}</span> </p>  
                                     </div>
                                 </div>
                                 <div v-else>
-                                    <p class="text-center my-5">Aucun accords</p>
+                                    <p class="text-center my-5">Aucune université</p>
                                 </div>
                             </div>
                         </div>
@@ -156,6 +155,7 @@
 
     const isLoaded = ref(false);
     const accords = ref([]);
+    const universitys = ref([]);
     const partnercountry = ref([]);
     const confirmDeletePays = ref([])
     const response = ref([])
@@ -257,9 +257,9 @@
     }
 
     // Retourne le nombre d'accord lié au pays
-    function countAgreementsByPays(parco_id) {
-        return accords.value.agreements.filter(agreement => 
-            agreement.partnercountry && agreement.partnercountry.parco_id === parco_id
+    function countUnivByPays(parco_id) {
+        return universitys.value.filter(univ => 
+            univ.partnercountry && univ.partnercountry.parco_id === parco_id
         ).length;
     }
 
@@ -269,16 +269,18 @@
         return country ? country.parco_code : 'Code non disponible';
     }
 
-    // Liste des accords concerné par le pays qu'on supprime
-    const filteredAgreements = computed(() => {
-        return accords.value.agreements.filter(agreement => 
-            agreement.partnercountry && agreement.partnercountry.parco_id === confirmDeletePays.value.parco_id
+
+    // Liste des universités concerné par le pays qu'on supprime
+    const filteredUniveristy = computed(() => {
+        return universitys.value.filter(univ => 
+            univ.partnercountry && univ.partnercountry.parco_id === confirmDeletePays.value.parco_id
         );
     });
 
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accords, config.apiUrl + 'api/agreement');
+        await request('GET', false, universitys, config.apiUrl + 'api/university');
         await request('GET', false, partnercountry, config.apiUrl + 'api/partnercountry');
         isLoaded.value = true;
         await nextTick()
