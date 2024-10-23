@@ -128,6 +128,9 @@
             <CalendarComp :events="events"></CalendarComp>
         </div>
     </div>
+    <div v-else>
+        <LoadingComp></LoadingComp>
+    </div>
 </template>
 
 
@@ -140,6 +143,7 @@ import { request } from '../composables/httpRequest';
 import config from '../config';
 import CalendarComp from '../components/utils/CalendarComp.vue';
 import EventComp from '../components/utils/EventComp.vue';
+import LoadingComp from '../components/utils/LoadingComp.vue';
 
 const events = ref([]);
 const filteredEvents = ref([]);

@@ -372,7 +372,7 @@
     import { request } from '../../composables/httpRequest'
     import config from '../../config'
     import LoadingComp from '../../components/utils/LoadingComp.vue';
-import { info } from 'autoprefixer';
+    import { info } from 'autoprefixer';
 
     const response = ref([])
     const accords = ref([])
