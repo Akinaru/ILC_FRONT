@@ -117,6 +117,13 @@ const routes = [
                 meta: { title: 'Dashboard - Etudiants', requiresAuth: true }
             },
             { 
+                path: 'pays', 
+                name: 'PaysDash', 
+                component: () => import('./pages/dashboard/pays.vue'),
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Pays', requiresAuth: true }
+            },            
+            { 
                 path: 'historique', 
                 name: 'HistoriqueDash', 
                 component: () => import('./pages/dashboard/historique.vue'),
