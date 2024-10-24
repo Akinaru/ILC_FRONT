@@ -246,6 +246,33 @@ function removeBackgroundColors(html) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const elements = doc.body.getElementsByTagName('*');
+    console.log(elements)
+
+    // Fonction utilitaire pour convertir une couleur hexadécimale en composantes RGB
+    function hexToRgb(hex) {
+        let hexValue = hex.replace('#', '');
+        if (hexValue.length === 3) {
+            hexValue = hexValue.split('').map(h => h + h).join(''); // Convertit #000 en #000000
+        }
+        const bigint = parseInt(hexValue, 16);
+        return {
+            r: (bigint >> 16) & 255,
+            g: (bigint >> 8) & 255,
+            b: bigint & 255
+        };
+    }
+
+    // Fonction utilitaire pour vérifier si une couleur est proche du noir ou du blanc
+    function isNearBlackOrWhite(rgb) {
+        const { r, g, b } = rgb;
+        const blackThreshold = 30;  // Tolérance pour le noir
+        const whiteThreshold = 225; // Tolérance pour le blanc
+
+        const isBlack = r <= blackThreshold && g <= blackThreshold && b <= blackThreshold;
+        const isWhite = r >= whiteThreshold && g >= whiteThreshold && b >= whiteThreshold;
+
+        return { isBlack, isWhite };
+    }
 
     for (let element of elements) {
         // Supprimer les couleurs de fond
@@ -253,10 +280,21 @@ function removeBackgroundColors(html) {
             element.style.backgroundColor = '';
         }
 
-        // Supprimer les couleurs de texte noir et blanc
-        const textColor = element.style.color;
-        if (textColor === 'black' || textColor === 'white' || textColor === '#000000' || textColor === '#ffffff') {
-            element.style.color = '';
+        // Utiliser getComputedStyle pour obtenir la couleur de texte
+        const computedStyle = getComputedStyle(element);
+        console.log(element = ' -> ' + computedStyle)
+        const textColor = computedStyle.color;
+
+        if (textColor) {    
+            console.log(element); // Affiche l'élément pour débogage
+            const rgb = hexToRgb(textColor);
+            const { isBlack, isWhite } = isNearBlackOrWhite(rgb);
+
+            if (isBlack || isWhite) {
+                // Supprime la couleur si elle est proche du noir ou du blanc
+                element.style.color = '';
+            }
+
         }
     }
 
@@ -309,18 +347,18 @@ function modifArticle(article) {
 
 // Annulation de la modification d'article, remise a 0 des valeurs
 function cancelModifArticle() {
-        isEditing.value = false;
-        // Réinitialiser les valeurs
-        currentArticleModif.value = {};
-        newArticle.value.title = '';
-        newArticle.value.art_description = '';
-        newArticle.value.pinned = false;
-        newArticle.value.image = null;
-        imagePreview.value = null;
-        imagePreviewModif.value = null;
-        const editor = document.querySelector('.editor-content');
-        editor.innerHTML = '';
-    }
+    isEditing.value = false;
+    // Réinitialiser les valeurs
+    currentArticleModif.value = {};
+    newArticle.value.title = '';
+    newArticle.value.art_description = '';
+    newArticle.value.pinned = false;
+    newArticle.value.image = null;
+    imagePreview.value = null;
+    imagePreviewModif.value = null;
+    const editor = document.querySelector('.editor-content');
+    editor.innerHTML = '';
+}
 
 // confirmation de modification d'article
 async function confirmModifArticle() {
@@ -335,7 +373,6 @@ async function confirmModifArticle() {
 
     await request('PUT', true, response, config.apiUrl + 'api/article', requestData);
     if (response.value.status === 200) {
-        console.log(currentArticleModif.value.art_image)
         if(currentArticleModif.value.art_image){
             try {
                 if (currentArticleModif.value.art_image instanceof File) {
