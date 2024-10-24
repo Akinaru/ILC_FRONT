@@ -247,12 +247,12 @@
                     </div>
                 <!-- Si la thematique n'est dans aucun evenement -->
                 <div class="modal-action" v-if="confirmDeleteThematique.canDelete">
-                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn" @click="closeModal">Annuler</button>
                     <button class="btn btn-success"  @click="removeThematique(confirmDeleteThematique.evthm_name, confirmDeleteThematique.evthm_id)">Confirmer</button>
                 </div>
                 <!-- Si la thematique est dans 1 ou plusieurs evenement -->
                 <div class="modal-action" v-else>
-                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn" @click="closeModal">Annuler</button>
                 </div>
                 </div>
             </dialog>
@@ -272,7 +272,7 @@
                         </div>
                     </div>
                 <div class="modal-action">
-                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn" @click="closeModal">Annuler</button>
                     <button class="btn btn-success"  @click="removeEvent(confirmDeleteEvenement.evt_name, confirmDeleteEvenement.evt_id)">Confirmer</button>
                 </div>
                 </div>

@@ -132,7 +132,7 @@
                             </select>
                         </label>
                         <div class="modal-action">
-                            <label for="modal_modif" class="btn ">Annuler</label>
+                            <label for="modal_modif" class="btn">Annuler</label>
                             <button type="submit">
                                 <label for="modal_modif" class="btn btn-success">Enregistrer</label>
                             </button>
@@ -189,7 +189,7 @@
                             </div>
                     </div>
                 <div class="modal-action">
-                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn" @click="closeModal">Annuler</button>
                     <button class="btn btn-success" @click="deleteUniv(confirmDeleteUniv.univ_id, confirmDeleteUniv.univ_name, confirmDeleteUniv.univ_city)">Confirmer</button>
                 </div>
                 </div>

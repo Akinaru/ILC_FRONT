@@ -73,7 +73,7 @@
                             <div class="label">
                                 <span class="label-text">Identitée</span>
                             </div>
-                            <p class="w-full bg-base-300 p-3">{{ account.acc_fullname }}</p>
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_fullname || 'Inconnu' }}</p>
                         </label>
 
                         <!-- Mail -->
@@ -81,7 +81,7 @@
                             <div class="label">
                                 <span class="label-text">Email</span>
                             </div>
-                            <p class="w-full bg-base-300 p-3">{{ account.acc_mail }}</p>
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_mail || 'Aucun' }}</p>
                         </label>
 
                         <!-- numéro étudiant -->
@@ -89,7 +89,7 @@
                             <div class="label">
                                 <span class="label-text">Numéro étudiant</span>
                             </div>
-                            <p class="w-full bg-base-300 p-3">{{ account.acc_studentnum }}</p>
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_studentnum || 'Aucun' }}</p>
                         </label>
 
                         <!-- Années de mobilités -->
@@ -97,7 +97,7 @@
                             <div class="label">
                                 <span class="label-text">Années de mobilité</span>
                             </div>
-                            <p class="w-full bg-base-300 p-3">{{ account.acc_anneemobilite }}</p>
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_anneemobilite || 'Aucune' }}</p>
                         </label>
 
                         <!-- Département -->
@@ -115,7 +115,7 @@
                             <div class="label">
                                 <span class="label-text">Score TOEIC</span>
                             </div>
-                            <p class="w-full bg-base-300 p-3">{{ account.acc_toeic }}</p>
+                            <p class="w-full bg-base-300 p-3">{{ account.acc_toeic || 'Inconnu' }}</p>
                         </label>
 
                        <!-- Dernière connexion -->
@@ -123,7 +123,7 @@
                             <div class="label">
                                 <span class="label-text">Dernière connexion</span>
                             </div>
-                            <p class="w-full bg-base-300 p-3">{{ formatDate(account.acc_lastlogin) }}</p>
+                            <p class="w-full bg-base-300 p-3">{{ formatDate(account.acc_lastlogin) || 'Jamais' }}</p>
                         </label>
 
                         <!-- Boutton de modification -->
@@ -193,10 +193,10 @@
                                         <input type="text"  class="input input-bordered w-full" v-model="modifCompte.acc_toeic"/>
                                     </label>
                                     <div class="modal-action">
+                                        <label for="my_modal_6" class="btn">Annuler</label>
                                         <button type="submit">
                                             <label for="my_modal_6" class="btn btn-success">Enregistrer</label>
                                         </button>
-                                        <label for="my_modal_6" class="btn">Annuler</label>
                                     </div>
                                 </form>
                             </div>

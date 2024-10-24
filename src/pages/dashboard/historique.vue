@@ -37,8 +37,8 @@
                         <h3 class="font-bold text-lg">Confirmation requise</h3>
                         <p class="py-4">Confirmez vous la suppression de l'historique ?</p>
                         <div class="modal-action">
-                            <label for="delete" @click="deleteHistory()" class="btn btn-success">Valider</label>
                             <label for="delete" class="btn">Annuler</label>
+                            <label for="delete" @click="deleteHistory()" class="btn btn-success">Valider</label>
                         </div>
                     </div>
                 </div>

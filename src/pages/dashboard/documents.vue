@@ -68,7 +68,7 @@
                     <span v-if="confirmDeleteDocument.dept != null" :style="{backgroundColor: confirmDeleteDocument.dept.dept_color ? confirmDeleteDocument.dept.dept_color : '#aaaaaa'}" class="badge">{{ confirmDeleteDocument.dept.dept_shortname }}</span>
                 </div>
                 <div class="modal-action">
-                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn" @click="closeModal">Annuler</button>
                     <button class="btn btn-success" @click="deleteFile(confirmDeleteDocument.title, confirmDeleteDocument.type, confirmDeleteDocument.dept ? confirmDeleteDocument.dept.dept_id : null)">Confirmer</button>
                 </div>
             </div>

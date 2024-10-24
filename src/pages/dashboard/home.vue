@@ -264,7 +264,7 @@
                                     <p>Confirmez vous la suppression du fichier: <strong>{{ confirmDeleteDocument.title }}</strong></p>
                                 </div>
                                 <div class="modal-action">
-                                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                    <button class="btn" @click="closeModal">Annuler</button>
                                     <button class="btn btn-success" @click="deleteFile(confirmDeleteDocument.folder, confirmDeleteDocument.title, confirmDeleteDocument.type)">Confirmer</button>
                                 </div>
                             </div>

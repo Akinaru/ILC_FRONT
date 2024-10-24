@@ -134,7 +134,7 @@
 
                     </div>
                 <div class="modal-action">
-                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn" @click="closeModal">Annuler</button>
                     <button class="btn btn-success" @click="deletePays(confirmDeletePays.parco_id, confirmDeletePays.parco_name, confirmDeletePays.parco_code)">Confirmer</button>
                 </div>
                 </div>

@@ -112,7 +112,7 @@
 
                     </div>
                 <div class="modal-action">
-                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                    <button class="btn" @click="closeModal">Annuler</button>
                     <button class="btn btn-success" @click="deleteIsced(confirmDeleteIsced.isc_id, confirmDeleteIsced.isc_name, confirmDeleteIsced.isc_code)">Confirmer</button>
                 </div>
                 </div>

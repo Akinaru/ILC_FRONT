@@ -201,7 +201,7 @@
                             </div>
                         </div>
                     <div class="modal-action">
-                        <button class="btn btn-error" @click="closeModal">Annuler</button>
+                        <button class="btn" @click="closeModal">Annuler</button>
                         <button class="btn btn-success" @click="deleteEtu(confirmDeleteEtu.acc_id, confirmDeleteEtu.acc_fullname, confirmDeleteEtu.department?.dept_shortname || 'Aucun département')">Confirmer</button>
                     </div>
                     </div>

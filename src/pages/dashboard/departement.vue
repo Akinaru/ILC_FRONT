@@ -135,7 +135,7 @@
                                         </strong>
                                     </div>
                                 <div class="modal-action">
-                                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                    <button class="btn " @click="closeModal">Annuler</button>
                                     <button class="btn btn-success"  @click="removeComp(confirmDeleteComposante.comp_id)">Confirmer</button>
                                 </div>
                                 </div>
@@ -151,7 +151,7 @@
                                         </strong>
                                     </div>
                                 <div class="modal-action">
-                                    <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                    <button class="btn " @click="closeModal">Annuler</button>
                                     <button class="btn btn-success"  @click="removeDepartment(confirmDeleteDepartment.dept_shortname, confirmDeleteDepartment.dept_id)">Confirmer</button>
                                 </div>
                                 </div>

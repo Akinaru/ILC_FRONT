@@ -130,7 +130,7 @@
                                     </p>
                                 </div>
                             <div class="modal-action">
-                                <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                <button class="btn" @click="closeModal">Annuler</button>
                                 <button class="btn btn-success" @click="removeAccess(confirmDeleteAccess.acc_id)">Confirmer</button>
                             </div>
                             </div>
@@ -260,7 +260,7 @@
                                     </p>
                                 </div>
                             <div class="modal-action">
-                                <button class="btn btn-error" @click="closeModal">Annuler</button>
+                                <button class="btn " @click="closeModal">Annuler</button>
                                 <button class="btn btn-success" @click="removeAccepted(confirmDeleteAccepted.acc_id)">Confirmer</button>
                             </div>
                             </div>

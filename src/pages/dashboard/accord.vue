@@ -404,7 +404,7 @@
                         </div>
                         <div class="modal-action">
                             <button class="btn" @click="closeModal">Annuler</button>
-                            <button class="btn btn-error" @click="deleteAll()" :disabled="isConfirmDisabled.bool">Confirmer</button>
+                            <button class="btn btn-success" @click="deleteAll()" :disabled="isConfirmDisabled.bool">Confirmer</button>
                         </div>
                     </div>
                 </dialog>
@@ -537,7 +537,7 @@
                             </div>
                         </div>
                         <div class="modal-action">
-                            <button class="btn btn-error" @click="closeModal">Annuler</button>
+                            <button class="btn " @click="closeModal">Annuler</button>
                             <button class="btn btn-success" @click="deleteAgreement(confirmDeleteAccord.university?.univ_name || 'Univeristé indisponible' , confirmDeleteAccord.agree_id)">Confirmer</button>
                         </div>
                     </div>
@@ -574,7 +574,7 @@
                             </div>
                         </div>
                         <div class="modal-action">
-                            <button class="btn btn-error" @click="closeModalImport">Annuler</button>
+                            <button class="btn" @click="closeModalImport">Annuler</button>
                             <button class="btn btn-success" @click="confirmImportAccord">Confirmer</button>
                         </div>
                     </div>
@@ -1017,10 +1017,10 @@
                 agree_id: response.value.agreement.agree_id
             };
             await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            await fetchAll();
         }
 
-        // Rafraîchir les données après l'ajout
-        await fetchAll();
+        
     }
 
     //Récupération des données et tri des universités par ordre alphabétique (Nom pays puis Nom univ)
