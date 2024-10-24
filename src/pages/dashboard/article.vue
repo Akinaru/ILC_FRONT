@@ -32,48 +32,77 @@
         <div>
             <p class="text-lg font-bold">Liste article</p>
             <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
-    <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 max-w-7xl mx-auto">
-        <div v-for="(article, index) in articles.articles" :key="index" class="relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
-            <!-- Modification / Suppression -->
-            <div class="flex absolute top-0 right-0 ">
-                <!-- Bouton de modification -->
-                <label class="hover:opacity-70 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                        <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                    </svg>
-                </label>
-                <!-- Bouton de suppression -->
-                <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300" @click="openConfirmModal(article)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
+                <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 max-w-7xl mx-auto">
+                    <div v-for="(article, index) in articles.articles" :key="index" class="relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
+                        <!-- Modification / Suppression -->
+                        <div class="flex absolute top-0 right-0 ">
+                            <!-- Bouton de modification -->
+                            <label class="hover:opacity-70 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="modifArticle(article)">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </label>
+                            <!-- Bouton de suppression -->
+                            <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300" @click="openConfirmModal(article)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
 
-            <!-- Affichage -->
-            <RouterLink :to="{name: 'Article', params: {art_id: article.art_id}}">
-                <div class="p-2">
-                    <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
-                </div>
-                <span v-if="article.art_pin" class="badge badge-primary absolute top-1 left-1">📌Épinglé</span>
-                <div class="p-4 flex flex-col justify-start h-52">
-                    <div class="mb-2">
-                        <p class="font-bold text-xl">{{ article.art_title }}</p>
-                        <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
+                        <!-- Affichage -->
+                        <RouterLink :to="{name: 'Article', params: {art_id: article.art_id}}">
+                            <div class="p-2">
+                                <div :style="{ backgroundImage: `url(${article.art_image ? config.apiUrl + 'api/article/image/' + article.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
+                            </div>
+                            <span v-if="article.art_pin" class="badge badge-primary absolute top-1 left-1">📌Épinglé</span>
+                            <div class="p-4 flex flex-col justify-start h-52">
+                                <div class="mb-2">
+                                    <p class="font-bold text-xl">{{ article.art_title }}</p>
+                                    <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
+                                </div>
+                                <!-- Limitation de la hauteur de la description avec overflow et ellipsis -->
+                                <div class="overflow-hidden text-sm text-gray-700" style="max-height: 4rem; text-overflow: ellipsis; white-space: nowrap;" v-html="article.art_description"></div>
+                            </div>
+                        </RouterLink>
                     </div>
-                    <!-- Limitation de la hauteur de la description avec overflow et ellipsis -->
-                    <div class="overflow-hidden text-sm text-gray-700" style="max-height: 4rem; text-overflow: ellipsis; white-space: nowrap;" v-html="article.art_description"></div>
                 </div>
-            </RouterLink>
-        </div>
-    </div>
-    <div v-else class="text-center text-gray-500">Aucun article disponible.</div>
-</div>
+                <div v-else class="text-center text-gray-500">Aucun article disponible.</div>
+            </div>
             <div v-else class="flex items-center justify-center my-20">
                 <span class="loading loading-dots loading-lg"></span>
             </div>
         </div>
+        <!-- Modal de confirmation suppression -->
+        <dialog id="confirmModal" ref="confirmModal" class="modal">
+            <div class="modal-box">
+                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+                <div class="py-3">
+                    <p>Confirmez vous la supression de l'article:</p>
+                    <!-- Affichage -->
+                    <div>
+                        <div class="p-2">
+                            <div :style="{ backgroundImage: `url(${confirmDeleteArticle.art_image ? config.apiUrl + 'api/article/image/' + confirmDeleteArticle.art_id : config.apiUrl+'images/no_image.jpg'})` }" class="bg-cover bg-center w-full h-48"></div>
+                        </div>
+                        <span v-if="confirmDeleteArticle.art_pin" class="badge badge-primary absolute top-1 left-1">📌Épinglé</span>
+                        <div class="p-4 flex flex-col justify-start h-52">
+                            <div class="mb-2">
+                                <p class="font-bold text-xl">{{ confirmDeleteArticle.art_title }}</p>
+                                <p class="text-gray-600 text-sm">Dernière modif: {{ confirmDeleteArticle.art_lastmodif }}</p>
+                            </div>
+                            <!-- Limitation de la hauteur de la description avec overflow et ellipsis -->
+                            <div class="overflow-hidden text-sm text-gray-700" style="max-height: 4rem; text-overflow: ellipsis; white-space: nowrap;" v-html="confirmDeleteArticle.art_description"></div>
+                        </div>
+                    </div>
+                </div>
+            <div class="modal-action">
+                <button class="btn" @click="closeModal">Annuler</button>
+                <button class="btn btn-success" @click="removeArticle(confirmDeleteArticle.art_title, confirmDeleteArticle.art_id)">Confirmer</button>
+            </div>
+            </div>
+        </dialog>
+
     </div>
 
 </template>
@@ -129,10 +158,12 @@ const handleFileInputChange = (event) => {
     }
 };
 
+// Variable qui contient l'url de l'image qu'on a choisit pour ajouter un article
 const backgroundImage = computed(() => {
     return imagePreview.value ? imagePreview.value : `${config.apiUrl}images/no_image.jpg`;
 });
 
+// Variable qui contient l'url de l'image qu'on a choisit pour ajouter un article dans le modal de modification
 const backgroundImageModif = computed(() => {
     return imagePreviewModif.value ? imagePreviewModif.value : 
         currentArticleModif.value.art_image
@@ -147,6 +178,7 @@ function openConfirmModal(article) {
     const modal = document.getElementById('confirmModal')
     modal.showModal()
 }
+
 //Fermer le modal de confirmation de suppression
 function closeModal() {
     const modal = document.getElementById('confirmModal')
@@ -209,6 +241,7 @@ async function addArticle(){
     imagePreview.value = null;
 }
 
+// Code qui permet de rendre clair l'affichage du texte et qui permet également de faire correspondre avec le theme (clair ou sombre)
 function removeBackgroundColors(html) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
@@ -274,6 +307,7 @@ function modifArticle(article) {
     }
 }
 
+// Annulation de la modification d'article, remise a 0 des valeurs
 function cancelModifArticle() {
         isEditing.value = false;
         // Réinitialiser les valeurs
@@ -288,6 +322,7 @@ function cancelModifArticle() {
         editor.innerHTML = '';
     }
 
+// confirmation de modification d'article
 async function confirmModifArticle() {
     const editor = document.querySelector('.editor-content');
     const cleanedDescription = removeBackgroundColors(editor.innerHTML);
@@ -331,13 +366,11 @@ async function confirmModifArticle() {
     }
 }
 
-
-
+// récupération des données
 async function fetchAll(){
     await request('GET', false, articles, config.apiUrl+'api/article');
     isEditing.value = false;
 }
-
 
 onMounted(fetchAll);
 </script>
