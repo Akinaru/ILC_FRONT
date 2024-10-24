@@ -21,6 +21,13 @@
                             </div>
                             <div class="p-1" v-show="isOpen.departments">
                                 <button class="hover:opacity-70 underline" @click="deselectAllDept">Tout désélectionner</button>
+                                <div class="flex items-center hover:opacity-60 my-1">
+                                    <input id="filt_dept_zero" type="checkbox" class="checkbox " value="Aucun" v-model="selectedDepartment">
+                                    <label for="filt_dept_zero" class="flex items-center justify-center w-full cursor-pointer pl-2">
+                                        <div class="w-3 h-3 mr-1" :style="{backgroundColor: '#aaaaaa'}"></div>
+                                        <label for="filt_dept_zero" class="select-none w-full cursor-pointer">Aucun</label>
+                                    </label>
+                                </div>
                                 <div v-for="(comp, index) in components.components" :key="index">
                                     <div class="lg:block flex flex-wrap">
                                         <p>- {{ comp.comp_name }}</p>
@@ -561,41 +568,40 @@
 
         await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
     }
-
-    // Liste des étudiants après filtres
-    const filteredEtus = computed(() => {
-        return Object.values(localEtus.value)
-            .filter(etu => {
-                // Filtre par département
-                if (selectedDepartment.value.length === 0) {
-                    return true; // Retourne tous les étudiants si aucun filtre n'est sélectionné
-                }
-                return selectedDepartment.value.includes(etu.department?.dept_shortname);
-            })
-            .filter(etu => {
-                // Filtre par accords
-                const filteredAgreements = getFilteredAgreements(etu).map(item => item.agreement.agree_id);
-                return selectedAccord.value.length === 0 || selectedAccord.value.some(accord => filteredAgreements.includes(accord));
-            })
-            .filter(etu => {
-                // Filtre par nombre de vœux
-                const voeuxCount = etu.wishes.count;
-                return selectedVoeux.value.length === 0 || selectedVoeux.value.includes(voeuxCount);
-            })
-            .filter(etu => {
-                // Filtre par année de mobilité
-                return selectedAnneeMobilite.value.length === 0 || selectedAnneeMobilite.value.includes(etu.acc_anneemobilite); // Utilisation de acc_anneemobilite
-            })
-            .sort((a, b) => {
-                // Tri par position du vœu et alphabétiquement
-                const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
-                const bMinPlace = Math.min(...getFilteredAgreements(b).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
-                if (aMinPlace !== bMinPlace) {
-                    return aMinPlace - bMinPlace;
-                }
-                return a.acc_fullname.localeCompare(b.acc_fullname);
-            });
-    });
+// Liste des étudiants après filtres
+const filteredEtus = computed(() => {
+    return Object.values(localEtus.value)
+        .filter(etu => {
+            // Filtre par département avec possibilité de filtrer par "Aucun"
+            const matchesDepartments = selectedDepartment.value.length === 0 || 
+                (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
+                (selectedDepartment.value.includes('Aucun') && !etu.department);
+            return matchesDepartments;
+        })
+        .filter(etu => {
+            // Filtre par accords
+            const filteredAgreements = getFilteredAgreements(etu).map(item => item.agreement.agree_id);
+            return selectedAccord.value.length === 0 || selectedAccord.value.some(accord => filteredAgreements.includes(accord));
+        })
+        .filter(etu => {
+            // Filtre par nombre de vœux
+            const voeuxCount = etu.wishes.count;
+            return selectedVoeux.value.length === 0 || selectedVoeux.value.includes(voeuxCount);
+        })
+        .filter(etu => {
+            // Filtre par année de mobilité
+            return selectedAnneeMobilite.value.length === 0 || selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
+        })
+        .sort((a, b) => {
+            // Tri par position du vœu et alphabétiquement
+            const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
+            const bMinPlace = Math.min(...getFilteredAgreements(b).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
+            if (aMinPlace !== bMinPlace) {
+                return aMinPlace - bMinPlace;
+            }
+            return a.acc_fullname.localeCompare(b.acc_fullname);
+        });
+});
 
 
 // Liste des accords avec arbitrage après filtres
