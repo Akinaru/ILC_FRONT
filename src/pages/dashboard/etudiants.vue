@@ -239,64 +239,66 @@ const isOpen = ref({
     departments: true,
     document: true,
 });
-function toggleCollapse(section) {
-    isOpen.value[section] = !isOpen.value[section];
-}
 
-const filteredEtudiants = computed(() => {
-    return etudiants.value.accounts
-        .filter(etu => {
-            const matchesDepartments = selectedDepartment.value.length === 0 || 
-                (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
-                (selectedDepartment.value.includes('Aucun') && !etu.department);
-            
-            const hasAccess = etu.access === null;
-
-            const matchesVoeux = selectedVoeux.value.length === 0 || 
-                (selectedVoeux.value.includes('Aucun') && etu.wishes.count === 0) ||
-                (selectedVoeux.value.includes('AuMoinsUn') && etu.wishes.count > 0);
-
-            // Filtrer par nom d'étudiant s'il y a une recherche en cours
-            const matchesSearchQuery = !searchQuery.value || etu.acc_fullname.toLowerCase().includes(searchQuery.value.toLowerCase());
-
-            // Vérification du nombre de documents
-            const documentCount = etu.documents.count || 0; // Utiliser 0 par défaut si undefined
-            const matchesDocuments = selectedDocument.value.length === 0 || 
-                selectedDocument.value.includes(documentCount.toString());
-
-            return matchesDepartments && hasAccess && matchesVoeux && matchesSearchQuery && matchesDocuments;
-        })
-        .sort((a, b) => {
-            // Trier les étudiants par leur nom complet
-            return a.acc_fullname.localeCompare(b.acc_fullname);
-        });
-});
-
-
-
-async function fetch() {
-    await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
-    if (account.value.access != null && account.value.access.acs_accounttype == 1) {
-        await request('GET', false, etudiants, config.apiUrl + 'api/account');
-    } else if (account.value.access != null && account.value.department != null) {
-        await request('GET', false, etudiants, config.apiUrl + 'api/account/getbydept/' + account.value.department.dept_id);
+    function toggleCollapse(section) {
+        isOpen.value[section] = !isOpen.value[section];
     }
-    await request('GET', false, components, config.apiUrl + 'api/component');
-    isLoaded.value = true;
-}
 
-//ouvrir le modal de confirmation de suppression
-function openConfirmModal(etu) {
+    const filteredEtudiants = computed(() => {
+        return etudiants.value.accounts
+            .filter(etu => {
+                const matchesDepartments = selectedDepartment.value.length === 0 || 
+                    (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
+                    (selectedDepartment.value.includes('Aucun') && !etu.department);
+                
+                const hasAccess = etu.access === null;
+
+                const matchesVoeux = selectedVoeux.value.length === 0 || 
+                    (selectedVoeux.value.includes('Aucun') && etu.wishes.count === 0) ||
+                    (selectedVoeux.value.includes('AuMoinsUn') && etu.wishes.count > 0);
+
+                // Filtrer par nom d'étudiant s'il y a une recherche en cours
+                const matchesSearchQuery = !searchQuery.value || etu.acc_fullname.toLowerCase().includes(searchQuery.value.toLowerCase());
+
+                // Vérification du nombre de documents
+                const documentCount = etu.documents.count || 0; // Utiliser 0 par défaut si undefined
+                const matchesDocuments = selectedDocument.value.length === 0 || 
+                    selectedDocument.value.includes(documentCount.toString());
+
+                return matchesDepartments && hasAccess && matchesVoeux && matchesSearchQuery && matchesDocuments;
+            })
+            .sort((a, b) => {
+                // Trier les étudiants par leur nom complet
+                return a.acc_fullname.localeCompare(b.acc_fullname);
+            });
+    });
+
+
+
+    async function fetch() {
+        await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
+        if (account.value.access != null && account.value.access.acs_accounttype == 1) {
+            await request('GET', false, etudiants, config.apiUrl + 'api/account');
+        } else if (account.value.access != null && account.value.department != null) {
+            await request('GET', false, etudiants, config.apiUrl + 'api/account/getbydept/' + account.value.department.dept_id);
+        }
+        await request('GET', false, components, config.apiUrl + 'api/component');
+        isLoaded.value = true;
+    }
+
+    //ouvrir le modal de confirmation de suppression
+    function openConfirmModal(etu) {
+        
+        confirmDeleteEtu.value = etu;
+        const modal = document.getElementById('confirmModal')
+        modal.showModal()
+    }
     
-    confirmDeleteEtu.value = etu;
-    const modal = document.getElementById('confirmModal')
-    modal.showModal()
-}
-//Fermer le modal de confirmation de suppression
-function closeModal() {
-    const modal = document.getElementById('confirmModal')
-    modal.close()
-}
+    //Fermer le modal de confirmation de suppression
+    function closeModal() {
+        const modal = document.getElementById('confirmModal')
+        modal.close()
+    }
 
     // Supprimer un étudiant
     async function deleteEtu(acc_id, acc_fullname, dept_shortname){
