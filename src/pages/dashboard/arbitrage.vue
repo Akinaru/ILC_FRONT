@@ -238,7 +238,7 @@
                     <div class="bg-base-200 drop-shadow-lg w-11/12" v-if="accords && accords.agreements">
                         <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg select-none">Filtres</p>
                         <p class="select-none">{{ filteredArbitrage.length }} résultats </p>
-                        <button class="hover:opacity-70 underline" @click="deselectAllArbitrage">Tout désélectionner</button>
+                        <button class="hover:opacity-70 underline" @click="deselectAllArb">Tout désélectionner</button>
                         <!-- Pays -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
@@ -310,6 +310,30 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Arbitrage -->
+                        <div>
+                            <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('arbitrage')">
+                                <p class="select-none">Arbitrage ({{ selectedArbitrage.length }} séléctionné{{ selectedArbitrage.length > 1 ? 's' : '' }})</p>
+                                <span :class="isOpen.arbitrage ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                            </div>
+                            <div class="p-1" v-show="isOpen.arbitrage">
+                                <button class="hover:opacity-70 underline" @click="deselectAllArbitrage">Tout désélectionner</button>
+                                <div>
+                                    <div class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
+                                        <input id="filt_arbitrage_1" type="checkbox" class="checkbox" value="aucun" v-model="selectedArbitrage">
+                                        <label for="filt_arbitrage_1" class="cursor-pointer w-full pl-2">
+                                            <label for="filt_arbitrage_1" class="select-none w-full hover:cursor-pointer">Aucun étudiant</label>
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
+                                        <input id="filt_arbitrage_2" type="checkbox" class="checkbox" value="aumoinsun" v-model="selectedArbitrage">
+                                        <label for="filt_arbitrage_2" class="cursor-pointer w-full pl-2">
+                                            <label for="filt_arbitrage_2" class="select-none w-full hover:cursor-pointer">Au moins un étudiant</label>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -372,7 +396,6 @@
     import { request } from '../../composables/httpRequest'
     import config from '../../config'
     import LoadingComp from '../../components/utils/LoadingComp.vue';
-    import { info } from 'autoprefixer';
 
     const response = ref([])
     const accords = ref([])
@@ -386,6 +409,7 @@
     const selectedIsced = ref([]);
     const selectedAccord = ref([]);
     const selectedAccordArbitrage = ref([]);
+    const selectedArbitrage = ref([]);
     const selectedVoeux = ref([]);
     const selectedCountries = ref([]);
     const selectedAnneeMobilite = ref([]);
@@ -414,19 +438,24 @@
         departments: false,
         accords: false,
         accordsarbitrage: false,
+        arbitrage: false,
         isced: false,
         voeux: false,
         anneemobilite: false,
         etudiants: [], 
     });
 
+    //Changer l'état d'un menu de filtre
     function toggleCollapse(section) {
         isOpen.value[section] = !isOpen.value[section];
     }
+
+    //Changer l'état d'un menu de filtre partie étudiant
     const toggleCollapseEtu = (acc_id) => {
         isOpen.value.etudiants[acc_id] = !isOpen.value.etudiants[acc_id];
     };
 
+    // Récupération des données
     async function fetch(){
         isLoaded.value = false;
         await request('GET', false, accords, config.apiUrl+'api/agreement');
@@ -455,54 +484,54 @@
 
     }
 
-
-
+    // Initialisation des données et mise en place des drops
     async function init() {
-    // Initialiser localEtus avec les étudiants qui ne sont pas dans arbitrage
-    localEtus.value = etudiants.value.accounts
-        .filter(etu => !arbitrage.value.some(arbitre => arbitre.account.acc_id === etu.acc_id))
-        .reduce((acc, etu) => {
-            acc[etu.acc_id] = etu;
+        // Initialiser localEtus avec les étudiants qui ne sont pas dans arbitrage
+        localEtus.value = etudiants.value.accounts
+            .filter(etu => !arbitrage.value.some(arbitre => arbitre.account.acc_id === etu.acc_id))
+            .reduce((acc, etu) => {
+                acc[etu.acc_id] = etu;
+                return acc;
+        }, {});
+
+        // Initialiser localArbitrage avec les accords et les informations sur les étudiants correspondants
+        localArbitrage.value = accords.value.agreements.reduce((acc, accord) => {
+            // Obtenir toutes les positions possibles pour l'accord actuel
+            const allPositions = getNumberOfPlace(accord.agree_id);
+
+            // Chercher les étudiants correspondants dans arbitrage
+            const matchingArbitrages = arbitrage.value.filter(arbitre => arbitre.agreement.agree_id === accord.agree_id);
+
+            // Créer l'objet pour l'accord actuel
+            acc[accord.agree_id] = {
+                agreement: accord,
+                accounts: allPositions.map(pos => {
+                    // Chercher les arbitrages qui correspondent à la position actuelle
+                    const matchingArbitrage = matchingArbitrages.find(arbitre => arbitre.arb_pos === pos + 1);
+                    return {
+                        arb_pos: pos + 1, // Les positions doivent être basées sur 1
+                        account: matchingArbitrage ? matchingArbitrage.account : null // Mettre account à null si matchingArbitrage n'existe pas
+                    };
+                })
+            };
+
             return acc;
-    }, {});
+        }, {});
 
-    // Initialiser localArbitrage avec les accords et les informations sur les étudiants correspondants
-    localArbitrage.value = accords.value.agreements.reduce((acc, accord) => {
-        // Obtenir toutes les positions possibles pour l'accord actuel
-        const allPositions = getNumberOfPlace(accord.agree_id);
+        // Attendre le prochain "tick" pour assurer que les changements sont appliqués
+        await nextTick();
 
-        // Chercher les étudiants correspondants dans arbitrage
-        const matchingArbitrages = arbitrage.value.filter(arbitre => arbitre.agreement.agree_id === accord.agree_id);
+        // Rafraîchir les éléments de drag and drop
+        refreshDrag();
+        refreshDrop();
+    }
 
-        // Créer l'objet pour l'accord actuel
-        acc[accord.agree_id] = {
-            agreement: accord,
-            accounts: allPositions.map(pos => {
-                // Chercher les arbitrages qui correspondent à la position actuelle
-                const matchingArbitrage = matchingArbitrages.find(arbitre => arbitre.arb_pos === pos + 1);
-                return {
-                    arb_pos: pos + 1, // Les positions doivent être basées sur 1
-                    account: matchingArbitrage ? matchingArbitrage.account : null // Mettre account à null si matchingArbitrage n'existe pas
-                };
-            })
-        };
-
-        return acc;
-    }, {});
-
-    // Attendre le prochain "tick" pour assurer que les changements sont appliqués
-    await nextTick();
-
-    // Rafraîchir les éléments de drag and drop
-    refreshDrag();
-    refreshDrop();
-}
-
+    // Changer les informations de l'étudiant qu'on souhaite afficher
     function changeEtuInfo(etu){
         infoetudiant.value = etu;
     }
 
-
+    // Renvoie la date formatée
     function formatDate(date) {
         const d = new Date(date);
 
@@ -569,23 +598,42 @@
     });
 
 
+// Liste des accords avec arbitrage après filtres
+const filteredArbitrage = computed(() => {
+    return Object.values(localArbitrage.value)
+        .filter(arbitrage => {
+            const countryFilter = selectedCountries.value.length === 0 || 
+                                selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
+            const iscedFilter = selectedIsced.value.length === 0 || 
+                                (arbitrage.agreement.isced && selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
+            const accordFilter = selectedAccordArbitrage.value.length === 0 || 
+                                selectedAccordArbitrage.value.includes(arbitrage.agreement.agree_id);
 
-    // Liste des accords avec arbitrage après filtres
-    const filteredArbitrage = computed(() => {
-        return Object.values(localArbitrage.value)
-            .filter(arbitrage => {
-                const countryFilter = selectedCountries.value.length === 0 || 
-                                    selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
-                const iscedFilter = selectedIsced.value.length === 0 || 
-                                    (arbitrage.agreement.isced && selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
-                const accordFilter = selectedAccordArbitrage.value.length === 0 || 
-                                    selectedAccordArbitrage.value.includes(arbitrage.agreement.agree_id); // Filtre par accord
+            // Vérification si tous les comptes sont null
+            const allAccountsNull = arbitrage.accounts.every(account => account.account === null);
+            // Vérification s'il y a au moins un compte non null
+            const atLeastOneAccountNotNull = arbitrage.accounts.some(account => account.account !== null);
 
-                return countryFilter && iscedFilter && accordFilter; // Ajout du filtre d'accord
-            });
-    });
+            // Nouveau filtre pour selectedArbitrage
+            const arbitrageFilter = (() => {
+                if (selectedArbitrage.value.includes('aucun') && allAccountsNull) {
+                    return true; // Correspond à 'aucun' (tous les comptes sont null)
+                }
+                if (selectedArbitrage.value.includes('aumoinsun') && atLeastOneAccountNotNull) {
+                    return true; // Correspond à 'aumoinsun' (au moins un compte non null)
+                }
+                if (!selectedArbitrage.value.length) {
+                    return true; // Aucun filtre appliqué si selectedArbitrage est vide
+                }
+                return false; // Ne correspond à aucun des filtres
+            })();
+
+            return countryFilter && iscedFilter && accordFilter && arbitrageFilter;
+        });
+});
 
     
+    // renvoie les voeux d'un étudiant
     function getFilteredAgreements(etu) {
         if (!etu || !etu.wishes) {
             return [];
@@ -606,7 +654,7 @@
       }).filter(item => item.agreement !== undefined);
     }
 
-
+    // Enlever un étudiant d'un accord
     function removeEtuFromPlace(agree_id, pos) {
         const etu = localArbitrage.value[agree_id].accounts[pos].account
         localEtus.value[etu.acc_id] = etu;
@@ -676,7 +724,7 @@
         return places;
     }
 
-
+    // Quand on change un filtre, permet d'actualiser les drag et drop
     async function handleFiltreEtu() {
         await nextTick();
         refreshDrag();
@@ -691,8 +739,9 @@
     watch(selectedIsced, handleFiltreEtu);
     watch(selectedAnneeMobilite, handleFiltreEtu);
     watch(selectedAccordArbitrage, handleFiltreEtu);
+    watch(selectedArbitrage, handleFiltreEtu);
 
-
+    // définit les drop zones
     async function refreshDrop() {
         let dropZones = document.getElementsByClassName('dropZones');
         for (let dropZone of dropZones) {
@@ -765,7 +814,7 @@
         }
     }
 
-
+    // Trouver un étudiant si il fait partie d'un accord ou non
     function findStudentInArbitrage(etuId) {
         for (let agreementId in localArbitrage.value) {
             const accounts = localArbitrage.value[agreementId].accounts;
@@ -778,6 +827,7 @@
         return null;
     }
 
+    //Trouver la position d'un étudiant dans l'accord
     function findStudentPositionInArbitrage(accId) {
         for (let agreementId in localArbitrage.value) {
             const accounts = localArbitrage.value[agreementId].accounts;
@@ -791,6 +841,7 @@
         return null; // Return null if student not found
     }
 
+    // Renvoie l'accord de l'étudiant (id) passé en param
     function getCurrentAgreeIdByAccId(accId) {
         for (let agreementId in localArbitrage.value) {
             const accounts = localArbitrage.value[agreementId].accounts;
@@ -804,8 +855,7 @@
         return null;
     }
 
-
-
+    // Refresh les drag zone
     async function refreshDrag() {
         await nextTick();
         let elementsDraggable = document.getElementsByClassName("elementDrag");
@@ -817,10 +867,13 @@
             }
         }
     }
+
+    // Permet de définir le handler d'un drag
     function dragStartHandler(e) {
         e.dataTransfer.setData("text/plain", e.target.id);
     }
 
+    // déséléctionner les filtres
     function deselectAll() {
         selectedDepartment.value = [];
         selectedVoeux.value = [];
@@ -828,10 +881,12 @@
         selectedAccord.value = [];
     }
 
-    function deselectAllArbitrage() {
+    // déséléctionner les filtres arbitrage
+    function deselectAllArb() {
         selectedCountries.value = [];
         selectedIsced.value = [];
         selectedAccordArbitrage.value = [];
+        selectedArbitrage.value = [];
     }
 
     function deselectAllDept() {
@@ -854,6 +909,9 @@
     }
     function deselectAllAccordArbitrage(){
         selectedAccordArbitrage.value = [];
+    }
+    function deselectAllArbitrage(){
+        selectedArbitrage.value = [];
     }
     onMounted(fetch)
 
