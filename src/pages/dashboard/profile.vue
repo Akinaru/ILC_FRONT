@@ -11,8 +11,8 @@
         <p class="text-xl font-bold py-5 bg-base-200 flex items-center justify-center">{{ account.acc_fullname }}<span v-if="account.department != null" :style="{backgroundColor: account.department.dept_color}" class="p-3 mx-3">{{ account.department.dept_shortname }}</span> </p>
         <div>
             <!-- Destination finale -->
-            <div v-if="destination.agreement">
-                <p class="font-bold text-xl py-5">Destination finale</p>
+            <p class="font-bold text-xl py-5">Destination finale</p>
+            <div v-if="destination.agreement" class="flex items-center justify-start">
                 <div class="select-none flex justify-between items-center elementDrag h-20 transition-all duration-100 ease-in-out">
                     <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
@@ -30,6 +30,71 @@
                             <p class="w-full select-none">({{ destination.agreement.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{destination.agreement.university?.univ_city || 'Ville indisponible'}} - {{ destination.agreement.university?.univ_name || 'Université indisponible' }}</span> ({{ destination.agreement.isced?.isc_code || 'Code ISCED indisponible' }})</p>    
                         </div>
                     </RouterLink>
+                    
+                    <label for="my_modal_dest" class="cursor-pointer bg-base-300 ml-1 h-20 w-20 hover:opacity-70 flex items-center justify-center" @click="resetModif">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                        </svg>
+                    </label>
+                </div>
+            </div>
+            <!-- Modal de modification de la destination -->
+            <input type="checkbox" id="my_modal_dest" class="modal-toggle" />
+            <div class="modal fixed inset-0 z-50" role="dialog">
+                <div class="modal-box fixed w-170 max-w-full"> 
+                    <h3 class="text-lg font-bold">Modification de la destination</h3>
+                    <div class="my-10">
+                        <p class="">Accord séléctionné:</p>
+                        <div v-if="selectedNewDestination != null" class=" cursor-pointer my-1 select-none flex justify-between items-center elementDrag h-20 transition-all duration-100 ease-in-out w-full">
+                            <div class="group w-full relative">
+                                <div class="bg-base-300 p-1 flex items-center justify-center w-full h-20 select-none">
+                                    <span class="relative inline-block tooltip mr-2">
+                                        <!-- Drapeau -->
+                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-' + (selectedNewDestination?.partnercountry?.parco_code || '')"></span>
+
+                                        <!-- Point d'interrogation si pas de drapeau -->
+                                        <span v-if="!selectedNewDestination?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                            ?
+                                        </span>
+                                    </span>
+
+                                    <p class="w-full select-none">({{ selectedNewDestination.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{selectedNewDestination.university?.univ_city || 'Ville indisponible'}} - {{ selectedNewDestination.university?.univ_name || 'Université indisponible' }}</span> ({{ selectedNewDestination.isced?.isc_code || 'Code ISCED indisponible' }})</p>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-2 border-neutral w-full flex flex-col max-h-96 overflow-y-scroll my-5" >
+                        <div v-for="(accord, index) in accords.agreements" :key="index" 
+                        @click="changeDestination(accord)" 
+                        class=" cursor-pointer my-1 select-none flex justify-between items-center elementDrag h-20 transition-all duration-100 ease-in-out w-full"
+                        :class="{ 'opacity-100': selectedNewDestination.agree_id == accord.agree_id, 'opacity-60': selectedNewDestination.agree_id != accord.agree_id}">
+                            <div class="group w-full relative">
+                                <div class="bg-base-300 p-1 flex items-center justify-center w-full h-20 select-none">
+                                    <span class="relative inline-block tooltip mr-2">
+                                        <!-- Drapeau -->
+                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord?.partnercountry?.parco_code || '')"></span>
+
+                                        <!-- Point d'interrogation si pas de drapeau -->
+                                        <span v-if="!accord?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                            ?
+                                        </span>
+                                    </span>
+
+                                    <p class="w-full select-none">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form @submit.prevent="confirmModifDest" class="w-full">
+                        <div class="modal-action">
+                            <label for="my_modal_dest" class="btn">Annuler</label>
+                            <button type="submit">
+                                <label for="my_modal_dest" class="btn btn-success">Enregistrer</label>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -333,6 +398,7 @@
     const route = useRoute();
     const acc_id = route.params.acc_id;
     const account = ref([]);
+    const accords = ref([])
     const department = ref([]);
     const components = ref([]);
     const wishes = ref([])
@@ -340,6 +406,7 @@
     const destination = ref([])
     const labels = ref(['agree_one', 'agree_two', 'agree_three', 'agree_four', 'agree_five', 'agree_six']);
     const anneesmobilite = ref([]);
+    const selectedNewDestination = ref([]);
 
 
     const myfiles = ref({
@@ -364,6 +431,7 @@
 
     const modifCompte = ref([])
 
+    // Renvoie la date formatée
     function formatDate(date) {
         const d = new Date(date);
 
@@ -376,12 +444,15 @@
         return `${day}/${month}/${year} à ${hours}h${minutes}`;
     }
 
+    // Récupère toutes les informations
     async function fetchAll(){
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
         resetModif();
         await request('GET', false, wishes, config.apiUrl+'api/wishagreement/getbylogin/'+acc_id);
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
+        selectedNewDestination.value = destination.value.agreement;
         await request('GET', false, components, config.apiUrl+'api/component');
+        await request('GET', false, accords, config.apiUrl+'api/agreement');
         await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/choix_cours/'+acc_id)
         if(response.value.status == 200){
             myfiles.value.choixCours.exist = true;
@@ -419,6 +490,8 @@
     function closeModal() {
         const modal = document.getElementById('confirmModalDoc');
         modal.close();
+        const modal2 = document.getElementById('confirmModalDoc');
+        modal2.close();
     }
 
 
@@ -431,6 +504,10 @@
             myfiles.value[fileTitle].exist = false;
             myfiles.value[fileTitle].path = '';
         }
+    }
+
+    function changeDestination(accord){
+        selectedNewDestination.value = accord;
     }
 
     async function openMyFileInNewTab(filePath) {
@@ -488,6 +565,8 @@
         modifCompte.value.acc_toeic = account.value.acc_toeic;
         modifCompte.value.acc_anneemobilite = account.value.acc_anneemobilite;
         modifCompte.value.dept_id = account.value.department ? account.value.department.dept_id : 'no_dept' 
+
+        selectedNewDestination.value = [];
     }
 
     onMounted(fetchAll)

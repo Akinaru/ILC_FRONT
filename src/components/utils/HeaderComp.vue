@@ -1,5 +1,5 @@
 <template>
-  <header class="w-full z-40">
+  <header class="w-full">
     <div class="flex justify-between items-center bg-base-300 md:p-10 px-3 py-8 drop-shadow-md min-h-36">
       <RouterLink :to="{ name: 'Accueil' }" class="md:ml-0 ml-2 hover:opacity-80 transition-all hover:scale-105">
         <img :src="config.apiUrl + 'images/LOGOS/Logo_ILC_couleur_complet.png'" alt="ILC" class="w-24 sm:w-36 transition-all duration-300 ease-in-out">

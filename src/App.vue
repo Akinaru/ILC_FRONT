@@ -26,8 +26,9 @@ import AlertContainer from './components/utils/AlertContainer.vue';
 
 <style>
 
-html {
-  overflow-x: hidden;
+html, body {
+  overscroll-behavior-y: contain; /* Empêche le scroll au-delà des limites de la page */
+  overflow-x: hidden; /* Empêche le scroll horizontal */
 }
 
 #content {
@@ -37,7 +38,10 @@ html {
 
 header {
   position: relative;
-  z-index: 1000;
+}
+
+.modal-box{
+  z-index: 1001;
 }
 
 .notification-container {
