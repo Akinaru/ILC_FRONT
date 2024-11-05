@@ -243,7 +243,7 @@
     const eventspf = ref([]);
     const favoris = ref([]);
 
-    const itemsToShow = ref(30);
+    const itemsToShow = ref(12);
 
     const isLoaded = ref(false);
 
@@ -257,14 +257,10 @@
 
         if (savedDepartments) {
             selectedDepartment.value = JSON.parse(savedDepartments);
-            if(selectedDepartment.value.length > 0)
-                isOpen.value.departments = true;
 
         }
         if (savedCountries) {
             selectedCountries.value = JSON.parse(savedCountries);
-            if(selectedCountries.value.length > 0)
-                isOpen.value.pays = true;
         }
 
 
@@ -370,18 +366,6 @@
         }
     }
     
-    // Ouvrir les filtres ou les fermer en fonction de la taille de l'écran
-    function updateIsOpenState() {
-        if (window.innerWidth >= 1024) {
-            isOpen.value.pays = true;
-            isOpen.value.departments = true;
-            isOpen.value.component = true;
-        } else {
-            isOpen.value.pays = false;
-            isOpen.value.departments = false;
-            isOpen.value.component = false;
-        }
-    }
 
     // renvoie le nombre de département visible d'un accord
     function countVisibleDepartments(accord) {
@@ -404,7 +388,6 @@
 
     onMounted(() => {
         fetchAll();
-        updateIsOpenState();
         loadFilters();
     });
 
