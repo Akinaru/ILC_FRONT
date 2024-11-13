@@ -299,16 +299,32 @@
                             <div v-if="localFavoris.length > 0" v-for="(accord, index) in localFavoris" :key="index" :draggable="true" :id="'accord_wish_'+accord.agree_id" class=" select-none flex justify-between items-center elementDrag h-20 hover:cursor-move hover:opacity-80 transition-all duration-100 ease-in-out">
                                 <div class="bg-base-300 flex items-center justify-center w-full h-20 select-none">
                                     <span class="relative inline-block mr-2">
-                                            <!-- Drapeau -->
-                                            <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord.partnercountry?.parco_code)"></span>
+                                        <!-- Drapeau -->
+                                        <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (accord.partnercountry?.parco_code)"></span>
 
-                                            <!-- Point d'interrogation si pas de drapeau -->
-                                            <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                                ?
-                                            </span>
+                                        <!-- Point d'interrogation si pas de drapeau -->
+                                        <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
+                                            ?
                                         </span>
-                                    <p class="w-full select-none xl:text-base text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
-                                    
+                                    </span>
+
+                                    <div class="w-full flex">
+                                        <p class="w-full select-none xl:text-base text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
+                                            <!-- Ouvrir le profil -->
+                                            <RouterLink target="_blank" :to="{name: 'Accord', params: {agree_id: accord.agree_id}}" class="tooltip" data-tip="Afficher l'accord">
+                                                <button class="hover:opacity-60 hover:cursor-pointer p-2">
+                                                    <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                        viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
+                                                        <g>
+                                                            <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
+                                                            <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
+                                                            <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                                                237.594,166.688 322.39,166.688 204.531,284.547 	"/>
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </RouterLink>
+                                    </div>
                                 </div>
                             </div>
                             <div v-else>
@@ -344,6 +360,19 @@
                                             <p class="w-full select-none xl:text-md text-sm transition-all duration-100 ease-in-out">({{ localVoeux[i].partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{localVoeux[i].university?.univ_city || 'Ville indisponible'}} - {{ localVoeux[i].university?.univ_name || 'Université indisponible' }}</span> ({{ localVoeux[i].isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                             
                                         </div>
+                                        <RouterLink target="_blank" :to="{name: 'Accord', params: {agree_id: localVoeux[i].agree_id}}" class="tooltip" data-tip="Afficher l'accord">
+                                                <button class="hover:opacity-60 hover:cursor-pointer p-2">
+                                                    <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                        viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
+                                                        <g>
+                                                            <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
+                                                            <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
+                                                            <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                                                237.594,166.688 322.39,166.688 204.531,284.547 	"/>
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </RouterLink>
                                         <button @click="removeVoeu(localVoeux[i].agree_id, i)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         </button>
@@ -385,7 +414,22 @@
                                                     ?
                                                 </span>
                                             </span>
-                                            <p class="w-full select-none text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
+                                            <div class="w-full flex">
+                                                <RouterLink target="_blank" :to="{name: 'Accord', params: {agree_id: accord.agree_id}}" class="tooltip" data-tip="Afficher l'accord">
+                                                <button class="hover:opacity-60 hover:cursor-pointer p-2">
+                                                    <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                        viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
+                                                        <g>
+                                                            <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
+                                                            <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
+                                                            <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                                                237.594,166.688 322.39,166.688 204.531,284.547 	"/>
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </RouterLink>
+                                                <p class="w-full select-none text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
+                                            </div>
                                             
                                         </div>
                                     </div>
@@ -415,6 +459,19 @@
                                             </span>
                                     <p class="w-full select-none text-xs">({{ localVoeux[i].partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{localVoeux[i].university?.univ_city || 'Ville indisponible'}} - {{ localVoeux[i].university?.univ_name || 'Université indisponible' }}</span> ({{ localVoeux[i].isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                 </div>
+                                <RouterLink target="_blank" :to="{name: 'Accord', params: {agree_id: localVoeux[i].agree_id}}" class="tooltip" data-tip="Afficher l'accord">
+                                                <button class="hover:opacity-60 hover:cursor-pointer p-2">
+                                                    <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                        viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
+                                                        <g>
+                                                            <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
+                                                            <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
+                                                            <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                                                237.594,166.688 322.39,166.688 204.531,284.547 	"/>
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </RouterLink>
                                 <button @click="removeVoeu(localVoeux[i].agree_id, i)" class="h-20 bg-base-300 hover:opacity-60 p-5 hover:cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
@@ -443,7 +500,22 @@
                                                 ?
                                             </span>
                                         </span>
-                                    <p class="w-full select-none text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
+                                    <div class="w-full flex">
+                                        <RouterLink target="_blank" :to="{name: 'Accord', params: {agree_id: accord.agree_id}}" class="tooltip" data-tip="Afficher l'accord">
+                                                <button class="hover:opacity-60 hover:cursor-pointer p-2">
+                                                    <svg height="24px" width="24px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                        viewBox="0 0 512 512"  xml:space="preserve" fill="currentColor">
+                                                        <g>
+                                                            <path class="st0" d="M96,0v416h416V0H96z M472,376H136V40h336V376z"/>
+                                                            <polygon class="st0" points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"/>
+                                                            <polygon class="st0" points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                                                237.594,166.688 322.39,166.688 204.531,284.547 	"/>
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </RouterLink>
+                                        <p class="w-full select-none text-xs">({{ accord.partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{accord.university?.univ_city || 'Ville indisponible'}} - {{ accord.university?.univ_name || 'Université indisponible' }}</span> ({{ accord.isced?.isc_code || 'Code ISCED indisponible' }})</p>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Aucun favoris -->
