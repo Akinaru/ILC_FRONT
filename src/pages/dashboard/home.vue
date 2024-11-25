@@ -549,7 +549,7 @@
                     <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
                         <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Vœu n°{{ i }}</p>
                         <div  class="bg-base-100 h-20 xl:w-130 w-105 flex items-center justify-center transition-all duration-100 ease-in-out">
-                            <div v-if="localVoeux[i]" :draggable="true" class=" select-none flex justify-between items-center xl:w-150 w-120 transition-all duration-100 ease-in-out h-20 hover:opacity-80">
+                            <RouterLink target="_blank" :to="{ name: 'Accord', params: { agree_id: localVoeux[i].agree_id }}" v-if="localVoeux[i]" :draggable="true" class="cursor-pointer select-none flex justify-between items-center xl:w-150 w-120 transition-all duration-100 ease-in-out h-20 hover:opacity-80">
                                 <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full">
                                     <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                         <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
@@ -557,7 +557,7 @@
                                     <p class="w-full select-none">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
                                     
                                 </div>
-                            </div>
+                            </RouterLink>
                             <p v-else class="opacity-45 select-none w-96 flex items-center justify-center">Emplacement vœu n°{{ i }} vide</p>
                         </div>
                     </span>

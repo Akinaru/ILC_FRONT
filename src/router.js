@@ -62,7 +62,7 @@ const routes = [
                 if (accountStore.getAccessLevel() === 1) {
                     next({ name: 'HomeRI' });
                 } else if (accountStore.getAccessLevel() === 2) {
-                    next({ name: 'HomeDept' });
+                    next({ name: 'EtudiantsDash' });
                 } else {
                     next({ name: 'Home' });
                 }
@@ -157,13 +157,6 @@ const routes = [
                 component: () => import('./pages/dashboard/home-ri.vue'),
                 beforeEnter: requireAccess(1),
                 meta: { title: 'Dashboard - Home RI', requiresAuth: true }
-            },
-            { 
-                path: 'home-dept', 
-                name: 'HomeDept', 
-                component: () => import('./pages/dashboard/home-dept.vue'),
-                beforeEnter: requireAccess(2),
-                meta: { title: 'Dashboard - Home Dept', requiresAuth: true }
             },
             { 
                 path: 'home', 

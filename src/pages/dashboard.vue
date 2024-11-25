@@ -55,7 +55,6 @@
     ]
 
     const routesDept = [
-        {routeName: 'HomeDept', name: '🏠 Accueil'},
         {routeName: 'EtudiantsDash', name: '👩‍🎓 Etudiants'},
     ]
 
