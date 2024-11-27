@@ -32,7 +32,7 @@
         <div>
             <p class="text-lg font-bold">Liste article</p>
             <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
-                <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 max-w-7xl mx-auto">
+                <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 mx-auto">
                     <div v-for="(article, index) in articles.articles" :key="index" class="relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
                         <!-- Modification / Suppression -->
                         <div class="flex absolute top-0 right-0 ">
