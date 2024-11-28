@@ -83,6 +83,22 @@
                         </div>
                     </div>
                 </div>
+                <!-- Années de mobilité -->
+                <div>
+                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('anneemobilite')">
+                        <p class="select-none">Années de mobilité ({{ selectedAnneeMobilite.length }} séléctionné{{ selectedAnneeMobilite.length > 1 ? 's' : '' }})</p>
+                        <span :class="isOpen.anneemobilite ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                    </div>
+                    <div class="p-1" v-show="isOpen.anneemobilite">
+                        <button class="hover:opacity-70 underline" @click="deselectAllAnneeMobilite">Tout désélectionner</button>
+                        <div v-for="(annee, index) in anneesmobilite" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
+                            <input :id="'filt_annee_'+index" type="checkbox" class="checkbox" :value="annee" v-model="selectedAnneeMobilite">
+                            <label :for="'filt_annee_'+index" class="cursor-pointer w-full pl-2">
+                                <label :for="'filt_annee_'+index" class="select-none w-full hover:cursor-pointer">{{ annee }}</label>
+                            </label>
+                        </div>
+                    </div>
+                </div> 
             </div>
             <!-- Liste des étudiants -->
             <div v-if="account && account.acc_id && etudiants && etudiants.accounts" class="w-full px-2">
@@ -155,6 +171,7 @@
                                         <p class="text-sm text-gray-400">
                                             <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
                                             <strong>Documents ajouté(s):</strong> {{ etu.documents?.count || 0 }}/{{ etu.documents?.countmax }}<br>
+                                            <strong>Années de mobilités:</strong> {{ etu.acc_anneemobilite ? etu.acc_anneemobilite : 'Inconnu' }}<br>
                                             <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}<br>
                                             <strong>Aménagement aux éxams:</strong> {{ etu.acc_amenagement == true ? 'Oui' : 'Non' }}
                                         </p>
@@ -234,10 +251,12 @@ const response = ref([])
 const selectedDepartment = ref([]);
 const selectedVoeux = ref([]);
 const selectedDocument = ref([]);
+const selectedAnneeMobilite = ref([]);
 const isOpen = ref({
     voeux: true,
     departments: true,
     document: true,
+    anneemobilite: true
 });
 
     function toggleCollapse(section) {
@@ -260,12 +279,15 @@ const isOpen = ref({
                 // Filtrer par nom d'étudiant s'il y a une recherche en cours
                 const matchesSearchQuery = !searchQuery.value || etu.acc_fullname.toLowerCase().includes(searchQuery.value.toLowerCase());
 
+                // Filtre par année de mobilité
+                const matchesAnneeMobilite = selectedAnneeMobilite.value.length === 0 || selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
+
                 // Vérification du nombre de documents
                 const documentCount = etu.documents.count || 0; // Utiliser 0 par défaut si undefined
                 const matchesDocuments = selectedDocument.value.length === 0 || 
                     selectedDocument.value.includes(documentCount.toString());
 
-                return matchesDepartments && hasAccess && matchesVoeux && matchesSearchQuery && matchesDocuments;
+                return matchesDepartments && hasAccess && matchesVoeux && matchesSearchQuery && matchesDocuments && matchesAnneeMobilite;
             })
             .sort((a, b) => {
                 // Trier les étudiants par leur nom complet
@@ -337,6 +359,7 @@ const exportUrl = computed(() => {
         const savedDepartments = sessionStorage.getItem('etu_dashboard.selectedDepartment');
         const savedDocument = sessionStorage.getItem('etu_dashboard.selectedDocument');
         const savedVoeux = sessionStorage.getItem('etu_dashboard.selectedVoeux');
+        const savedAnneeMobilite = sessionStorage.getItem('etu_dashboard.selectedAnneeMobilite');
 
 
 
@@ -352,7 +375,10 @@ const exportUrl = computed(() => {
             selectedDocument.value = JSON.parse(savedDocument);
 
         }
+        if (savedAnneeMobilite) {
+            selectedAnneeMobilite.value = JSON.parse(savedAnneeMobilite);
 
+        }
 
     }
 
@@ -360,10 +386,12 @@ const exportUrl = computed(() => {
         sessionStorage.setItem('etu_dashboard.selectedDepartment', JSON.stringify(selectedDepartment.value));
         sessionStorage.setItem('etu_dashboard.selectedVoeux', JSON.stringify(selectedVoeux.value));
         sessionStorage.setItem('etu_dashboard.selectedDocument', JSON.stringify(selectedDocument.value));
+        sessionStorage.setItem('etu_dashboard.selectedAnneeMobilite', JSON.stringify(selectedAnneeMobilite.value));
     }
 
     watch(selectedDepartment, saveFilters);
     watch(selectedVoeux, saveFilters);
+    watch(selectedAnneeMobilite, saveFilters);
     watch(selectedDocument, saveFilters);
 
 onMounted(() => {
@@ -384,5 +412,8 @@ onMounted(() => {
     }
     function deselectAllDocuments() {
         selectedDocument.value = [];
+    }
+    function deselectAllAnneeMobilite() {
+        selectedAnneeMobilite.value = [];
     }
 </script>
