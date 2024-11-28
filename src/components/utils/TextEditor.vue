@@ -126,13 +126,24 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['update:modelValue']); // Définir les événements émis
-
+const editor = ref(null); // Référence à l'éditeur
 const currentColor = ref('#000000');
 
 const toggleStyle = (style) => {
   document.execCommand(style);
 };
 
+const clear = () => {
+  if (editor.value) {
+    editor.value.innerHTML = '';
+    // Émettre l'événement avec une valeur vide
+    emits('update:modelValue', '');
+  }
+};
+
+defineExpose({
+  clear
+});
 
 const toggleLink = () => {
   const url = prompt("Entrez l'URL :");

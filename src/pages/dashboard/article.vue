@@ -12,7 +12,7 @@
                 </div>
                 <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full mb-4" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full mb-4" />
-                <TextEditor v-model="newArticle.art_description"></TextEditor>
+                <TextEditor ref="editorRef" v-model="newArticle.art_description"></TextEditor>
                 <div class="form-control my-4">
                     <label class="label cursor-pointer justify-start w-fit">
                         <input type="checkbox" class="checkbox mr-2" v-model="newArticle.pinned" />
@@ -121,7 +121,7 @@ const articles = ref([]);
 const newArticle = ref({ title: null, description: null, pinned: false, image: null });
 const isEditing = ref(false)
 const confirmDeleteArticle = ref([])
-
+const editorRef = ref(null);
 
 const currentArticleModif = ref([]);
 const imagePreview = ref(null);
@@ -230,15 +230,12 @@ async function addArticle(){
         }
         await request('POST', false, rep, config.apiUrl+'api/action', requestDataAction);
         await fetchAll();
+        resetInput();
 
     }
 
-    // Reset du formulaire
-    newArticle.value.title = '';
-    newArticle.value.art_description = '';
-    newArticle.value.pinned = false;
-    newArticle.value.image = null;
-    imagePreview.value = null;
+
+
 }
 
 function removeBackgroundColors(html) {
@@ -333,6 +330,16 @@ function removeBackgroundColors(html) {
 
     const finalHTML = doc.body.innerHTML;
     return finalHTML;
+}
+
+function resetInput(){
+    // Reset du formulaire
+    newArticle.value.title = '';
+    newArticle.value.art_description = '';
+    newArticle.value.pinned = false;
+    newArticle.value.image = null;
+    imagePreview.value = null;
+    editorRef.value.clear();
 }
 
 // Suppression d'article
@@ -435,7 +442,7 @@ async function confirmModifArticle() {
         cancelModifArticle();
         await nextTick();
         await fetchAll();
-
+        resetInput();
     }
 }
 
