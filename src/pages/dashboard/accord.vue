@@ -935,7 +935,8 @@
     }
 
     const filteredAccords = computed(() => {
-        return accords.value.agreements.filter(accord => {
+    return accords.value.agreements
+        .filter(accord => {
             const matchesDepartments = selectedDepartments.value.length === 0 || 
                 accord.departments.some(dept => selectedDepartments.value.includes(dept.dept_shortname));
 
@@ -947,23 +948,34 @@
 
             // Filtre unknowns pour les champs vides
             const matchesUnknowns = selectedUnknowns.value.every(unknown => {
-                // S'il y a un point dans la clé, on fait un split et on réduit
                 if (unknown.includes('.')) {
                     const keys = unknown.split('.');
                     return keys.reduce((obj, key) => obj && obj[key], accord) === null;
                 } else {
-                    // Cas particulier pour departments
                     if (unknown === 'departments') {
-                        return accord.departments.length === 0; // Vérifie si departments est vide
+                        return accord.departments.length === 0;
                     }
-                    // Vérification pour les autres champs sans sous-propriétés
                     return accord[unknown] === null;
                 }
             });
 
             return matchesDepartments && matchesCountries && matchesComponents && matchesUnknowns;
+        })
+        .sort((a, b) => {
+            // Premier niveau : tri par pays
+            const countryA = a.partnercountry?.parco_name || '';
+            const countryB = b.partnercountry?.parco_name || '';
+
+            if (countryA !== countryB) {
+                return countryA.localeCompare(countryB);
+            }
+
+            // Deuxième niveau : tri par université
+            const univA = a.university?.univ_name || '';
+            const univB = b.university?.univ_name || '';
+            return univA.localeCompare(univB);
         });
-    });
+});
 
     // Ajouter un accord
     async function addAgreement() {
