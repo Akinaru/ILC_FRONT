@@ -109,7 +109,7 @@
                             <div class="w-fit flex items-center justify-start my-1 bg-base-300 border-2 "
                             :class="destination.agreement && wishes?.count > 0 && wishes.wishes[label] && destination.agreement.agree_id == wishes.wishes[label].agree_id ? ' border-warning' : 'border-base-300'">
                                 <p class="font-bold text-sm xl:text-lg min-w-fit p-5 transition-all duration-100 ease-in-out">Voeu n° {{ index+1 }}</p>
-                                <div v-if="wishes && wishes.count > 0 && wishes.wishes[label]" class=" select-none flex justify-between items-center elementDrag w-96 h-20">
+                                <RouterLink target="_blank" :to="{ name: 'Accord', params: { agree_id: wishes.wishes[label].agree_id }}" v-if="wishes && wishes.count > 0 && wishes.wishes[label]" class="bg-base-300 cursor-pointer hover:opacity-50 select-none flex justify-between items-center elementDrag w-96 h-20">
                                     <div class=" flex items-center justify-center h-20 select-none">
                                         <span class="relative inline-block mr-2">
                                                 <!-- Drapeau -->
@@ -123,7 +123,7 @@
                                         <p class="w-full select-none">({{ wishes.wishes[label].partnercountry?.parco_name || 'Pays indisponible' }}) <span class="font-bold">{{wishes.wishes[label].university?.univ_city || 'Ville indisponible'}} - {{ wishes.wishes[label].university?.univ_name || 'Université indisponible' }}</span> ({{ wishes.wishes[label].isced?.isc_code || 'Code ISCED indisponible' }})</p>
                                         
                                     </div>
-                                </div>
+                                </RouterLink>
                                 <div v-else class="w-96 flex items-center justify-center">
                                     <p class="select-none">Pas de voeu séléctionné</p>
                                 </div>

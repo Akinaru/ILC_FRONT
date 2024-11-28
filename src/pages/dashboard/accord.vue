@@ -294,6 +294,7 @@
 
                                 <div>
                                     <p>Description: <span v-if="accord.agree_description">{{ accord.agree_description }}</span><span v-if="!accord.agree_description">Aucune</span></p>
+                                    <p v-if="accord.agree_note">Note: <span>{{ accord.agree_note }}</span></p>
                                     
                                 </div>
                                 
@@ -446,16 +447,38 @@
                                     <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{ isced.isc_code }}) {{ isced.isc_name }}</option>
                                 </select>
                             </label>
-                            <!-- Formulaire composante -->
+                            <div class="w-full flex">
+
+                                <!-- Formulaire composante -->
+                                <label class="form-control w-full items-center justify-center">
+                                    <div class="label">
+                                        <span class="label-text">Composante</span>
+                                    </div>
+                                    <select class="select select-bordered w-full select-primary" id="compo_select" v-model="currentAccordModif.comp_id">
+                                        <option :value="null">Aucune composante</option>
+                                        <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
+                                    </select>
+                                </label>
+                                <!-- Formulaire Typeaccord -->
+                                <label class="form-control w-full items-center justify-center">
+                                    <div class="label">
+                                        <span class="label-text">Type accord</span>
+                                    </div>
+                                    <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="currentAccordModif.agree_typeaccord">
+                                        <option :value="null">Aucun type d'accord</option>
+                                        <option>Bilatéral</option>
+                                        <option>Erasmus</option>
+                                    </select>
+                                </label>
+                            <!-- Formulaire Nombre de place -->
                             <label class="form-control w-full items-center justify-center">
                                 <div class="label">
-                                    <span class="label-text">Composante</span>
+                                    <span class="label-text">Nombre de place</span>
                                 </div>
-                                <select class="select select-bordered w-full select-primary" id="compo_select" v-model="currentAccordModif.comp_id">
-                                    <option :value="null">Aucune composante</option>
-                                    <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
-                                </select>
+                                <input type="number" class="input input-bordered w-full" v-model="currentAccordModif.agree_nbplace" />
                             </label>
+                            </div>
+
                             <!-- Formulaire université -->
                             <label class="form-control w-full items-center justify-center">
                                 <div class="label">
@@ -466,24 +489,8 @@
                                     <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
                                 </select>
                             </label>
-                            <!-- Formulaire Typeaccord -->
-                            <label class="form-control w-full items-center justify-center">
-                                <div class="label">
-                                    <span class="label-text">Type accord</span>
-                                </div>
-                                <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="currentAccordModif.agree_typeaccord">
-                                    <option :value="null">Aucun type d'accord</option>
-                                    <option>Bilatéral</option>
-                                    <option>Erasmus</option>
-                                </select>
-                            </label>
-                            <!-- Formulaire Nombre de place -->
-                            <label class="form-control w-full items-center justify-center">
-                                <div class="label">
-                                    <span class="label-text">Nombre de place</span>
-                                </div>
-                                <input type="number" class="input input-bordered w-full" v-model="currentAccordModif.agree_nbplace" />
-                            </label>
+
+
                             <!-- Formulaire Lien -->
                             <label class="form-control w-full items-center justify-center">
                                 <div class="label">
@@ -491,6 +498,7 @@
                                 </div>
                                 <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_lien" />
                             </label>
+
                             <!-- Formulaire Description -->
                             <label class="form-control w-full items-center justify-center">
                                 <div class="label">
@@ -498,6 +506,15 @@
                                 </div>
                                 <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_description" />
                             </label>
+
+                            <!-- Formulaire Note -->
+                            <label class="form-control w-full items-center justify-center">
+                                <div class="label">
+                                    <span class="label-text">Note (facultatif & invisible)</span>
+                                </div>
+                                <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_note" />
+                            </label>
+
                         </form>
                         <div class="modal-action">
                             <button class="btn btn-neutral" @click="closeModal">Annuler</button>
@@ -670,6 +687,7 @@
         currentAccordModif.value.comp_id = accord.component ? accord.component.comp_id : null;
         currentAccordModif.value.agree_typeaccord = accord.agree_typeaccord || null;
         currentAccordModif.value.agree_description = accord.agree_description || null;
+        currentAccordModif.value.agree_note = accord.agree_note || null;
         currentAccordModif.value.agree_nbplace = accord.agree_nbplace != null ? accord.agree_nbplace : 0;
         currentAccordModif.value.agree_lien = accord.agree_lien || null;
 
@@ -695,6 +713,10 @@
         }
         if (currentAccordModif.value.agree_description != null) {
             requestData.agree_description = currentAccordModif.value.agree_description;
+        }
+
+        if (currentAccordModif.value.agree_note != null) {
+            requestData.agree_note = currentAccordModif.value.agree_note;
         }
 
         requestData.isc_id = currentAccordModif.value.isc_id;

@@ -4,7 +4,7 @@
 
         <!-- Formulaire d'ajout d'article -->
         <div class="m-5 flex justify-center items-center flex-col">
-            <p class="text-lg font-bold">{{ isEditing ? 'Modifier article' : 'Ajout article' }}</p>
+            <p class="text-lg font-bold" id="page_title">{{ isEditing ? 'Modifier l\'article' : 'Ajout un article' }}</p>
             <form @submit.prevent="addArticle" class="w-4/5 *:my-2" enctype="multipart/form-data">
                 <!-- Affichage de l'image conditionnel -->
                 <div class="flex items-center justify-center">
@@ -32,7 +32,7 @@
         <div>
             <p class="text-lg font-bold">Liste article</p>
             <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
-                <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 max-w-7xl mx-auto">
+                <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 mx-auto">
                     <div v-for="(article, index) in articles.articles" :key="index" class="relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
                         <!-- Modification / Suppression -->
                         <div class="flex absolute top-0 right-0 ">
@@ -109,7 +109,7 @@
 
 <script setup>
 import { request } from '../../composables/httpRequest';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, nextTick } from 'vue';
 import config from '../../config';
 import TextEditor from '../../components/utils/TextEditor.vue';
 import { useAccountStore } from '../../stores/accountStore';
@@ -188,11 +188,11 @@ function closeModal() {
 // Ajout d'article
 async function addArticle(){
 
-    if(newArticle.value.title == null){
+    if(newArticle.value.title == '' || newArticle.value.title == null){
         addAlert('error', {data:{error: 'Vous devez mettre un titre à votre article.', message:'Ajout de l\'article annulé.'}})
         return;
     }
-    if(newArticle.value.art_description == null){
+    if(newArticle.value.art_description == '' || newArticle.value.art_description == null){
         addAlert('error', {data:{error: 'Vous devez mettre une description à votre article.', message:'Ajout de l\'article annulé.'}})
         return;
     }
@@ -241,32 +241,46 @@ async function addArticle(){
     imagePreview.value = null;
 }
 
-// Code qui permet de rendre clair l'affichage du texte et qui permet également de faire correspondre avec le theme (clair ou sombre)
 function removeBackgroundColors(html) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const elements = doc.body.getElementsByTagName('*');
-    console.log(elements)
-
-    // Fonction utilitaire pour convertir une couleur hexadécimale en composantes RGB
-    function hexToRgb(hex) {
-        let hexValue = hex.replace('#', '');
-        if (hexValue.length === 3) {
-            hexValue = hexValue.split('').map(h => h + h).join(''); // Convertit #000 en #000000
+    
+    function extractRGB(color) {
+        
+        // Si la couleur est au format rgb() ou rgba()
+        const matches = color.match(/\d+/g);
+        if (matches && !color.startsWith('#')) {
+            const rgb = {
+                r: parseInt(matches[0]),
+                g: parseInt(matches[1]),
+                b: parseInt(matches[2])
+            };
+            return rgb;
         }
-        const bigint = parseInt(hexValue, 16);
-        return {
-            r: (bigint >> 16) & 255,
-            g: (bigint >> 8) & 255,
-            b: bigint & 255
-        };
+        
+        // Si la couleur est au format hexadécimal
+        if (color.startsWith('#')) {
+            const hex = color.slice(1); // Enlève le #
+            const r = parseInt(hex.slice(0, 2), 16);
+            const g = parseInt(hex.slice(2, 4), 16);
+            const b = parseInt(hex.slice(4, 6), 16);
+            
+            const rgb = { r, g, b };
+            return rgb;
+        }
+        
+        return null;
     }
 
-    // Fonction utilitaire pour vérifier si une couleur est proche du noir ou du blanc
     function isNearBlackOrWhite(rgb) {
+        if (!rgb || rgb.r === undefined || rgb.g === undefined || rgb.b === undefined) {
+            return { isBlack: false, isWhite: false };
+        }
+
         const { r, g, b } = rgb;
-        const blackThreshold = 30;  // Tolérance pour le noir
-        const whiteThreshold = 225; // Tolérance pour le blanc
+        const blackThreshold = 30;
+        const whiteThreshold = 225;
 
         const isBlack = r <= blackThreshold && g <= blackThreshold && b <= blackThreshold;
         const isWhite = r >= whiteThreshold && g >= whiteThreshold && b >= whiteThreshold;
@@ -274,31 +288,51 @@ function removeBackgroundColors(html) {
         return { isBlack, isWhite };
     }
 
+    
     for (let element of elements) {
-        // Supprimer les couleurs de fond
+        // Traitement des balises <font> avec attribut color
+        if (element.tagName === 'FONT' && element.hasAttribute('color')) {
+            const fontColor = element.getAttribute('color');
+            const rgb = extractRGB(fontColor);
+            if (rgb) {
+                const { isBlack, isWhite } = isNearBlackOrWhite(rgb);
+                if (isBlack || isWhite) {
+                    element.removeAttribute('color');
+                }
+            }
+        }
+
+        // Le reste du code reste identique...
         if (element.style.backgroundColor) {
             element.style.backgroundColor = '';
         }
 
-        // Utiliser getComputedStyle pour obtenir la couleur de texte
-        const computedStyle = getComputedStyle(element);
-        console.log(element = ' -> ' + computedStyle)
-        const textColor = computedStyle.color;
-
-        if (textColor) {    
-            console.log(element); // Affiche l'élément pour débogage
-            const rgb = hexToRgb(textColor);
-            const { isBlack, isWhite } = isNearBlackOrWhite(rgb);
-
-            if (isBlack || isWhite) {
-                // Supprime la couleur si elle est proche du noir ou du blanc
-                element.style.color = '';
+        if (element.style.color) {
+            const rgb = extractRGB(element.style.color);
+            if (rgb) {
+                const { isBlack, isWhite } = isNearBlackOrWhite(rgb);
+                if (isBlack || isWhite) {
+                    element.style.color = '';
+                }
             }
+        }
 
+        const computedStyle = window.getComputedStyle(element);
+        const computedColor = computedStyle.color;
+        
+        if (computedColor) {
+            const rgb = extractRGB(computedColor);
+            if (rgb) {
+                const { isBlack, isWhite } = isNearBlackOrWhite(rgb);
+                if (isBlack || isWhite) {
+                    element.style.color = '';
+                }
+            }
         }
     }
 
-    return doc.body.innerHTML;
+    const finalHTML = doc.body.innerHTML;
+    return finalHTML;
 }
 
 // Suppression d'article
@@ -332,11 +366,12 @@ function modifArticle(article) {
 
     newArticle.value.title = currentArticleModif.value.art_title;
     newArticle.value.pinned = currentArticleModif.value.art_pin;
-    window.scrollTo({
-        top: 120,
-        behavior: 'smooth' 
-    });
-
+    const element = document.getElementById('page_title');
+    if (element) {
+        element.scrollIntoView({ 
+            behavior: 'smooth'
+        });
+    }
     // Mettre à jour l'image de prévisualisation pour la modification
     if (article.art_image) {
         imagePreviewModif.value = `${config.apiUrl}api/article/image/${article.art_id}`;
@@ -397,8 +432,9 @@ async function confirmModifArticle() {
         };
 
         await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
-        await fetchAll();
         cancelModifArticle();
+        await nextTick();
+        await fetchAll();
 
     }
 }
