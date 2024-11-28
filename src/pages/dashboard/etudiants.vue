@@ -247,6 +247,7 @@ const isLoaded = ref(false);
 const searchQuery = ref('');
 const confirmDeleteEtu = ref([])
 const response = ref([])
+const anneesmobilite = ref([])
 
 const selectedDepartment = ref([]);
 const selectedVoeux = ref([]);
@@ -305,6 +306,13 @@ const isOpen = ref({
             await request('GET', false, etudiants, config.apiUrl + 'api/account/getbydept/' + account.value.department.dept_id);
         }
         await request('GET', false, components, config.apiUrl + 'api/component');
+
+        const currentYear = new Date().getFullYear();
+        for (let i = 0; i < 4; i++) {
+            const startYear = currentYear + i;
+            const endYear = startYear + 1;
+            anneesmobilite.value.push(`${startYear}-${endYear}`);
+        }
         isLoaded.value = true;
     }
 

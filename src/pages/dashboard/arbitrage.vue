@@ -7,7 +7,7 @@
                 <p class="text-center py-5">Liste des étudiants</p>
 
                 <!-- Partie filtre étudiants -->
-                <div class="flex items-center justify-center py-5">
+                <div class="flex items-center justify-center pt-5">
                     <div class="bg-base-200 drop-shadow-lg w-96" v-if="accords && accords.agreements">
                         <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg select-none">Filtres</p>
                         <p class="select-none">{{ filteredEtus.length }} résultats</p>
@@ -107,6 +107,7 @@
 
                 <!-- Affichage des etudiants -->
                 <div class="flex flex-col items-center justify-start w-full">
+                    <button class="w-full py-2 hover:opacity-70 underline text-start" @click="watchAllWish">Voir tous les voeux</button>
                     <div class="elementDrag bg-base-300 w-96 mb-2 flex items-center justify-center cursor-move select-none hover:opacity-80 flex-col" 
                         :draggable="true" 
                         :id="'etu_drag_'+etu.acc_id"
@@ -145,7 +146,7 @@
                             <div>
                                 <div>
                                     <div v-for="(accord, index) in getFilteredAgreements(etu)" :key="index" class="flex justify-between">
-                                        <p class="min-w-fit">Voeu {{ accord.place }}</p>
+                                        <p class="min-w-fit flex items-center justify-center">Voeu {{ accord.place }}</p>
                                         <div class="flex w-full items-center justify-start ml-2">
                                             <span class="relative inline-block mr-1">
                                                 <!-- Drapeau -->
@@ -641,24 +642,40 @@ const filteredArbitrage = computed(() => {
     
     // renvoie les voeux d'un étudiant
     function getFilteredAgreements(etu) {
-        if (!etu || !etu.wishes) {
-            return [];
-        }
-      const wishes = etu.wishes;
-      const wishIds = [
+    if (!etu || !etu.wishes) {
+        return [];
+    }
+    const wishes = etu.wishes;
+    const wishIds = [
         { place: 1, id: wishes.wsha_one },
         { place: 2, id: wishes.wsha_two },
         { place: 3, id: wishes.wsha_three },
         { place: 4, id: wishes.wsha_four },
         { place: 5, id: wishes.wsha_five },
         { place: 6, id: wishes.wsha_six }
-      ].filter(wsha => wsha !== null);
+    ].filter(wsha => wsha.id !== null);
 
-      return wishIds.map(wsha => {
-        const agreement = accords.value.agreements.find(agreement => agreement.agree_id === wsha.id);
-        return { place: wsha.place, agreement };
-      }).filter(item => item.agreement !== undefined);
-    }
+    return wishIds
+        .map(wsha => {
+            const agreement = accords.value.agreements.find(agreement => agreement.agree_id === wsha.id);
+            return { place: wsha.place, agreement };
+        })
+        .filter(item => item.agreement !== undefined)
+        .sort((a, b) => {
+            // Tri par pays
+            const countryA = a.agreement.partnercountry?.parco_name || '';
+            const countryB = b.agreement.partnercountry?.parco_name || '';
+
+            if (countryA !== countryB) {
+                return countryA.localeCompare(countryB);
+            }
+
+            // Si même pays, tri par université
+            const univA = a.agreement.university?.univ_name || '';
+            const univB = b.agreement.university?.univ_name || '';
+            return univA.localeCompare(univB);
+        });
+}
 
     // Enlever un étudiant d'un accord
     function removeEtuFromPlace(agree_id, pos) {
@@ -877,6 +894,13 @@ const filteredArbitrage = computed(() => {
     // Permet de définir le handler d'un drag
     function dragStartHandler(e) {
         e.dataTransfer.setData("text/plain", e.target.id);
+    }
+
+    // voir tous les filtres
+    function watchAllWish() {
+        filteredEtus.value.forEach(etu => {
+            isOpen.value.etudiants[etu.acc_id] = true;
+        });
     }
 
     // déséléctionner les filtres

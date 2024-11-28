@@ -301,7 +301,8 @@
     }
 
     const filteredAccords = computed(() => {
-        return accords.value.agreements.filter(accord => {
+    return accords.value.agreements
+        .filter(accord => {
             // Gestion des valeurs nulles ou undefined
             const departments = accord.departments || [];
             const partnercountry = accord.partnercountry || {};
@@ -316,14 +317,28 @@
             const matchesCountries = countryNames.length === 0 || 
                 (partnercountry && partnercountry.parco_name && countryNames.includes(partnercountry.parco_name));
 
-
             // Assurez-vous que departments est un tableau et vérifiez sa longueur
             const hasDepartments = Array.isArray(departments) && departments.length > 0;
 
             // Retourner les accords qui correspondent aux filtres ou qui ont des départements
             return matchesDepartments && matchesCountries && (hasDepartments || deptShortnames.length === 0);
+        })
+        .sort((a, b) => {
+            // Récupération des noms de pays avec gestion des undefined
+            const countryA = a.partnercountry?.parco_name || '';
+            const countryB = b.partnercountry?.parco_name || '';
+
+            // Si les pays sont différents, on trie par pays
+            if (countryA !== countryB) {
+                return countryA.localeCompare(countryB);
+            }
+
+            // Si les pays sont identiques, on trie par nom d'université
+            const univA = a.university?.univ_name || '';
+            const univB = b.university?.univ_name || '';
+            return univA.localeCompare(univB);
         });
-    });
+});
 
     
     const canShowMore = computed(() => {
