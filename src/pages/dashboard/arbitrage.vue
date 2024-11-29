@@ -642,40 +642,23 @@ const filteredArbitrage = computed(() => {
     
     // renvoie les voeux d'un étudiant
     function getFilteredAgreements(etu) {
-    if (!etu || !etu.wishes) {
-        return [];
-    }
-    const wishes = etu.wishes;
-    const wishIds = [
-        { place: 1, id: wishes.wsha_one },
+        if (!etu || !etu.wishes) {
+            return [];
+        }
+      const wishes = etu.wishes;
+      const wishIds = [
+      { place: 1, id: wishes.wsha_one },
         { place: 2, id: wishes.wsha_two },
         { place: 3, id: wishes.wsha_three },
         { place: 4, id: wishes.wsha_four },
         { place: 5, id: wishes.wsha_five },
         { place: 6, id: wishes.wsha_six }
-    ].filter(wsha => wsha.id !== null);
-
-    return wishIds
-        .map(wsha => {
-            const agreement = accords.value.agreements.find(agreement => agreement.agree_id === wsha.id);
-            return { place: wsha.place, agreement };
-        })
-        .filter(item => item.agreement !== undefined)
-        .sort((a, b) => {
-            // Tri par pays
-            const countryA = a.agreement.partnercountry?.parco_name || '';
-            const countryB = b.agreement.partnercountry?.parco_name || '';
-
-            if (countryA !== countryB) {
-                return countryA.localeCompare(countryB);
-            }
-
-            // Si même pays, tri par université
-            const univA = a.agreement.university?.univ_name || '';
-            const univB = b.agreement.university?.univ_name || '';
-            return univA.localeCompare(univB);
-        });
-}
+        ].filter(wsha => wsha !== null);
+        return wishIds.map(wsha => {
+        const agreement = accords.value.agreements.find(agreement => agreement.agree_id === wsha.id);
+        return { place: wsha.place, agreement };
+      }).filter(item => item.agreement !== undefined);
+    }
 
     // Enlever un étudiant d'un accord
     function removeEtuFromPlace(agree_id, pos) {
