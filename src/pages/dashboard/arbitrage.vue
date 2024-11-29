@@ -636,6 +636,18 @@ const filteredArbitrage = computed(() => {
             })();
 
             return countryFilter && iscedFilter && accordFilter && arbitrageFilter;
+        })
+        .sort((a, b) => {
+            // Premier niveau de tri : par nom de pays partenaire
+            const countryComparison = a.agreement.partnercountry.parco_name.localeCompare(b.agreement.partnercountry.parco_name);
+            
+            // Si les pays sont différents, retourne la comparaison des pays
+            if (countryComparison !== 0) {
+                return countryComparison;
+            }
+            
+            // Deuxième niveau de tri : par nom d'université
+            return a.agreement.university.univ_name.localeCompare(b.agreement.university.univ_name);
         });
 });
 
