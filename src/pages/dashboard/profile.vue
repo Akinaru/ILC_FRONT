@@ -138,7 +138,7 @@
                             <!-- Idéntitée -->
                             <label class="form-control w-full">
                                 <div class="label">
-                                    <span class="label-text">Identitée</span>
+                                    <span class="label-text">Identité</span>
                                 </div>
                                 <p class="w-full bg-base-300 p-3">{{ account.acc_fullname || 'Inconnu' }}</p>
                             </label>
@@ -162,7 +162,7 @@
                             <!-- Années de mobilités -->
                             <label class="form-control w-full">
                                 <div class="label">
-                                    <span class="label-text">Années de mobilité</span>
+                                    <span class="label-text">Année de mobilité</span>
                                 </div>
                                 <p class="w-full bg-base-300 p-3">{{ account.acc_anneemobilite || 'Aucune' }}</p>
                             </label>
