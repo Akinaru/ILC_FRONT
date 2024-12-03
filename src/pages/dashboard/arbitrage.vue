@@ -406,6 +406,7 @@
     import { request } from '../../composables/httpRequest'
     import config from '../../config'
     import LoadingComp from '../../components/utils/LoadingComp.vue';
+    import { useAccountStore } from '../../stores/accountStore';
 
     const response = ref([])
     const accords = ref([])
@@ -423,6 +424,8 @@
     const selectedVoeux = ref([]);
     const selectedCountries = ref([]);
     const selectedAnneeMobilite = ref([]);
+
+    const accountStore = useAccountStore();
 
     const infoetudiant = ref([])
 
@@ -554,23 +557,80 @@
         return `${day}/${month}/${year} à ${hours}h${minutes}`;
     }
 
-    // Enregistrement de l'arbitrage
-    async function saveArbitrage(){
-        const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
-            arbitrage.accounts.forEach(accountInfo => {
-                if (accountInfo.account) {
-                    acc.push({
-                        acc_id: accountInfo.account.acc_id,
-                        agree_id: arbitrage.agreement.agree_id,
-                        arb_pos: accountInfo.arb_pos
-                    });
-                }
-            });
-            return acc;
-        }, []);
+// Enregistrement de l'arbitrage
+async function saveArbitrage() {
 
-        await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
-    }
+   // Sauvegarder l'état précédent pour comparaison
+   const previousState = arbitrage.value.map(arb => ({
+       acc_id: arb.account.acc_id,
+       agree_id: arb.agreement.agree_id,
+       arb_pos: arb.arb_pos
+   }));
+   
+
+   const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
+       arbitrage.accounts.forEach(accountInfo => {
+           if (accountInfo.account) {
+               acc.push({
+                   acc_id: accountInfo.account.acc_id,
+                   agree_id: arbitrage.agreement.agree_id,
+                   arb_pos: accountInfo.arb_pos
+               });
+           }
+       });
+       return acc;
+   }, []);
+
+   await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData);
+   
+   if(response.value.status == 200) {
+       // Créer une map des positions précédentes par étudiant et accord
+       const previousPositions = new Map(
+           previousState.map(state => [`${state.acc_id}-${state.agree_id}`, state.arb_pos])
+       );
+       
+       // Créer une map des nouvelles positions
+       const newPositions = new Map(
+           extractedData.map(data => [`${data.acc_id}-${data.agree_id}`, data.arb_pos])
+       );
+
+       // Trouver les suppressions (étudiants qui ne sont plus sur le même accord)
+       const removals = previousState.filter(prevData => {
+           const key = `${prevData.acc_id}-${prevData.agree_id}`;
+           const hasKey = !newPositions.has(key);
+           return hasKey;
+       });
+
+       // Trouver les changements (nouveaux placements ou modifications de position)
+       const changes = extractedData.filter(newData => {
+           const key = `${newData.acc_id}-${newData.agree_id}`;
+           const previousPos = previousPositions.get(key);
+           return !previousPos || previousPos !== newData.arb_pos;
+       });
+
+       // Créer une entrée dans l'historique pour les changements
+       for (const data of changes) {
+           const requestDataAction = {
+               act_description: `Changement de l'arbitrage pour ${data.acc_id} sur l'accord ${data.agree_id} à la position ${data.arb_pos}.`,
+               acc_id: accountStore.login,
+               act_type: 'arbitrage'
+           };
+           await request('POST', false, response, config.apiUrl+'api/action', requestDataAction);
+       }
+
+       // Créer une entrée dans l'historique pour les suppressions
+       for (const data of removals) {
+           const requestDataAction = {
+               act_description: `Suppression de l'arbitrage pour ${data.acc_id} (précédemment sur l'accord ${data.agree_id}).`,
+               acc_id: accountStore.login,
+               act_type: 'arbitrage'
+           };
+           await request('POST', false, response, config.apiUrl+'api/action', requestDataAction);
+       }
+   }
+}
+
+
 // Liste des étudiants après filtres
 const filteredEtus = computed(() => {
     return Object.values(localEtus.value)
