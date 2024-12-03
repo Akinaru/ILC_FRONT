@@ -124,7 +124,9 @@ function applyTheme(theme) {
 
 async function load() {
   await nextTick();
-  await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
+  if(accountStore.isLogged()){
+    await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
+  }
   applyTheme(theme.value);
   
 }

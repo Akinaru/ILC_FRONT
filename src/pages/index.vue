@@ -289,8 +289,9 @@
         await request('GET', false, components, config.apiUrl+'api/component')
         await request('GET', false, events, config.apiUrl+'api/event')
         await request('GET', false, eventspf, config.apiUrl+'api/event/pfonly')
-        if(accountStore.isLogged)
+        if(accountStore.isLogged()){
             await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
+        }
         isLoaded.value = true;
     }
 

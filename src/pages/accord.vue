@@ -123,10 +123,9 @@
     async function fetchAll(){
         isLoaded.value = false;
         await request('GET', false, accord, config.apiUrl+'api/agreement/getbyid/'+route.params.agree_id);
-        if(accountStore.isLogged)
-            await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         const requestData = {}
         if(accountStore.isLogged()){
+            await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login);
             await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+accountStore.login); 
             requestData.dept_id = account.value.department ? account.value.department.dept_id : null;
         }
