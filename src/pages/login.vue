@@ -18,16 +18,14 @@ const login = ref(null);
 const auth = ref(null);
 const acceptedResponse = ref([])
 const accessResponse = ref([])
+const response = ref([])
 const accountStore = useAccountStore();
 
 onMounted(() => {
-
-    // Récupérer les valeurs de localStorage
     login.value = localStorage.getItem('login');
     auth.value = localStorage.getItem('auth');
     if(auth.value == 'success'){
         loginUser();
-        
     }else{
         if(accountStore.isLogged()){
             router.push({ name: 'Dashboard' });
@@ -35,17 +33,20 @@ onMounted(() => {
             router.push({ name: 'Accueil' });
         }
     }
-
 });
 
 async function loginUser() {
-
     try {
+        // Appel API Laravel login
+
+        await request('POST', false, response, config.apiUrl + 'api/login', {login: login.value});
+
+        localStorage.setItem('token', response.value.token);
+
         
         await request('GET', false, acceptedResponse, config.apiUrl + 'api/acceptedaccount/getbylogin/' + login.value);
         await request('GET', false, accessResponse, config.apiUrl + 'api/access/getbylogin/' + login.value);
 
-        // Vérifie si le login est accepté dans l'une des deux listes
         const isLoginAccepted = acceptedResponse.value && acceptedResponse.value.account;
         const isLoginAccess = accessResponse.value && accessResponse.value.access;
 
@@ -60,9 +61,4 @@ async function loginUser() {
         router.push({ name: 'Accueil' });
     } 
 }
-
 </script>
-
-<style scoped>
-/* Ajoutez votre style ici si nécessaire */
-</style>

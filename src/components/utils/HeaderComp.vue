@@ -81,16 +81,21 @@ const { fullname, logged, acc_validateacc } = storeToRefs(accountStore); // Rend
 const theme = ref(localStorage.getItem('theme') || 'light');
 
 const role = ref([]);
+const response = ref([]);
 
 // Propriété computed pour vérifier l'état de connexion
 const isUserLoggedIn = computed(() => logged.value);
 
-function logout() {
-  // Effacer localStorage
+async function logout() {
+  // Appel API logout
+  await request('POST', false, response, config.apiUrl + 'api/logout');
+  
+  // Nettoyage localStorage
   localStorage.removeItem('login');
   localStorage.removeItem('auth');
+  localStorage.removeItem('token');
   
-  window.open(config.apiUrl + 'cas.php?logout=true', '_blank');  
+  window.open(config.apiUrl + 'cas.php?logout=true', '_blank');
   router.push({ name: 'Accueil' });
   accountStore.logoutAccount();
 }
