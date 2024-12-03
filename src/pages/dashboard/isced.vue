@@ -129,6 +129,7 @@
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { addAlert } from '../../composables/addAlert';
     import { useAccountStore } from '../../stores/accountStore';
+import { addAction } from '../../composables/actionType';
     const accountStore = useAccountStore();
 
     const isLoaded = ref(false);
@@ -162,12 +163,7 @@
         };
         await request('PUT', true, response, config.apiUrl+'api/isced', requestData);
         if(response.value.status == 200){
-            const requestDataAction = {
-                act_description: 'Modification de l\'isced (' + requestData.isc_code + ') '+requestData.isc_name+'.',
-                acc_id: accountStore.login,
-                isc_id: requestData.isc_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'isced', response, 'Modification de l\'isced (' + requestData.isc_code + ') '+requestData.isc_name+'.');
         }
         fetchAll();
     }
@@ -196,12 +192,7 @@
             
             // Rafraîchir les données après l'ajout
             await fetchAll();
-            const requestDataAction = {
-                act_description: 'Ajout de l\'isced (' + requestData.isc_code + ') '+requestData.isc_name+'.',
-                acc_id: accountStore.login,
-                isc_id: 1
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'isced', response, 'Ajout de l\'isced (' + requestData.isc_code + ') '+requestData.isc_name+'.');
         }
 
     }
@@ -210,12 +201,7 @@
     async function deleteIsced(isc_id, isc_name, isc_code){
         await request('DELETE', true, response, config.apiUrl+'api/isced/deletebyid/'+isc_id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de l\'université (' + isc_code + ') '+isc_name+'.',
-                acc_id: accountStore.login,
-                isc_id: isc_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'isced', response, 'Suppression de l\'université (' + isc_code + ') '+isc_name+'.');
         }
         fetchAll();
     }

@@ -74,7 +74,7 @@ import CalendarComp from '../../components/utils/CalendarComp.vue';
 import { request } from '../../composables/httpRequest';
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
-import { getType } from '../../composables/actionType'
+import { addAction, getType } from '../../composables/actionType'
 import { types } from '../../composables/actionType'
 import LoadingComp from '../../components/utils/LoadingComp.vue';
 import { addAlert } from '../../composables/addAlert';
@@ -146,12 +146,7 @@ async function confirmModifDate(){
   };
   await request('PUT', true, response, config.apiUrl+'api/admin', requestData);
   if(response.value.status == 200){
-        const requestDataAction = {
-          act_description: 'Modification administration: Nouvelle date limite des voeux: '+formatDate(requestData.adm_datelimite),
-          acc_id: accountStore.login,
-          admin: 1
-      }
-      await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+      addAction(accountStore.login, 'admin', response, 'Modification administration: Nouvelle date limite des voeux: '+formatDate(requestData.adm_datelimite));
   }
   fetch();
 }

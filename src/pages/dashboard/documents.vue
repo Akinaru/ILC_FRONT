@@ -87,6 +87,7 @@
     import config from '../../config';
 
     import { useAccountStore } from '../../stores/accountStore';
+import { addAction } from '../../composables/actionType';
     const accountStore = useAccountStore();
 
     const isLoaded = ref(false);
@@ -174,13 +175,9 @@
             files.value.choixCours[deptId].file = null; // Réinitialiser le fichier spécifique
             files.value.contratPeda.file = null;
             
-            const requestDataAction = {
-                act_description: 'Modification du document: ' + folder + '/' + title + '.',
-                acc_id: accountStore.login,
-                admin: 1
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'admin', response, 'Modification du document: ' + folder + '/' + title + '.');
         }
+        
         fetch();
     }
 

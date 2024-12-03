@@ -206,6 +206,7 @@
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { addAlert } from '../../composables/addAlert';
     import { useAccountStore } from '../../stores/accountStore';
+import { addAction } from '../../composables/actionType';
     const accountStore = useAccountStore();
 
     const isLoaded = ref(false);
@@ -271,12 +272,7 @@
         };
         await request('PUT', true, response, config.apiUrl+'api/university', requestData);
         if(response.value.status == 200){
-            const requestDataAction = {
-                act_description: 'Modification de l\'université '+requestData.univ_name+' (' + requestData.univ_city + ').',
-                acc_id: accountStore.login,
-                univ_id: requestData.univ_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'university', response, 'Modification de l\'université '+requestData.univ_name+' (' + requestData.univ_city + ').');
         }
         fetchAll();
     }
@@ -327,12 +323,7 @@
             
             // Rafraîchir les données après l'ajout
             await fetchAll();
-            const requestDataAction = {
-                act_description: 'Ajout de l\'université ' + requestData.univ_name + ' (' + requestData.univ_city + ').',
-                acc_id: accountStore.login,
-                univ_id: 1
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'university', response, 'Ajout de l\'université ' + requestData.univ_name + ' (' + requestData.univ_city + ').');
         }
 
     }
@@ -341,12 +332,7 @@
     async function deleteUniv(univ_id, univ_name, univ_city){
         await request('DELETE', true, response, config.apiUrl+'api/university/deletebyid/'+univ_id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de l\'université '+univ_name+' (' + univ_city + ').',
-                acc_id: accountStore.login,
-                univ_id: univ_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'university', response, 'Suppression de l\'université '+univ_name+' (' + univ_city + ').');
         }
         fetchAll();
     }

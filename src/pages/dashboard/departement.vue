@@ -243,6 +243,7 @@
     import { addAlert } from '../../composables/addAlert';
     import { useAccountStore } from '../../stores/accountStore';
     import ExportComp from '../../components/impexp/ExportComp.vue';
+import { addAction } from '../../composables/actionType';
 
     const accountStore = useAccountStore();
 
@@ -296,12 +297,7 @@
         
         await request("POST", true, response, config.apiUrl+'api/department', requestData);
         if(response.value.status == 201){
-            const requestDataAction = {
-                act_description: 'Ajout du département '+newDep.value.shortname+'.',
-                acc_id: accountStore.login,
-                dept_id: response.value.department.dept_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'department', response, 'Ajout du département '+newDep.value.shortname+'.');
         }
         await fetchAll();
         resetInput();
@@ -326,12 +322,7 @@
         
         await request("POST", true, response, config.apiUrl+'api/component', requestData);
         if(response.value.status == 201){
-            const requestDataAction = {
-                act_description: 'Ajout de la composante '+newComp.value.shortname+'.',
-                acc_id: accountStore.login,
-                dept_id: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'department', response, 'Ajout de la composante '+newComp.value.shortname+'.');
         }
         await fetchAll();
         resetInput();
@@ -374,6 +365,7 @@
         currentCompModif.value.comp_shortname = comp.comp_shortname;
     }
 
+
     // Confirmer la modification
     async function confirmModifDept(){
         const requestData = { 
@@ -384,12 +376,7 @@
         };
         await request('PUT', true, response, config.apiUrl+'api/department', requestData);
         if(response.value.status == 200){
-            const requestDataAction = {
-                act_description: 'Modification du département '+requestData.dept_shortname+'.',
-                acc_id: accountStore.login,
-                dept_id: response.value.department.dept_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'department', response, 'Modification du département '+requestData.dept_shortname+'.');
         }
         fetchAll();
     }
@@ -409,12 +396,7 @@
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/department/deletebyid/'+id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression du département '+shortname+'.',
-                acc_id: accountStore.login,
-                dept_id: id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'department', response, 'Suppression du département '+shortname+'.');
         }
         fetchAll();
     }

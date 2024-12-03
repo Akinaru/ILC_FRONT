@@ -1,3 +1,6 @@
+import { request } from '../composables/httpRequest.js'
+import config from '../config'
+
 export const types = [
     { name: 'Département', color: 'badge-primary', condition: 'department' },
     { name: 'Accord', color: 'badge-neutral', condition: 'agreement' },
@@ -12,4 +15,14 @@ export const types = [
 
 export function getType(act_type) {
     return types.find(type => type.condition === act_type);
+}
+
+
+export async function addAction(login, type, responseObj, description, ){
+    const requestDataAction = {
+        act_description: description,
+        acc_id: login,
+        act_type: type
+    }
+    await request('POST', false, responseObj, config.apiUrl+'api/action', requestDataAction);
 }

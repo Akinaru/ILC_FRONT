@@ -98,7 +98,7 @@ import { request } from '../../composables/httpRequest';
 import LoadingComp from '../../components/utils/LoadingComp.vue';
 import { onMounted, ref, computed } from 'vue';
 
-import { getType } from '../../composables/actionType'
+import { addAction, getType } from '../../composables/actionType'
 import { types } from '../../composables/actionType'
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
@@ -159,12 +159,7 @@ const filteredActions = computed(() => {
 async function deleteHistory(){
     await request('DELETE', true, response, config.apiUrl+'api/action');
     if(response.value.status == 202){
-        const requestDataAction = {
-            act_description: 'Suppression de l\'historique.',
-            acc_id: accountStore.login,
-            admin: 1
-        }
-        await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        addAction(accountStore.login, 'admin', response, 'Suppression de l\'historique des actions.');
     }
     fetch();
 }

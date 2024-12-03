@@ -416,6 +416,7 @@
     import config from '../../config';
     import { useAccountStore } from '../../stores/accountStore';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
+import { addAction } from '../../composables/actionType';
  
     const accountStore = useAccountStore();
     const route = useRoute();
@@ -577,11 +578,7 @@
         if (response.value.status === 200) {
             
             // Rafraîchir les données après l'ajout
-            const requestDataAction = {
-                act_description: 'Modification des informations de '+ account.value.acc_fullname +'.',
-                acc_id: accountStore.login,
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'admin', response, 'Modification des informations de '+ account.value.acc_fullname +'.');
         }
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
         resetModif();
@@ -607,11 +604,7 @@
         if (response.value.status === 200) {
             
             // Rafraîchir les données après l'ajout
-            const requestDataAction = {
-                act_description: 'Modification de la destination de '+ account.value.acc_fullname +'.',
-                acc_id: accountStore.login,
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'admin', response, 'Modification de la destination de '+ account.value.acc_fullname +'.');
         }
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
         await nextTick();

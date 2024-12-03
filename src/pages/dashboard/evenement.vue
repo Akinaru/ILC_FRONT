@@ -291,6 +291,7 @@
     import config from '../../config';
     import { useAccountStore } from '../../stores/accountStore';
     import { addAlert } from '../../composables/addAlert';
+import { addAction } from '../../composables/actionType';
 
     const accountStore = useAccountStore();
     const response = ref([]);
@@ -350,12 +351,7 @@
         await fetchAll();
 
         if(rep.value.status == 201){
-            const requestDataAction = {
-                act_description: 'Ajout de l\'évènement '+rep.value.event.evt_name+' pour le '+rep.value.event.evt_datetime,
-                acc_id: accountStore.login,
-                evt_id: rep.value.event.evt_id
-            }
-            await request('POST', false, rep, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'event', response, 'Ajout de l\'évènement '+rep.value.event.evt_name+' pour le '+rep.value.event.evt_datetime);
         }
         resetInput()
 
@@ -378,12 +374,7 @@
                 open: false,
                 name: ''
             }
-            const requestDataAction = {
-                act_description: 'Ajout de la thématique '+requestData.evthm_name+'.',
-                acc_id: accountStore.login,
-                evt_id: 1
-            }
-            await request('POST', false, rep, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'event', response, 'Ajout de la thématique '+requestData.evthm_name+'.');
             await fetchAll();
         }
     }
@@ -422,12 +413,7 @@
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/eventtheme/deletebyid/'+id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de la thématique '+name+'.',
-                acc_id: accountStore.login,
-                evt_id: id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'event', response, 'Suppression de la thématique '+name+'.');
         }
         await fetchAll();
     }
@@ -438,12 +424,7 @@
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/event/deletebyid/'+id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de l\'évènement '+title+'.',
-                acc_id: accountStore.login,
-                evt_id: id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'event', response, 'Suppression de l\'évènement '+title+'.');
         }
         await fetchAll();
     }
@@ -482,12 +463,7 @@
         };
         await request('PUT', true, response, config.apiUrl+'api/eventtheme', requestData);
         if(response.value.status == 200){
-            const requestDataAction = {
-                act_description: 'Modification de la thématique '+currentThematiqueModif.value.evthm_name+'.',
-                acc_id: accountStore.login,
-                evt_id: currentThematiqueModif.value.evthm_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'event', response, 'Modification de la thématique '+currentThematiqueModif.value.evthm_name+'.');
         }
         fetchAll();
     }
@@ -503,12 +479,7 @@
         };
         await request('PUT', true, response, config.apiUrl+'api/event', requestData);
         if(response.value.status == 200){
-            const requestDataAction = {
-                act_description: 'Modification de l\'évènement '+currentEventModif.value.evt_name+'.',
-                acc_id: accountStore.login,
-                evt_id: currentEventModif.value.evt_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'event', response, 'Modification de l\'évènement '+currentEventModif.value.evt_name+'.');
         }
         fetchAll();
     }

@@ -418,6 +418,7 @@
     import config from '../../config'
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { useAccountStore } from '../../stores/accountStore';
+import { addAction } from '../../composables/actionType';
 
     const response = ref([])
     const accords = ref([])
@@ -622,22 +623,12 @@ async function saveArbitrage() {
 
        // Créer une entrée dans l'historique pour les changements
        for (const data of changes) {
-           const requestDataAction = {
-               act_description: `Changement de l'arbitrage pour ${data.acc_id} sur l'accord ${data.agree_id} à la position ${data.arb_pos}.`,
-               acc_id: accountStore.login,
-               act_type: 'arbitrage'
-           };
-           await request('POST', false, response, config.apiUrl+'api/action', requestDataAction);
+           addAction(accountStore.login, 'arbitrage', response, `Changement de l'arbitrage pour ${data.acc_id} sur l'accord ${data.agree_id} à la position ${data.arb_pos}.`);
        }
 
        // Créer une entrée dans l'historique pour les suppressions
        for (const data of removals) {
-           const requestDataAction = {
-               act_description: `Suppression de l'arbitrage pour ${data.acc_id} (précédemment sur l'accord ${data.agree_id}).`,
-               acc_id: accountStore.login,
-               act_type: 'arbitrage'
-           };
-           await request('POST', false, response, config.apiUrl+'api/action', requestDataAction);
+           addAction(accountStore.login, 'arbitrage', response, `Suppression de l'arbitrage pour ${data.acc_id} (précédemment sur l'accord ${data.agree_id}).`);
        }
    }
 }

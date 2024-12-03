@@ -612,6 +612,7 @@
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import ImportAccordComp from '../../components/impexp/ImportAccordComp.vue';
     import ExportComp from '../../components/impexp/ExportComp.vue';
+import { addAction } from '../../composables/actionType';
     const accountStore = useAccountStore();
     const response = ref([]);
 
@@ -861,12 +862,8 @@
         console.log(importFinalAccord.value);
         await request('POST', true, response, config.apiUrl + 'api/agreementexp', importFinalAccord.value);
         if (response.value.status === 201) {
-            const requestDataAction = {
-                act_description: 'Importation de ' + importFinalAccord.value.agreements.length + ' accords.',
-                acc_id: accountStore.login,
-                agree_id: 1
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'agreement', response, 'Importation de ' + importFinalAccord.value.agreements.length + ' accords.');
+            
         }
         closeModalImport();
         fetchAll();
@@ -1045,12 +1042,7 @@
 
         // Vérification de la réponse et ajout d'une action si nécessaire
         if (response.value.status === 201) {
-            const requestDataAction = {
-                act_description: 'Ajout de l\'accord avec ' + response.value.agreement.university.univ_name + ' (' + response.value.agreement.partnercountry.parco_name + ').',
-                acc_id: accountStore.login,
-                agree_id: response.value.agreement.agree_id
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'agreement', response, 'Ajout de l\'accord avec ' + response.value.agreement.university.univ_name + ' (' + response.value.agreement.partnercountry.parco_name + ').');
             await fetchAll();
         }
 
@@ -1099,12 +1091,7 @@
     async function deleteAll(){
         await request('DELETE', true, response, config.apiUrl+'api/agreement/deleteall');
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de tous les accords',
-                acc_id: accountStore.login,
-                agree_id: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'agreement', response, 'Suppression de tous les accords');
         }
         fetchAll();
     }
@@ -1115,12 +1102,7 @@
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/agreement/deletebyid/'+agree_id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de l\'accord avec '+univ_name+'.',
-                acc_id: accountStore.login,
-                agree_id: agree_id
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'agreement', response, 'Suppression de l\'accord avec '+univ_name+'.');
         }
         fetchAccords();
     }
@@ -1196,13 +1178,7 @@
         }
         await request('POST', true, response, config.apiUrl+'api/departmentagreement', requestData);
         if(response.value.status == 201){
-            const requestDataAction = {
-                act_description: `Ajout du département ${response.value.department?.dept_shortname || 'Inconnu'} à l'accord ${response.value.agreement?.university?.univ_name || 'Inconnu'} (${response.value.agreement?.partnercountry?.parco_name || 'Inconnu'}).`,
-                acc_id: accountStore.login,
-                agree_id: response.value.agreement?.agree_id || 'Inconnu'
-            };
-
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'agreement', response, `Ajout du département ${response.value.department?.dept_shortname || 'Inconnu'} à l'accord ${response.value.agreement?.university?.univ_name || 'Inconnu'} (${response.value.agreement?.partnercountry?.parco_name || 'Inconnu'}).`);
         }
         fetchAccords();
     }

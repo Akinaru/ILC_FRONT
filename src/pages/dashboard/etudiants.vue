@@ -238,6 +238,7 @@ import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
 import LoadingComp from '../../components/utils/LoadingComp.vue';
 import ExportComp from '../../components/impexp/ExportComp.vue';
+import { addAction } from '../../composables/actionType';
 
 const accountStore = useAccountStore();
 const etudiants = ref([]);
@@ -338,11 +339,7 @@ const isOpen = ref({
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/account/deletebyid/'+acc_id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de l\'étudiant '+acc_fullname+' (' + dept_shortname + ').',
-                acc_id: accountStore.login,
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'admin', response, 'Suppression de l\'étudiant '+acc_fullname+' (' + dept_shortname + ').');
         }
         fetch();
     }

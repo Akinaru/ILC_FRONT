@@ -341,6 +341,7 @@
     import { addAlert } from '../../composables/addAlert';
     import ImportComp from '../../components/impexp/ImportComp.vue';
     import { decomposeDN } from '../../composables/destructLDAP';
+import { addAction } from '../../composables/actionType.js';
 
     const accountStore = useAccountStore();
     const access = ref([]);
@@ -435,12 +436,7 @@
 
         await request("POST", true, response, config.apiUrl+'api/access', requestData);
         if(response.value.status == 201){
-            const requestDataAction = {
-                act_description: 'Ajout de l\'access pour '+newAccess.value.login+'. (Accès de niveau '+ newAccess.value.access +')',
-                acc_id: accountStore.login,
-                access: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'access', response, 'Ajout de l\'access pour '+newAccess.value.login+'. (Accès de niveau '+ newAccess.value.access +')');
         }
         await fetch();
         resetInput();
@@ -453,12 +449,7 @@
         }
         await request('DELETE', true, response, config.apiUrl+'api/access/delete', requestData);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de l\'access pour '+acc_id+'.',
-                acc_id: accountStore.login,
-                access: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'access', response, 'Suppression de l\'access pour '+acc_id+'.');
         }
         fetch();
     }
@@ -472,12 +463,7 @@
         };
         await request("POST", true, response, config.apiUrl+'api/acceptedaccount', requestData);
         if(response.value.status == 201){
-            const requestDataAction = {
-                act_description: 'Ajout de l\'autorisation pour l\'utilisateur '+requestData.acc_id+'.',
-                acc_id: accountStore.login,
-                access: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'access', response, 'Ajout de l\'autorisation pour l\'utilisateur '+requestData.acc_id+'.');
         }
         await fetch();
         resetInput();
@@ -488,12 +474,7 @@
         }
         await request('DELETE', true, response, config.apiUrl+'api/acceptedaccount', requestData);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression de l\'autorisation pour l\'utilisateur '+acc_id+'.',
-                acc_id: accountStore.login,
-                access: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'access', response, 'Suppression de l\'autorisation pour l\'utilisateur '+acc_id+'.');
         }
         fetch();
     }
@@ -526,12 +507,7 @@
     async function removeDept(acc_id){
         await request('DELETE', true, response, config.apiUrl+'api/account/removedept/'+acc_id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression du département pour l\'access de '+acc_id+'.',
-                acc_id: accountStore.login,
-                access: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'access', response, 'Suppression du département pour l\'access de '+acc_id+'.');
         }
         fetch();
     }
@@ -558,12 +534,7 @@
         showForms.value[acc_id] = false;
         await request('put', true, response, config.apiUrl+'api/account/changedept/'+acc_id+'/'+selectedDepartment.value[acc_id]);
         if(response.value.status == 200){
-            const requestDataAction = {
-                act_description: 'Changement du département dans l\'access pour '+acc_id+' (Nouveau: '+ selectedDepartment.value[acc_id] +').',
-                acc_id: accountStore.login,
-                access: 1
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'access', response, 'Changement du département dans l\'access pour '+acc_id+' (Nouveau: '+ selectedDepartment.value[acc_id] +').');
         }
         fetch();
     }
@@ -593,12 +564,7 @@
 
         await request("POST", true, response, config.apiUrl+'api/acceptedaccount/import', requestData);
         if (response.value && response.value.status === 201) {
-            const requestDataAction = {
-                act_description: `Importation de ${response.value.added_accounts.length} étudiants.`,
-                acc_id: accountStore.login,
-                access: 1, 
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'access', response, `Importation de ${response.value.added_accounts.length} étudiants.`);
         }
         
         fetch();

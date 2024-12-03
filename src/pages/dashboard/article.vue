@@ -114,6 +114,7 @@ import config from '../../config';
 import TextEditor from '../../components/utils/TextEditor.vue';
 import { useAccountStore } from '../../stores/accountStore';
 import { addAlert } from '../../composables/addAlert';
+import { addAction } from '../../composables/actionType';
 
 const accountStore = useAccountStore();
 const response = ref([]);
@@ -223,12 +224,7 @@ async function addArticle(){
                 console.log("Erreur ajout image: "+error)
             }
         }
-        const requestDataAction = {
-            act_description: 'Ajout de l\'article '+rep.value.article.art_title+'.',
-            acc_id: accountStore.login,
-            art_id: rep.value.article.art_id
-        }
-        await request('POST', false, rep, config.apiUrl+'api/action', requestDataAction);
+        addAction(accountStore.login, 'article', response, 'Ajout de l\'article '+rep.value.article.art_title+'.');
         await fetchAll();
         resetInput();
 
@@ -347,12 +343,7 @@ async function removeArticle(title, id){
     closeModal()
     await request('DELETE', true, response, config.apiUrl+'api/article/deletebyid/'+id);
     if(response.value.status == 202){
-        const requestDataAction = {
-            act_description: 'Suppression de l\'article '+title+'.',
-            acc_id: accountStore.login,
-            art_id: id
-        }
-        await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+        addAction(accountStore.login, 'article', response, 'Suppression de l\'article '+title+'.');
     }
     await fetchAll();
 }
@@ -432,13 +423,7 @@ async function confirmModifArticle() {
             }
         }
 
-        const requestDataAction = {
-            act_description: 'Modification de l\'article ' + currentArticleModif.value.art_title + '.',
-            acc_id: accountStore.login,
-            art_id: currentArticleModif.value.art_id
-        };
-
-        await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+        addAction(accountStore.login, 'article', response, 'Modification de l\'article ' + currentArticleModif.value.art_title + '.');
         cancelModifArticle();
         await nextTick();
         await fetchAll();

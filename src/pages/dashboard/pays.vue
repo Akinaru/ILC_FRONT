@@ -151,6 +151,7 @@
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { addAlert } from '../../composables/addAlert';
     import { useAccountStore } from '../../stores/accountStore';
+import { addAction } from '../../composables/actionType';
     const accountStore = useAccountStore();
 
     const isLoaded = ref(false);
@@ -184,11 +185,7 @@
         };
         await request('PUT', true, response, config.apiUrl+'api/partnercountry', requestData);
         if(response.value.status == 200){
-            const requestDataAction = {
-                act_description: 'Modification du pays (' + requestData.parco_code + ') '+requestData.parco_name+'.',
-                acc_id: accountStore.login,
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'university', response, 'Modification du pays (' + requestData.parco_code + ') '+requestData.parco_name+'.');
         }
         fetchAll();
     }
@@ -212,13 +209,7 @@
         await request("POST", true, response, config.apiUrl + 'api/partnercountry', requestData);
 
         if (response.value.status === 201) {
-            
-            // Rafraîchir les données après l'ajout
-            const requestDataAction = {
-                act_description: 'Ajout du pays (' + requestData.parco_code + ') '+requestData.parco_name+'.',
-                acc_id: accountStore.login,
-            };
-            await request('POST', false, response, config.apiUrl + 'api/action', requestDataAction);
+            addAction(accountStore.login, 'university', response, 'Ajout du pays (' + requestData.parco_code + ') '+requestData.parco_name+'.');
             fetchAll();
         }
 
@@ -228,11 +219,7 @@
     async function deletePays(parco_id, parco_name, parco_code){
         await request('DELETE', true, response, config.apiUrl+'api/partnercountry/'+parco_id);
         if(response.value.status == 202){
-            const requestDataAction = {
-                act_description: 'Suppression du pays (' + parco_code + ') '+parco_name+'.',
-                acc_id: accountStore.login,
-            }
-            await request('POST', false, response, config.apiUrl+'api/action', requestDataAction)
+            addAction(accountStore.login, 'university', response, 'Suppression du pays (' + parco_code + ') '+parco_name+'.');
         }
         fetchAll();
     }
