@@ -50,34 +50,40 @@
                             <div v-for="(acc, index) in access.access[2]" :key="index" class="flex flex-col *:my-1">
                                 <div class="flex w-full">
 
-                                    <div class="bg-base-300 p-2 w-full flex items-center">
-                                        <div class="avatar placeholder h-12 my-1 mr-2">
-                                            <div class="text-neutral-content w-12 rounded-full select-none bg-neutral" >
-                                            <span>{{ getInitials(acc.account?.acc_fullname) }}</span>
+                                    <div class="bg-base-300 p-2 w-full flex items-center justify-between">
+                                        <div class="flex justify-center items-center">
+                                        
+                                            <div class="avatar placeholder h-12 my-1 mr-2">
+                                                <div class="text-neutral-content w-12 rounded-full select-none bg-neutral" >
+                                                <span>{{ getInitials(acc.account?.acc_fullname) }}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <span class="font-bold mr-1">{{ acc.acc_id }}</span>
-                                        <span v-if="acc.account">
-                                            ({{ acc.account.acc_fullname }})
-                                        </span>
-                                        <span v-else>
-                                            (Inconnu ou non enregistré)
-                                        </span>
-                                        <div v-if="acc.account && acc.account.department && acc.account.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
-                                            <span class="p-2 mx-2 flex items-center justify-center" :style="{backgroundColor: acc.account.department.dept_color}">
-                                                <p class="mx-1 select-none">{{ acc.account.department.dept_shortname}}</p>
-                                                <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1" @click="removeDept(acc.acc_id)">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                </button>
+
+                                            <span class="font-bold mr-1">{{ acc.acc_id }}</span>
+                                            <span v-if="acc.account">
+                                                ({{ acc.account.acc_fullname }})
                                             </span>
-                                        </div>
-                                        <div v-else-if="acc.account">
-                                            <button  class="btn  mx-2" v-if="!showForms[acc.acc_id]" @click="showForm(acc.account.acc_id)">Séléctionner un département</button>
+                                            <span v-else>
+                                                (Inconnu ou non enregistré)
+                                            </span>
+                                            <div v-if="acc.account && acc.account.department && acc.account.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
+                                                <span class="p-2 mx-2 flex items-center justify-center" :style="{backgroundColor: acc.account.department.dept_color}">
+                                                    <p class="mx-1 select-none">{{ acc.account.department.dept_shortname}}</p>
+                                                    <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1" @click="removeDept(acc.acc_id)">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                            <div v-else-if="acc.account">
+                                                <button  class="btn  mx-2" v-if="!showForms[acc.acc_id]" @click="showForm(acc.account.acc_id)">Séléctionner un département</button>
+                                            </div>
+
+                                            
                                         </div>
 
                                         
+                                        <span>Dernière connexion: <span v-if="acc.account && acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Jamais</span></span>
                                     </div>
-                                    
                                     <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(acc)">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
@@ -90,15 +96,16 @@
                                                 <span class="label-text">Séléctionnez un département</span>
                                             </div>
 
-
                                             <select class="select select-bordered" v-model="selectedDepartment[acc.account.acc_id]">
                                                 <option disabled selected>Séléctionnez un département</option>
                                                 <template v-for="(compo, index) in components.components" :key="index">
                                                     <optgroup :label="compo.comp_name">
-                                                        <option v-for="(dept, index) in compo.departments" :value="dept.dept_id" :key="index">{{ dept.dept_name }} ({{ dept.dept_shortname }})</option>
+                                                        <option v-for="(dept, index) in compo.departments" :key="index" :value="dept.dept_id" :style="{ color: dept.dept_color }">({{ dept.dept_shortname }}) {{ dept.dept_name }} </option>
                                                     </optgroup>
                                                 </template>
                                             </select>
+
+
                                         </label>
                                         <div class="flex items-center justify-start">
                                             <div class="flex items-center justify-center">
