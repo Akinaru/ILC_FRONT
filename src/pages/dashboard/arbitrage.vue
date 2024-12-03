@@ -107,7 +107,18 @@
 
                 <!-- Affichage des etudiants -->
                 <div class="flex flex-col items-center justify-start w-full">
-                    <button class="w-full py-2 hover:opacity-70 underline text-start" @click="watchAllWish">Voir tous les voeux</button>
+                    <div class="w-full flex items-center justify-start">
+                        <button class="w-fit py-2 hover:opacity-70 underline text-start" @click="watchAllWish">Voir tous les voeux</button>
+                    </div>
+
+                    <!-- Barre de recherche -->
+                    <label class="input input-bordered flex items-center gap-2 w-full my-2">
+                        <input type="text" class="grow" placeholder="Recherche par nom et prénom" v-model="searchQuery" />
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+                            <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+                        </svg>
+                    </label>
+
                     <div class="elementDrag bg-base-300 w-96 mb-2 flex items-center justify-center cursor-move select-none hover:opacity-80 flex-col" 
                         :draggable="true" 
                         :id="'etu_drag_'+etu.acc_id"
@@ -146,8 +157,8 @@
                             <div>
                                 <div>
                                     <div v-for="(accord, index) in getFilteredAgreements(etu)" :key="index" class="flex justify-between">
-                                        <p class="min-w-fit flex items-center justify-center">Voeu {{ accord.place }}</p>
-                                        <div class="flex w-full items-center justify-start ml-2">
+                                        <p class="min-w-fit flex items-start justify-center">Voeu {{ accord.place }}</p>
+                                        <div class="flex w-full items-start justify-start ml-2">
                                             <span class="relative inline-block mr-1">
                                                 <!-- Drapeau -->
                                                 <span class="fi" :class="'fi-' + (accord.agreement?.partnercountry?.parco_code)"></span>
@@ -415,6 +426,7 @@
     const components = ref([])
     const partnercountry = ref([])
     const isLoaded = ref(false)
+    const searchQuery = ref('');
 
     const selectedDepartment = ref([]);
     const selectedIsced = ref([]);
@@ -639,7 +651,14 @@ const filteredEtus = computed(() => {
             const matchesDepartments = selectedDepartment.value.length === 0 || 
                 (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
                 (selectedDepartment.value.includes('Aucun') && !etu.department);
-            return matchesDepartments;
+            
+            // Filtre par recherche
+            const matchesSearchQuery = !searchQuery.value || 
+                [etu.acc_fullname, etu.acc_id.toString()].some(field => 
+                field.toLowerCase().includes(searchQuery.value.toLowerCase())
+            );
+            
+            return matchesDepartments && matchesSearchQuery;
         })
         .filter(etu => {
             // Filtre par accords
