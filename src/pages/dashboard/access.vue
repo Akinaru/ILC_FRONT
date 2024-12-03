@@ -5,41 +5,60 @@
 
         <!-- Partie accès de haut niveau -->
         <div class="m-5 flex items-start justify-center md:flex-row flex-col">
-            <div class="md:w-1/2 w-4/5 flex items-center flex-col">
+            <div class="w-4/5 flex items-center flex-col">
                 <p class="text-lg font-bold">Liste des accès de haut niveau</p>
                 <div v-if="access && access.count" class="w-full my-2">
                     <div v-if="access && access.count > 0">
 
                         <!-- Relations Internationales -->
                         <p>RI (Relations Internationales)</p>
-                        <div class="md:m-5 m-1">
+                        <div class="md:m-5 m-1 flex w-full items-center justify-between">
                             <!-- Liste acces ADMIN -->
-                            <div v-for="(acc, index) in access.access[1]" :key="index" class="flex *:my-1">
-                                <div class="bg-base-300 p-2 w-full flex items-center justify-between">
-                                    <div>
+                             <div class="md:w-1/2 w-full flex flex-col items-start justify-center">
+                                <div v-for="(acc, index) in access.access[1]" :key="index" class="flex *:my-1 w-full">
+                                    <div class="bg-base-300 p-2 w-full flex items-center justify-between">
+                                        <div>
 
-                                        <!-- Image -->
-                                        <div class="avatar placeholder h-12 my-1 mr-2">
-                                            <div
-                                            v-if="acc.account" 
-                                            :style="{ backgroundColor: getColorFromName(acc.account.acc_fullname) }"
-                                            class="text-neutral-content w-12 rounded-full select-none"
-                                            >
-                                                <span>{{ getInitials(acc.account.acc_fullname) }}</span>
+                                            <!-- Image -->
+                                            <div class="avatar placeholder h-12 my-1 mr-2">
+                                                <div
+                                                v-if="acc.account" 
+                                                :style="{ backgroundColor: getColorFromName(acc.account.acc_fullname) }"
+                                                class="text-neutral-content w-12 rounded-full select-none"
+                                                >
+                                                    <span>{{ getInitials(acc.account.acc_fullname) }}</span>
+                                                </div>
+                                                <div v-else class="text-neutral-content w-12 rounded-full select-none bg-neutral">
+                                                    <span>ILC</span>  <!-- Affichage par défaut si acc.account est null -->
+                                                </div>
                                             </div>
-                                            <div v-else class="text-neutral-content w-12 rounded-full select-none bg-neutral">
-                                                <span>ILC</span>  <!-- Affichage par défaut si acc.account est null -->
-                                            </div>
+                                            <span class="font-bold mr-1">{{ acc.acc_id }}</span>
+                                            <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
+                                            <span v-else>(Nom introuvable)</span> 
                                         </div>
-                                        <span class="font-bold mr-1">{{ acc.acc_id }}</span>
-                                        <span v-if="acc.account">({{ acc.account.acc_fullname }})</span>
-                                        <span v-else>(Nom introuvable)</span> 
+                                        <span>Dernière connexion: <span v-if="acc.account && acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Jamais</span></span>
                                     </div>
-                                    <span>Dernière connexion: <span v-if="acc.account && acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Jamais</span></span>
+                                    <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(acc)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
                                 </div>
-                                <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(acc)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </button>
+                            </div>
+
+
+                            <!-- Partie ajoute access -->
+                            <div class="md:w-1/2 w-full flex items-center flex-col">
+                                <p class="text-lg font-bold">Ajouter/modifier un utilisateur</p>
+                                <form @submit.prevent="addAccess" class="w-2/5 *:my-2">
+                                    <input type="text" placeholder="Login" v-model="newAccess.login" class="input input-bordered w-full " />
+                                    <select class="select select-bordered w-full" v-model="newAccess.access">
+                                        <option disabled selected>Selectionnez un niveau d'accès</option>
+                                        <option value="1">1 (Relations Internationales)</option>
+                                        <option value="2">2 (Département)</option>
+                                    </select>
+                                    <div class="flex items-center justify-center">
+                                        <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70 w-full" type="submit">Ajouter l'accès</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
 
@@ -47,75 +66,97 @@
                         <p>Dept (Département)</p>
                         <div class="md:m-5 m-1">
                             <!-- Liste access chef DEPT -->
-                            <div v-for="(acc, index) in access.access[2]" :key="index" class="flex flex-col *:my-1">
-                                <div class="flex w-full">
-
-                                    <div class="bg-base-300 p-2 w-full flex items-center justify-between">
-                                        <div class="flex justify-center items-center">
-                                        
-                                            <div class="avatar placeholder h-12 my-1 mr-2">
-                                                <div class="text-neutral-content w-12 rounded-full select-none bg-neutral" >
-                                                <span>{{ getInitials(acc.account?.acc_fullname) }}</span>
+                            <div class="grid grid-cols-2 gap-4 w-full">
+                                <div v-for="(acc, index) in access.access[2]" 
+                                    :key="index" 
+                                    class="bg-base-300 p-4 rounded-lg">
+                                    
+                                    <div class="flex justify-between items-start relative">
+                                        <!-- Partie gauche : Avatar et infos principales -->
+                                        <div class="flex items-center">
+                                            <div class="avatar placeholder h-12 mr-3">
+                                                <div class="text-neutral-content w-12 rounded-full select-none bg-neutral">
+                                                    <span>{{ getInitials(acc.account?.acc_fullname) }}</span>
                                                 </div>
                                             </div>
 
-                                            <span class="font-bold mr-1">{{ acc.acc_id }}</span>
-                                            <span v-if="acc.account">
-                                                ({{ acc.account.acc_fullname }})
-                                            </span>
-                                            <span v-else>
-                                                (Inconnu ou non enregistré)
-                                            </span>
-                                            <div v-if="acc.account && acc.account.department && acc.account.department.dept_shortname" class="flex bg-base-300 items-center justify-center">
-                                                <span class="p-2 mx-2 flex items-center justify-center" :style="{backgroundColor: acc.account.department.dept_color}">
-                                                    <p class="mx-1 select-none">{{ acc.account.department.dept_shortname}}</p>
-                                                    <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1" @click="removeDept(acc.acc_id)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                    </button>
+                                            <div class="flex flex-col">
+                                                <div class="flex items-center">
+                                                    <span v-if="acc.account">
+                                                        ({{ acc.account.acc_fullname }})
+                                                    </span>
+                                                    <span v-else>(Inconnu ou non enregistré)</span>
+                                                </div>
+                                                <span class="font-bold mr-1">{{ acc.acc_id }}</span>
+
+                                                
+                                                <span class="text-sm">
+                                                    Dernière connexion: 
+                                                    <span v-if="acc.account && acc.account.acc_lastlogin">
+                                                        {{ formatDate(acc.account.acc_lastlogin) }}
+                                                    </span>
+                                                    <span v-else>Jamais</span>
                                                 </span>
                                             </div>
-                                            <div v-else-if="acc.account">
-                                                <button  class="btn  mx-2" v-if="!showForms[acc.acc_id]" @click="showForm(acc.account.acc_id)">Séléctionner un département</button>
-                                            </div>
-
-                                            
                                         </div>
 
-                                        
-                                        <span>Dernière connexion: <span v-if="acc.account && acc.account.acc_lastlogin">{{ formatDate(acc.account.acc_lastlogin) }}</span><span v-else>Jamais</span></span>
+                                        <!-- Bouton de suppression -->
+                                        <button class="absolute top-0 right-0 hover:opacity-60 p-2 rounded" @click="openConfirmModal(acc)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
                                     </div>
-                                    <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(acc)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    </button>
-                                </div>
-                                <!-- Formulaire pour ajouter un département -->
-                                <div v-if="showForms[acc.acc_id]">
-                                    <form @submit.prevent="submitForm(acc.account.acc_id)" class="my-1">
-                                        <label class="form-control w-full max-w-xs">
-                                            <div class="label">
-                                                <span class="label-text">Séléctionnez un département</span>
-                                            </div>
 
-                                            <select class="select select-bordered" v-model="selectedDepartment[acc.account.acc_id]">
+                                    <!-- Département -->
+                                    <div class="mt-4 flex flex-col justify-between">
+                                        <div v-if="acc.account && acc.account.department && acc.account.department.dept_shortname" 
+                                            class="flex items-center">
+                                            <span class="p-2 flex items-center rounded" 
+                                                :style="{backgroundColor: acc.account.department.dept_color}">
+                                                <p class="mx-1 select-none">{{ acc.account.department.dept_shortname}}</p>
+                                                <button class="hover:opacity-60 bg-base-300 p-1 rounded ml-2" 
+                                                        @click="removeDept(acc.acc_id)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        <div v-else>
+                                            <button class="btn btn-sm" 
+                                                v-if="!showForms[acc.acc_id]" 
+                                                @click="showForm(acc.account.acc_id)"
+                                                :disabled="!acc.account">
+                                            Séléctionner un département
+                                        </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Formulaire pour ajouter un département -->
+                                    <div v-if="showForms[acc.acc_id]" class="mt-4">
+                                        <form @submit.prevent="submitForm(acc.account.acc_id)">
+                                            <select class="select select-bordered w-full mb-2" 
+                                                    v-model="selectedDepartment[acc.account.acc_id]">
                                                 <option disabled selected>Séléctionnez un département</option>
                                                 <template v-for="(compo, index) in components.components" :key="index">
                                                     <optgroup :label="compo.comp_name">
-                                                        <option v-for="(dept, index) in compo.departments" :key="index" :value="dept.dept_id" :style="{ color: dept.dept_color }">({{ dept.dept_shortname }}) {{ dept.dept_name }} </option>
+                                                        <option v-for="(dept, index) in compo.departments" 
+                                                                :key="index" 
+                                                                :value="dept.dept_id" 
+                                                                :style="{ color: dept.dept_color }">
+                                                            ({{ dept.dept_shortname }}) {{ dept.dept_name }}
+                                                        </option>
                                                     </optgroup>
                                                 </template>
                                             </select>
-
-
-                                        </label>
-                                        <div class="flex items-center justify-start">
-                                            <div class="flex items-center justify-center">
-                                                <button class="btn btn-primary" type="submit">Valider</button>
+                                            
+                                            <div class="flex gap-2">
+                                                <button class="btn btn-primary btn-sm" type="submit">Valider</button>
+                                                <button class="btn btn-sm" @click="showForm(acc.account.acc_id)">Annuler</button>
                                             </div>
-                                            <div class="flex items-center justify-center">
-                                                <button class="btn" @click="showForm(acc.account.acc_id)">Annuler</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -148,21 +189,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Partie ajoute access -->
-            <div class="md:w-1/2 w-full flex items-center flex-col">
-                <p class="text-lg font-bold">Ajouter/modifier un utilisateur</p>
-                <form @submit.prevent="addAccess" class="w-2/5 *:my-2">
-                    <input type="text" placeholder="Login" v-model="newAccess.login" class="input input-bordered w-full " />
-                    <select class="select select-bordered w-full" v-model="newAccess.access">
-                        <option disabled selected>Selectionnez un niveau d'accès</option>
-                        <option value="1">1 (Relations Internationales)</option>
-                        <option value="2">2 (Département)</option>
-                    </select>
-                    <div class="flex items-center justify-center">
-                        <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70 w-full" type="submit">Ajouter l'accès</button>
-                    </div>
-                </form>
-            </div>
+
         </div>
 
         <!-- Séparateur -->
@@ -171,13 +198,13 @@
 
         <!-- Partie autorisation au site -->
         <div class="m-5 flex items-start justify-center md:flex-row flex-col">
-            <div class="md:w-1/2 w-4/5 flex items-center flex-col">
+            <div class="flex items-center flex-col w-1/2">
                 <p class="text-lg font-bold">Liste des autorisations au site</p>
                 <div v-if="accepted" class="w-full my-2">
                     <div v-if="accepted && accepted.count > 0">
                         <!-- Barre de recherche -->
                         <div class="py-2">
-                            <label class="input input-bordered flex items-center gap-2">
+                            <label class="input input-bordered flex items-center gap-2 min-w-full">
                                 <input type="text" class="grow" placeholder="Recherche par nom ou login" v-model="searchQuery" />
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
                                     <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
@@ -415,30 +442,45 @@ import { addAction } from '../../composables/actionType.js';
         const requestData = { 
             acc_id: newAccess.value.login,
             acs_accounttype: newAccess.value.access,
-            }; 
+        }; 
 
         const accountExists = account.value.accounts.some(acc => acc.acc_id === requestData.acc_id);
         
-        if(!accountExists) {
-            const decomposedInfo = ref([]);
-            await request('GET', false, response, 'https://srv-peda.iut-acy.local/ldama/ldap/?login=' + requestData.acc_id);
-            if(!response.value.count == 0){
-                decomposedInfo.value = decomposeDN(requestData.acc_id, response.value[0].dn);
+        try {
+            if (!accountExists) {
+                const decomposedInfo = ref([]);
+                
+                // Requête LDAP
+                try {
+                    await request('GET', false, response, config.apiUrl + 'ldap.php/?login=' + newAccess.value.login);
+                    await nextTick();
+                    decomposedInfo.value = decomposeDN(newAccess.value.login, response.value[0].dn);
+                } catch (ldapError) {
+                    console.error('Erreur lors de la requête LDAP:', ldapError);
+                    throw new Error('Impossible de récupérer les informations LDAP de l\'utilisateur');
+                }
 
-                // Création de l'utilisateur dans la base
-                var requestDataAccount = {
-                    acc_id: decomposedInfo.value.login,
-                    acc_fullname: decomposedInfo.value.fullname,
-                };
-                await request("POST", false, response, config.apiUrl+'api/account', requestDataAccount);
+                // Création de l'utilisateur
+                try {
+                    const requestData = {
+                        acc_id: decomposedInfo.value.login,
+                        acc_fullname: decomposedInfo.value.fullname,
+                    };
+                    await request('POST', false, response, config.apiUrl + 'api/account', requestData);
+                } catch (createError) {
+                    console.error('Erreur lors de la création du compte:', createError);
+                    throw new Error('Impossible de créer le compte utilisateur');
+                }
             }
+        } catch (error) {
+            addAlert('error', { data: { error: 'Impossible de récupéer les informations.', message: "Le login que vous avez fournis n'est pas reconnu." } });
         }
 
         await request("POST", true, response, config.apiUrl+'api/access', requestData);
         if(response.value.status == 201){
             addAction(accountStore.login, 'access', response, 'Ajout de l\'access pour '+newAccess.value.login+'. (Accès de niveau '+ newAccess.value.access +')');
         }
-        await fetch();
+        await request('GET', false, access, config.apiUrl+'api/access/filtered');
         resetInput();
     }
     async function removeAccess(acc_id){
@@ -451,8 +493,10 @@ import { addAction } from '../../composables/actionType.js';
         if(response.value.status == 202){
             addAction(accountStore.login, 'access', response, 'Suppression de l\'access pour '+acc_id+'.');
         }
-        fetch();
+        await request('GET', false, access, config.apiUrl+'api/access/filtered');
     }
+
+
     async function addAccepted(){
         if(newAccepted.value.login == ''){
             addAlert('error', {data:{error: 'Vous devez entrer un login.', message:'L\'ajout de l\'autorisation a été annulée.'}})
@@ -465,7 +509,7 @@ import { addAction } from '../../composables/actionType.js';
         if(response.value.status == 201){
             addAction(accountStore.login, 'access', response, 'Ajout de l\'autorisation pour l\'utilisateur '+requestData.acc_id+'.');
         }
-        await fetch();
+        await request('GET', false, accepted, config.apiUrl+'api/acceptedaccount');
         resetInput();
     }
     async function removeAccepted(acc_id){
@@ -476,7 +520,8 @@ import { addAction } from '../../composables/actionType.js';
         if(response.value.status == 202){
             addAction(accountStore.login, 'access', response, 'Suppression de l\'autorisation pour l\'utilisateur '+acc_id+'.');
         }
-        fetch();
+        await request('GET', false, accepted, config.apiUrl+'api/acceptedaccount');
+        closeModal();
     }
 
 
@@ -509,7 +554,7 @@ import { addAction } from '../../composables/actionType.js';
         if(response.value.status == 202){
             addAction(accountStore.login, 'access', response, 'Suppression du département pour l\'access de '+acc_id+'.');
         }
-        fetch();
+        await request('GET', false, access, config.apiUrl+'api/access/filtered');
     }
 
     function formatDate(date) {
@@ -536,7 +581,7 @@ import { addAction } from '../../composables/actionType.js';
         if(response.value.status == 200){
             addAction(accountStore.login, 'access', response, 'Changement du département dans l\'access pour '+acc_id+' (Nouveau: '+ selectedDepartment.value[acc_id] +').');
         }
-        fetch();
+        await request('GET', false, access, config.apiUrl+'api/access/filtered');
     }
 
 
