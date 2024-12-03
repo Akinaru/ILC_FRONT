@@ -4,7 +4,7 @@
         <p class="text-xl font-bold">Accès</p>
 
         <!-- Partie accès de haut niveau -->
-        <div class="m-5 flex items-center justify-center md:flex-row flex-col">
+        <div class="m-5 flex items-start justify-center md:flex-row flex-col">
             <div class="md:w-1/2 w-4/5 flex items-center flex-col">
                 <p class="text-lg font-bold">Liste des accès de haut niveau</p>
                 <div v-if="access && access.count" class="w-full my-2">
