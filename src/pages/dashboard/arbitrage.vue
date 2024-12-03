@@ -571,6 +571,8 @@
 
         await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData)
     }
+
+
 // Liste des étudiants après filtres
 const filteredEtus = computed(() => {
     return Object.values(localEtus.value)

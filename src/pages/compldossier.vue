@@ -1,6 +1,13 @@
 <template>
     <div class="m-5 flex items-center justify-center flex-col">
-      <div class="w-full flex items-center justify-center flex-col py-10">
+
+      <img :src="config.apiUrl + 'images/LOGOS/Logo_ILC_couleur_complet.png'" alt="ILC" class="w-64 sm:w-72 transition-all duration-300 ease-in-out py-5">
+
+      <p class="font-bold text-xl">Bienvenue sur votre espace personnel dédié aux relations internationales.</p>
+      <p class="font-bold text-xl">Votre dossier est incomplet,</p>
+      <p class="font-bold text-xl">veuillez remplir les informations ci-dessous pour compléter votre dossier.</p>
+
+      <div class="w-full flex items-center justify-center flex-col py-3">
         <p class="py-4">Avancement des étapes actuelles:</p>
         <ul class="steps steps-vertical lg:steps-horizontal max-w-lg">
           <li class="step step-neutral">Inscription</li>
@@ -9,9 +16,7 @@
           <li class="step">Validation</li>
         </ul>
       </div>
-      <p class="font-bold">Bienvenue sur votre espace personnel dédié aux relations internationales.</p>
-      <p class="font-bold">Votre dossier est incomplet,</p>
-      <p class="font-bold">veuillez remplir les informations ci-dessous pour compléter votre dossier.</p>
+
       
       <!-- Formulaire -->
       <form @submit.prevent="confirmCompl" class="m-5 md:w-4/6 w-full flex items-center justify-center flex-col mt-10">
@@ -46,6 +51,14 @@
                           </optgroup>
                       </template>
                   </select>
+              </label>
+
+              <!-- Parcours -->
+              <label class="form-control w-full max-w-lg">
+                  <div class="label">
+                      <span class="label-text">Parcours</span>
+                  </div>
+                  <input type="text" placeholder="(Parcours lors de la mobilité)" class="input input-bordered w-full max-w-lg" v-model="complDossier.parcours"/>
               </label>
 
               <!-- Années mobilité -->
@@ -109,6 +122,7 @@
                 </p>
                 <p v-else>Département : <strong>Aucun</strong></p>
                 <p>Années de mobilité : <strong>{{ complDossier.anneesmobilite ? complDossier.anneesmobilite : 'Aucune' }}</strong></p>
+                <p>Parcours : <strong>{{ complDossier.parcours ? complDossier.parcours : 'Aucun' }}</strong></p>
                 <p>Email : <strong>{{ complDossier.email ? complDossier.email : 'Aucun' }}</strong></p>
                 <p>Aménagements : <strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></p>
                 <p>Consentement utilisation image : <strong>{{ complDossier.consent ? 'Oui' : 'Non' }}</strong></p>
@@ -138,6 +152,7 @@
   const anneesmobilite = ref([]);
   const complDossier = ref({
     ine: '',
+    parcours: '',
     department: '',
     email: '',
     anneesmobilite: '',
@@ -178,6 +193,7 @@
       acc_amenagement: complDossier.value.amenagement,
       acc_mail: complDossier.value.email,
       acc_anneemobilite: complDossier.value.anneesmobilite,
+      acc_parcours: complDossier.value.parcours,
       acc_consent: complDossier.value.consent
     }
   
@@ -233,6 +249,7 @@ function getDeptColor(deptId) {
   
   function resetInput() {
     complDossier.value.ine = ''
+    complDossier.value.parcours = ''
     complDossier.value.amenagement = false
     complDossier.value.consent = false
     complDossier.value.department = document.querySelector('.select').options[0].value

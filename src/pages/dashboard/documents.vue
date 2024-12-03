@@ -159,7 +159,6 @@
                 files.value[fileType].file = null;
             }
         }
-        console.log(files.value)
     };
 
     // Enregistrer un fichier
@@ -264,9 +263,7 @@
         files.value.anciensEtudiants.file = null;
 
         // Réinitialisation des fichiers choixCours pour chaque département
-        console.log("démarrae de resetInput")
         for (const deptId in files.value.choixCours) {
-            console.log(deptId)
             if (files.value.choixCours[deptId] != null) {
                 files.value.choixCours[deptId].file = null;
             }

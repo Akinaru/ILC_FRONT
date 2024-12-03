@@ -35,13 +35,13 @@
                 <!-- Informations -->
                  <div class="w-full md:w-1/2 pt-10 flex items-center justify-center flex-col">
                     <p class="text-lg font-bold w-full max-w-xl mb-5">Vos informations:</p>
-                    <p class="w-full max-w-xl">Vos informations ne peuvent pas être modifiées. Renseignez-vous auprès d'ILC si besoin.</p>
+                    <p class="w-full max-w-xl">Certaines de vos informations ne peuvent pas être modifiées. Renseignez-vous auprès d'ILC si besoin.</p>
                     <div class="w-full max-w-xl">
 
                         <!-- Fullname -->
                         <label class="form-control w-full items-center justify-center">
                             <div class="label w-full">
-                                <span class="label-text">Identitée</span>
+                                <span class="label-text">Identité</span>
                             </div>
                             <input type="text" :value="account.acc_fullname" class="input input-bordered w-full" disabled />
                         </label>
@@ -68,11 +68,19 @@
                                 <span class="label-text">Département</span>
                             </div>
                             <input type="text" 
-       :value="account.department ? account.department.dept_shortname : 'Aucun'" 
-       class="input input-bordered w-full" 
-       :style="{ borderBottom: '2px solid ' + (account.department && account.department.dept_color ? account.department.dept_color : 'grey') }" 
-       disabled />
+                                :value="account.department ? account.department.dept_shortname : 'Aucun'" 
+                                class="input input-bordered w-full" 
+                                :style="{ borderBottom: '2px solid ' + (account.department && account.department.dept_color ? account.department.dept_color : 'grey') }" 
+                                disabled />
 
+                        </label>
+
+                        <!-- Parcours -->
+                        <label class="form-control w-full items-center justify-center">
+                            <div class="label w-full">
+                                <span class="label-text">Parcours</span>
+                            </div>
+                            <input type="text" :value="account.acc_parcours" class="input input-bordered w-full" disabled />
                         </label>
 
                         <!-- Score toeic -->
@@ -86,7 +94,7 @@
                         <!-- Années mobilite -->
                         <label class="form-control w-full items-center justify-center" >
                             <div class="label w-full">
-                                <span class="label-text">Années de mobilité</span>
+                                <span class="label-text">Année de mobilité</span>
                             </div>
                             <input type="text" :value="account.acc_anneemobilite" class="input input-bordered w-full " disabled/>
                         </label>
@@ -116,6 +124,14 @@
                                     <span class="label-text">Numéro étudiant (INE)</span>
                                 </div>
                                 <input type="text" placeholder="XXXXXXXX" class="input input-bordered w-full" v-model="currentUnivEtu.acc_studentnum"/>
+                            </label>
+
+                            <!-- Parcours  -->
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">Parcours</span>
+                                </div>
+                                <input type="text" placeholder="(Parcours lors de la mobilité)" class="input input-bordered w-full" v-model="currentUnivEtu.acc_parcours"/>
                             </label>
 
                             
@@ -652,6 +668,7 @@
         currentUnivEtu.value.acc_id = account.acc_id || null;
         currentUnivEtu.value.acc_mail = account.acc_mail || null;
         currentUnivEtu.value.acc_studentnum = account.acc_studentnum || null;
+        currentUnivEtu.value.acc_parcours = account.acc_parcours || null;
     }
 
     function setAccordToVoeu(agree_id) {
@@ -698,6 +715,7 @@
             acc_id: currentUnivEtu.value.acc_id,
             acc_mail: currentUnivEtu.value.acc_mail,
             acc_studentnum: currentUnivEtu.value.acc_studentnum,
+            acc_parcours: currentUnivEtu.value.acc_parcours,
 
         };
         await request('PUT', true, response, config.apiUrl+'api/account/modifetu', requestData);
