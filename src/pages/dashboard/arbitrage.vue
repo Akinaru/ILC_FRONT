@@ -198,7 +198,9 @@
                                             <strong>Email:</strong> {{ infoetudiant.acc_mail ? infoetudiant.acc_mail : 'Aucun' }}<br>
                                             <strong>Numéro étudiant:</strong> {{ infoetudiant.acc_studentnum ? infoetudiant.acc_studentnum : 'Aucun' }}<br>
                                             <strong>Années de mobilité:</strong> {{ infoetudiant.acc_anneemobilite ? infoetudiant.acc_anneemobilite : 'Aucune' }}<br>
-                                            <strong>Score TOEIC:</strong> {{ infoetudiant.acc_toeic ? infoetudiant.acc_toeic : 'Aucun' }}
+                                            <strong>Score TOEIC:</strong> {{ infoetudiant.acc_toeic ? infoetudiant.acc_toeic : 'Aucun' }}<br>
+                                            <strong>Département:</strong> {{ infoetudiant.department ? infoetudiant.department.dept_name : 'Aucun' }}<br>
+                                            <strong>Parcours:</strong> {{ infoetudiant.acc_parcours ? infoetudiant.acc_parcours : 'Aucun' }}
                                     </p>  
                                 </div>
                             </div>

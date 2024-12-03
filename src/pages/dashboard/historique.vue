@@ -138,8 +138,10 @@ const filteredActions = computed(() => {
     }
 
     if (searchQuery.value.trim() !== '') {
+        const searchTerm = searchQuery.value.trim().toLowerCase();
         filtered = filtered.filter(action => {
-            return action.acc_id.includes(searchQuery.value.trim());
+            return (action.acc_id?.toLowerCase().includes(searchTerm)) || 
+                (getFullName(action.acc_id)?.toLowerCase().includes(searchTerm));
         });
     }
 

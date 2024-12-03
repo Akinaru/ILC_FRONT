@@ -177,6 +177,14 @@
                                 >{{ account.department ? account.department.dept_shortname : 'Aucun' }}</p>
                             </label>
 
+                            <!-- Parcours -->
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">Parcours</span>
+                                </div>
+                                <p class="w-full bg-base-300 p-3">{{ account.acc_parcours || 'Aucun' }}</p>
+                            </label>
+
                             <!-- TOEIC -->
                             <label class="form-control w-full" >
                                 <div class="label">
@@ -251,6 +259,13 @@
                                                 </template>
                                             </select>
                                             <p v-if="accountStore.access != 1">Seul les administrateurs peuvent modifier ce champ.</p>
+                                        </label>
+                                        <!-- Parcours -->
+                                        <label class="form-control w-full">
+                                            <div class="label">
+                                                <span class="label-text">Parcours</span>
+                                            </div>
+                                            <input type="text"  class="input input-bordered w-full" v-model="modifCompte.acc_parcours"/>
                                         </label>
                                         <!-- Toeic -->
                                         <label class="form-control w-full">
@@ -556,6 +571,7 @@
             acc_anneemobilite: modifCompte.value.acc_anneemobilite != null ? modifCompte.value.acc_anneemobilite : null,
             acc_mail: modifCompte.value.acc_mail != null ? modifCompte.value.acc_mail : 'Aucun mail' ,
             acc_toeic: modifCompte.value.acc_toeic != null ? modifCompte.value.acc_toeic : 0, 
+            acc_parcours: modifCompte.value.acc_parcours != null ? modifCompte.value.acc_parcours : null, 
         }
         await request('PUT', true, response, config.apiUrl+'api/account/modif', requestData);
         if (response.value.status === 200) {
