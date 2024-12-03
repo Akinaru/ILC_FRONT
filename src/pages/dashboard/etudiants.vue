@@ -278,7 +278,10 @@ const isOpen = ref({
                     (selectedVoeux.value.includes('AuMoinsUn') && etu.wishes.count > 0);
 
                 // Filtrer par nom d'étudiant s'il y a une recherche en cours
-                const matchesSearchQuery = !searchQuery.value || etu.acc_fullname.toLowerCase().includes(searchQuery.value.toLowerCase());
+                const matchesSearchQuery = !searchQuery.value || 
+                    [etu.acc_fullname, etu.acc_id.toString()].some(field => 
+                    field.toLowerCase().includes(searchQuery.value.toLowerCase())
+                );
 
                 // Filtre par année de mobilité
                 const matchesAnneeMobilite = selectedAnneeMobilite.value.length === 0 || selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
