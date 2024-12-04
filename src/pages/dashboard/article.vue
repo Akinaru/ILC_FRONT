@@ -1,6 +1,6 @@
 <template>
     <div >
-        <p class="text-xl font-bold">Articles</p>
+        <p class="text-2xl font-bold flex items-center justify-center py-3">Articles</p>
 
         <!-- Formulaire d'ajout d'article -->
         <div class="m-5 flex justify-center items-center flex-col">
@@ -13,10 +13,19 @@
                 <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full mb-4" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full mb-4" />
                 <TextEditor ref="editorRef" v-model="newArticle.art_description"></TextEditor>
-                <div class="form-control my-4">
+                <label class="label cursor-pointer justify-start w-fit">
+                    <input type="checkbox" class="checkbox mr-2" v-model="newArticle.pinned" />
+                    <span class="label-text">Épinglé ?</span> 
+                </label>
+                
+                <div class="flex flex-row items-center gap-4">
                     <label class="label cursor-pointer justify-start w-fit">
-                        <input type="checkbox" class="checkbox mr-2" v-model="newArticle.pinned" />
-                        <span class="label-text">Épinglé ?</span> 
+                        <input type="checkbox" class="checkbox mr-2" v-model="newArticle.datesortiebool" />
+                        <span class="label-text">Date sortie différée ?</span>
+                    </label>
+                    
+                    <label v-if="newArticle.datesortiebool" class="label cursor-pointer justify-start w-fit">
+                        <input type="datetime-local" class="input input-bordered w-fit" v-model="newArticle.datesortie" />
                     </label>
                 </div>
                 <div class="flex items-center justify-center *:mx-1 ">
@@ -30,7 +39,7 @@
         </div>
         <!-- Liste des articles -->
         <div>
-            <p class="text-lg font-bold">Liste article</p>
+            <p class="text-xl font-bold flex items-center justify-center py-3">Liste article</p>
             <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
                 <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 mx-auto">
                     <div v-for="(article, index) in articles.articles" :key="index" class="relative bg-base-300 w-80 md:w-110 h-96 transition-all duration-100 ease-in-out drop-shadow-lg hover:scale-105">
@@ -60,6 +69,7 @@
                             <div class="p-4 flex flex-col justify-start h-52">
                                 <div class="mb-2">
                                     <p class="font-bold text-xl">{{ article.art_title }}</p>
+                                    <p class="text-gray-600 text-sm">Date sortie: {{ article.art_datesortie }} passé : {{ getDateSortieStatus(article.art_datesortie) }}</p>
                                     <p class="text-gray-600 text-sm">Dernière modif: {{ article.art_lastmodif }}</p>
                                 </div>
                                 <!-- Limitation de la hauteur de la description avec overflow et ellipsis -->
@@ -119,7 +129,7 @@ import { addAction } from '../../composables/actionType';
 const accountStore = useAccountStore();
 const response = ref([]);
 const articles = ref([]);
-const newArticle = ref({ title: null, description: null, pinned: false, image: null });
+const newArticle = ref({ title: null, description: null, pinned: false, image: null, date: '', datesortiebool: false    });
 const isEditing = ref(false)
 const confirmDeleteArticle = ref([])
 const editorRef = ref(null);
@@ -159,6 +169,7 @@ const handleFileInputChange = (event) => {
     }
 };
 
+
 // Variable qui contient l'url de l'image qu'on a choisit pour ajouter un article
 const backgroundImage = computed(() => {
     return imagePreview.value ? imagePreview.value : `${config.apiUrl}images/no_image.jpg`;
@@ -171,6 +182,24 @@ const backgroundImageModif = computed(() => {
         ? `${config.apiUrl}api/article/image/${currentArticleModif.value.art_id}`
         : `${config.apiUrl}images/no_image.jpg`;
 });
+
+function getDateSortieStatus(date) {
+    // Si la date est nulle, on considère que c'est publié immédiatement
+    if (date === null) {
+        return '✅';
+    }
+    
+    const dateSortie = new Date(date);
+    const now = new Date();
+
+    // Si la date de sortie est passée ou égale à maintenant
+    if (dateSortie <= now) {
+        return '✅';
+    }
+    
+    // Si la date est future
+    return '❌';
+}
 
 //ouvrir le modal de confirmation de suppression
 function openConfirmModal(article) {
@@ -188,50 +217,55 @@ function closeModal() {
 
 // Ajout d'article
 async function addArticle(){
+   if(newArticle.value.title == '' || newArticle.value.title == null){
+       addAlert('error', {data:{error: 'Vous devez mettre un titre à votre article.', message:'Ajout de l\'article annulé.'}})
+       return;
+   }
+   if(newArticle.value.art_description == '' || newArticle.value.art_description == null){
+       addAlert('error', {data:{error: 'Vous devez mettre une description à votre article.', message:'Ajout de l\'article annulé.'}})
+       return;
+   }
+   // Vérification de la date de sortie si elle est activée
+   if(newArticle.value.datesortiebool && (newArticle.value.datesortie == '' || newArticle.value.datesortie == null)) {
+       addAlert('error', {data:{error: 'Vous devez définir une date de sortie (ou décocher la case).', message:'Ajout de l\'article annulé.'}})
+       return;
+   }
 
-    if(newArticle.value.title == '' || newArticle.value.title == null){
-        addAlert('error', {data:{error: 'Vous devez mettre un titre à votre article.', message:'Ajout de l\'article annulé.'}})
-        return;
-    }
-    if(newArticle.value.art_description == '' || newArticle.value.art_description == null){
-        addAlert('error', {data:{error: 'Vous devez mettre une description à votre article.', message:'Ajout de l\'article annulé.'}})
-        return;
-    }
    // Enlever les couleurs de fond dans la description
    const cleanedDescription = removeBackgroundColors(newArticle.value.art_description);
 
-    const requestData = {
-        art_title: newArticle.value.title,
-        art_description: cleanedDescription,
-        art_pin: newArticle.value.pinned,
-    };
-    var rep = ref();
-    await request("POST", true, rep, config.apiUrl+'api/article', requestData);
+   const requestData = {
+       art_title: newArticle.value.title,
+       art_description: cleanedDescription,
+       art_pin: newArticle.value.pinned,
+   };
 
-    if(rep.value.status == 201){
-        if(newArticle.value.image != null){
+   // Ajout de la date de sortie au requestData si activée
+   if(newArticle.value.datesortiebool) {
+       requestData.art_datesortie = newArticle.value.datesortie;
+   }
 
-            try{
-                const formData = new FormData();
-                formData.append('image', newArticle.value.image);
-                formData.append('fileName', 'img_art_' + rep.value.article.art_id);
-                formData.append('filePath', 'private/images/articles');
-                formData.append('articleId', rep.value.article.art_id);
-                
-                await request('POST', true, response, config.apiUrl+'api/image/upload', formData)        
+   var rep = ref();
+   await request("POST", true, rep, config.apiUrl+'api/article', requestData);
 
-            } catch (error){
-                console.log("Erreur ajout image: "+error)
-            }
-        }
-        addAction(accountStore.login, 'article', response, 'Ajout de l\'article '+rep.value.article.art_title+'.');
-        await fetchAll();
-        resetInput();
-
-    }
-
-
-
+   if(rep.value.status == 201){
+       if(newArticle.value.image != null){
+           try{
+               const formData = new FormData();
+               formData.append('image', newArticle.value.image);
+               formData.append('fileName', 'img_art_' + rep.value.article.art_id);
+               formData.append('filePath', 'private/images/articles');
+               formData.append('articleId', rep.value.article.art_id);
+               
+               await request('POST', true, response, config.apiUrl+'api/image/upload', formData)        
+           } catch (error){
+               console.log("Erreur ajout image: "+error)
+           }
+       }
+       addAction(accountStore.login, 'article', response, 'Ajout de l\'article '+rep.value.article.art_title+'.');
+       await fetchAll();
+       resetInput();
+   }
 }
 
 function removeBackgroundColors(html) {
@@ -334,6 +368,7 @@ function resetInput(){
     newArticle.value.art_description = '';
     newArticle.value.pinned = false;
     newArticle.value.image = null;
+    newArticle.value.datesortie = '';
     imagePreview.value = null;
     editorRef.value.clear();
 }
@@ -357,6 +392,8 @@ function modifArticle(article) {
     currentArticleModif.value.art_description = article.art_description;
     currentArticleModif.value.art_pin = article.art_pin;
     currentArticleModif.value.art_image = article.art_image;
+    currentArticleModif.value.art_datesortiebool = true;
+    currentArticleModif.value.art_datesortie = article.art_datesortie;
     
     const editor = document.querySelector('.editor-content');
     editor.innerHTML = currentArticleModif.value.art_description;
@@ -364,6 +401,8 @@ function modifArticle(article) {
 
     newArticle.value.title = currentArticleModif.value.art_title;
     newArticle.value.pinned = currentArticleModif.value.art_pin;
+    newArticle.value.datesortie = currentArticleModif.value.art_datesortie;
+    newArticle.value.datesortiebool = currentArticleModif.value.art_datesortiebool;
     const element = document.getElementById('page_title');
     if (element) {
         element.scrollIntoView({ 
@@ -387,6 +426,8 @@ function cancelModifArticle() {
     newArticle.value.art_description = '';
     newArticle.value.pinned = false;
     newArticle.value.image = null;
+    newArticle.value.datesortie = '';
+    newArticle.value.datesortiebool = false;
     imagePreview.value = null;
     imagePreviewModif.value = null;
     const editor = document.querySelector('.editor-content');
@@ -395,8 +436,24 @@ function cancelModifArticle() {
 
 // confirmation de modification d'article
 async function confirmModifArticle() {
+
+    if(currentArticleModif.value.art_title == '' || currentArticleModif.value.art_title == null){
+       addAlert('error', {data:{error: 'Vous devez mettre un titre à votre article.', message:'Ajout de l\'article annulé.'}})
+       return;
+    }
+    if(currentArticleModif.value.art_description == '' || currentArticleModif.value.art_description == null){
+        addAlert('error', {data:{error: 'Vous devez mettre une description à votre article.', message:'Ajout de l\'article annulé.'}})
+        return;
+    }
+    // Vérification de la date de sortie si elle est activée
+    if(currentArticleModif.value.art_datesortiebool && (currentArticleModif.value.art_datesortie == '' || currentArticleModif.value.art_datesortie == null)) {
+        addAlert('error', {data:{error: 'Vous devez définir une date de sortie (ou décocher la case).', message:'Ajout de l\'article annulé.'}})
+        return;
+    }
+
     const editor = document.querySelector('.editor-content');
     const cleanedDescription = removeBackgroundColors(editor.innerHTML);
+
     const requestData = { 
         art_id: currentArticleModif.value.art_id,
         art_title: newArticle.value.title,
@@ -404,6 +461,11 @@ async function confirmModifArticle() {
         art_description: cleanedDescription
     };
 
+       // Ajout de la date de sortie au requestData si activée
+   if(newArticle.value.datesortiebool) {
+       requestData.art_datesortie = newArticle.value.datesortie;
+   }
+   console.log(requestData);
     await request('PUT', true, response, config.apiUrl + 'api/article', requestData);
     if (response.value.status === 200) {
         if(currentArticleModif.value.art_image){
