@@ -17,6 +17,7 @@ const requireAccess = (accessLevel) => (to, from, next) => {
         addAlert('error', {data: {error: 'Vous n\'avez pas les autorisations nécessaires pour accéder à cette page.'}})
     }
 };
+
 function checkMultipleAccess(...levels) {
     return (to, from, next) => {
         const accountStore = useAccountStore();
@@ -184,10 +185,13 @@ async function checkUserLogin() {
     const accountStore = useAccountStore();
       const response = await fetch(config.apiUrl+'cas.php'+'?check_login=true');
       if (response.ok) {
+
         const data = await response.json();
         const isLogged = data.logged_in;
         const userLogin = data.login;
-  
+        if(!isLogged){
+            accountStore.logoutAccount();
+        }
   
         return [isLogged, userLogin];
       } else {
@@ -221,6 +225,7 @@ router.beforeEach(async (to, from, next) => {
             addAlert('error', {
                 data: { error: 'Vous devez être connecté pour accéder à cette page.' }
             });
+            accountStore.logoutAccount();
             return next({ name: 'Accueil' });
         } else {
             // Mettez à jour le store si l'utilisateur est connecté
