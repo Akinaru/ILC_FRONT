@@ -78,10 +78,19 @@
   }
 
   function startTimer() {
+    // Si duration est null, ne pas démarrer le timer
+    if (props.response.duration === null) {
+      return;
+    }
+
+    // Utiliser soit la durée spécifiée, soit la durée par défaut du config
+    const duration = props.response.duration || config.alertTimeBeforeRemove;
+    
+    document.documentElement.style.setProperty('--alert-time', duration + 's');
+    
     setTimeout(() => {
       dismissAlert();
-    }, config.alertTimeBeforeRemove * 1000);
-    document.documentElement.style.setProperty('--alert-time', config.alertTimeBeforeRemove + 's');
+    }, duration * 1000);
   }
 
   onMounted(startTimer);
@@ -90,6 +99,8 @@
 <style scoped>
   .progress-bar {
     animation: progressBar var(--alert-time) linear forwards;
+    /* Ne montrer la barre de progression que si une durée est définie */
+    display: v-bind('props.response.duration === null ? "none" : "block"');
   }
 
   @keyframes progressBar {
@@ -100,4 +111,4 @@
       width: 0%;
     }
   }
-</style>  
+</style>

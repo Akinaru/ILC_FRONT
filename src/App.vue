@@ -46,7 +46,7 @@ async function checkUserLogin() {
                           error: 'Vous avez été déconnecté automatiquement.', 
                           message: 'Vous avez été redirigé vers la page d\'accueil.' 
                       }
-                    });
+                    }, null);
                     router.push({ name: 'Accueil' });
                 }
             }

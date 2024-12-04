@@ -1,4 +1,3 @@
-// alertStore.js
 import { defineStore } from 'pinia';
 
 export const useAlertStore = defineStore({
