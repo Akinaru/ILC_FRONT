@@ -21,7 +21,7 @@
               <details>
                 <summary>
                   <!-- Affichage du rôle uniquement pour les grands écrans -->
-                  <span v-if="role.role != 'Aucun'" class="md:p-1 hidden sm:block rounded-lg" :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">
+                  <span v-if="role.role != 'Aucun'" class="p-1 hidden sm:block rounded-lg" :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">
                     {{ role.role }}
                   </span>
                   <!-- Nom d'utilisateur avec bordure inférieure pour les petits écrans -->

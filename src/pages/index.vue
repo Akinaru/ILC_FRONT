@@ -3,7 +3,13 @@
         <!-- Partie accord -->
         <div>
             
-            <p class="text-3xl font-bold py-10 text-center">Accords Internationaux</p>
+            <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
+                <img 
+                :src="config.apiUrl + 'images/banner_dest.webp'" 
+                    alt="Bannière"
+                    className="w-full h-full object-cover"
+                />
+            </div>
             <div class="block lg:flex my-5">
  
                 <!-- Partie filtre -->
@@ -144,7 +150,13 @@
 
         <!-- Espace communication -->
         <div class="w-full ">
-            <p class="text-3xl font-bold text-center py-10">Espace communication</p>
+            <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
+                <img 
+                :src="config.apiUrl + 'images/banner_art.webp'" 
+                    alt="Bannière"
+                    className="w-full h-full object-cover"
+                />
+            </div>
             <!-- Articles -->
             <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
                 <div v-if="articles.count > 0" class="flex flex-wrap justify-center gap-5 max-w-7xl mx-auto">
@@ -179,7 +191,13 @@
             </div>
 
             <!-- Agenda -->
-            <p class="text-3xl font-bold text-center py-10">Agenda des événements</p>
+            <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
+                <img 
+                :src="config.apiUrl + 'images/banner_evt.webp'" 
+                    alt="Bannière"
+                    className="w-full h-full object-cover"
+                />
+            </div>
                 <div class="m-5 flex items-center justify-center flex-col">
                     <div class="flex h-full items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
                         <!-- Calendrier -->

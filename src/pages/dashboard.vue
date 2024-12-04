@@ -51,6 +51,7 @@
         {routeName: 'HistoriqueDash', name: '🕵️‍♀️ Historique'},
         {routeName: 'EtudiantsDash', name: '👩‍🎓 Etudiants'},
         {routeName: 'DocumentsDash', name: '📜 Documents'},
+        {routeName: 'ImagesDash', name: '📷 Images'},
         {routeName: 'Arbitrage', name: '🖥️ Arbitrage'},
     ]
 

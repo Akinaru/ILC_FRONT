@@ -146,6 +146,13 @@ const routes = [
                 meta: { title: 'Dashboard - Documents', requiresAuth: true }
             },
             { 
+                path: 'images', 
+                name: 'ImagesDash', 
+                component: () => import('./pages/dashboard/images.vue'),
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Images', requiresAuth: true }
+            },
+            { 
                 path: 'arbitrage', 
                 name: 'Arbitrage', 
                 component: () => import('./pages/dashboard/arbitrage.vue'),
