@@ -119,67 +119,72 @@
                         </svg>
                     </label>
 
-                    <div class="elementDrag bg-base-300 w-96 mb-2 flex items-center justify-center cursor-move select-none hover:opacity-80 flex-col" 
-                        :draggable="true" 
-                        :id="'etu_drag_'+etu.acc_id"
-                        v-for="(etu, index) in filteredEtus" :key="index"
-                        :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">  
+                    <div class="w-full max-h-screen overflow-auto">
 
-                        <div class="flex items-center justify-between w-full p-1">
-                            <p v-if="etu.department" :style="{backgroundColor: etu.department.dept_color}" class="p-2 rounded-lg min-w-16 text-center">{{ etu.department.dept_shortname }}</p>
-                            <p v-else class="bg-gray-500 p-2 rounded-lg min-w-16 text-center">Aucun</p>
-                            <div class="flex flex-col w-full items-center justify-start">
-                                <p class="w-full text-center">{{ etu.acc_fullname }}</p> 
+                        <div class="elementDrag bg-base-300 w-96 mb-2 flex items-center justify-center cursor-move select-none hover:opacity-80 flex-col" 
+                            :draggable="true" 
+                            :id="'etu_drag_'+etu.acc_id"
+                            v-for="(etu, index) in filteredEtus" :key="index"
+                            :style="{ borderBottom: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">  
+
+                            <div class="flex items-center justify-between w-full p-1">
+                                <p v-if="etu.department" :style="{backgroundColor: etu.department.dept_color}" class="p-2 rounded-lg min-w-16 text-center">{{ etu.department.dept_shortname }}</p>
+                                <p v-else class="bg-gray-500 p-2 rounded-lg min-w-16 text-center">Aucun</p>
+                                <div class="flex flex-col w-full items-center justify-start">
+                                    <p class="w-full text-center">{{ etu.acc_fullname }}</p> 
+                                </div>
+                                <label for="modal_info_etu" class="px-2 hover:opacity-70 btn btn-neutral" @click="changeEtuInfo(etu)">
+                                    <svg class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
+                                        version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85"
+                                        xml:space="preserve">
+                                        <g>
+                                            <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
+                                                s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
+                                                c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
+                                                C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
+                                                c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                        </g>
+                                    </svg>
+                                </label>
                             </div>
-                            <label for="modal_info_etu" class="px-2 hover:opacity-70 btn btn-neutral" @click="changeEtuInfo(etu)">
-                                <svg class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
-                                    version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85"
-                                    xml:space="preserve">
-                                    <g>
-                                        <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
-                                            s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
-                                            c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
-                                            C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
-                                            c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
-                                    </g>
-                                </svg>
-                            </label>
+                            
+                            <!-- Si létudiant a des voeux -->
+                            <div v-if="etu.wishes.count > 0" class="bg-base-200 w-full p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapseEtu(etu.acc_id)">
+                                <p>Voir les voeux</p>
+                                <span :class="isOpen.etudiants[etu.acc_id] ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                            </div>
+
+                            <!-- Affichage des voeux -->
+                            <div class="p-1 w-full" v-show="isOpen.etudiants[etu.acc_id]">
+                                <div>
+                                    <div>
+                                        <div v-for="(accord, index) in getFilteredAgreements(etu)" :key="index" class="flex justify-between">
+                                            <p class="min-w-fit flex items-start justify-center">Voeu {{ accord.place }}</p>
+                                            <div class="flex w-full items-start justify-start ml-2">
+                                                <span class="relative inline-block mr-1">
+                                                    <!-- Drapeau -->
+                                                    <span class="fi" :class="'fi-' + (accord.agreement?.partnercountry?.parco_code)"></span>
+
+                                                    <!-- Point d'interrogation si pas de drapeau -->
+                                                    <span v-if="!accord.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                                        ?
+                                                    </span>
+                                                </span>
+
+                                                <p>{{accord.agreement.university?.univ_name || 'Université indisponible'}} {{ accord.agreement.isced?.isc_code || 'Code ISCED ?' }}</p>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+    
+
                         </div>
                         
-                        <!-- Si létudiant a des voeux -->
-                        <div v-if="etu.wishes.count > 0" class="bg-base-200 w-full p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapseEtu(etu.acc_id)">
-                            <p>Voir les voeux</p>
-                            <span :class="isOpen.etudiants[etu.acc_id] ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
-                        </div>
-
-                        <!-- Affichage des voeux -->
-                        <div class="p-1 w-full" v-show="isOpen.etudiants[etu.acc_id]">
-                            <div>
-                                <div>
-                                    <div v-for="(accord, index) in getFilteredAgreements(etu)" :key="index" class="flex justify-between">
-                                        <p class="min-w-fit flex items-start justify-center">Voeu {{ accord.place }}</p>
-                                        <div class="flex w-full items-start justify-start ml-2">
-                                            <span class="relative inline-block mr-1">
-                                                <!-- Drapeau -->
-                                                <span class="fi" :class="'fi-' + (accord.agreement?.partnercountry?.parco_code)"></span>
-
-                                                <!-- Point d'interrogation si pas de drapeau -->
-                                                <span v-if="!accord.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
-                                                    ?
-                                                </span>
-                                            </span>
-
-                                            <p>{{accord.agreement.university?.univ_name || 'Université indisponible'}} {{ accord.agreement.isced?.isc_code || 'Code ISCED ?' }}</p>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-   
-
                     </div>
+
 
                     <!-- Modal informations étudiant -->
                     <input type="checkbox" id="modal_info_etu" class="select-none modal-toggle" />
@@ -360,47 +365,48 @@
 
                 
                 <!-- Partie rendu accord -->
-                <div class="flex flex-col items-center justify-start w-full select-none">
-                    <div v-for="(arbitrage, accordIndex) in filteredArbitrage" :key="'accord-' + accordIndex" class="bg-base-300 w-11/12 mb-4 p-4 rounded-lg">
-                        <div class="flex items-center justify-center mb-2">
-                            <span class="relative inline-block mr-2">
-                                <!-- Drapeau -->
-                                <span class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out" :class="'fi-' + (arbitrage.agreement?.partnercountry?.parco_code)"></span>
+                <div class="flex flex-col items-center justify-start w-full select-none h-screen overflow-auto">
+                        <div v-for="(arbitrage, accordIndex) in filteredArbitrage" :key="'accord-' + accordIndex" class="bg-base-300 w-11/12 mb-4 p-4 rounded-lg">
+                            <div class="flex items-center justify-center mb-2">
+                                <span class="relative inline-block mr-2">
+                                    <!-- Drapeau -->
+                                    <span class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out" :class="'fi-' + (arbitrage.agreement?.partnercountry?.parco_code)"></span>
 
-                                <!-- Point d'interrogation si pas de drapeau -->
-                                <span v-if="!arbitrage.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
-                                    ?
+                                    <!-- Point d'interrogation si pas de drapeau -->
+                                    <span v-if="!arbitrage.agreement?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                        ?
+                                    </span>
                                 </span>
-                            </span>
 
-                            <p class="font-bold text-lg">{{ arbitrage.agreement.partnercountry?.parco_name || 'Pays indisponible' }}</p>
-                        </div>
-                        <p class="text-center mb-3">{{ arbitrage.agreement.university?.univ_name || 'Université indisponible' }} - {{ arbitrage.agreement.isced?.isc_code || 'Code ISCED indisponible' }} {{ arbitrage.agreement.isced?.isc_name || 'Nom ISCED indisponible' }} </p>
+                                <p class="font-bold text-lg">{{ arbitrage.agreement.partnercountry?.parco_name || 'Pays indisponible' }}</p>
+                            </div>
+                            <p class="text-center mb-3">{{ arbitrage.agreement.university?.univ_name || 'Université indisponible' }} - {{ arbitrage.agreement.isced?.isc_code || 'Code ISCED indisponible' }} {{ arbitrage.agreement.isced?.isc_name || 'Nom ISCED indisponible' }} </p>
 
-                        <div class="w-full flex justify-center">
-                            <div class="flex flex-wrap gap-4 justify-center w-full">
-                                <!-- Rendu des cases -->
-                                <div :id="'drop_'+arbitrage.agreement.agree_id+'_'+placeIndex" v-for="(place, placeIndex) in getNumberOfPlace(arbitrage.agreement.agree_id)" :key="'place-' + placeIndex" 
-                                    class="dropZones bg-base-200 m-1 h-20 w-72 relative flex items-center justify-center">
-                                    <div v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account"
-                                    draggable="true"
-                                    :id="'etu_drag_'+arbitrage.accounts[placeIndex].account.acc_id"
-                                    class="h-full w-full flex items-center justify-center elementDrag cursor-move hover:opacity-60"
-                                    :style="{borderBottom: `4px solid ${arbitrage.accounts[placeIndex]?.account?.department?.dept_color || '#aaaaaa'}`}">
-                                        <p>{{ arbitrage.accounts[placeIndex].account.acc_fullname }}</p>
-                                        <button @click="removeEtuFromPlace(arbitrage.agreement.agree_id, placeIndex)" class="hover:cursor-pointer hover:opacity-60 absolute top-0 right-0 p-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                        </button>
+                            <div class="w-full flex justify-center">
+                                <div class="flex flex-wrap gap-4 justify-center w-full">
+                                    <!-- Rendu des cases -->
+                                    <div :id="'drop_'+arbitrage.agreement.agree_id+'_'+placeIndex" v-for="(place, placeIndex) in getNumberOfPlace(arbitrage.agreement.agree_id)" :key="'place-' + placeIndex" 
+                                        class="dropZones bg-base-200 m-1 h-20 w-72 relative flex items-center justify-center">
+                                        <div v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account"
+                                        draggable="true"
+                                        :id="'etu_drag_'+arbitrage.accounts[placeIndex].account.acc_id"
+                                        class="h-full w-full flex items-center justify-center elementDrag cursor-move hover:opacity-60"
+                                        :style="{borderBottom: `4px solid ${arbitrage.accounts[placeIndex]?.account?.department?.dept_color || '#aaaaaa'}`}">
+                                            <p>{{ arbitrage.accounts[placeIndex].account.acc_fullname }}</p>
+                                            <button @click="removeEtuFromPlace(arbitrage.agreement.agree_id, placeIndex)" class="hover:cursor-pointer hover:opacity-60 absolute top-0 right-0 p-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            </button>
+                                        </div>
+                                        <p v-else class="">Aucun étudiant</p>
                                     </div>
-                                    <p v-else class="">Aucun étudiant</p>
-                                </div>
-                                <div class="w-72 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer"
-                                    @click="addPlace(arbitrage.agreement.agree_id)">
-                                    <p class="text-lg font-bold">+</p>
+                                    <div class="w-72 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer"
+                                        @click="addPlace(arbitrage.agreement.agree_id)">
+                                        <p class="text-lg font-bold">+</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
                 </div>
 
             </div>
