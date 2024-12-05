@@ -31,7 +31,7 @@
 
         <!-- Partie informations -->
         <div>
-            <div v-if="account && account.acc_id" class="block md:flex w-full justify-center items-center">
+            <div v-if="account && account.acc_id" class="block md:flex w-full justify-center items-start">
                 <!-- Informations -->
                  <div class="w-full md:w-1/2 pt-10 flex items-center justify-center flex-col">
                     <p class="text-lg font-bold w-full max-w-xl mb-5">Vos informations:</p>
@@ -563,24 +563,40 @@
                 <div id="right" class="bg-base-200 flex flex-col *:m-3">
 
                     <span class="flex items-center min-h-20" v-for="(i, index) in 6" :key="index">
-                        <p class="font-bold xl:p-5 p-3 xl:text-lg transition-all duration-100 ease-in-out">Vœu n°{{ i }}</p>
-                        <div  class="bg-base-100 h-20 xl:w-130 w-105 flex items-center justify-center transition-all duration-100 ease-in-out">
+                        <p class="font-bold xl:p-5 p-3 xl:text-lg text-sm transition-all duration-100 ease-in-out">Vœu n°{{ i }}</p>
+                        <div class="bg-base-100 h-20 xl:w-130 w-105 flex items-center justify-center transition-all duration-100 ease-in-out">
                             <RouterLink target="_blank" :to="{ name: 'Accord', params: { agree_id: localVoeux[i].agree_id }}" v-if="localVoeux[i]" :draggable="true" class="cursor-pointer select-none flex justify-between items-center xl:w-150 w-120 transition-all duration-100 ease-in-out h-20 hover:opacity-80">
                                 <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full">
                                     <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                         <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                     </span>
-                                    <p class="w-full select-none">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
-                                    
+                                    <p class="w-full select-none text-xs xl:text-base">({{ localVoeux[i].partnercountry.parco_name }}) <span class="font-bold">{{localVoeux[i].university.univ_city}} - {{ localVoeux[i].university.univ_name }}</span> ({{ localVoeux[i].isced.isc_code }})</p>
                                 </div>
                             </RouterLink>
-                            <p v-else class="opacity-45 select-none w-96 flex items-center justify-center">Emplacement vœu n°{{ i }} vide</p>
+                            <p v-else class="opacity-45 select-none w-96 flex items-center justify-center text-xs xl:text-base">Emplacement vœu n°{{ i }} vide</p>
                         </div>
                     </span>
 
                 </div>
             </div>
         </div>
+
+        <!-- Partie témoignage -->
+         <div class="w-full flex items-center justify-center mt-20">
+
+            <div class="w-150 relative">
+                <p>Témoignange</p>
+                <p className="text-base-content/70 mb-4">
+                    Écrivez un témoignage de vos expériences à l'étranger. N'hésitez pas à donner également un retour d'expériences sur le site et sur des possibles améliorations.
+                </p>
+                <textarea class="w-full min-h-96 textarea textarea-bordered"></textarea>
+                <div class="w-full flex justify-end items-center">
+                    <label for="modal_modif" class="btn btn-success mt-3 mr-1" >Enregistrer</label>
+                    <label for="modal_modif" class="btn btn-neutral mt-3" >Supprimer</label>
+                </div>
+            </div>
+         </div>
+
     </div>
     <div v-else>
         <LoadingComp></LoadingComp>
