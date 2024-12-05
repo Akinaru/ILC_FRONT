@@ -582,20 +582,29 @@
         </div>
 
         <!-- Partie témoignage -->
-         <div class="w-full flex items-center justify-center mt-20">
-
+        <div class="w-full flex items-center justify-center mt-20">
             <div class="w-150 relative">
                 <p>Témoignange</p>
                 <p className="text-base-content/70 mb-4">
                     Écrivez un témoignage de vos expériences à l'étranger. N'hésitez pas à donner également un retour d'expériences sur le site et sur des possibles améliorations.
                 </p>
-                <textarea class="w-full min-h-96 textarea textarea-bordered"></textarea>
-                <div class="w-full flex justify-end items-center">
-                    <label for="modal_modif" class="btn btn-success mt-3 mr-1" >Enregistrer</label>
-                    <label for="modal_modif" class="btn btn-neutral mt-3" >Supprimer</label>
+                <textarea 
+                    class="w-full min-h-96 textarea textarea-bordered" 
+                    v-model="account.acc_temoignage"
+                ></textarea>
+                <div class="w-full flex justify-between items-center mt-3">
+                    <span class="text-sm opacity-70">
+                        {{ account.acc_temoignage?.length || 0 }} / {{ CHAR_LIMIT }} caractères
+                    </span>
+                    <label 
+                        @click="modifTemoignage" 
+                        class="btn btn-success"
+                    >
+                        Enregistrer
+                    </label>
                 </div>
             </div>
-         </div>
+        </div>
 
     </div>
     <div v-else>
@@ -616,6 +625,7 @@
     const favoris = ref([]);
     const accords = ref([]);
     const destination = ref([])
+    const CHAR_LIMIT = 1500;
     const admin = ref([]);
     const isLoaded = ref(false);
     const accountStore = useAccountStore();
@@ -677,6 +687,21 @@
 
     function changeVoeuLocal(voeu){
         selectedChangeVoeu.value = voeu;
+    }
+
+    async function modifTemoignage(){
+        // Définir une limite de caractères (par exemple 500)
+        
+        if (account.value.acc_temoignage && account.value.acc_temoignage.length > CHAR_LIMIT) {
+            addAlert('error', {data: {error: `Le témoignage est trop long. Maximum ${CHAR_LIMIT} caractères.`}})
+            return;
+        }
+
+        const requestData = {
+            acc_id: accountStore.login,
+            acc_temoignage: account.value.acc_temoignage,
+        }
+        await request('PUT', true, response, config.apiUrl + 'api/account/temoignage', requestData);
     }
 
     // Modal modif etu
