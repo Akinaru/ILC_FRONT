@@ -297,40 +297,36 @@
                             <div class="p-1" v-show="isOpen.isced">
                                 <button class="hover:opacity-70 underline" @click="deselectAllIsced">Tout désélectionner</button>
                                 <div class="flex flex-wrap items-center justify-start">
-                                    <div v-for="(isced,index) in isceds" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer md:w-3/6 xl:w-2/6">
+                                    <div v-for="(isced,index) in availableIsceds" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer md:w-3/6 xl:w-2/6">
                                         <input :id="'filt_isced_'+index" type="checkbox" class="checkbox" :value="isced.isc_id" v-model="selectedIsced">
                                         <label :for="'filt_isced_'+index" class="cursor-pointer w-full pl-2">
-                                            
                                             <label :for="'filt_isced_'+index" class="select-none w-full hover:cursor-pointer">{{ isced.isc_code || 'XX' }} - {{ isced.isc_name || 'Sans code' }}</label>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Accords -->
+
+                        <!-- Universités -->
                         <div>
-                            <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('accordsarbitrage')">
-                                <p class="select-none">Accords (voeux) ({{ selectedAccordArbitrage.length }} séléctionné{{ selectedAccordArbitrage.length > 1 ? 's' : '' }})</p>
-                                <span :class="isOpen.accordsarbitrage ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                            <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('university')">
+                                <p class="select-none">Universités ({{ selectedUniversity.length }} séléctionnée{{ selectedUniversity.length > 1 ? 's' : '' }})</p>
+                                <span :class="isOpen.university ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                             </div>
-                            <div class="p-1" v-show="isOpen.accordsarbitrage">
-                                <button class="hover:opacity-70 underline" @click="deselectAllAccordArbitrage">Tout désélectionner</button>
+                            <div class="p-1" v-show="isOpen.university">
+                                <button class="hover:opacity-70 underline" @click="deselectAllUniversity">Tout désélectionner</button>
                                 <div class="flex flex-wrap items-center justify-start">
-
-                                    <div v-for="(accord,index) in accords.agreements" :key="index" class="flex items-center hover:opacity-60 my-1 md:w-4/6 xl:w-3/6 hover:cursor-pointer">
-                                        <input :id="'filt_accordarbitrage_'+index" type="checkbox" class="checkbox" :value="accord.agree_id" v-model="selectedAccordArbitrage">
-                                        <label :for="'filt_accordarbitrage_'+index" class="cursor-pointer w-full pl-2">
+                                    <div v-for="(univ,index) in availableUniversities" :key="index" class="flex items-center hover:opacity-60 my-1 md:w-4/6 xl:w-3/6 hover:cursor-pointer">
+                                        <input :id="'filt_univ_'+index" type="checkbox" class="checkbox" :value="univ.univ_id" v-model="selectedUniversity">
+                                        <label :for="'filt_univ_'+index" class="cursor-pointer w-full pl-2">
                                             <span class="relative inline-block mr-1">
-                                                <!-- Drapeau -->
-                                                <span class="fi" :class="'fi-' + (accord.partnercountry?.parco_code)"></span>
-
-                                                <!-- Point d'interrogation si pas de drapeau -->
-                                                <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
-                                                    ?
-                                                </span>
+                                                <span class="fi" :class="'fi-' + (univ.partnercountry?.parco_code)"></span>
+                                                <span v-if="!univ.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">?</span>
                                             </span>
-
-                                            <label :for="'filt_accordarbitrage_'+index" class="select-none w-full hover:cursor-pointer">{{ accord.university?.univ_name || 'Université indisponible' }} - {{ accord.isced?.isc_code || 'Code ISCED ?' }}</label>
+                                            <label :for="'filt_univ_'+index" class="select-none w-full hover:cursor-pointer">
+                                                {{ univ.univ_name || 'Université indisponible' }}
+                                                <span class="text-sm text-gray-500">({{ univ.iscedCount }} ISCED{{ univ.iscedCount > 1 ? 's' : '' }})</span>
+                                            </label>
                                         </label>
                                     </div>
                                 </div>
@@ -424,10 +420,11 @@
     import config from '../../config'
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { useAccountStore } from '../../stores/accountStore';
-import { addAction } from '../../composables/actionType';
+    import { addAction } from '../../composables/actionType';
 
     const response = ref([])
     const accords = ref([])
+    const university = ref([])
     const etudiants = ref([])
     const isceds = ref([])
     const components = ref([])
@@ -438,6 +435,7 @@ import { addAction } from '../../composables/actionType';
     const selectedDepartment = ref([]);
     const selectedIsced = ref([]);
     const selectedAccord = ref([]);
+    const selectedUniversity = ref([]);
     const selectedAccordArbitrage = ref([]);
     const selectedArbitrage = ref([]);
     const selectedVoeux = ref([]);
@@ -469,6 +467,7 @@ import { addAction } from '../../composables/actionType';
         pays: false,
         departments: false,
         accords: false,
+        university: false,
         accordsarbitrage: false,
         arbitrage: false,
         isced: false,
@@ -491,6 +490,7 @@ import { addAction } from '../../composables/actionType';
     async function fetch(){
         isLoaded.value = false;
         await request('GET', false, accords, config.apiUrl+'api/agreement');
+        await request('GET', false, university, config.apiUrl+'api/university');
         await request('GET', false, components, config.apiUrl+'api/component');
         await request('GET', false, partnercountry, config.apiUrl+'api/partnercountry');
         await request('GET', false, isceds, config.apiUrl+'api/isced');
@@ -576,155 +576,138 @@ import { addAction } from '../../composables/actionType';
         return `${day}/${month}/${year} à ${hours}h${minutes}`;
     }
 
-// Enregistrement de l'arbitrage
-async function saveArbitrage() {
+    // Enregistrement de l'arbitrage
+    async function saveArbitrage() {
 
-   // Sauvegarder l'état précédent pour comparaison
-   const previousState = arbitrage.value.map(arb => ({
-       acc_id: arb.account.acc_id,
-       agree_id: arb.agreement.agree_id,
-       arb_pos: arb.arb_pos
-   }));
-   
+    // Sauvegarder l'état précédent pour comparaison
+    const previousState = arbitrage.value.map(arb => ({
+        acc_id: arb.account.acc_id,
+        agree_id: arb.agreement.agree_id,
+        arb_pos: arb.arb_pos
+    }));
+    
 
-   const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
-       arbitrage.accounts.forEach(accountInfo => {
-           if (accountInfo.account) {
-               acc.push({
-                   acc_id: accountInfo.account.acc_id,
-                   agree_id: arbitrage.agreement.agree_id,
-                   arb_pos: accountInfo.arb_pos
-               });
-           }
-       });
-       return acc;
-   }, []);
-
-   await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData);
-   
-   if(response.value.status == 200) {
-       // Créer une map des positions précédentes par étudiant et accord
-       const previousPositions = new Map(
-           previousState.map(state => [`${state.acc_id}-${state.agree_id}`, state.arb_pos])
-       );
-       
-       // Créer une map des nouvelles positions
-       const newPositions = new Map(
-           extractedData.map(data => [`${data.acc_id}-${data.agree_id}`, data.arb_pos])
-       );
-
-       // Trouver les suppressions (étudiants qui ne sont plus sur le même accord)
-       const removals = previousState.filter(prevData => {
-           const key = `${prevData.acc_id}-${prevData.agree_id}`;
-           const hasKey = !newPositions.has(key);
-           return hasKey;
-       });
-
-       // Trouver les changements (nouveaux placements ou modifications de position)
-       const changes = extractedData.filter(newData => {
-           const key = `${newData.acc_id}-${newData.agree_id}`;
-           const previousPos = previousPositions.get(key);
-           return !previousPos || previousPos !== newData.arb_pos;
-       });
-
-       // Créer une entrée dans l'historique pour les changements
-       for (const data of changes) {
-           addAction(accountStore.login, 'arbitrage', response, `Changement de l'arbitrage pour ${data.acc_id} sur l'accord ${data.agree_id} à la position ${data.arb_pos}.`);
-       }
-
-       // Créer une entrée dans l'historique pour les suppressions
-       for (const data of removals) {
-           addAction(accountStore.login, 'arbitrage', response, `Suppression de l'arbitrage pour ${data.acc_id} (précédemment sur l'accord ${data.agree_id}).`);
-       }
-   }
-}
-
-
-// Liste des étudiants après filtres
-const filteredEtus = computed(() => {
-    return Object.values(localEtus.value)
-        .filter(etu => {
-            // Filtre par département avec possibilité de filtrer par "Aucun"
-            const matchesDepartments = selectedDepartment.value.length === 0 || 
-                (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
-                (selectedDepartment.value.includes('Aucun') && !etu.department);
-            
-            // Filtre par recherche
-            const matchesSearchQuery = !searchQuery.value || 
-                [etu.acc_fullname, etu.acc_id.toString()].some(field => 
-                field.toLowerCase().includes(searchQuery.value.toLowerCase())
-            );
-            
-            return matchesDepartments && matchesSearchQuery;
-        })
-        .filter(etu => {
-            // Filtre par accords
-            const filteredAgreements = getFilteredAgreements(etu).map(item => item.agreement.agree_id);
-            return selectedAccord.value.length === 0 || selectedAccord.value.some(accord => filteredAgreements.includes(accord));
-        })
-        .filter(etu => {
-            // Filtre par nombre de vœux
-            const voeuxCount = etu.wishes.count;
-            return selectedVoeux.value.length === 0 || selectedVoeux.value.includes(voeuxCount);
-        })
-        .filter(etu => {
-            // Filtre par année de mobilité
-            return selectedAnneeMobilite.value.length === 0 || selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
-        })
-        .sort((a, b) => {
-            // Tri par position du vœu et alphabétiquement
-            const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
-            const bMinPlace = Math.min(...getFilteredAgreements(b).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
-            if (aMinPlace !== bMinPlace) {
-                return aMinPlace - bMinPlace;
+    const extractedData = Object.values(localArbitrage.value).reduce((acc, arbitrage) => {
+        arbitrage.accounts.forEach(accountInfo => {
+            if (accountInfo.account) {
+                acc.push({
+                    acc_id: accountInfo.account.acc_id,
+                    agree_id: arbitrage.agreement.agree_id,
+                    arb_pos: accountInfo.arb_pos
+                });
             }
-            return a.acc_fullname.localeCompare(b.acc_fullname);
         });
-});
+        return acc;
+    }, []);
+
+    await request('POST', true, response, config.apiUrl+'api/arbitrage', extractedData);
+    
+    if(response.value.status == 200) {
+        // Créer une map des positions précédentes par étudiant et accord
+        const previousPositions = new Map(
+            previousState.map(state => [`${state.acc_id}-${state.agree_id}`, state.arb_pos])
+        );
+        
+        // Créer une map des nouvelles positions
+        const newPositions = new Map(
+            extractedData.map(data => [`${data.acc_id}-${data.agree_id}`, data.arb_pos])
+        );
+
+        // Trouver les suppressions (étudiants qui ne sont plus sur le même accord)
+        const removals = previousState.filter(prevData => {
+            const key = `${prevData.acc_id}-${prevData.agree_id}`;
+            const hasKey = !newPositions.has(key);
+            return hasKey;
+        });
+
+        // Trouver les changements (nouveaux placements ou modifications de position)
+        const changes = extractedData.filter(newData => {
+            const key = `${newData.acc_id}-${newData.agree_id}`;
+            const previousPos = previousPositions.get(key);
+            return !previousPos || previousPos !== newData.arb_pos;
+        });
+
+        // Créer une entrée dans l'historique pour les changements
+        for (const data of changes) {
+            addAction(accountStore.login, 'arbitrage', response, `Changement de l'arbitrage pour ${data.acc_id} sur l'accord ${data.agree_id} à la position ${data.arb_pos}.`);
+        }
+
+        // Créer une entrée dans l'historique pour les suppressions
+        for (const data of removals) {
+            addAction(accountStore.login, 'arbitrage', response, `Suppression de l'arbitrage pour ${data.acc_id} (précédemment sur l'accord ${data.agree_id}).`);
+        }
+    }
+    }
 
 
-// Liste des accords avec arbitrage après filtres
-const filteredArbitrage = computed(() => {
+    // Liste des étudiants après filtres
+    const filteredEtus = computed(() => {
+        return Object.values(localEtus.value)
+            .filter(etu => {
+                // Filtre par département avec possibilité de filtrer par "Aucun"
+                const matchesDepartments = selectedDepartment.value.length === 0 || 
+                    (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
+                    (selectedDepartment.value.includes('Aucun') && !etu.department);
+                
+                // Filtre par recherche
+                const matchesSearchQuery = !searchQuery.value || 
+                    [etu.acc_fullname, etu.acc_id.toString()].some(field => 
+                    field.toLowerCase().includes(searchQuery.value.toLowerCase())
+                );
+                
+                return matchesDepartments && matchesSearchQuery;
+            })
+            .filter(etu => {
+                // Filtre par accords
+                const filteredAgreements = getFilteredAgreements(etu).map(item => item.agreement.agree_id);
+                return selectedAccord.value.length === 0 || selectedAccord.value.some(accord => filteredAgreements.includes(accord));
+            })
+            .filter(etu => {
+                // Filtre par nombre de vœux
+                const voeuxCount = etu.wishes.count;
+                return selectedVoeux.value.length === 0 || selectedVoeux.value.includes(voeuxCount);
+            })
+            .filter(etu => {
+                // Filtre par année de mobilité
+                return selectedAnneeMobilite.value.length === 0 || selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
+            })
+            .sort((a, b) => {
+                // Tri par position du vœu et alphabétiquement
+                const aMinPlace = Math.min(...getFilteredAgreements(a).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
+                const bMinPlace = Math.min(...getFilteredAgreements(b).filter(item => selectedAccord.value.includes(item.agreement.agree_id)).map(item => item.place));
+                if (aMinPlace !== bMinPlace) {
+                    return aMinPlace - bMinPlace;
+                }
+                return a.acc_fullname.localeCompare(b.acc_fullname);
+            });
+    });
+
+
+    // Liste des accords avec arbitrage après filtres
+    const filteredArbitrage = computed(() => {
     return Object.values(localArbitrage.value)
         .filter(arbitrage => {
             const countryFilter = selectedCountries.value.length === 0 || 
                                 selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
             const iscedFilter = selectedIsced.value.length === 0 || 
                                 (arbitrage.agreement.isced && selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
-            const accordFilter = selectedAccordArbitrage.value.length === 0 || 
-                                selectedAccordArbitrage.value.includes(arbitrage.agreement.agree_id);
+            const universityFilter = selectedUniversity.value.length === 0 ||
+                                   (arbitrage.agreement.university && selectedUniversity.value.includes(arbitrage.agreement.university.univ_id));
 
-            // Vérification si tous les comptes sont null
             const allAccountsNull = arbitrage.accounts.every(account => account.account === null);
-            // Vérification s'il y a au moins un compte non null
             const atLeastOneAccountNotNull = arbitrage.accounts.some(account => account.account !== null);
 
-            // Nouveau filtre pour selectedArbitrage
-            const arbitrageFilter = (() => {
-                if (selectedArbitrage.value.includes('aucun') && allAccountsNull) {
-                    return true; // Correspond à 'aucun' (tous les comptes sont null)
-                }
-                if (selectedArbitrage.value.includes('aumoinsun') && atLeastOneAccountNotNull) {
-                    return true; // Correspond à 'aumoinsun' (au moins un compte non null)
-                }
-                if (!selectedArbitrage.value.length) {
-                    return true; // Aucun filtre appliqué si selectedArbitrage est vide
-                }
-                return false; // Ne correspond à aucun des filtres
-            })();
+            const arbitrageFilter = selectedArbitrage.value.length === 0 || 
+                                  (selectedArbitrage.value.includes('aucun') && allAccountsNull) ||
+                                  (selectedArbitrage.value.includes('aumoinsun') && atLeastOneAccountNotNull);
 
-            return countryFilter && iscedFilter && accordFilter && arbitrageFilter;
+            return countryFilter && iscedFilter && universityFilter && arbitrageFilter;
         })
         .sort((a, b) => {
-            // Premier niveau de tri : par nom de pays partenaire
             const countryComparison = a.agreement.partnercountry.parco_name.localeCompare(b.agreement.partnercountry.parco_name);
-            
-            // Si les pays sont différents, retourne la comparaison des pays
             if (countryComparison !== 0) {
                 return countryComparison;
             }
-            
-            // Deuxième niveau de tri : par nom d'université
             return a.agreement.university.univ_name.localeCompare(b.agreement.university.univ_name);
         });
 });
@@ -827,6 +810,105 @@ const filteredArbitrage = computed(() => {
         refreshDrop();
     }
 
+    // Computed property pour obtenir les ISCED disponibles en fonction des universités sélectionnées
+const availableIsceds = computed(() => {
+  if (selectedUniversity.value.length === 0) {
+    // Si aucune université n'est sélectionnée, retourner tous les ISCED disponibles
+    const uniqueIscedIds = new Set();
+    accords.value.agreements.forEach(accord => {
+      if (accord.isced) {
+        uniqueIscedIds.add(accord.isced.isc_id);
+      }
+    });
+    return isceds.value.filter(isced => uniqueIscedIds.has(isced.isc_id));
+  }
+
+  // Récupérer tous les ISCED des accords des universités sélectionnées
+  const uniqueIscedIds = new Set();
+  accords.value.agreements
+    .filter(accord => selectedUniversity.value.includes(accord.university?.univ_id))
+    .forEach(accord => {
+      if (accord.isced) {
+        uniqueIscedIds.add(accord.isced.isc_id);
+      }
+    });
+
+  return isceds.value.filter(isced => uniqueIscedIds.has(isced.isc_id));
+});
+
+// Computed property pour obtenir les universités avec le compte des ISCED
+const availableUniversities = computed(() => {
+  let universities;
+  
+  if (selectedIsced.value.length === 0) {
+    universities = university.value;
+  } else {
+    const validUnivIds = new Set();
+    accords.value.agreements
+      .filter(accord => accord.isced && selectedIsced.value.includes(accord.isced.isc_id))
+      .forEach(accord => {
+        if (accord.university) {
+          validUnivIds.add(accord.university.univ_id);
+        }
+      });
+
+    universities = university.value.filter(univ => validUnivIds.has(univ.univ_id));
+  }
+
+  // Ajouter le compte des ISCED pour chaque université
+  return universities.map(univ => {
+    // Obtenir tous les ISCED uniques pour cette université
+    const uniqueIsceds = new Set(
+      accords.value.agreements
+        .filter(accord => 
+          accord.university && 
+          accord.university.univ_id === univ.univ_id &&
+          accord.isced
+        )
+        .map(accord => accord.isced.isc_id)
+    );
+
+    return {
+      ...univ,
+      iscedCount: uniqueIsceds.size
+    };
+  }).sort((a, b) => {
+    const countryComparison = (a.partnercountry?.parco_name || '').localeCompare(b.partnercountry?.parco_name || '');
+    if (countryComparison !== 0) {
+      return countryComparison;
+    }
+    return (a.univ_name || '').localeCompare(b.univ_name || '');
+  });
+});
+
+// Watchers pour maintenir la cohérence entre les sélections
+watch(selectedUniversity, (newValue) => {
+  if (newValue.length > 0) {
+    // Filtrer les ISCED qui ne correspondent plus à aucune université sélectionnée
+    selectedIsced.value = selectedIsced.value.filter(iscedId => {
+      return accords.value.agreements.some(accord => 
+        accord.university && 
+        newValue.includes(accord.university.univ_id) && 
+        accord.isced && 
+        accord.isced.isc_id === iscedId
+      );
+    });
+  }
+});
+
+watch(selectedIsced, (newValue) => {
+  if (newValue.length > 0) {
+    // Filtrer les universités qui ne correspondent plus à aucun ISCED sélectionné
+    selectedUniversity.value = selectedUniversity.value.filter(univId => {
+      return accords.value.agreements.some(accord => 
+        accord.university && 
+        accord.university.univ_id === univId && 
+        accord.isced && 
+        newValue.includes(accord.isced.isc_id)
+      );
+    });
+  }
+});
 
     watch(selectedDepartment, handleFiltreEtu);
     watch(selectedAccord, handleFiltreEtu);
@@ -836,6 +918,7 @@ const filteredArbitrage = computed(() => {
     watch(selectedAnneeMobilite, handleFiltreEtu);
     watch(selectedAccordArbitrage, handleFiltreEtu);
     watch(selectedArbitrage, handleFiltreEtu);
+    watch(selectedUniversity, handleFiltreEtu);
 
     // définit les drop zones
     async function refreshDrop() {
@@ -990,6 +1073,7 @@ const filteredArbitrage = computed(() => {
         selectedIsced.value = [];
         selectedAccordArbitrage.value = [];
         selectedArbitrage.value = [];
+        selectedUniversity.value = [];
     }
 
     function deselectAllDept() {
@@ -1015,6 +1099,9 @@ const filteredArbitrage = computed(() => {
     }
     function deselectAllArbitrage(){
         selectedArbitrage.value = [];
+    }
+    function deselectAllUniversity(){
+        selectedUniversity.value = [];
     }
     onMounted(fetch)
 
