@@ -215,8 +215,9 @@
                                         </p>
                                     </div>
 
+                                    
                                     <div class="p-2 mt-1  rounded w-72" :class="etu.arbitrage ? 'bg-base-200' : 'bg-base-300 opacity-60'">
-                                        <div v-if="etu.arbitrage" class="text-sm">
+                                        <RouterLink target="_blank" :to="{name: 'Accord', params: {agree_id: etu.arbitrage.agree_id}}" v-if="etu.arbitrage" class="text-sm select-none hover:opacity-60">
                                             <div class="flex items-center">
                                                 <span class="relative inline-block mr-2">
                                                     <!-- Drapeau -->
@@ -237,7 +238,7 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </RouterLink>
                                         <div v-else class="text-sm text-gray-400 italic flex items-center justify-center w-full min-h-12">
                                             Pas de destination
                                         </div>
