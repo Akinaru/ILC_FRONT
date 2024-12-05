@@ -8,7 +8,7 @@
         </div>
         <div v-if="isLoaded" class="flex">
             <!-- Filtres -->
-            <div class="bg-base-200 min-w-72 h-fit min-h-screen drop-shadow-lg" >
+            <div class="max-w-80 bg-base-200 min-w-72 h-fit min-h-screen drop-shadow-lg" >
                 <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
                 <button class="hover:opacity-70 underline" @click="deselectAll">Tout désélectionner</button>
                 
@@ -99,9 +99,48 @@
                         </div>
                     </div>
                 </div> 
+                <!-- Destination -->
+                <div>
+                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('destination')">
+                        <p class="select-none">Destination ({{ selectedDestination.length }} séléctionné{{ selectedDestination.length > 1 ? 's' : '' }})</p>
+                        <span :class="isOpen.destination ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
+                    </div>
+                    <div class="p-1" v-show="isOpen.destination">
+                        <button class="hover:opacity-70 underline" @click="deselectAllDestination">Tout désélectionner</button>
+
+                        <!-- Option "Aucune" -->
+                        <div class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
+                            <input id="filt_dest_none" type="checkbox" class="checkbox" value="null" v-model="selectedDestination">
+                            <label for="filt_dest_none" class="cursor-pointer w-full pl-2">
+                                <label for="filt_dest_none" class="select-none w-full hover:cursor-pointer">Aucune destination</label>
+                            </label>
+                        </div>
+
+                        <!-- Liste des destinations arbitrées -->
+                        <div  v-for="(dest, index) in destinations" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
+                            <input :id="'filt_dest_'+index" type="checkbox" class="checkbox" :value="dest.agree_id" v-model="selectedDestination">
+                            <label :for="'filt_dest_'+index" class="cursor-pointer w-full pl-2">
+                                <span class="relative inline-block mr-1">
+                                    <!-- Drapeau -->
+                                    <span class="fi" :class="'fi-' + (dest.partnercountry?.parco_code)"></span>
+
+                                    <!-- Point d'interrogation si pas de drapeau -->
+                                    <span v-if="!dest.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                        ?
+                                    </span>
+                                </span>
+
+                                <label :for="'filt_dest_'+index" class="select-none w-full hover:cursor-pointer">{{ dest.university?.univ_name || 'Université indisponible' }} à {{ dest.university?.univ_city || 'Ville indisponible' }} - {{ dest.isced?.isc_code || 'Code ISCED ?' }}</label>
+                            </label>
+                        </div>
+
+                    </div>
+
+                </div> 
             </div>
             <!-- Liste des étudiants -->
             <div v-if="account && account.acc_id && etudiants && etudiants.accounts" class="w-full px-2">
+                <!-- Infos -->
                 <div class="w-full flex items-center justify-between flex-col md:flex-row">
                     <p class="text-lg font-semibold">Liste des étudiants 
                         <span v-if="account.access.acs_accounttype == 2">dans le département 
@@ -139,7 +178,6 @@
                     </div>
 
                 </div>
-
                 <!-- Barre de recherche -->
                 <div class="py-2">
                     <label class="input input-bordered flex items-center gap-2">
@@ -175,6 +213,34 @@
                                             <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}<br>
                                             <strong>Aménagement aux éxams:</strong> {{ etu.acc_amenagement == true ? 'Oui' : 'Non' }}
                                         </p>
+                                    </div>
+
+                                    <div class="p-2 mt-1  rounded w-72" :class="etu.arbitrage ? 'bg-base-200' : 'bg-base-300 opacity-60'">
+                                        <div v-if="etu.arbitrage" class="text-sm">
+                                            <div class="flex items-center">
+                                                <span class="relative inline-block mr-2">
+                                                    <!-- Drapeau -->
+                                                    <span class="fi" :class="'fi-' + (etu.arbitrage.partnercountry?.parco_code)"></span>
+
+                                                    <!-- Point d'interrogation si pas de drapeau -->
+                                                    <span v-if="!etu.arbitrage.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                                        ?
+                                                    </span>
+                                                </span>
+
+                                                <div class="flex flex-col flex-1 overflow-hidden">
+                                                    <span class="font-medium truncate">{{ etu.arbitrage.university?.univ_name || 'Université indisponible' }}</span>
+                                                    <span class="text-gray-500 truncate">
+                                                        {{ etu.arbitrage.university?.univ_city || 'Ville indisponible' }} - 
+                                                        {{ etu.arbitrage.partnercountry?.parco_name || 'Pays indisponible' }}
+                                                        <span class="text-xs">({{ etu.arbitrage.isced?.isc_code || 'Code ISCED ?' }})</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-else class="text-sm text-gray-400 italic flex items-center justify-center w-full min-h-12">
+                                            Pas de destination
+                                        </div>
                                     </div>
                                 <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}" class="mt-3">
                                     <button class="btn w-full">Voir le profil</button>
@@ -249,16 +315,19 @@ const searchQuery = ref('');
 const confirmDeleteEtu = ref([])
 const response = ref([])
 const anneesmobilite = ref([])
+const destinations = ref([]);
 
 const selectedDepartment = ref([]);
 const selectedVoeux = ref([]);
 const selectedDocument = ref([]);
 const selectedAnneeMobilite = ref([]);
+const selectedDestination = ref([]);
 const isOpen = ref({
     voeux: true,
     departments: true,
     document: true,
-    anneemobilite: true
+    anneemobilite: true,
+    destination: true,
 });
 
     function toggleCollapse(section) {
@@ -266,41 +335,68 @@ const isOpen = ref({
     }
 
     const filteredEtudiants = computed(() => {
-        return etudiants.value.accounts
-            .filter(etu => {
-                const matchesDepartments = selectedDepartment.value.length === 0 || 
-                    (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
-                    (selectedDepartment.value.includes('Aucun') && !etu.department);
-                
-                const hasAccess = etu.access === null;
+    return etudiants.value.accounts
+        .filter(etu => {
+            const matchesDepartments = selectedDepartment.value.length === 0 || 
+                (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
+                (selectedDepartment.value.includes('Aucun') && !etu.department);
+            
+            const hasAccess = etu.access === null;
 
-                const matchesVoeux = selectedVoeux.value.length === 0 || 
-                    (selectedVoeux.value.includes('Aucun') && etu.wishes.count === 0) ||
-                    (selectedVoeux.value.includes('AuMoinsUn') && etu.wishes.count > 0);
+            const matchesVoeux = selectedVoeux.value.length === 0 || 
+                (selectedVoeux.value.includes('Aucun') && etu.wishes.count === 0) ||
+                (selectedVoeux.value.includes('AuMoinsUn') && etu.wishes.count > 0);
 
-                // Filtrer par nom d'étudiant s'il y a une recherche en cours
-                const matchesSearchQuery = !searchQuery.value || 
-                    [etu.acc_fullname, etu.acc_id.toString()].some(field => 
-                    field.toLowerCase().includes(searchQuery.value.toLowerCase())
-                );
+            const matchesSearchQuery = !searchQuery.value || 
+                [etu.acc_fullname, etu.acc_id.toString()].some(field => 
+                field.toLowerCase().includes(searchQuery.value.toLowerCase())
+            );
 
-                // Filtre par année de mobilité
-                const matchesAnneeMobilite = selectedAnneeMobilite.value.length === 0 || selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
+            const matchesAnneeMobilite = selectedAnneeMobilite.value.length === 0 || 
+                selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
 
-                // Vérification du nombre de documents
-                const documentCount = etu.documents.count || 0; // Utiliser 0 par défaut si undefined
-                const matchesDocuments = selectedDocument.value.length === 0 || 
-                    selectedDocument.value.includes(documentCount.toString());
+            const documentCount = etu.documents.count || 0;
+            const matchesDocuments = selectedDocument.value.length === 0 || 
+                selectedDocument.value.includes(documentCount.toString());
 
-                return matchesDepartments && hasAccess && matchesVoeux && matchesSearchQuery && matchesDocuments && matchesAnneeMobilite;
-            })
-            .sort((a, b) => {
-                // Trier les étudiants par leur nom complet
-                return a.acc_fullname.localeCompare(b.acc_fullname);
-            });
+            // Dans le computed filteredEtudiants, modifier la partie matchesDestination :
+            const matchesDestination = selectedDestination.value.length === 0 || 
+                (selectedDestination.value.includes('null') && !etu.arbitrage) ||
+                (etu.arbitrage?.agree_id && selectedDestination.value.includes(etu.arbitrage.agree_id));
+
+            return matchesDepartments && hasAccess && matchesVoeux && 
+                   matchesSearchQuery && matchesDocuments && 
+                   matchesAnneeMobilite && matchesDestination;
+        })
+        .sort((a, b) => {
+            return a.acc_fullname.localeCompare(b.acc_fullname);
+        });
     });
 
-
+// Fonction pour extraire les destinations uniques des arbitrages
+function extractDestinations() {
+    if (!etudiants.value.accounts) return;
+    
+    const destinationsMap = new Map();
+    
+    etudiants.value.accounts.forEach(account => {
+        if (account.arbitrage?.agree_id) {
+            destinationsMap.set(account.arbitrage.agree_id, account.arbitrage);
+        }
+    });
+    
+    destinations.value = Array.from(destinationsMap.values()).sort((a, b) => {
+        // Compare les noms de pays d'abord
+        const countryCompare = a.partnercountry?.parco_name?.localeCompare(b.partnercountry?.parco_name) || 0;
+        
+        // Si les pays sont identiques, compare les noms d'universités
+        if (countryCompare === 0) {
+            return a.university?.univ_name?.localeCompare(b.university?.univ_name) || 0;
+        }
+        
+        return countryCompare;
+    });
+}
 
     async function fetch() {
         await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
@@ -317,6 +413,8 @@ const isOpen = ref({
             const endYear = startYear + 1;
             anneesmobilite.value.push(`${startYear}-${endYear}`);
         }
+
+        extractDestinations();
         isLoaded.value = true;
     }
 
@@ -368,6 +466,7 @@ const exportUrl = computed(() => {
         const savedDocument = sessionStorage.getItem('etu_dashboard.selectedDocument');
         const savedVoeux = sessionStorage.getItem('etu_dashboard.selectedVoeux');
         const savedAnneeMobilite = sessionStorage.getItem('etu_dashboard.selectedAnneeMobilite');
+        const savedDestination = sessionStorage.getItem('etu_dashboard.selectedDestination');
 
 
 
@@ -388,6 +487,10 @@ const exportUrl = computed(() => {
 
         }
 
+        if(savedDestination){
+            selectedDestination.value = JSON.parse(savedDestination);
+        }
+
     }
 
     function saveFilters() {
@@ -395,12 +498,14 @@ const exportUrl = computed(() => {
         sessionStorage.setItem('etu_dashboard.selectedVoeux', JSON.stringify(selectedVoeux.value));
         sessionStorage.setItem('etu_dashboard.selectedDocument', JSON.stringify(selectedDocument.value));
         sessionStorage.setItem('etu_dashboard.selectedAnneeMobilite', JSON.stringify(selectedAnneeMobilite.value));
+        sessionStorage.setItem('etu_dashboard.selectedDestination', JSON.stringify(selectedDestination.value));
     }
 
     watch(selectedDepartment, saveFilters);
     watch(selectedVoeux, saveFilters);
     watch(selectedAnneeMobilite, saveFilters);
     watch(selectedDocument, saveFilters);
+    watch(selectedDestination, saveFilters);
 
 onMounted(() => {
     fetch();
@@ -411,6 +516,8 @@ onMounted(() => {
         selectedDepartment.value = [];
         selectedVoeux.value = [];
         selectedDocument.value = [];
+        selectedAnneeMobilite.value = [];
+        selectedDestination.value = [];
     }
     function deselectAllDept() {
         selectedDepartment.value = [];
@@ -423,5 +530,8 @@ onMounted(() => {
     }
     function deselectAllAnneeMobilite() {
         selectedAnneeMobilite.value = [];
+    }
+    function deselectAllDestination() {
+        selectedDestination.value = [];
     }
 </script>
