@@ -1,114 +1,264 @@
 <template>
+  <div class="w-full">
+    <!-- Affichage des images -->
     <div class="w-full">
-      <!-- Affichage des images -->
-      <div v-for="(image, index) in images" :key="image.nom" class="relative mb-8">
-        <div class="w-full h-24 sm:h-32 md:h-36 lg:h-44">
-          <img 
-            :src="config.apiUrl + 'images/' + image.nom + '.webp'"
-            alt="Bannière"
-            class="w-full h-full object-cover"
-          />
+      <div v-for="(image, index) in images" :key="image.name" class="relative mb-8">
+        <!-- En-tête avec nom et boutons -->
+        <div class="w-full flex justify-between items-center bg-base-200">
+          <p class="px-3 font-bold">{{ image.name }}</p>
+          <div class="flex">
+            <!-- Bouton de modification -->
+            <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300" 
+                    @click="openModifModal(image)">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round" 
+                      stroke-width="2"/>
+                <polygon fill="none" 
+                         points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" 
+                         stroke="currentColor" 
+                         stroke-linecap="round" 
+                         stroke-linejoin="round" 
+                         stroke-width="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Zone d'affichage de l'image -->
+        <div class="w-full h-24 sm:h-32 md:h-36 lg:h-44 bg-base-200">
+          <div class="w-full h-full relative">
+            <!-- Image si elle existe -->
+            <img v-if="image.exists"
+              :src="`${config.apiUrl}api/image?path=${image.path}&name=${image.nom}`"
+              :alt="image.name"
+              class="w-full h-full object-cover"
+            />
+            <!-- Message si pas d'image -->
+            <div v-else 
+                 class="w-full h-full flex items-center justify-center">
+              <div class="text-center">
+                <span class="text-gray-500">Image non trouvée</span>
+                <p class="text-sm text-gray-400 mt-2">Cliquez sur le bouton de modification pour ajouter une image</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations supplémentaires -->
+        <div class="w-full bg-base-200 px-3 py-2 text-sm text-gray-500">
+          <p v-if="image.lastModified">Dernière modification: {{ image.lastModified }}</p>
+          <p v-if="image.extension">Format: {{ image.extension }}</p>
+        </div>
+      </div>
+    </div>
+
+
+      <!-- Modal de confirmation suppression -->
+      <dialog id="confirmModal" ref="confirmModal" class="modal">
+          <div class="modal-box">
+              <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
+              <div class="py-3">
+                  <p>Confirmez vous la suppression de l'image:</p>
+                  <!-- Affichage -->
+                  <div>
+                      <div class="p-2">
+                          <div :style="{ backgroundImage: `url(${confirmDeleteImage.img_path ? config.apiUrl + confirmDeleteImage.img_path : config.apiUrl+'images/no_image.jpg'})` }" 
+                              class="bg-cover bg-center w-full h-48">
+                          </div>
+                      </div>
+                      <div class="p-4 flex flex-col justify-start">
+                          <div class="mb-2">
+                              <p class="font-bold text-xl">{{ confirmDeleteImage.img_name }}</p>
+                              <p class="text-gray-600 text-sm">Dernière modif: {{ confirmDeleteImage.img_lastmodif }}</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-action">
+                  <button class="btn" @click="closeModal">Annuler</button>
+                  <button class="btn btn-error" @click="removeImage(confirmDeleteImage.img_name, confirmDeleteImage.img_id)">Confirmer</button>
+              </div>
+          </div>
+      </dialog>
+
+<!-- Modal de modification -->
+<dialog id="modifModal" ref="modifModal" class="modal">
+    <div class="modal-box max-w-3xl">
+        <h3 class="text-lg font-bold">Modifier l'image bannière</h3>
+        <div class="py-3">
+            <!-- Prévisualisation de l'image -->
+            <div class="flex items-center justify-center">
+                <div :style="{ backgroundImage: `url(${isModifying ? backgroundImageModif : backgroundImage})` }" 
+                    class="bg-cover bg-center w-full h-32 mb-4">
+                </div>
+            </div>
+            
+            <!-- Formulaire de modification -->
+            <div class="form-control w-full">
+                <input type="file" 
+                      @change="handleFileInputChange" 
+                      name="image" 
+                      accept="image/*" 
+                      class="file-input file-input-bordered w-full" />
+                      
+                <p class="text-sm text-gray-500 mt-2">Format recommandé : 1920x400 pixels</p>
+            </div>
         </div>
         
-        <!-- Bouton d'édition -->
-        <button 
-          @click="openEditModal(index)"
-          class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded shadow"
-        >
-          Modifier
-        </button>
-      </div>
-  
-      <!-- Modal d'édition -->
-      <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-          <h2 class="text-xl font-bold mb-4">Modifier la bannière</h2>
-          
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Nouvelle image</label>
-            <input 
-              type="file" 
-              @change="handleFileChange" 
-              accept="image/webp"
-              class="w-full border rounded p-2"
-            >
-          </div>
-  
-          <div class="flex justify-end gap-2">
-            <button 
-              @click="closeModal" 
-              class="px-4 py-2 border rounded hover:bg-gray-100"
-            >
-              Annuler
-            </button>
-            <button 
-              @click="saveChanges" 
-              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Enregistrer
-            </button>
-          </div>
+        <div class="modal-action">
+            <button class="btn" @click="cancelModifImage">Annuler</button>
+            <button class="btn btn-success" @click="confirmModifImage">Enregistrer</button>
         </div>
-      </div>
+    </div>
+</dialog>
     </div>
   </template>
   
   <script setup>
-  import { ref } from 'vue'
+  import { ref, computed, onMounted  } from 'vue'
   import config from '../../config';
+  import { request } from '../../composables/httpRequest';
+
   
+  const confirmDeleteImage = ref([]);
+  const response = ref([]);
+  const newImage = ref({ name: null, file: null });
+  const imagePreview = ref(null);
+  const isModifying = ref(false);
+  const currentImageModif = ref({});
+  const imagePreviewModif = ref(null);
+
   const images = ref([
-    { nom: 'banner_dest' },
-    { nom: 'banner_art' },
-    { nom: 'banner_evt' },
-  ])
-  
-  const showModal = ref(false)
-  const currentEditIndex = ref(null)
-  const selectedFile = ref(null)
-  
-  const openEditModal = (index) => {
-    currentEditIndex.value = index
-    showModal.value = true
-  }
-  
-  const closeModal = () => {
-    showModal.value = false
-    currentEditIndex.value = null
-    selectedFile.value = null
-  }
-  
-  const handleFileChange = (event) => {
-    selectedFile.value = event.target.files[0]
-  }
-  
-  const saveChanges = async () => {
-    if (!selectedFile.value) {
-      alert('Veuillez sélectionner une image')
-      return
+    { nom: 'banner_dest', path: 'private/images/site', exists: false },
+    { nom: 'banner_art', path: 'private/images/site', exists: false },
+    { nom: 'banner_evt', path: 'private/images/site', exists: false },
+]);
+
+  const backgroundImage = computed(() => {
+    return imagePreview.value ? imagePreview.value : `${config.apiUrl}images/no_image.jpg`;
+  });
+
+  const backgroundImageModif = computed(() => {
+    return imagePreviewModif.value ? imagePreviewModif.value : 
+        currentImageModif.value.img_path
+        ? `${config.apiUrl}${currentImageModif.value.img_path}`
+        : `${config.apiUrl}images/no_image.jpg`;
+  });
+
+  async function fetchAll() {
+    for (const image of images.value) {
+        await request(
+            'GET', 
+            false, 
+            response, 
+            `${config.apiUrl}api/image?path=${image.path}&name=${image.nom}`
+        );
+        if (!response?.value?.error) {
+            image.exists = true;
+        } else {
+            image.exists = false;
+        }
     }
-  
-    try {
-      const formData = new FormData()
-      formData.append('image', selectedFile.value)
-      formData.append('nom', images.value[currentEditIndex.value].nom)
-  
-      // Appel API à implémenter
-      const response = await fetch(`${config.apiUrl}update-banner`, {
-        method: 'POST',
-        body: formData
-      })
-  
-      if (response.ok) {
-        // Forcer le rechargement de l'image en ajoutant un timestamp
-        const timestamp = new Date().getTime()
-        images.value[currentEditIndex.value].timestamp = timestamp
-        closeModal()
-      } else {
-        throw new Error('Erreur lors de la mise à jour')
+    isModifying.value = false;
+}
+
+  // Fermer le modal de confirmation de suppression
+  function closeModal() {
+      const modal = document.getElementById('confirmModal')
+      modal.close()
+  }
+
+  // Gestion du changement d'image dans le formulaire
+  const handleFileInputChange = (event) => {
+    if(isModifying.value){
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreviewModif.value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            currentImageModif.value.file = file;
+        } else {
+            imagePreviewModif.value = null;
+            currentImageModif.value.file = null;
+        }
+      }else{
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            newImage.value.file = file;
+        } else {
+            imagePreview.value = null;
+            newImage.value.file = null;
+        }
       }
-    } catch (error) {
-      alert('Erreur lors de la modification : ' + error.message)
-    }
+
+  };
+
+  // Ouvrir le modal de modification
+  function openModifModal(image) {
+      currentImageModif.value = {...image}; // Clone l'objet image
+      isModifying.value = true;
+      const modal = document.getElementById('modifModal');
+      modal.showModal();
   }
+
+  // Annuler la modification
+  function cancelModifImage() {
+      isModifying.value = false;
+      currentImageModif.value = {};
+      imagePreviewModif.value = null;
+      const modal = document.getElementById('modifModal');
+      modal.close();
+  }
+
+  // Confirmer la modification
+  async function confirmModifImage() {
+      if(currentImageModif.value.img_name == '' || currentImageModif.value.img_name == null){
+          addAlert('error', {data:{error: 'Vous devez donner un nom à votre image.', message:'Modification de l\'image annulée.'}});
+          return;
+      }
+
+      try {
+          // Si une nouvelle image a été sélectionnée
+          if(currentImageModif.value.file) {
+              const formData = new FormData();
+              formData.append('image', currentImageModif.value.file);
+              formData.append('fileName', currentImageModif.value.img_name);
+              formData.append('filePath', 'private/images');
+              formData.append('imageId', currentImageModif.value.img_id);
+              
+              await request('POST', true, response, config.apiUrl + 'api/image/upload', formData);
+          }
+          
+          // Si seulement le nom a été modifié
+          const requestData = {
+              img_id: currentImageModif.value.img_id,
+              img_name: currentImageModif.value.img_name
+          };
+          
+          await request('PUT', true, response, config.apiUrl + 'api/image', requestData);
+          
+          if(response.value.status === 200) {
+              addAction(accountStore.login, 'image', response, 'Modification de l\'image ' + currentImageModif.value.img_name + '.');
+              await fetchAll();
+              cancelModifImage();
+          }
+      } catch (error) {
+          console.log("Erreur modification image: " + error);
+          addAlert('error', {data:{error: error, message:'Erreur lors de la modification de l\'image.'}});
+      }
+  }
+
+  onMounted(fetchAll);
+
   </script>
