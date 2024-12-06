@@ -297,7 +297,7 @@
                             <div class="p-1" v-show="isOpen.isced">
                                 <button class="hover:opacity-70 underline" @click="deselectAllIsced">Tout désélectionner</button>
                                 <div class="flex flex-wrap items-center justify-start">
-                                    <div v-for="(isced,index) in availableIsceds" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer md:w-3/6 xl:w-2/6">
+                                    <div v-for="(isced,index) in isceds" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer md:w-3/6 xl:w-2/6">
                                         <input :id="'filt_isced_'+index" type="checkbox" class="checkbox" :value="isced.isc_id" v-model="selectedIsced">
                                         <label :for="'filt_isced_'+index" class="cursor-pointer w-full pl-2">
                                             <label :for="'filt_isced_'+index" class="select-none w-full hover:cursor-pointer">{{ isced.isc_code || 'XX' }} - {{ isced.isc_name || 'Sans code' }}</label>
@@ -306,7 +306,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Universités -->
                         <div>
                             <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('university')">
@@ -316,7 +315,7 @@
                             <div class="p-1" v-show="isOpen.university">
                                 <button class="hover:opacity-70 underline" @click="deselectAllUniversity">Tout désélectionner</button>
                                 <div class="flex flex-wrap items-center justify-start">
-                                    <div v-for="(univ,index) in availableUniversities" :key="index" class="flex items-center hover:opacity-60 my-1 md:w-4/6 xl:w-3/6 hover:cursor-pointer">
+                                    <div v-for="(univ,index) in university" :key="index" class="flex items-center hover:opacity-60 my-1 md:w-4/6 xl:w-3/6 hover:cursor-pointer">
                                         <input :id="'filt_univ_'+index" type="checkbox" class="checkbox" :value="univ.univ_id" v-model="selectedUniversity">
                                         <label :for="'filt_univ_'+index" class="cursor-pointer w-full pl-2">
                                             <span class="relative inline-block mr-1">
@@ -689,10 +688,6 @@
         .filter(arbitrage => {
             const countryFilter = selectedCountries.value.length === 0 || 
                                 selectedCountries.value.includes(arbitrage.agreement.partnercountry.parco_name);
-            const iscedFilter = selectedIsced.value.length === 0 || 
-                                (arbitrage.agreement.isced && selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
-            const universityFilter = selectedUniversity.value.length === 0 ||
-                                   (arbitrage.agreement.university && selectedUniversity.value.includes(arbitrage.agreement.university.univ_id));
 
             const allAccountsNull = arbitrage.accounts.every(account => account.account === null);
             const atLeastOneAccountNotNull = arbitrage.accounts.some(account => account.account !== null);
@@ -701,14 +696,22 @@
                                   (selectedArbitrage.value.includes('aucun') && allAccountsNull) ||
                                   (selectedArbitrage.value.includes('aumoinsun') && atLeastOneAccountNotNull);
 
-            return countryFilter && iscedFilter && universityFilter && arbitrageFilter;
+            const iscedFilter = selectedIsced.value.length === 0 || 
+                                (arbitrage.agreement.isced && selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
+
+            const universityFilter = selectedUniversity.value.length === 0 || 
+                                     (arbitrage.agreement.university && selectedUniversity.value.includes(arbitrage.agreement.university.univ_id));
+
+            return countryFilter && arbitrageFilter && iscedFilter && universityFilter;
         })
         .sort((a, b) => {
             const countryComparison = a.agreement.partnercountry.parco_name.localeCompare(b.agreement.partnercountry.parco_name);
             if (countryComparison !== 0) {
                 return countryComparison;
             }
-            return a.agreement.university.univ_name.localeCompare(b.agreement.university.univ_name);
+            const universityA = a.agreement.university ? a.agreement.university.univ_name : '';
+            const universityB = b.agreement.university ? b.agreement.university.univ_name : '';
+            return universityA.localeCompare(universityB);
         });
 });
 
@@ -810,61 +813,45 @@
         refreshDrop();
     }
 
-    // Computed property pour obtenir les ISCED disponibles en fonction des universités sélectionnées
-const availableIsceds = computed(() => {
-  if (selectedUniversity.value.length === 0) {
-    // Si aucune université n'est sélectionnée, retourner tous les ISCED disponibles
+
+
+    const availableIsceds = computed(() => {
     const uniqueIscedIds = new Set();
+
+    // Récupérer tous les ISCED des accords
     accords.value.agreements.forEach(accord => {
-      if (accord.isced) {
-        uniqueIscedIds.add(accord.isced.isc_id);
-      }
-    });
-    return isceds.value.filter(isced => uniqueIscedIds.has(isced.isc_id));
-  }
-
-  // Récupérer tous les ISCED des accords des universités sélectionnées
-  const uniqueIscedIds = new Set();
-  accords.value.agreements
-    .filter(accord => selectedUniversity.value.includes(accord.university?.univ_id))
-    .forEach(accord => {
-      if (accord.isced) {
-        uniqueIscedIds.add(accord.isced.isc_id);
-      }
+        if (accord.isced && accord.isced.isc_id) {
+            uniqueIscedIds.add(accord.isced.isc_id);
+        }
     });
 
-  return isceds.value.filter(isced => uniqueIscedIds.has(isced.isc_id));
+    // Filtrer et trier les ISCED d'abord par isc_code puis par isc_name
+    return isceds.value
+        .filter(isced => uniqueIscedIds.has(isced.isc_id))
+        .sort((a, b) => {
+            const codeComparison = a.isc_code.localeCompare(b.isc_code);
+            if (codeComparison !== 0) {
+                return codeComparison;
+            }
+            return a.isc_name.localeCompare(b.isc_name);
+        });
 });
 
-// Computed property pour obtenir les universités avec le compte des ISCED
-const availableUniversities = computed(() => {
-  let universities;
-  
-  if (selectedIsced.value.length === 0) {
-    universities = university.value;
-  } else {
-    const validUnivIds = new Set();
-    accords.value.agreements
-      .filter(accord => accord.isced && selectedIsced.value.includes(accord.isced.isc_id))
-      .forEach(accord => {
-        if (accord.university) {
-          validUnivIds.add(accord.university.univ_id);
-        }
-      });
+    const availableUniversities = computed(() => {
+    const uniqueUnivIds = new Set();
 
-    universities = university.value.filter(univ => validUnivIds.has(univ.univ_id));
-  }
+    // Récupérer toutes les universités des accords
+    accords.value.agreements.forEach(accord => {
+        if (accord.university) {
+        uniqueUnivIds.add(accord.university.univ_id);
+        }
+    });
 
   // Ajouter le compte des ISCED pour chaque université
-  return universities.map(univ => {
-    // Obtenir tous les ISCED uniques pour cette université
+  return university.value.filter(univ => uniqueUnivIds.has(univ.univ_id)).map(univ => {
     const uniqueIsceds = new Set(
       accords.value.agreements
-        .filter(accord => 
-          accord.university && 
-          accord.university.univ_id === univ.univ_id &&
-          accord.isced
-        )
+        .filter(accord => accord.university && accord.university.univ_id === univ.univ_id && accord.isced)
         .map(accord => accord.isced.isc_id)
     );
 
@@ -883,31 +870,11 @@ const availableUniversities = computed(() => {
 
 // Watchers pour maintenir la cohérence entre les sélections
 watch(selectedUniversity, (newValue) => {
-  if (newValue.length > 0) {
-    // Filtrer les ISCED qui ne correspondent plus à aucune université sélectionnée
-    selectedIsced.value = selectedIsced.value.filter(iscedId => {
-      return accords.value.agreements.some(accord => 
-        accord.university && 
-        newValue.includes(accord.university.univ_id) && 
-        accord.isced && 
-        accord.isced.isc_id === iscedId
-      );
-    });
-  }
+  // Ne rien faire ici pour éviter les croisements
 });
 
 watch(selectedIsced, (newValue) => {
-  if (newValue.length > 0) {
-    // Filtrer les universités qui ne correspondent plus à aucun ISCED sélectionné
-    selectedUniversity.value = selectedUniversity.value.filter(univId => {
-      return accords.value.agreements.some(accord => 
-        accord.university && 
-        accord.university.univ_id === univId && 
-        accord.isced && 
-        newValue.includes(accord.isced.isc_id)
-      );
-    });
-  }
+  // Ne rien faire ici pour éviter les croisements
 });
 
     watch(selectedDepartment, handleFiltreEtu);
