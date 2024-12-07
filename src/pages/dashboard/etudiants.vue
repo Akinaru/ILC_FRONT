@@ -83,10 +83,10 @@
                         </div>
                     </div>
                 </div>
-                <!-- Années de mobilité -->
+                <!--  de mobilité -->
                 <div>
                     <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('anneemobilite')">
-                        <p class="select-none">Années de mobilité ({{ selectedAnneeMobilite.length }} séléctionné{{ selectedAnneeMobilite.length > 1 ? 's' : '' }})</p>
+                        <p class="select-none">Année de mobilité ({{ selectedAnneeMobilite.length }} séléctionné{{ selectedAnneeMobilite.length > 1 ? 's' : '' }})</p>
                         <span :class="isOpen.anneemobilite ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
                     </div>
                     <div class="p-1" v-show="isOpen.anneemobilite">
@@ -209,7 +209,7 @@
                                         <p class="text-sm text-gray-400">
                                             <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
                                             <strong>Documents ajouté(s):</strong> {{ etu.documents?.count || 0 }}/{{ etu.documents?.countmax }}<br>
-                                            <strong>Années de mobilités:</strong> {{ etu.acc_anneemobilite ? etu.acc_anneemobilite : 'Inconnu' }}<br>
+                                            <strong>Année de mobilité:</strong> {{ etu.acc_anneemobilite ? etu.acc_anneemobilite : 'Inconnu' }}<br>
                                             <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}<br>
                                             <strong>Aménagement aux éxams:</strong> {{ etu.acc_amenagement == true ? 'Oui' : 'Non' }}
                                         </p>

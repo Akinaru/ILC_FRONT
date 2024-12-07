@@ -78,7 +78,7 @@
                         <!-- Parcours -->
                         <label class="form-control w-full items-center justify-center">
                             <div class="label w-full">
-                                <span class="label-text">Parcours</span>
+                                <span class="label-text">Parcours de BUT envisagé</span>
                             </div>
                             <input type="text" :value="account.acc_parcours" class="input input-bordered w-full" disabled />
                         </label>
@@ -129,7 +129,7 @@
                             <!-- Parcours  -->
                             <label class="form-control w-full">
                                 <div class="label">
-                                    <span class="label-text">Parcours</span>
+                                    <span class="label-text">Parcours de BUT envisagé</span>
                                 </div>
                                 <input type="text" placeholder="(Parcours lors de la mobilité)" class="input input-bordered w-full" v-model="currentUnivEtu.acc_parcours"/>
                             </label>
