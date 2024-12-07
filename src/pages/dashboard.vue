@@ -52,6 +52,7 @@
         {routeName: 'EtudiantsDash', name: '👩‍🎓 Etudiants'},
         {routeName: 'DocumentsDash', name: '📜 Documents'},
         {routeName: 'ImagesDash', name: '📷 Images'},
+        {routeName: 'TemoignageDash', name: '📜 Témoignages'},
         {routeName: 'Arbitrage', name: '🖥️ Arbitrage'},
     ]
 

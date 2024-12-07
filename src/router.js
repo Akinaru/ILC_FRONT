@@ -153,6 +153,13 @@ const routes = [
                 meta: { title: 'Dashboard - Images', requiresAuth: true }
             },
             { 
+                path: 'temoignage', 
+                name: 'TemoignageDash', 
+                component: () => import('./pages/dashboard/temoignage.vue'),
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Témoignages', requiresAuth: true }
+            },
+            { 
                 path: 'arbitrage', 
                 name: 'Arbitrage', 
                 component: () => import('./pages/dashboard/arbitrage.vue'),
