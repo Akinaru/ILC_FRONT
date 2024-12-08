@@ -31,32 +31,32 @@
                             </div>
                         </div>
                         <div class="p-2 mt-1  rounded w-72" :class="account.arbitrage ? 'bg-base-200' : 'bg-base-300 opacity-60'">
-                                        <RouterLink target="_blank" :to="{name: 'Accord', params: {agree_id: account.arbitrage.agree_id}}" v-if="account.arbitrage" class="text-sm select-none hover:opacity-60">
-                                            <div class="flex items-center">
-                                                <span class="relative inline-block mr-2">
-                                                    <!-- Drapeau -->
-                                                    <span class="fi" :class="'fi-' + (account.arbitrage.partnercountry?.parco_code)"></span>
+                            <RouterLink target="_blank" :to="{name: 'Accord', params: {agree_id: account.arbitrage.agree_id}}" v-if="account.arbitrage" class="text-sm select-none hover:opacity-60">
+                                <div class="flex items-center">
+                                    <span class="relative inline-block mr-2">
+                                        <!-- Drapeau -->
+                                        <span class="fi" :class="'fi-' + (account.arbitrage.partnercountry?.parco_code)"></span>
 
-                                                    <!-- Point d'interrogation si pas de drapeau -->
-                                                    <span v-if="!account.arbitrage.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
-                                                        ?
-                                                    </span>
-                                                </span>
+                                        <!-- Point d'interrogation si pas de drapeau -->
+                                        <span v-if="!account.arbitrage.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
+                                            ?
+                                        </span>
+                                    </span>
 
-                                                <div class="flex flex-col flex-1 overflow-hidden">
-                                                    <span class="font-medium truncate">{{ account.arbitrage.university?.univ_name || 'Université indisponible' }}</span>
-                                                    <span class="text-gray-500 truncate">
-                                                        {{ account.arbitrage.university?.univ_city || 'Ville indisponible' }} - 
-                                                        {{ account.arbitrage.partnercountry?.parco_name || 'Pays indisponible' }}
-                                                        <span class="text-xs">({{ account.arbitrage.isced?.isc_code || 'Code ISCED ?' }})</span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </RouterLink>
-                                        <div v-else class="text-sm text-gray-400 italic flex items-center justify-center w-full min-h-12">
-                                            Pas de destination
-                                        </div>
+                                    <div class="flex flex-col flex-1 overflow-hidden">
+                                        <span class="font-medium truncate">{{ account.arbitrage.university?.univ_name || 'Université indisponible' }}</span>
+                                        <span class="text-gray-500 truncate">
+                                            {{ account.arbitrage.university?.univ_city || 'Ville indisponible' }} - 
+                                            {{ account.arbitrage.partnercountry?.parco_name || 'Pays indisponible' }}
+                                            <span class="text-xs">({{ account.arbitrage.isced?.isc_code || 'Code ISCED ?' }})</span>
+                                        </span>
                                     </div>
+                                </div>
+                            </RouterLink>
+                            <div v-else class="text-sm text-gray-400 italic flex items-center justify-center w-full min-h-12">
+                                Pas de destination
+                            </div>
+                        </div>
                         <!-- Témoignage -->
                         <div class="prose">
                             <blockquote class="italic">
