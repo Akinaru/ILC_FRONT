@@ -20,45 +20,60 @@
           </div>
         </div>
 
-        <!-- Date limite voeux -->
-        <div class="flex items-center justify-center flex-col pt-5">
-          <p>Date limite des voeux:</p>
-          <div class="flex items-center justify-start bg-base-300 w-fit p-3">
-            <div class="flex py-3 pr-3 ">
-              <p class="font-bold">{{ formatDate(admin.adm_datelimite) }}</p>
-              <p class="mx-2">{{ getJoursRestants(admin.adm_datelimite) }}</p>
-            </div>
-            <label for="modal_date" class="btn btn-primary hover:scale-105 transition-all hover:opacity-70">Modifier</label>
+        <div class="w-full flex flex-col items-center justify-center">
+          <div class="w-full flex flex-col md:flex-row items-center justify-center gap-8 p-5">
+              <!-- Date limite voeux -->
+              <div class="flex items-center justify-center flex-col">
+                  <p>Date limite des voeux:</p>
+                  <div class="flex items-center justify-start bg-base-300 w-fit h-20 p-3">
+                      <div class="flex py-3 pr-3">
+                          <p class="font-bold">{{ formatDate(admin.adm_datelimite) }}</p>
+                          <p class="mx-2">{{ getJoursRestants(admin.adm_datelimite) }}</p>
+                      </div>
+                      <label for="modal_date" class="btn btn-primary hover:scale-105 transition-all hover:opacity-70">Modifier</label>
 
-
-            <!-- Modal modification date -->
-            <input type="checkbox" id="modal_date" class="modal-toggle" />
-            <div class="modal" role="dialog">
-              <div class="modal-box">
-                <h3 class="font-bold text-lg">Modification date limite</h3>
-                <form @submit.prevent="confirmModifDate" class="w-full">
-                  <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
-                  <div class="modal-action">
-                    <button type="submit">
-                      <label for="modal_date" class="btn btn-success">Valider</label>
-                    </button>  
-                    <label for="modal_date" class="btn">Annuler</label>
+                      <!-- Modal modification date -->
+                      <input type="checkbox" id="modal_date" class="modal-toggle" />
+                      <div class="modal" role="dialog">
+                          <div class="modal-box">
+                              <h3 class="font-bold text-lg">Modification date limite</h3>
+                              <form @submit.prevent="confirmModifDate" class="w-full">
+                                  <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
+                                  <div class="modal-action">
+                                      <button type="submit">
+                                          <label for="modal_date" class="btn btn-success">Valider</label>
+                                      </button>  
+                                      <label for="modal_date" class="btn">Annuler</label>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
                   </div>
-                </form>
               </div>
-            </div>
 
-
+              <!-- Status Arbitrage -->
+              <div class="flex items-center justify-center flex-col">
+                  <p>Statut de l'arbitrage:</p>
+                  <div class="flex items-center justify-between bg-base-300 w-72 h-20 p-3">
+                      <span class="font-medium opacity-70">Temporaire</span>
+                      <input type="checkbox" 
+                             class="toggle toggle-primary hover:scale-105 transition-all" 
+                             :checked="!admin.adm_arbitragetemporaire"
+                             @change="updateArbitrageStatus" />
+                      <span class="font-medium opacity-70">Définitif</span>
+                  </div>
+              </div>
           </div>
+
           <!-- Etapes -->
           <div class="w-fit flex items-center justify-center flex-col md:py-10">
-                <p class="py-4">Avancement des étapes actuelles:</p>
-                <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
-                    <li class="step step-primary">Inscriptions</li>
-                    <li class="step step-primary">Choix des voeux</li>
-                    <li class="step" :class="{'step-primary' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
-                </ul>
-            </div>
+              <p class="py-4">Avancement des étapes actuelles:</p>
+              <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
+                  <li class="step step-primary">Inscriptions</li>
+                  <li class="step step-primary">Choix des voeux</li>
+                  <li class="step" :class="{'step-primary' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+              </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -102,6 +117,18 @@ const limitedActions = computed(() => {
   return actions.value.slice(0, 5);
 });
 
+async function updateArbitrageStatus(event) {
+    const requestData = {
+        adm_id: admin.value.adm_id,
+        adm_arbitragetemporaire: !event.target.checked
+    };
+    
+    await request('PUT', true, response, config.apiUrl + 'api/admin/arbitrage', requestData);
+    if(response.value.status == 200) {
+      await request('GET', false, admin, config.apiUrl + 'api/admin');
+    }
+}
+
 function getJoursRestants(date){
   if(joursRestants(date) == 0){
     return "ajourd'hui";
@@ -123,11 +150,10 @@ function joursRestants(date) {
   return daysRemaining;
 }
 
-
 function formatDate(dateString) {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Les mois commencent à 0
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 }
@@ -144,11 +170,10 @@ async function confirmModifDate(){
   const requestData = { 
     adm_datelimite: modifDate.value,
   };
-  await request('PUT', true, response, config.apiUrl+'api/admin', requestData);
+  await request('PUT', false, response, config.apiUrl+'api/admin/date', requestData);
   if(response.value.status == 200){
-      addAction(accountStore.login, 'admin', response, 'Modification administration: Nouvelle date limite des voeux: '+formatDate(requestData.adm_datelimite));
+    await request('GET', false, admin, config.apiUrl + 'api/admin');
   }
-  fetch();
 }
 
 function formatDateModif(dateTime) {
@@ -158,5 +183,4 @@ function formatDateModif(dateTime) {
    const day = String(date.getDate()).padStart(2, '0');
    return `${year}-${month}-${day}`;
 }
-
 </script>
