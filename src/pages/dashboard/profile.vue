@@ -18,7 +18,10 @@
                     <div class="select-none flex justify-between items-center elementDrag h-20 transition-all duration-100 ease-in-out">
                         <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
 
-                            <div class="border-warning border-2 bg-base-300 p-1 flex items-center justify-center w-full h-20 select-none">
+                            <div :class="[
+                                'border-2 bg-base-300 p-1 flex items-center justify-center w-full h-20 select-none',
+                                destination.status ? 'border-warning' : 'border-green-400'
+                                ]">
                                 <span class="relative inline-block tooltip mr-2" :data-tip="destination.agreement?.partnercountry?.parco_name || 'Introuvable'">
                                     <!-- Drapeau -->
                                     <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-' + (destination.agreement?.partnercountry?.parco_code || '')"></span>
@@ -106,8 +109,12 @@
                     <div class="w-full flex items-center justify-start flex-col">
                         <p class="font-bold text-xl py-5 flex justify-start items-center">Liste des voeux:</p>
                         <div v-for="(label, index) in labels" :key="index">
-                            <div class="w-fit flex items-center justify-start my-1 bg-base-300 border-2 "
-                            :class="destination.agreement && wishes?.count > 0 && wishes.wishes[label] && destination.agreement.agree_id == wishes.wishes[label].agree_id ? ' border-warning' : 'border-base-300'">
+                            <div class="w-fit flex items-center justify-start my-1 bg-base-300 border-2"
+   :class="[
+       (destination.agreement && wishes?.count > 0 && wishes.wishes[label] && destination.agreement.agree_id == wishes.wishes[label].agree_id)
+           ? (destination.status ? 'border-warning' : 'border-green-400')
+           : 'border-base-300'
+   ]">
                                 <p class="font-bold text-sm xl:text-lg min-w-fit p-5 transition-all duration-100 ease-in-out">Voeu n° {{ index+1 }}</p>
                                 <RouterLink target="_blank" :to="{ name: 'Accord', params: { agree_id: wishes.wishes[label].agree_id }}" v-if="wishes && wishes.count > 0 && wishes.wishes[label]" class="bg-base-300 cursor-pointer hover:opacity-50 select-none flex justify-between items-center elementDrag w-96 h-20">
                                     <div class=" flex items-center justify-center h-20 select-none">
@@ -354,7 +361,7 @@
                             <!-- Relevé de notes -->
                             <div class="form-control w-full py-3">
                                 <div class="label">
-                                    <span class="label-text">Relevé des notes</span>
+                                    <span class="label-text">Relevé des notes de la mobilité</span>
                                 </div>
                                 <div class="w-full flex flex-col" v-if="myfiles.releveNote.exist">
                                     <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.releveNote.path)">
