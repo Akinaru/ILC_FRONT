@@ -5,10 +5,17 @@
             
             <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
                 <img 
-                :src="config.apiUrl + 'images/banner_dest.webp'" 
+                v-if="images.find(img => img.nom === 'banner_dest').exists"
+                :src="`${config.apiUrl}api/image?path=private/images/site&name=banner_dest`"
                     alt="Bannière"
                     className="w-full h-full object-cover"
                 />
+                <div v-else
+                    class="w-full h-full flex items-center justify-center">
+                    <div class="text-center">
+                        <span class="text-3xl font-bold">Destinations</span>
+                    </div>
+                </div>
             </div>
             <div class="block lg:flex my-5">
  
@@ -152,10 +159,17 @@
         <div class="w-full ">
             <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
                 <img 
-                :src="config.apiUrl + 'images/banner_art.webp'" 
+                v-if="images.find(img => img.nom === 'banner_art').exists"
+                :src="`${config.apiUrl}api/image?path=private/images/site&name=banner_art`"
                     alt="Bannière"
                     className="w-full h-full object-cover"
                 />
+                <div v-else
+                    class="w-full h-full flex items-center justify-center ">
+                    <div class="text-center">
+                        <span class="text-3xl font-bold">Articles</span>
+                    </div>
+                </div>
             </div>
             <!-- Articles -->
             <div v-if="articles && articles.articles" class="flex justify-center items-center flex-col py-5">
@@ -193,10 +207,17 @@
             <!-- Agenda -->
             <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
                 <img 
-                :src="config.apiUrl + 'images/banner_evt.webp'" 
+                v-if="images.find(img => img.nom === 'banner_evt').exists"
+                :src="`${config.apiUrl}api/image?path=private/images/site&name=banner_evt`"
                     alt="Bannière"
                     className="w-full h-full object-cover"
                 />
+                <div v-else
+                    class="w-full h-full flex items-center justify-center">
+                    <div class="text-center">
+                        <span class="text-3xl font-bold">Evenements</span>
+                    </div>
+                </div>
             </div>
                 <div class="m-5 flex items-center justify-center flex-col">
                     <div class="flex h-full items-start justify-center md:flex-row flex-col " v-if="events && events.count > 0">
@@ -268,6 +289,11 @@
     const events = ref([]);
     const eventspf = ref([]);
     const favoris = ref([]);
+    const images = ref([
+        { vrainom: 'Destinations Accueil', nom: 'banner_dest', path: 'private/images/site', exists: false },
+        { vrainom: 'Articles Accueil', nom: 'banner_art', path: 'private/images/site', exists: false },
+        { vrainom: 'Evenements Accueil', nom: 'banner_evt', path: 'private/images/site', exists: false },
+    ]);
 
     const itemsToShow = ref(12);
 
@@ -315,6 +341,19 @@
         await request('GET', false, components, config.apiUrl+'api/component')
         await request('GET', false, events, config.apiUrl+'api/event')
         await request('GET', false, eventspf, config.apiUrl+'api/event/pfonly')
+        for (const image of images.value) {
+            await request(
+                'GET', 
+                false, 
+                response, 
+                `${config.apiUrl}api/image?path=${image.path}&name=${image.nom}`
+            );
+            if (!response?.value?.error) {
+                image.exists = true;
+            } else {
+                image.exists = false;
+            }
+        }
         if(accountStore.isLogged()){
             await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+accountStore.login)
         }

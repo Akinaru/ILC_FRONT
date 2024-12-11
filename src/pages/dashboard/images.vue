@@ -5,7 +5,7 @@
       <div v-for="(image, index) in images" :key="image.name" class="relative mb-8">
         <!-- En-tête avec nom et boutons -->
         <div class="w-full flex justify-between items-center bg-base-200">
-          <p class="px-3 font-bold">{{ image.name }}</p>
+          <p class="px-3 font-bold">{{ image.vrainom }}</p>
           <div class="flex">
             <!-- Bouton de modification -->
             <button class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300" 
@@ -25,6 +25,11 @@
                          stroke-width="2"/>
               </svg>
             </button>
+            <button v-if="image.exists" class="hover:opacity-70 p-5 hover:cursor-pointer bg-base-300" @click="openConfirmModal(image)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
           </div>
         </div>
 
@@ -85,36 +90,58 @@
           </div>
       </dialog>
 
-<!-- Modal de modification -->
-<dialog id="modifModal" ref="modifModal" class="modal">
-    <div class="modal-box max-w-3xl">
-        <h3 class="text-lg font-bold">Modifier l'image bannière</h3>
-        <div class="py-3">
-            <!-- Prévisualisation de l'image -->
-            <div class="flex items-center justify-center">
-                <div :style="{ backgroundImage: `url(${isModifying ? backgroundImageModif : backgroundImage})` }" 
-                    class="bg-cover bg-center w-full h-32 mb-4">
-                </div>
-            </div>
-            
-            <!-- Formulaire de modification -->
-            <div class="form-control w-full">
-                <input type="file" 
-                      @change="handleFileInputChange" 
-                      name="image" 
-                      accept="image/*" 
-                      class="file-input file-input-bordered w-full" />
-                      
-                <p class="text-sm text-gray-500 mt-2">Format recommandé : 1920x400 pixels</p>
-            </div>
-        </div>
-        
-        <div class="modal-action">
-            <button class="btn" @click="cancelModifImage">Annuler</button>
-            <button class="btn btn-success" @click="confirmModifImage">Enregistrer</button>
-        </div>
-    </div>
-</dialog>
+      <!-- Modal de modification -->
+      <dialog id="modifModal" ref="modifModal" class="modal">
+          <div class="modal-box max-w-3xl">
+              <h3 class="text-lg font-bold">Modifier l'image</h3>
+              <h4>{{ currentImageModif.vrainom }} ({{ currentImageModif.nom }})</h4>
+              <div class="py-3">
+                  <!-- Prévisualisation de l'image -->
+                  <div class="flex items-center justify-center">
+                      <div :style="{ backgroundImage: `url(${isModifying ? backgroundImageModif : backgroundImage})` }" 
+                          class="bg-cover bg-center w-full h-32 mb-4">
+                      </div>
+                  </div>
+                  
+                  <!-- Formulaire de modification -->
+                  <div class="form-control w-full">
+                      <input type="file" 
+                            @change="handleFileInputChange" 
+                            name="image" 
+                            accept="image/*" 
+                            class="file-input file-input-bordered w-full" />
+                            
+                      <p class="text-sm text-gray-500 mt-2">Format recommandé : 1920x400 pixels</p>
+                  </div>
+              </div>
+              
+              <div class="modal-action">
+                  <button class="btn" @click="cancelModifImage">Annuler</button>
+                  <button class="btn btn-success" @click="confirmModifImage">Enregistrer</button>
+              </div>
+          </div>
+      </dialog>
+
+      <!-- Modal de suppression -->
+      <dialog id="deleteModal" ref="deleteModal" class="modal">
+          <div class="modal-box max-w-3xl">
+              <h3 class="text-lg font-bold">Supprimer l'image</h3>
+              <h4>{{ currentImageDelete.vrainom }} ({{ currentImageDelete.nom }})</h4>
+              <div class="py-3">
+                  <!-- Prévisualisation de l'image -->
+                  <div class="flex items-center justify-center">
+                      <div :style="{ backgroundImage: `url(${backgroundImageDelete})` }" 
+                          class="bg-cover bg-center w-full h-32 mb-4">
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="modal-action">
+                  <button class="btn" @click="cancelDeleteImage">Annuler</button>
+                  <button class="btn btn-success" @click="confirmSuprImage">Confirmer</button>
+              </div>
+          </div>
+      </dialog>
     </div>
   </template>
   
@@ -122,6 +149,7 @@
   import { ref, computed, onMounted  } from 'vue'
   import config from '../../config';
   import { request } from '../../composables/httpRequest';
+    import { addAlert } from '../../composables/addAlert';
 
   
   const confirmDeleteImage = ref([]);
@@ -130,13 +158,15 @@
   const imagePreview = ref(null);
   const isModifying = ref(false);
   const currentImageModif = ref({});
+  const currentImageDelete = ref({});
   const imagePreviewModif = ref(null);
+  const imagePreviewDelete = ref(null);
 
   const images = ref([
-    { nom: 'banner_dest', path: 'private/images/site', exists: false },
-    { nom: 'banner_art', path: 'private/images/site', exists: false },
-    { nom: 'banner_evt', path: 'private/images/site', exists: false },
-]);
+    { vrainom: 'Destinations Accueil', nom: 'banner_dest', path: 'private/images/site', exists: false },
+    { vrainom: 'Articles Accueil', nom: 'banner_art', path: 'private/images/site', exists: false },
+    { vrainom: 'Evenements Accueil', nom: 'banner_evt', path: 'private/images/site', exists: false },
+  ]);
 
   const backgroundImage = computed(() => {
     return imagePreview.value ? imagePreview.value : `${config.apiUrl}images/no_image.jpg`;
@@ -146,6 +176,13 @@
     return imagePreviewModif.value ? imagePreviewModif.value : 
         currentImageModif.value.img_path
         ? `${config.apiUrl}${currentImageModif.value.img_path}`
+        : `${config.apiUrl}images/no_image.jpg`;
+  });
+
+  const backgroundImageDelete = computed(() => {
+    return imagePreviewModif.value ? imagePreviewDelete.value : 
+        currentImageDelete.value.img_path
+        ? `${config.apiUrl}${currentImageDelete.value.img_path}`
         : `${config.apiUrl}images/no_image.jpg`;
   });
 
@@ -212,6 +249,13 @@
       modal.showModal();
   }
 
+    // Ouvrir le modal de suppression
+    function openConfirmModal(image) {
+      currentImageDelete.value = {...image}; // Clone l'objet image
+      const modal = document.getElementById('deleteModal');
+      modal.showModal();
+  }
+
   // Annuler la modification
   function cancelModifImage() {
       isModifying.value = false;
@@ -221,35 +265,37 @@
       modal.close();
   }
 
+    // Annuler la suppression
+    function cancelDeleteImage() {
+      currentImageDelete.value = {};
+      imagePreviewDelete.value = null;
+      const modal = document.getElementById('deleteModal');
+      modal.close();
+  }
+
   // Confirmer la modification
   async function confirmModifImage() {
-      if(currentImageModif.value.img_name == '' || currentImageModif.value.img_name == null){
-          addAlert('error', {data:{error: 'Vous devez donner un nom à votre image.', message:'Modification de l\'image annulée.'}});
-          return;
-      }
 
       try {
           // Si une nouvelle image a été sélectionnée
           if(currentImageModif.value.file) {
-              const formData = new FormData();
+
+            try{
+                const formData = new FormData();
               formData.append('image', currentImageModif.value.file);
-              formData.append('fileName', currentImageModif.value.img_name);
-              formData.append('filePath', 'private/images');
-              formData.append('imageId', currentImageModif.value.img_id);
+              formData.append('fileName', currentImageModif.value.nom);
+              formData.append('filePath', 'private/images/site');
               
-              await request('POST', true, response, config.apiUrl + 'api/image/upload', formData);
+              await request('POST', true, response, config.apiUrl + 'api/image/upload', formData);   
+           } catch (error){
+               console.log("Erreur ajout image: "+error)
+           }
+
+
           }
           
-          // Si seulement le nom a été modifié
-          const requestData = {
-              img_id: currentImageModif.value.img_id,
-              img_name: currentImageModif.value.img_name
-          };
-          
-          await request('PUT', true, response, config.apiUrl + 'api/image', requestData);
-          
           if(response.value.status === 200) {
-              addAction(accountStore.login, 'image', response, 'Modification de l\'image ' + currentImageModif.value.img_name + '.');
+
               await fetchAll();
               cancelModifImage();
           }
@@ -258,6 +304,39 @@
           addAlert('error', {data:{error: error, message:'Erreur lors de la modification de l\'image.'}});
       }
   }
+
+  // Confirmer la modification
+  async function confirmSuprImage() {
+
+try {
+    // Si une nouvelle image a été sélectionnée
+    if(currentImageDelete.value) {
+
+      try{
+        
+        var requestData = {
+          'fileName': currentImageDelete.value.nom,
+          'filePath': 'private/images/site'
+        }
+
+        await request('DELETE', true, response, config.apiUrl + 'api/image', requestData);   
+     } catch (error){
+         console.log("Erreur ajout image: "+error)
+     }
+
+
+    }
+    
+    if(response.value.status === 200) {
+
+        await fetchAll();
+        cancelModifImage();
+    }
+} catch (error) {
+    console.log("Erreur modification image: " + error);
+    addAlert('error', {data:{error: error, message:'Erreur lors de la modification de l\'image.'}});
+}
+}
 
   onMounted(fetchAll);
 
