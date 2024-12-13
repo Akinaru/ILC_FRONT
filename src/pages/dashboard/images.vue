@@ -207,6 +207,8 @@
   function closeModal() {
       const modal = document.getElementById('confirmModal')
       modal.close()
+      const modal2 = document.getElementById('deleteModal')
+      modal2.close()
   }
 
   // Gestion du changement d'image dans le formulaire
@@ -320,6 +322,8 @@ try {
         }
 
         await request('DELETE', true, response, config.apiUrl + 'api/image', requestData);   
+        closeModal();
+        await fetchAll();
      } catch (error){
          console.log("Erreur ajout image: "+error)
      }
