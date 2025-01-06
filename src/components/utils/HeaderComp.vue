@@ -131,14 +131,7 @@ async function load() {
   
 }
 
-// Watcher sur le changement de connexion
-watch(fullname, async (newVal) => {
-  if (newVal) {
-    await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
-  } else {
-    role.value = [];
-  }
-});
+
 
 watch(logged, async (newVal) => {
   isUserLoggedIn.value = logged.value;

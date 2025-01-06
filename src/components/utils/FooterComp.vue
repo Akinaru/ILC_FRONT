@@ -19,6 +19,7 @@
         </nav>
         <aside>
             <p>Copyright © {{ date }} ILC - Tous droits réservés. <span class="link link-hover">Mentions légales</span></p>
+            <p>Maxime GALLOTTA - Luc DAMAS</p>
         </aside>
     </footer>
 </template>

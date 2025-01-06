@@ -51,18 +51,30 @@
                   </div>
               </div>
 
-              <!-- Status Arbitrage -->
-              <div class="flex items-center justify-center flex-col">
-                  <p>Statut de l'arbitrage:</p>
-                  <div class="flex items-center justify-between bg-base-300 w-72 h-20 p-3">
-                      <span class="font-medium opacity-70">Temporaire</span>
-                      <input type="checkbox" 
-                             class="toggle toggle-primary hover:scale-105 transition-all" 
-                             :checked="!admin.adm_arbitragetemporaire"
-                             @change="updateArbitrageStatus" />
-                      <span class="font-medium opacity-70">Définitif</span>
-                  </div>
-              </div>
+<!-- Status Arbitrage -->
+<div class="flex items-center justify-center flex-col">
+   <p>Statut de l'arbitrage:</p>
+   <div class="flex items-center justify-between bg-base-300 w-72 h-20 p-3">
+       <div class="flex flex-col items-center">
+           <span class="font-medium" :class="admin.adm_arbitragetemporaire ? '' : 'opacity-70'">
+               Temporaire
+           </span>
+           <div class="h-4 w-4 border-2 border-warning mt-1"></div>
+       </div>
+       
+       <input type="checkbox" 
+              class="toggle toggle-primary hover:scale-105 transition-all" 
+              :checked="!admin.adm_arbitragetemporaire"
+              @change="updateArbitrageStatus" />
+              
+       <div class="flex flex-col items-center">
+           <span class="font-medium" :class="!admin.adm_arbitragetemporaire ? '' : 'opacity-70'">
+               Définitif
+           </span>
+           <div class="h-4 w-4 border-2 border-green-400 mt-1"></div>
+       </div>
+   </div>
+</div>
           </div>
 
           <!-- Etapes -->

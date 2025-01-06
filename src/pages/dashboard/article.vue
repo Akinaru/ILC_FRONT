@@ -257,7 +257,7 @@ async function addArticle(){
                formData.append('filePath', 'private/images/articles');
                formData.append('articleId', rep.value.article.art_id);
                
-               await request('POST', true, response, config.apiUrl+'api/image/upload', formData)        
+               await request('POST', true, response, config.apiUrl+'api/image/uploadarticle', formData)        
            } catch (error){
                console.log("Erreur ajout image: "+error)
            }
@@ -476,7 +476,7 @@ async function confirmModifArticle() {
                     formData.append('fileName', 'img_art_' + currentArticleModif.value.art_id);
                     formData.append('filePath', 'private/images/articles');
                     formData.append('articleId', currentArticleModif.value.art_id);
-                    await request('POST', true, response, config.apiUrl + 'api/image/upload', formData);
+                    await request('POST', true, response, config.apiUrl + 'api/image/uploadarticle', formData);
                 }
                 else{
                 }

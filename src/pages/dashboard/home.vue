@@ -16,16 +16,20 @@
         <!-- Destination finale -->
         <div v-if="destination.agreement" class="flex items-center justify-center flex-col">
             <p class="text-sm font-bold pb-2">Destination finale</p>
-            <div class="select-none flex justify-between items-center elementDrag xl:w-120 md:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
+            <div class="select-none flex flex-col justify-between items-center elementDrag xl:w-120 md:w-105 w-96 h-20 transition-all duration-100 ease-in-out">
                 <RouterLink :to="{name: 'Accord', params: {agree_id: destination.agreement.agree_id}}" class="group hover:opacity-60 relative">
-
-                    <div class="border-warning border-2 p-1 flex items-center justify-center w-full h-20 select-none">
+                    
+                    <div :class="[
+                        'border-2 p-1 flex items-center justify-center w-full h-20 select-none',
+                        destination.status ? 'border-warning' : 'border-green-400'
+                    ]">
                         <span class="tooltip mr-2" :data-tip="destination.agreement.partnercountry.parco_name">
                             <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+destination.agreement.partnercountry.parco_code "></span>
                         </span>
                         <p class="w-full select-none">({{ destination.agreement.partnercountry.parco_name }}) <span class="font-bold">{{destination.agreement.university.univ_city}} - {{ destination.agreement.university.univ_name }}</span> ({{ destination.agreement.isced.isc_code }})</p>    
                     </div>
                 </RouterLink>
+                <p v-if="destination.status" class="text-sm italic mt-1">Cette destination n'est pas définitive et pourra être modifiée avant la validation finale.</p>
             </div>
         </div>
 
@@ -244,7 +248,7 @@
                         <!-- Relevé de notes -->
                         <div class="form-control w-full py-3">
                             <div class="label">
-                                <span class="label-text">Relevé des notes</span>
+                                <span class="label-text">Relevé des notes de la mobilité</span>
                             </div>
                             <input accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'releveNote')" type="file" class="file-input file-input-bordered w-full mb-1"/>
 
@@ -363,7 +367,13 @@
                                 <p class="font-bold xl:pr-5 pr-3 xl:text-lg transition-all duration-100 ease-in-out min-w-fit">Vœu n°{{ i }}</p>
                                 <div :id="'voeu'+i" class="voeuxDrop bg-base-100 h-20 w-full flex items-center justify-center transition-all duration-100 ease-in-out">
                                     <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300 select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
-                                        <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 flex items-center justify-center h-20 select-none w-full">
+                                        <div :class="[
+                                        'border-2 flex items-center justify-center h-20 select-none w-full',
+                                        (destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id)
+                                            ? (destination.status ? 'border-warning' : 'border-green-400')
+                                            : 'border-base-300'
+                                        ]">
+
                                             <span class="relative inline-block mr-2">
                                             <!-- Drapeau -->
                                             <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (localVoeux[i].partnercountry?.parco_code)"></span>
@@ -463,7 +473,11 @@
                             <!-- Sil y a un accord -->
                             <div v-if="localVoeux[i]" :draggable="true" :id="'accord_wish_'+localVoeux[i].agree_id" class="bg-base-300  select-none flex justify-between items-center elementDrag w-full transition-all duration-100 ease-in-out h-20 hover:cursor-move hover:opacity-80">
                                 <div class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full"
-                                :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'">
+                                    :class="[
+                                        (destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id)
+                                            ? (destination.status ? 'border-warning' : 'border-green-400')
+                                            : 'border-base-300'
+                                    ]">
                                 <span class="relative inline-block mr-1">
                                                 <!-- Drapeau -->
                                                 <span class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out" :class="'fi-' + (localVoeux[i].partnercountry?.parco_code || '')"></span>
@@ -566,7 +580,12 @@
                         <p class="font-bold xl:p-5 p-3 xl:text-lg text-sm transition-all duration-100 ease-in-out">Vœu n°{{ i }}</p>
                         <div class="bg-base-100 h-20 xl:w-130 w-105 flex items-center justify-center transition-all duration-100 ease-in-out">
                             <RouterLink target="_blank" :to="{ name: 'Accord', params: { agree_id: localVoeux[i].agree_id }}" v-if="localVoeux[i]" :draggable="true" class="cursor-pointer select-none flex justify-between items-center xl:w-150 w-120 transition-all duration-100 ease-in-out h-20 hover:opacity-80">
-                                <div :class="destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id ? 'border-warning' : 'border-base-300'" class="border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full">
+                                <div :class="[
+                                    'border-2 bg-base-300 flex items-center justify-center h-20 select-none w-full',
+                                    (destination.agreement && destination.agreement.agree_id == localVoeux[i].agree_id)
+                                        ? (destination.status ? 'border-warning' : 'border-green-400')
+                                        : 'border-base-300'
+                                    ]">
                                     <span class="tooltip mr-2" :data-tip="localVoeux[i].partnercountry.parco_name">
                                         <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+localVoeux[i].partnercountry.parco_code "></span>
                                     </span>
@@ -584,7 +603,7 @@
         <!-- Partie témoignage -->
         <div class="w-full flex items-center justify-center mt-20">
             <div class="w-150 relative">
-                <p>Témoignange</p>
+                <p class="text-xl font-bold">Témoignage</p>
                 <p className="text-base-content/70 mb-4">
                     Écrivez un témoignage de vos expériences à l'étranger. N'hésitez pas à donner également un retour d'expériences sur le site et sur des possibles améliorations.
                 </p>
