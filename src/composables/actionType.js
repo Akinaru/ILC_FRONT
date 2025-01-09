@@ -9,8 +9,9 @@ export const types = [
     { name: 'Evenement', color: 'badge-error', condition: 'event' },
     { name: 'Admin', color: 'badge-secondary', condition: 'admin' },
     { name: 'Université', color: 'badge-success', condition: 'university' },
-    { name: 'Isced', color: 'badge-link', condition: 'isced' },
+    { name: 'Isced', color: 'bg-purple-600 text-white', condition: 'isced' },
     { name: 'Autre', color: 'badge-warning', condition: 'other' },
+    { name: 'Arbitrage', color: 'bg-indigo-600 text-white', condition: 'arbitrage' },
 ];
 
 export function getType(act_type) {
