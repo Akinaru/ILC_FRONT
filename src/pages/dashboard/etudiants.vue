@@ -55,6 +55,7 @@
                             <input id="filt_voeux_2" type="checkbox" class="checkbox " value="AuMoinsUn" v-model="selectedVoeux">
                             <label for="filt_voeux_2" class="select-none w-full cursor-pointer pl-2">Au moins un</label>
                         </div>
+
                     </div>
                 </div>
                 <!-- Documents -->
@@ -65,6 +66,10 @@
                     </div>
                     <div class="p-1" v-show="isOpen.document">
                         <button class="hover:opacity-70 underline" @click="deselectAllDocuments">Tout désélectionner</button>
+                        <div class="flex items-center hover:opacity-60 my-1">
+                            <input id="filt_document_4" type="checkbox" class="checkbox" value="ChoixCoursValide" v-model="selectedDocument">
+                            <label for="filt_document_4" class="select-none w-full cursor-pointer pl-2">Choix cours validés</label>
+                        </div>
                         <div class="flex items-center hover:opacity-60 my-1">
                             <input id="filt_document_0" type="checkbox" class="checkbox" value="0" v-model="selectedDocument">
                             <label for="filt_document_0" class="select-none w-full cursor-pointer pl-2">0</label>
@@ -207,13 +212,13 @@
                                     </div>
                                     <div class="mt-4">
                                         <p class="text-sm text-gray-400">
-    <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
-    <strong>Documents ajouté(s):</strong> {{ etu.documents?.count || 0 }}/{{ etu.documents?.countmax }}<br>
-    <strong>Année de mobilité:</strong> {{ etu.acc_anneemobilite ? etu.acc_anneemobilite : 'Inconnu' }}<br>
-    <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}<br>
-    <strong>Aménagement aux éxams:</strong> {{ etu.acc_amenagement == true ? 'Oui' : 'Non' }}<br>
-    <strong>Validation choix de cours:</strong> {{ etu.acc_validechoixcours ? '✅' : '❌' }}
-</p>
+                                            <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
+                                            <strong>Documents ajouté(s):</strong> {{ etu.documents?.count || 0 }}/{{ etu.documents?.countmax }}<br>
+                                            <strong>Année de mobilité:</strong> {{ etu.acc_anneemobilite ? etu.acc_anneemobilite : 'Inconnu' }}<br>
+                                            <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}<br>
+                                            <strong>Aménagement aux éxams:</strong> {{ etu.acc_amenagement == true ? 'Oui' : 'Non' }}<br>
+                                            <strong>Validation choix de cours:</strong> {{ etu.acc_validechoixcours ? '✅' : '❌' }}
+                                        </p>
                                     </div>
 
                                     
@@ -359,9 +364,9 @@ const isOpen = ref({
 
             const documentCount = etu.documents.count || 0;
             const matchesDocuments = selectedDocument.value.length === 0 || 
-                selectedDocument.value.includes(documentCount.toString());
+                selectedDocument.value.includes(documentCount.toString()) ||
+                (selectedDocument.value.includes('ChoixCoursValide') && etu.acc_validechoixcours == true);
 
-            // Dans le computed filteredEtudiants, modifier la partie matchesDestination :
             const matchesDestination = selectedDestination.value.length === 0 || 
                 (selectedDestination.value.includes('null') && !etu.arbitrage) ||
                 (etu.arbitrage?.agree_id && selectedDestination.value.includes(etu.arbitrage.agree_id));
@@ -373,7 +378,7 @@ const isOpen = ref({
         .sort((a, b) => {
             return a.acc_fullname.localeCompare(b.acc_fullname);
         });
-    });
+});
 
 // Fonction pour extraire les destinations uniques des arbitrages
 function extractDestinations() {
