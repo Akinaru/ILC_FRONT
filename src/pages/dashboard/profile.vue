@@ -302,33 +302,77 @@
 
                             <!-- Choix de cours -->
                             <div class="form-control w-full py-3">
-                                <div class="label">
-                                    <span class="label-text">Choix de cours</span>
-                                </div>
-                                <div class="w-full flex flex-col" v-if="myfiles.choixCours.exist">
-                                    <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.choixCours.path)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
-                                        </svg>
-                                        <span class="text-warning">Voir votre fichier</span>
-                                    </button>
-                                    
-                                    <button class="btn btn-neutral mb-1" @click="openConfirmModal('choix_cours', 'choixCours')">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                        <span class="text-error">Supprimer le fichier</span>
-                                    </button>
-                                </div>
-                                <button class="btn btn-neutral mb-1" v-else disabled>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
-                                        </svg>
-                                        <span >Aucun fichier</span>
-                                    </button>
-                            </div>
+    <div class="label">
+        <span class="label-text">Choix de cours</span>
+    </div>
+    <div class="w-full flex flex-col" v-if="myfiles.choixCours.exist">
+        <button class="btn btn-neutral mb-1" @click="openMyFileInNewTab(myfiles.choixCours.path)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+            </svg>
+            <span class="text-warning">Voir le fichier</span>
+        </button>
+        
+        <button class="btn btn-neutral mb-1" @click="openConfirmModal('choix_cours', 'choixCours')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span class="text-error">Supprimer le fichier</span>
+        </button>
+
+        <!-- Statut de validation -->
+        <div class="alert mb-1" :class="account.acc_validechoixcours ? 'bg-base-300' : 'bg-base-300'">
+            <template v-if="account.acc_validechoixcours">
+                <!-- Icône info en vert quand validé -->
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                    class="h-5 w-5 stroke-green-500" 
+                    fill="none" 
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" 
+                        stroke-linejoin="round" 
+                        stroke-width="2" 
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </template>
+            <template v-else>
+                <!-- Icône X en rouge quand non validé -->
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                    class="h-5 w-5 stroke-red-500" 
+                    fill="none" 
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" 
+                        stroke-linejoin="round" 
+                        stroke-width="2" 
+                        d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </template>
+            <span>{{ account.acc_validechoixcours ? 'Les choix de cours sont validés' : 'Les choix de cours ne sont pas validés' }}</span>
+        </div>
+
+        <!-- Bouton de validation -->
+        <button 
+            class="btn mb-1" 
+            :class="account.acc_validechoixcours ? 'btn-error' : 'btn-success'"
+            @click="validateChoixCours"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path v-if="!account.acc_validechoixcours" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                <path v-else stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>{{ account.acc_validechoixcours ? 'Annuler la validation' : 'Valider les choix' }}</span>
+        </button>
+    </div>
+    <button class="btn btn-neutral mb-1" v-else disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-.02.079-.046.155-.07.232C20.268 16.057 16.478 19 12 19c-4.478 0-8.268-2.943-9.542-7 .024-.077.05-.153.07-.232z" />
+        </svg>
+        <span>Aucun fichier</span>
+    </button>
+</div>
+
+
                             <!-- Contrat pédagogique -->
                             <div class="form-control w-full py-3">
                                 <div class="label">
@@ -543,6 +587,13 @@ import { addAction } from '../../composables/actionType';
 
     function changeDestination(accord){
         selectedNewDestination.value = accord;
+    }
+
+    async function validateChoixCours(){
+        await request('PUT', true, response, `${config.apiUrl}api/account/validatechoixcours/${acc_id}`);
+        if(response.value.status == 200){
+            account.value.acc_validechoixcours = !account.value.acc_validechoixcours;
+        }
     }
 
     async function openMyFileInNewTab(filePath) {

@@ -66,6 +66,19 @@
                             <input type="text" :value="account.acc_studentnum" class="input input-bordered w-full " disabled />
                         </label>
 
+                         <!-- Choix Cours -->
+                         <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text">Choix cours</span>
+                                </div>
+                                <input 
+                                    type="text" 
+                                    :value="account.acc_validechoixcours ? 'Validé ✅' : 'Pas encore validé ❌'" 
+                                    class="input input-bordered w-full" 
+                                    disabled
+                                    />
+                            </label>
+
                         <!-- Département -->
                         <label class="form-control w-full items-center justify-center " >
                             <div class="label w-full">
@@ -1015,6 +1028,7 @@
         if (response.value.status == 200) {
             myfiles.value[fileTitle].exist = false;
             myfiles.value[fileTitle].path = '';
+            fetch();
         }
     }
 

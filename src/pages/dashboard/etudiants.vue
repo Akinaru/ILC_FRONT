@@ -207,12 +207,13 @@
                                     </div>
                                     <div class="mt-4">
                                         <p class="text-sm text-gray-400">
-                                            <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
-                                            <strong>Documents ajouté(s):</strong> {{ etu.documents?.count || 0 }}/{{ etu.documents?.countmax }}<br>
-                                            <strong>Année de mobilité:</strong> {{ etu.acc_anneemobilite ? etu.acc_anneemobilite : 'Inconnu' }}<br>
-                                            <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}<br>
-                                            <strong>Aménagement aux éxams:</strong> {{ etu.acc_amenagement == true ? 'Oui' : 'Non' }}
-                                        </p>
+    <strong>Nombre de vœux:</strong> {{ etu.wishes ? etu.wishes.count : 0 }}<br>
+    <strong>Documents ajouté(s):</strong> {{ etu.documents?.count || 0 }}/{{ etu.documents?.countmax }}<br>
+    <strong>Année de mobilité:</strong> {{ etu.acc_anneemobilite ? etu.acc_anneemobilite : 'Inconnu' }}<br>
+    <strong>Dernière connexion:</strong> {{ formatDate(etu.acc_lastlogin) }}<br>
+    <strong>Aménagement aux éxams:</strong> {{ etu.acc_amenagement == true ? 'Oui' : 'Non' }}<br>
+    <strong>Validation choix de cours:</strong> {{ etu.acc_validechoixcours ? '✅' : '❌' }}
+</p>
                                     </div>
 
                                     
