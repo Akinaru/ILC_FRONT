@@ -289,7 +289,7 @@
                             </div>
                         </div>
 
-                        <!-- Modal de confirmation suppression -->
+                        <!-- Modal de confirmation suppression de document -->
                         <dialog id="confirmModalDoc" ref="confirmModalDoc" class="modal">
                             <div class="modal-box">
                                 <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
@@ -302,6 +302,8 @@
                                 </div>
                             </div>
                         </dialog>
+                        
+
 
                     </div>
                 </div>
@@ -638,6 +640,37 @@
             </div>
         </div>
 
+        <!-- Partie suppression du compte -->
+        <div class="w-full flex items-center justify-center mt-20">
+            <div class="w-150 relative">
+                <p class="text-xl font-bold">Suppression du compte</p>
+                <p className="text-base-content/70 mb-4">
+                    Vous pouvez supprimer votre compte. Attention, cette action est irréversible.
+                </p>
+                <label 
+                    @click="openConfirmDeleteModal" 
+                    class="btn btn-error"
+                >
+                    Supprimer le compte
+                </label>
+            </div>
+         </div>
+
+                        <!-- Modal de confirmation suppression de compte -->
+                        <dialog id="confirmModalAccount" ref="confirmModalAccount" class="modal">
+                            <div class="modal-box">
+                                <h3 class="text-lg font-bold">Confirmer la suppression du compte?</h3>
+                                <div class="py-3">
+                                    <p>Confirmez vous la suppression de votre compte ?</p>
+                                    <p>Cette action est irréversible et vos informations seront supprimées.</p>
+                                </div>
+                                <div class="modal-action">
+                                    <button class="btn" @click="closeModal">Annuler</button>
+                                    <button class="btn btn-success" @click="deleteAccount">Confirmer</button>
+                                </div>
+                            </div>
+                        </dialog>
+
     </div>
     <div v-else>
         <LoadingComp></LoadingComp>
@@ -651,7 +684,9 @@
     import { useAccountStore } from '../../stores/accountStore';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { addAlert } from '../../composables/addAlert';
+    import { useRouter } from 'vue-router';
 
+    const router = useRouter();
     const response = ref([]);
     const account = ref([]);
     const favoris = ref([]);
@@ -1005,7 +1040,7 @@
         }
     }
 
-    // Ouvrir le modal de confirmation de suppression
+    // Ouvrir le modal de confirmation de suppression de document
     function openConfirmModal(fileFolder, fileTitle, fileType) {
         confirmDeleteDocument.value.folder = fileFolder;
         confirmDeleteDocument.value.title = fileTitle;
@@ -1014,10 +1049,18 @@
         modal.showModal();
     }
 
+    // Ouvrir le modal de confirmation de suppression du compte
+    function openConfirmDeleteModal() {
+        const modal = document.getElementById('confirmModalAccount');
+        modal.showModal();
+    }
+
     // Fermer le modal de confirmation de suppression
     function closeModal() {
         const modal = document.getElementById('confirmModalDoc');
         modal.close();
+        const modal2 = document.getElementById('confirmModalAccount');
+        modal2.close();
     }
 
     // Supprimer un fichier
@@ -1107,6 +1150,25 @@
             files.value.releveNote.file = null;
         }
         fetch();
+    }
+
+    async function deleteAccount(){
+        const requestData = {
+            acc_id: accountStore.login,
+        }
+        await request('DELETE', true, response, config.apiUrl + 'api/account/selfdelete', requestData);
+        if(response.value.status == 202){
+  
+            // Nettoyage localStorage
+            localStorage.removeItem('login');
+            localStorage.removeItem('auth');
+            localStorage.removeItem('token');
+            
+            router.push({ name: 'Accueil' });
+            window.open(config.apiUrl + 'cas.php?logout=true', '_blank');
+            accountStore.logoutAccount();
+
+        }
     }
 
     // Supprime de la liste des favoris l'accord passé en param
