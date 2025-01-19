@@ -656,8 +656,8 @@
             </div>
          </div>
 
-                        <!-- Modal de confirmation suppression de compte -->
-                        <dialog id="confirmModalAccount" ref="confirmModalAccount" class="modal">
+        <!-- Modal de confirmation suppression de compte -->
+        <dialog id="confirmModalAccount" ref="confirmModalAccount" class="modal">
                             <div class="modal-box">
                                 <h3 class="text-lg font-bold">Confirmer la suppression du compte?</h3>
                                 <div class="py-3">
@@ -669,7 +669,7 @@
                                     <button class="btn btn-success" @click="deleteAccount">Confirmer</button>
                                 </div>
                             </div>
-                        </dialog>
+        </dialog>
 
     </div>
     <div v-else>
@@ -1137,20 +1137,30 @@
     }
 
     // Enregistrer un fichier
-    async function saveFile(title, folder, file){
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('title', title);
-        formData.append('folder', folder);
+    async function saveFile(title, folder, file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', title);
+    formData.append('folder', folder);
 
-        await request('POST', true, response, config.apiUrl+'api/documents', formData);
-        if(response.value.status == 200){
-            files.value.choixCours.file = null;
-            files.value.contratPeda.file = null;
-            files.value.releveNote.file = null;
-        }
-        fetch();
+    await request('POST', true, response, config.apiUrl+'api/documents', formData);
+    if(response.value.status == 200) {
+        // Réinitialiser les états des fichiers
+        files.value.choixCours.file = null;
+        files.value.contratPeda.file = null;
+        files.value.releveNote.file = null;
+        myfiles.value.choixCours.file = null;
+        myfiles.value.contratPeda.file = null;
+        myfiles.value.releveNote.file = null;
+
+        // Réinitialiser les champs de fichier HTML
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.value = '';
+        });
     }
+    fetch();
+}
 
     async function deleteAccount(){
         const requestData = {
