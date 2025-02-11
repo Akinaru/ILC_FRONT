@@ -34,11 +34,17 @@ function checkMultipleAccess(...levels) {
 
 const isAlreadyComplete = (to, from, next) => {
     const accountStore = useAccountStore();
-    if(accountStore.getAccountValidate()){
-        next({name: 'Dashboard'})
+    if(accountStore.isLogged()){
+
+        if(accountStore.getAccountValidate()){
+            next({name: 'Dashboard'})
+        }else{
+            next();
+        }    
     }else{
-        next();
-    }    
+        next({name: 'Accueil'});
+        addAlert('error', {data: {error: 'Vous devez être connecté pour accéder à cette page.'}})
+    }
 }
 
 const routes = [
