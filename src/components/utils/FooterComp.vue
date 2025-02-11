@@ -18,7 +18,8 @@
             </div>
         </nav>
         <aside>
-            <p>Copyright © {{ date }} ILC - Tous droits réservés. <span class="link link-hover">Mentions légales</span></p>
+            <p>Copyright © {{ date }} ILC - Tous droits réservés. <RouterLink :to="{name: 'MentionsLegales'}" class="link link-hover">Mentions légales</RouterLink></p>
+            
             <p>Maxime GALLOTTA - Luc DAMAS</p>
         </aside>
     </footer>

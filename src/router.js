@@ -57,6 +57,7 @@ const routes = [
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: { title: route => `Article n° ${route.params.art_id}`, requiresAuth: false } },
     { path: '/accord/:agree_id', name: 'Accord', component: () => import('./pages/accord.vue'), meta: { title: route => `Accord n° ${route.params.agree_id}`, requiresAuth: false } },
     { path: '/evenement', name: 'Evenement', component: () => import('./pages/evenementliste.vue'), meta: { title: 'Liste des évènements', requiresAuth: false } },
+    { path: '/mentions-legales', name: 'MentionsLegales', component: () => import('./pages/mentionslegales.vue'), meta: { title: 'Mentions Légales', requiresAuth: false } },
     { path: '/evenement/:evt_id', name: 'EvenementDetail', component: () => import('./pages/evenementdetail.vue'), meta: { title: route => `Évènement ${route.params.evt_id}`, requiresAuth: false } },
     
     { 
