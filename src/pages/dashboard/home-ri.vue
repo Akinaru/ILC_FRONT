@@ -1,96 +1,113 @@
 <template>
-  <div v-if="isLoaded">
-    <div v-if="events && events.count > 0" class="flex lg:flex-row flex-col">
-      <!-- Calendrier -->
-      <CalendarComp :events="events"></CalendarComp>
+  <div v-if="isLoaded" class="container">
+    <div v-if="events && events.count > 0" class="flex flex-col lg:flex-row gap-6">
+      <!-- Calendrier - largeur naturelle -->
+      <div class="bg-base-100 rounded-xl shadow-md p-4 lg:w-auto flex-shrink-0">
+        <h2 class="text-xl font-semibold mb-4">Calendrier des événements</h2>
+        <CalendarComp :events="events"></CalendarComp>
+      </div>
 
-      <!-- Partie droite (actions, date limite) -->
-      <div class="px-3 w-full">
-        <div>
-          <p>Vos 5 dernières actions:</p>
-          <div v-if="limitedActions.length > 0" v-for="(action, index) in limitedActions" :key="index" class="flex py-2">
-              <template v-if="getType(action.act_type)">
-                <span class="min-w-32" :class="['badge', getType(action.act_type).color]">{{ getType(action.act_type).name }}</span>
-              </template>
-            <p class="ml-2">{{ action.act_date }}</p>
-            <p class="ml-2">{{ action.act_description }}</p>
+      <!-- Partie droite (largeur flexible) -->
+      <div class="lg:flex-1 space-y-6">
+        <!-- Section des dernières actions -->
+        <div class="bg-base-100 rounded-xl shadow-md p-4">
+          <h2 class="text-xl font-semibold mb-4">Vos 5 dernières actions</h2>
+          
+          <div v-if="limitedActions.length > 0" class="space-y-2">
+            <div v-for="(action, index) in limitedActions" :key="index" 
+                 class="flex items-start p-2 rounded-lg hover:bg-base-200 transition-colors">
+              <div v-if="getType(action.act_type)" 
+                   :class="['badge', getType(action.act_type).color, 'mr-3 mt-1']">
+                {{ getType(action.act_type).name }}
+              </div>
+              <div>
+                <div class="text-sm opacity-70">{{ action.act_date }}</div>
+                <div>{{ action.act_description }}</div>
+              </div>
+            </div>
           </div>
-          <div v-else>
-            <p>Aucune action.</p>
+          
+          <div v-else class="text-center py-4 italic opacity-70">
+            Aucune action récente.
           </div>
         </div>
 
-        <div class="w-full flex flex-col items-center justify-center">
-          <div class="w-full flex flex-col md:flex-row items-center justify-center gap-8 p-5">
-              <!-- Date limite voeux -->
-              <div class="flex items-center justify-center flex-col">
-                  <p>Date limite des voeux:</p>
-                  <div class="flex items-center justify-start bg-base-300 w-fit h-20 p-3">
-                      <div class="flex py-3 pr-3">
-                          <p class="font-bold">{{ formatDate(admin.adm_datelimite) }}</p>
-                          <p class="mx-2">{{ getJoursRestants(admin.adm_datelimite) }}</p>
-                      </div>
-                      <label for="modal_date" class="btn btn-primary hover:scale-105 transition-all hover:opacity-70">Modifier</label>
-
-                      <!-- Modal modification date -->
-                      <input type="checkbox" id="modal_date" class="modal-toggle" />
-                      <div class="modal" role="dialog">
-                          <div class="modal-box">
-                              <h3 class="font-bold text-lg">Modification date limite</h3>
-                              <form @submit.prevent="confirmModifDate" class="w-full">
-                                  <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
-                                  <div class="modal-action">
-                                      <button type="submit">
-                                          <label for="modal_date" class="btn btn-success">Valider</label>
-                                      </button>  
-                                      <label for="modal_date" class="btn">Annuler</label>
-                                  </div>
-                              </form>
-                          </div>
-                      </div>
-                  </div>
+        <!-- Section date limite et arbitrage -->
+        <div class="bg-base-100 rounded-xl shadow-md p-4">
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Date limite des voeux -->
+            <div class="bg-base-200 rounded-lg p-4">
+              <h3 class="text-lg font-medium mb-2">Date limite des voeux</h3>
+              <div class="flex flex-col items-center justify-center h-24">
+                <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite) }}</div>
+                <div class="mt-1 text-sm" :class="joursRestants(admin.adm_datelimite) < 0 ? 'text-error' : 'text-success'">
+                  {{ getJoursRestants(admin.adm_datelimite) }}
+                </div>
+                <label for="modal_date" class="btn btn-sm btn-primary mt-2">
+                  Modifier
+                </label>
               </div>
 
-<!-- Status Arbitrage -->
-<div class="flex items-center justify-center flex-col">
-   <p>Statut de l'arbitrage:</p>
-   <div class="flex items-center justify-between bg-base-300 w-72 h-20 p-3">
-       <div class="flex flex-col items-center">
-           <span class="font-medium" :class="admin.adm_arbitragetemporaire ? '' : 'opacity-70'">
-               Temporaire
-           </span>
-           <div class="h-4 w-4 border-2 border-warning mt-1"></div>
-       </div>
-       
-       <input type="checkbox" 
-              class="toggle toggle-primary hover:scale-105 transition-all" 
-              :checked="!admin.adm_arbitragetemporaire"
-              @change="updateArbitrageStatus" />
-              
-       <div class="flex flex-col items-center">
-           <span class="font-medium" :class="!admin.adm_arbitragetemporaire ? '' : 'opacity-70'">
-               Définitif
-           </span>
-           <div class="h-4 w-4 border-2 border-green-400 mt-1"></div>
-       </div>
-   </div>
-</div>
-          </div>
+              <!-- Modal modification date -->
+              <input type="checkbox" id="modal_date" class="modal-toggle" />
+              <div class="modal" role="dialog">
+                <div class="modal-box">
+                  <h3 class="font-bold text-lg">Modification de la date limite</h3>
+                  <form @submit.prevent="confirmModifDate" class="w-full">
+                    <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
+                    <div class="modal-action">
+                      <button type="submit">
+                        <label for="modal_date" class="btn btn-success">Valider</label>
+                      </button>  
+                      <label for="modal_date" class="btn">Annuler</label>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
 
-          <!-- Etapes -->
-          <div class="w-fit flex items-center justify-center flex-col md:py-10">
-              <p class="py-4">Avancement des étapes actuelles:</p>
-              <ul class="steps steps-vertical sm:steps-horizontal max-w-lg">
-                  <li class="step step-primary">Inscriptions</li>
-                  <li class="step step-primary">Choix des voeux</li>
-                  <li class="step" :class="{'step-primary' : joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
-              </ul>
+            <!-- Status Arbitrage -->
+            <div class="bg-base-200 rounded-lg p-4">
+              <h3 class="text-lg font-medium mb-2">Statut de l'arbitrage</h3>
+              <div class="flex items-center justify-between py-4">
+                <div class="flex flex-col items-center">
+                  <span class="font-medium" :class="admin.adm_arbitragetemporaire ? 'text-warning' : 'opacity-50'">
+                    Temporaire
+                  </span>
+                  <div class="h-3 w-3 rounded-full border-2 border-warning mt-1"
+                       :class="admin.adm_arbitragetemporaire ? 'bg-warning' : ''"></div>
+                </div>
+                
+                <input type="checkbox" 
+                       class="toggle toggle-lg toggle-primary" 
+                       :checked="!admin.adm_arbitragetemporaire"
+                       @change="updateArbitrageStatus" />
+                       
+                <div class="flex flex-col items-center">
+                  <span class="font-medium" :class="!admin.adm_arbitragetemporaire ? 'text-success' : 'opacity-50'">
+                    Définitif
+                  </span>
+                  <div class="h-3 w-3 rounded-full border-2 border-success mt-1"
+                       :class="!admin.adm_arbitragetemporaire ? 'bg-success' : ''"></div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <!-- Section étapes -->
+        <div class="bg-base-100 rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-semibold mb-4 text-center">Avancement du processus</h2>
+          <ul class="steps steps-vertical sm:steps-horizontal w-full">
+            <li class="step step-primary">Inscriptions</li>
+            <li class="step step-primary">Choix des voeux</li>
+            <li class="step" :class="{'step-primary': joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
-  <div v-else>
+  <div v-else class="flex justify-center items-center min-h-screen">
     <LoadingComp></LoadingComp>
   </div>
 </template>
@@ -101,8 +118,8 @@ import CalendarComp from '../../components/utils/CalendarComp.vue';
 import { request } from '../../composables/httpRequest';
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
-import { addAction, getType } from '../../composables/actionType'
-import { types } from '../../composables/actionType'
+import { addAction, getType } from '../../composables/actionType';
+import { types } from '../../composables/actionType';
 import LoadingComp from '../../components/utils/LoadingComp.vue';
 import { addAlert } from '../../composables/addAlert';
 
@@ -130,20 +147,20 @@ const limitedActions = computed(() => {
 });
 
 async function updateArbitrageStatus(event) {
-    const requestData = {
-        adm_id: admin.value.adm_id,
-        adm_arbitragetemporaire: !event.target.checked
-    };
-    
-    await request('PUT', true, response, config.apiUrl + 'api/admin/arbitrage', requestData);
-    if(response.value.status == 200) {
-      await request('GET', false, admin, config.apiUrl + 'api/admin');
-    }
+  const requestData = {
+    adm_id: admin.value.adm_id,
+    adm_arbitragetemporaire: !event.target.checked
+  };
+  
+  await request('PUT', true, response, config.apiUrl + 'api/admin/arbitrage', requestData);
+  if(response.value.status == 200) {
+    await request('GET', false, admin, config.apiUrl + 'api/admin');
+  }
 }
 
 function getJoursRestants(date){
   if(joursRestants(date) == 0){
-    return "ajourd'hui";
+    return "aujourd'hui";
   }
   else if(joursRestants(date) == 1){
     return 'demain';
