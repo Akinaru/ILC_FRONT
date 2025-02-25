@@ -104,6 +104,27 @@
             <li class="step" :class="{'step-primary': joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
           </ul>
         </div>
+        
+        <!-- Sauvegarde de base de données (version simplifiée) -->
+        <div class="bg-base-100 rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-semibold mb-4">Maintenance</h2>
+          <div class="flex flex-col">
+            <div class="bg-base-200 rounded-lg p-4">
+              <h3 class="text-lg font-medium mb-2">Sauvegarde de la base de données</h3>
+              
+              <button 
+                @click="backupDatabase" 
+                class="btn btn-primary"
+                :class="{ 'opacity-60': isBackingUp }"
+                :disabled="isBackingUp"
+              >
+                <span v-if="isBackingUp" class="loading loading-spinner loading-sm mr-2"></span>
+                <i class="mr-2">💾</i>
+                {{ isBackingUp ? 'Sauvegarde en cours...' : 'Sauvegarder la base de données' }}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -118,8 +139,7 @@ import CalendarComp from '../../components/utils/CalendarComp.vue';
 import { request } from '../../composables/httpRequest';
 import config from '../../config';
 import { useAccountStore } from '../../stores/accountStore';
-import { addAction, getType } from '../../composables/actionType';
-import { types } from '../../composables/actionType';
+import { getType } from '../../composables/actionType';
 import LoadingComp from '../../components/utils/LoadingComp.vue';
 import { addAlert } from '../../composables/addAlert';
 
@@ -130,6 +150,10 @@ const admin = ref([]);
 const isLoaded = ref(false);
 const modifDate = ref(null);
 const response = ref([]);
+
+// Variables simplifiées pour la sauvegarde
+const isBackingUp = ref(false);
+const backupSuccess = ref(false);
 
 async function fetch() {
   isLoaded.value = false;
@@ -155,6 +179,28 @@ async function updateArbitrageStatus(event) {
   await request('PUT', true, response, config.apiUrl + 'api/admin/arbitrage', requestData);
   if(response.value.status == 200) {
     await request('GET', false, admin, config.apiUrl + 'api/admin');
+  }
+}
+
+// Fonction simplifiée pour la sauvegarde de la base de données
+async function backupDatabase() {
+  if (isBackingUp.value) return;
+  
+  isBackingUp.value = true;
+  
+  try {
+    const backupResp = ref([]);
+    await request('POST', true, backupResp, config.apiUrl + 'api/admin/database');
+    
+    if (backupResp.value && backupResp.value.status === 200) {
+      backupSuccess.value = true;
+    } else {
+      backupSuccess.value = false;
+    }
+  } catch (error) {
+    backupSuccess.value = false;
+  } finally {
+    isBackingUp.value = false;
   }
 }
 
