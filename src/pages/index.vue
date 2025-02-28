@@ -162,163 +162,201 @@
           <div>
             <!-- Si il y a des accords -->
             <div v-if="filteredAccords && filteredAccords.length > 0">
-              <div class="z-10">
+              <div class="z-10 px-2 md:px-4">
                 <div
                   v-for="(accord, index) in paginatedAccords"
                   :key="index"
-                  class="mb-3 mx-2 list-disc overflow-hidden transition-all hover:scale-102"
+                  class="mb-2 overflow-hidden transition-all duration-200 hover:scale-[1.02] rounded-lg shadow-sm"
                 >
-                  <div
-                    class="w-full bg-base-300 flex justify-between items-center"
-                  >
-                    <RouterLink
-                      :to="{
-                        name: 'Accord',
-                        params: { agree_id: accord.agree_id },
-                      }"
-                      class="flex w-full justify-between transition-all duration-100 ease-in-out relative group"
+                  <div class="w-full bg-base-300 rounded-lg">
+                    <div
+                      class="flex flex-wrap md:flex-nowrap justify-between items-center"
                     >
-                      <div class="flex items-center flex-wrap">
-                        <span class="relative inline-block">
-                          <!-- Drapeau -->
-                          <span
-                            class="fi text-xl xl:text-5xl transition-all duration-100 ease-in-out"
-                            :class="
-                              'fi-' + (accord.partnercountry?.parco_code || '')
-                            "
-                          ></span>
-
-                          <!-- Point d'interrogation si pas de drapeau -->
-                          <span
-                            v-if="!accord.partnercountry?.parco_code"
-                            class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none"
-                          >
-                            ?
-                          </span>
-                        </span>
-                        <div class="md:ml-2 ml-1 flex flex-col">
-                          <p>
-                            <span class="font-bold">{{
-                              accord.university?.univ_name ||
-                              "Université indisponible"
-                            }}</span>
-                            à
-                            {{
-                              accord.university?.univ_city ||
-                              "Ville indisponible"
-                            }}
-                            ({{
-                              accord.partnercountry?.parco_name ||
-                              "Pays indisponible"
-                            }})
-                          </p>
-                          <p>
-                            [{{
-                              accord.isced?.isc_code ||
-                              "Code ISCED indisponible"
-                            }}
-                            {{
-                              accord.isced?.isc_name ||
-                              "Nom ISCED indisponible"
-                            }}] pour
-                            {{
-                              accord.component?.comp_name ||
-                              "Composante indisponible"
-                            }}
-                          </p>
-                        </div>
-                      </div>
-                      <div class="flex items-center flex-wrap">
+                      <RouterLink
+                        :to="{
+                          name: 'Accord',
+                          params: { agree_id: accord.agree_id },
+                        }"
+                        class="flex-1 flex flex-col md:flex-row w-full justify-between p-3 md:p-4 transition-all duration-100 ease-in-out relative group"
+                      >
                         <div
-                          v-if="countVisibleDepartments(accord)"
-                          class="flex flex-col md:flex-row items-center h-full z-0"
+                          class="flex items-start space-x-2 md:space-x-3 w-full md:w-auto mb-2 md:mb-0"
                         >
-                          <div
-                            v-for="(dept, index) in accord.departments"
-                            :key="index"
-                          >
-                            <p
-                              v-if="dept.pivot?.deptagree_valide"
-                              class="transition-all duration-100 ease-in-out xl:p-3 min-w-11 p-1 m-1 font-bold text-xs text-center select-none z-0"
-                              :style="{ backgroundColor: dept.dept_color }"
+                          <div class="flex-shrink-0">
+                            <!-- Drapeau -->
+                            <span
+                              class="fi text-2xl md:text-3xl lg:text-4xl xl:text-5xl transition-all duration-100 ease-in-out"
+                              :class="
+                                'fi-' +
+                                (accord.partnercountry?.parco_code || '')
+                              "
+                            ></span>
+
+                            <!-- Point d'interrogation si pas de drapeau -->
+                            <span
+                              v-if="!accord.partnercountry?.parco_code"
+                              class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none"
                             >
-                              {{ dept.dept_shortname }}
+                              ?
+                            </span>
+                          </div>
+
+                          <div class="flex flex-col flex-1">
+                            <!-- Premiere ligne -->
+                            <p class="text-sm md:text-base lg:text-lg">
+                              <span class="font-bold">{{
+                                accord.university?.univ_name ||
+                                "Université indisponible"
+                              }}</span>
+                              <span class="whitespace-normal">
+                                à
+                                {{
+                                  accord.university?.univ_city ||
+                                  "Ville indisponible"
+                                }}</span
+                              >
+                              <span class="whitespace-normal"
+                                > ({{
+                                  accord.partnercountry?.parco_name ||
+                                  "Pays indisponible"
+                                }})</span
+                              >
+                            </p>
+                            <!-- Deuxieme ligne -->
+                            <p class="text-xs md:text-sm text-base-content/80">
+                              [{{
+                                accord.isced?.isc_code ||
+                                "Code ISCED indisponible"
+                              }}
+                              {{
+                                accord.isced?.isc_name ||
+                                "Nom ISCED indisponible"
+                              }}] pour
+                              {{
+                                accord.component?.comp_name ||
+                                "Composante indisponible"
+                              }}
                             </p>
                           </div>
                         </div>
-                        <div v-else class="hidden md:block">
-                          <p class="p-3 m-1">Aucun département</p>
+
+                        <!-- Départements -->
+                        <div
+                          class="flex items-center justify-start md:justify-end mt-2 md:mt-0 w-full md:w-auto"
+                        >
+                          <div
+                            v-if="countVisibleDepartments(accord)"
+                            class="flex flex-wrap w-full md:justify-end"
+                          >
+                            <div
+                              v-for="(dept, index) in accord.departments"
+                              :key="index"
+                              class="flex-shrink-0"
+                            >
+                              <p
+                                v-if="dept.pivot?.deptagree_valide"
+                                class="transition-all duration-100 ease-in-out mx-1 px-2 py-1 md:px-3 md:py-2 min-w-[2.5rem] font-bold text-xs text-center select-none rounded"
+                                :style="{ backgroundColor: dept.dept_color }"
+                              >
+                                {{ dept.dept_shortname }}
+                              </p>
+                            </div>
+                          </div>
+                          <div
+                            v-else
+                            class="hidden md:block text-sm text-base-content/70"
+                          >
+                            <p class="px-3 py-2">Aucun département</p>
+                          </div>
+                        </div>
+
+                        <div
+                          class="absolute inset-0 bg-base-300/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        >
+                          <span class="text-base-content font-medium relative">
+                            Voir plus
+                            <span
+                              class="absolute inset-x-0 bottom-0 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+                            ></span>
+                          </span>
+                        </div>
+                      </RouterLink>
+
+                      <div
+                        v-if="
+                          accountStore.isLogged() && accountStore.isStudent()
+                        "
+                        class="flex-shrink-0 pr-3 pl-2 py-2 md:py-0"
+                      >
+                        <div
+                          @click="toggleFavoris(accord.agree_id)"
+                          class="group p-2 flex items-center justify-center hover:cursor-pointer"
+                          :class="{
+                            'hover:opacity-60': isFavorited(accord.agree_id),
+                          }"
+                        >
+                          <svg
+                            class="w-5 h-5 md:w-6 md:h-6 transition-all duration-100 ease-in-out"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              :class="{
+                                'fill-current': isFavorited(accord.agree_id),
+                                'group-hover:fill-current': !isFavorited(
+                                  accord.agree_id
+                                ),
+                              }"
+                              :fill="
+                                isFavorited(accord.agree_id)
+                                  ? 'currentColor'
+                                  : 'none'
+                              "
+                              stroke="currentColor"
+                              stroke-width="2"
+                              d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"
+                            />
+                          </svg>
                         </div>
                       </div>
-                      <span
-                        class="hidden xs:absolute inset-0 flex items-center justify-center text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out bg-opacity-75"
-                        >Voir plus</span
-                      >
-                    </RouterLink>
-                    <span
-                      v-if="accountStore.isLogged() && accountStore.isStudent()"
-                    >
-                      <div
-                        @click="toggleFavoris(accord.agree_id)"
-                        class="group md:p-5 p-2 flex items-center justify-center hover:cursor-pointer"
-                        :class="{
-                          'hover:opacity-60': isFavorited(accord.agree_id),
-                        }"
-                      >
-                        <svg
-                          class="md:w-5 w-4 md:h-5 h-4 transition-all duration-100 ease-in-out"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            :class="{
-                              'fill-current': isFavorited(accord.agree_id),
-                              'group-hover:fill-current': !isFavorited(
-                                accord.agree_id
-                              ),
-                            }"
-                            :fill="
-                              isFavorited(accord.agree_id)
-                                ? 'currentColor'
-                                : 'none'
-                            "
-                            stroke="currentColor"
-                            stroke-width="2"
-                            d="M12 .587l3.668 7.429L24 9.753l-6 5.847 1.417 8.265L12 18.896l-7.417 3.969L6 15.6 0 9.753l8.332-1.737L12 .587z"
-                          />
-                        </svg>
-                      </div>
-                    </span>
+                    </div>
                   </div>
                 </div>
-                <div class="flex items-center justify-center">
+
+                <div class="flex items-center justify-center my-6">
                   <button
-                  @click="showMore"
-                  v-if="canShowMore"
-                  class="btn btn-primary btn-outline gap-2"
-                >
-                  Voir plus d'accords
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                    @click="showMore"
+                    v-if="canShowMore"
+                    class="btn btn-primary btn-outline gap-2"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </button>
+                    Voir plus d'accords
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17 8l4 4m0 0l-4 4m4-4H3"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
-            <!-- Sil y n'y a pas d'accords -->
-            <div v-else class="flex items-center justify-center">
-              <p class="my-52">Aucun accord n'a été trouvé.</p>
+
+            <!-- S'il n'y a pas d'accords -->
+            <div
+              v-else
+              class="flex items-center justify-center min-h-[16rem] text-base-content/70"
+            >
+              <p class="my-12 md:my-24 text-center px-4">
+                Aucun accord n'a été trouvé.
+              </p>
             </div>
           </div>
         </div>
@@ -449,25 +487,25 @@
 
         <div v-if="articles.count > 0" class="flex justify-center mt-12">
           <RouterLink
-                  :to="{ name: 'Articles' }"
-                  class="btn btn-primary btn-outline gap-2"
-                >
-                  Voir tous les articles
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </RouterLink>
+            :to="{ name: 'Articles' }"
+            class="btn btn-primary btn-outline gap-2"
+          >
+            Voir tous les articles
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </RouterLink>
         </div>
       </div>
 
@@ -496,25 +534,25 @@
             <CalendarComp :events="events"></CalendarComp>
             <div class="flex items-center justify-center py-5 w-full">
               <RouterLink
-                  :to="{ name: 'Evenement' }"
-                  class="btn btn-primary btn-outline gap-2"
+                :to="{ name: 'Evenement' }"
+                class="btn btn-primary btn-outline gap-2"
+              >
+                Voir tous les événements
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  Voir tous les événements
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </RouterLink>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </RouterLink>
             </div>
           </div>
 
@@ -704,21 +742,21 @@
                     <div
                       class="text-base-content/50 text-sm font-medium flex items-center gap-1"
                     >
-                    Voir les détails
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          />
-                        </svg>
+                      Voir les détails
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        />
+                      </svg>
                     </div>
                   </div>
                 </div>
