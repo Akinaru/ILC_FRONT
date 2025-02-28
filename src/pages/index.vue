@@ -293,12 +293,26 @@
                 </div>
                 <div class="flex items-center justify-center">
                   <button
-                    v-if="canShowMore"
-                    @click="showMore"
-                    class="btn btn-primary mt-4 w-52 hover:opacity-80 transition-all hover:scale-105"
+                  @click="showMore"
+                  v-if="canShowMore"
+                  class="btn btn-primary btn-outline gap-2"
+                >
+                  Voir plus d'accords
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    Voir plus d'accords
-                  </button>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </button>
                 </div>
               </div>
             </div>
@@ -435,11 +449,25 @@
 
         <div v-if="articles.count > 0" class="flex justify-center mt-12">
           <RouterLink
-            :to="{ name: 'Articles' }"
-            class="btn btn-primary btn-lg w-64 hover:opacity-90 transition-all hover:scale-102"
-          >
-            Voir tous les articles
-          </RouterLink>
+                  :to="{ name: 'Articles' }"
+                  class="btn btn-primary btn-outline gap-2"
+                >
+                  Voir tous les articles
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </RouterLink>
         </div>
       </div>
 
@@ -468,10 +496,25 @@
             <CalendarComp :events="events"></CalendarComp>
             <div class="flex items-center justify-center py-5 w-full">
               <RouterLink
-                :to="{ name: 'Evenement' }"
-                class="btn btn-primary lg:w-100 w-80 hover:opacity-80 transition-all hover:scale-105"
-                >Voir tous les évènements</RouterLink
-              >
+                  :to="{ name: 'Evenement' }"
+                  class="btn btn-primary btn-outline gap-2"
+                >
+                  Voir tous les événements
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </RouterLink>
             </div>
           </div>
 
@@ -684,7 +727,7 @@
               <!-- Bouton pour voir tous les événements -->
               <div class="flex justify-center mt-8">
                 <RouterLink
-                  :to="{ name: 'Evenements' }"
+                  :to="{ name: 'Evenement' }"
                   class="btn btn-primary btn-outline gap-2"
                 >
                   Voir tous les événements

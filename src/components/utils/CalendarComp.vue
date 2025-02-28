@@ -1,83 +1,91 @@
 <template>
-    <div class="bg-base-300 w-fit p-5 drop-shadow-lg rounded-lg">
-      <!-- Partie du haut -->
-      <div class="py-3 w-4/5 flex w-full">
-        
-        <!-- Fleche de gauche -->
-        <div class="flex items-center justify-center font-bold  w-full *:mx-2">
-          <svg @click="previousMonth()" class="select-none hover:opacity-60 hover:cursor-pointer " xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="36" height="36" viewBox="0 0 24 24">
+  <div class="bg-gradient-to-br from-base-200 to-base-300 w-full max-w-3xl mx-auto p-3 sm:p-4 md:p-6 drop-shadow-xl rounded-xl border border-base-content/10">
+    <!-- Header Section -->
+    <div class="py-4 w-full flex items-center justify-between mb-4">
+      
+      <!-- Left Arrow -->
+      <div class="flex items-center justify-center">
+        <button @click="previousMonth()" class="btn btn-circle btn-ghost text-primary hover:bg-primary/10 transition-all duration-300 btn-sm sm:btn-md">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="sm:w-5 sm:h-5 md:w-6 md:h-6">
             <path d="M5 12l7-8v6h9v4h-9v6z"/>
           </svg>
-        </div>
+        </button>
+      </div>
 
-        <!-- Selecteur de mois -->
-        <select id="month" v-model="selectedMonth" class="rounded-lg hover:opacity-60 hover:cursor-pointer select-none p-2 mx-1 w-full font-bold drop-shadow-lg">
+      <!-- Month & Year Selectors -->
+      <div class="flex flex-1 mx-2 gap-2">
+        <select id="month" v-model="selectedMonth" class="select select-primary w-full font-bold bg-base-100/50 backdrop-blur-sm select-sm sm:select-md text-xs sm:text-sm md:text-base">
           <option v-for="(month, index) in months" :key="index" :value="index">
             {{ month }}
           </option>
         </select>
-  
-        <!-- Selecteur de l'année -->
-        <select id="year" v-model="selectedYear" class="rounded-lg hover:opacity-60 hover:cursor-pointer select-none p-2 mx-1 w-full font-bold drop-shadow-lg">
+    
+        <select id="year" v-model="selectedYear" class="select select-primary w-full font-bold bg-base-100/50 backdrop-blur-sm select-sm sm:select-md text-xs sm:text-sm md:text-base">
           <option v-for="year in years" :key="year" :value="year">
             {{ year }}
           </option>
         </select>
-        
-        <!-- Fleche de droite -->
-        <div class="flex items-center justify-center font-bold  w-full *:mx-2">
-          <svg @click="nextMonth()" class="select-none hover:opacity-60 hover:cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="36" height="36" viewBox="0 0 24 24">
-            <path d="M19 12l-7 8v-6H3v-4h9v-6z"/>
-          </svg>  
-        </div>
-
       </div>
       
-      <!-- Partie table -->
-      <table>
-
-        <!-- Nom des colonnes (premiere lettre des jours) -->
+      <!-- Right Arrow -->
+      <div class="flex items-center justify-center">
+        <button @click="nextMonth()" class="btn btn-circle btn-ghost text-primary hover:bg-primary/10 transition-all duration-300 btn-sm sm:btn-md">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" class="sm:w-5 sm:h-5 md:w-6 md:h-6">
+            <path d="M19 12l-7 8v-6H3v-4h9v-6z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Calendar Table -->
+    <div class="overflow-hidden rounded-lg shadow-lg">
+      <table class="w-full bg-base-100/50 backdrop-blur-sm">
+        <!-- Day Names Header -->
         <thead>
-          <tr>
-            <th class="p-2"  v-for="day in days" :key="day">{{ day }}</th>
+          <tr class="border-b border-base-300">
+            <th v-for="day in days" :key="day" class="p-3 text-center font-bold text-base-content/70">
+              {{ day }}
+            </th>
           </tr>
         </thead>
         
-        <!-- Contenu du calendrier -->
+        <!-- Calendar Days -->
         <tbody>
-          <tr v-for="week in calendar" :key="week">
-            <!-- Cases -->
+          <tr v-for="week in calendar" :key="week" class="border-b border-base-300 last:border-0">
+            <!-- Day Cells -->
             <td 
-                class="font-bold hover:cursor-pointer select-none hover:bg-base-200 hover:opacity-80 relative hover:drop-shadow-lg" 
-                v-for="day in week" 
-                :key="day.date"
-                :class="{ 'font-normal': day.isNotMonth, 'bg-primary': day.isToday, 'bg-base-200': dayHasEvent(day) }"
+              v-for="day in week" 
+              :key="day.date"
+              class="relative p-1 border-r border-base-300 last:border-0 transition-all duration-200"
+              :class="{ 
+                'opacity-40': day.isNotMonth, 
+                'bg-primary text-primary-content': day.isToday,
+                'bg-accent/10': dayHasEvent(day) && !day.isToday
+              }"
             >
-              <!-- Case de chaque jours -->
-                <RouterLink 
-                    :to="{ 
-                        name: 'Evenement', 
-                        query: { 
-                            date: formatDayQuery(day) 
-                        } 
-                    }"
-                    @click="checkAndReload(formatDayQuery(day))"
-                    class="flex items-center justify-center p-3 lg:p-6 transition-all duration-200 ease-in-out"
-                >
-                    {{ day.date }}
-                </RouterLink>
-                <!-- Badge qui affiche le nombre d'évenement sur la case -->
-                <span class="scale-70 badge badge-accent absolute top-0 right-0 md:opacity-100 opacity-70" v-if="dayHasEvent(day)">
-                    {{ countEventsOnDay(day) }}
+              <!-- Day Content with Link -->
+              <RouterLink 
+                :to="{ name: 'Evenement', query: { date: formatDayQuery(day) } }"
+                @click="checkAndReload(formatDayQuery(day))"
+                class="flex items-center justify-center aspect-square w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full hover:bg-base-300/50 transition-all duration-200"
+                :class="{ 'hover:bg-primary-focus': day.isToday }"
+              >
+                <span class="text-xs sm:text-sm md:text-base lg:text-lg font-medium">{{ day.date }}</span>
+              </RouterLink>
+              
+              <!-- Event Badge -->
+              <div v-if="dayHasEvent(day)" class="absolute -top-1 -right-1 flex items-center justify-center">
+                <span class="badge badge-accent badge-xs sm:badge-sm text-xs animate-pulse">
+                  {{ countEventsOnDay(day) }}
                 </span>
+              </div>
             </td>
-        </tr>
-
+          </tr>
         </tbody>
-
       </table>
     </div>
-  </template>
+  </div>
+</template>
   
 <script setup>
   import { ref, computed } from 'vue';
