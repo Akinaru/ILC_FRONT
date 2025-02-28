@@ -9,7 +9,7 @@
         <div v-if="!isUserLoggedIn">
           <!-- Afficher le portail de connexion -->
           <p class=" hover:opacity-70 transition-all mr-2">
-            <a :href="config.apiUrl+'cas.php'">Connexion</a>
+            <a :href="config.apiUrl+'cas.php'+(isPreprod ? '?preprod=true' : '')">Connexion</a>
           </p>
         </div>
 
@@ -77,11 +77,15 @@ import { request } from '../../composables/httpRequest';
 
 const router = useRouter();
 const accountStore = useAccountStore();
-const { fullname, logged, acc_validateacc } = storeToRefs(accountStore); // Rendre isLogged réactif
+const { fullname, logged, acc_validateacc } = storeToRefs(accountStore);
 const theme = ref(localStorage.getItem('theme') || 'light');
 
 const role = ref([]);
 const response = ref([]);
+// Remplacer la ref isPreprod par une propriété computed
+const isPreprod = computed(() => {
+  return window.location.href.includes('preprod');
+});
 
 // Propriété computed pour vérifier l'état de connexion
 const isUserLoggedIn = computed(() => logged.value);
@@ -95,11 +99,13 @@ async function logout() {
   localStorage.removeItem('auth');
   localStorage.removeItem('token');
   
+  // Ajout du paramètre preprod lors de la déconnexion aussi
   window.open(config.apiUrl + 'cas.php?logout=true', '_blank');
   router.push({ name: 'Accueil' });
   accountStore.logoutAccount();
 }
 
+// Reste des fonctions inchangées
 function closeMenu() {
   const details = document.querySelector('details');
   if (details) {
@@ -124,14 +130,13 @@ function applyTheme(theme) {
 
 async function load() {
   await nextTick();
+  // Vérifier l'environnement preprod au chargement
+  
   if(accountStore.isLogged()){
     await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
   }
   applyTheme(theme.value);
-  
 }
-
-
 
 watch(logged, async (newVal) => {
   isUserLoggedIn.value = logged.value;

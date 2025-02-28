@@ -1,35 +1,53 @@
 <template>
-    <div v-if="isLoaded">
-        <div class="text-sm breadcrumbs font-bold">
-            <ul>
-                <li><RouterLink :to="{name: 'Accueil'}">Accueil</RouterLink></li> 
-                <li><RouterLink :to="{name: 'Evenement'}">Évènements</RouterLink></li> 
-                <li v-if="event && event.evt_id">{{ event.evt_name }}</li>
-                <li v-else>?</li>
-            </ul>
+    <div v-if="isLoaded" class="container mx-auto px-4 py-6">
+      <!-- Fil d'Ariane -->
+      <div class="text-sm breadcrumbs font-bold mb-6">
+        <ul>
+          <li><RouterLink :to="{name: 'Accueil'}" class="hover:text-primary">Accueil</RouterLink></li> 
+          <li><RouterLink :to="{name: 'Evenement'}" class="hover:text-primary">Évènements</RouterLink></li> 
+          <li v-if="event && event.evt_id" class="text-primary">{{ event.evt_name }}</li>
+          <li v-else class="text-gray-400">?</li>
+        </ul>
+      </div>
+      
+      <!-- Contenu de l'événement -->
+      <div v-if="event && event.evt_id" class="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <!-- En-tête avec badge de thème -->
+        <div class="flex justify-between items-start mb-4">
+          <span class="badge badge-warning text-xs font-semibold px-3 py-1">{{ event.theme.evthm_name }}</span>
+          <p class="text-gray-600">{{ formatDate(event.evt_datetime) }}</p>
         </div>
-        <div v-if="event && event.evt_id" class="py-10">
-            <span class="badge badge-warning">{{ event.theme.evthm_name }}</span>
-            <div class="flex flex-col items-start justify-start my-10">
-                <p class="">{{ formatDate(event.evt_datetime) }}</p>
-                <p class="font-bold text-2xl">{{ event.evt_name }}</p>
-            </div>
-            <p class="text-xl py-5">{{ event.evt_description }}</p>
+        
+        <!-- Titre de l'événement -->
+        <h1 class="font-bold text-2xl md:text-3xl text-gray-800 mb-6">{{ event.evt_name }}</h1>
+        
+        <!-- Description de l'événement -->
+        <div class="prose max-w-none">
+          <p class="text-lg md:text-xl text-gray-700">{{ event.evt_description }}</p>
         </div>
-        <div v-else class="h-full min-h-screen flex flex-col justify-center items-center">
-            <p class="flex font-bold items-center justify-center text-xl md:text-2xl pb-10">Evenement introuvable...</p>
-            <RouterLink :to="{ name: 'Accueil' }" class="hover:opacity-80 transition-all hover:scale-105">
-                <button class="btn btn-primary">Revenir à l'accueil</button>
-            </RouterLink>
-            <div class="flex flex-col items-center space-y-4">
-                <Vue3Lottie :animationData="notfound" :height="animationWidth" :width="animationWidth" />
-            </div>
+      </div>
+      
+      <!-- Page événement non trouvé -->
+      <div v-else class="min-h-[70vh] flex flex-col justify-center items-center">
+        <div class="bg-white rounded-lg shadow-md p-8 text-center max-w-lg w-full">
+          <p class="font-bold text-xl md:text-2xl text-gray-800 mb-6">Evenement introuvable...</p>
+          <RouterLink :to="{ name: 'Accueil' }" class="inline-block">
+            <button class="btn btn-primary hover:opacity-90 transition-all hover:scale-105">
+              Revenir à l'accueil
+            </button>
+          </RouterLink>
+          <div class="mt-6">
+            <Vue3Lottie :animationData="notfound" :height="animationWidth" :width="animationWidth" />
+          </div>
         </div>
+      </div>
     </div>
-    <div v-else>
-        <LoadingComp></LoadingComp>
+    
+    <!-- Loading component -->
+    <div v-else class="min-h-screen">
+      <LoadingComp></LoadingComp>
     </div>
-</template>
+  </template>
 
 <script setup>
 
