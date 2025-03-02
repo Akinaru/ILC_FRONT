@@ -629,14 +629,6 @@
                           </div>
                         </div>
                         <div>
-                          <div class="text-sm font-medium">
-                            {{
-                              new Date(event.evt_datetime).toLocaleTimeString(
-                                "fr-FR",
-                                { hour: "2-digit", minute: "2-digit" }
-                              )
-                            }}
-                          </div>
                           <div class="text-xs opacity-70">
                             {{ new Date(event.evt_datetime).getFullYear() }}
                           </div>
@@ -715,7 +707,6 @@
                         </div>
                       </div>
                       <div>
-                        <div class="text-sm font-medium">--:--</div>
                         <div class="text-xs opacity-70">----</div>
                       </div>
                     </div>

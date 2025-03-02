@@ -1140,7 +1140,9 @@ function openConfirmModal() {
 }
 
 async function confirmArchivage(){
-    await request("POST", true, arbitrage, config.apiUrl + "api/arbitrage/archiver");
+    await request("POST", true, response, config.apiUrl + "api/arbitrage/archiver");
+    if(response.value.status == 200)
+      fetch();
 }
 
 // Initialisation des données et mise en place des drops
