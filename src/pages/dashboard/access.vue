@@ -16,10 +16,6 @@
             </svg>
             Accès Administratifs
           </h2>
-          
-          <div class="flex items-center mb-6">
-            <div class="badge badge-lg p-3 bg-primary text-primary-content">Relations Internationales (RI)</div>
-          </div>
   
           <div class="grid md:grid-cols-2 gap-6">
             <!-- Liste des accès -->

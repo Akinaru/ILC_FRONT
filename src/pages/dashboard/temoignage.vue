@@ -58,7 +58,7 @@
                             </div>
                         </div>
                         <!-- Témoignage -->
-                        <div class="prose">
+                        <div class="prose mt-6">
                             <blockquote class="italic">
                                 "{{ account.acc_temoignage }}"
                             </blockquote>

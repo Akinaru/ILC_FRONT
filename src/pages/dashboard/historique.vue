@@ -5,55 +5,75 @@
             <label for="delete" class="btn btn-error">Supprimer l'historique</label>
         </div>
         <div class="py-4">
-            <p>Filtres: <span>{{ filteredActions.length }} résultat{{ filteredActions.length > 1 ? 's' : '' }} 
-                avec {{ selectedTypes.length + (searchQuery !== '' ? 1 : 0) }} 
-                filtre{{ selectedTypes.length + (searchQuery !== '' ? 1 : 0) > 1 ? 's' : '' }}</span>
-            </p>
-            <div class="flex justify-between items-center">
-                <!-- Partie gauche -->
-                <div class="flex items-start flex-col w-fit">
-                    <!-- Type à cocher -->
-                    <div class="flex py-3">
-                        <label :for="'filt_type_'+index" class="flex items-center justify-center mr-2 hover:cursor-pointer" v-for="(type, index) in types" :key="index">
-                            <input type="checkbox" :id="'filt_type_'+index" class="checkbox mx-1" :value="type.condition" v-model="selectedTypes">
-                            <label :for="'filt_type_'+index" class="badge select-none min-w-32 cursor-pointer" :class="type.color">{{ type.name }}</label>
-                        </label>
-                    </div>
-                    <!-- Barre de recherche -->
-                    <label class="input input-bordered flex items-center gap-2 w-full">
-                        <input type="text" class="grow" placeholder="Recherche par login" v-model="searchQuery">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>
-                    </label>
-                </div>
+  <p class="mb-4">
+    Filtres: <span>{{ filteredActions.length }} résultat{{ filteredActions.length > 1 ? 's' : '' }} 
+    avec {{ selectedTypes.length + (searchQuery !== '' ? 1 : 0) }} 
+    filtre{{ selectedTypes.length + (searchQuery !== '' ? 1 : 0) > 1 ? 's' : '' }}</span>
+  </p>
+  
+  <div class="space-y-4">
+    <!-- Ligne 1: Types à cocher -->
+    <div class="flex flex-wrap gap-2">
+      <label 
+        v-for="(type, index) in types" 
+        :key="index" 
+        :for="'filt_type_'+index" 
+        class="flex items-center justify-center cursor-pointer mb-1"
+      >
+        <input 
+          type="checkbox" 
+          :id="'filt_type_'+index" 
+          class="checkbox mr-1" 
+          :value="type.condition" 
+          v-model="selectedTypes"
+        >
+        <span class="badge select-none min-w-[120px]" :class="type.color">
+          {{ type.name }}
+        </span>
+      </label>
+    </div>
+    
+    <!-- Ligne 2: Barre de recherche et pagination côte à côte -->
+    <div class="flex flex-col md:flex-row w-full gap-4 items-center">
+      <div class="w-full md:w-3/4">
+        <label class="input input-bordered flex items-center gap-2 w-full">
+          <input type="text" class="grow" placeholder="Recherche par login" v-model="searchQuery">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+            <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+          </svg>
+        </label>
+      </div>
+      
+      <div class="flex items-center gap-2 whitespace-nowrap">
+        <span>Éléments par page:</span>
+        <select v-model="perPage" class="select select-bordered" @change="changePerPage">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+    </div>
 
-                <!-- Sélecteur d'éléments par page -->
-                <div class="flex items-center gap-2">
-                    <span>Éléments par page:</span>
-                    <select v-model="perPage" class="select select-bordered" @change="changePerPage">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
+    <!-- Ligne 3 (supprimée et fusionnée avec la ligne 2) -->
+  </div>
 
-                <!-- modal -->
-                <input type="checkbox" id="delete" class="modal-toggle" />
-                <div class="modal" role="dialog">
-                    <div class="modal-box">
-                        <h3 class="font-bold text-lg">Confirmation requise</h3>
-                        <p class="py-4">Confirmez vous la suppression de l'historique ?</p>
-                        <div class="modal-action">
-                            <label for="delete" class="btn">Annuler</label>
-                            <label for="delete" @click="deleteHistory()" class="btn btn-success">Valider</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- modal -->
+  <input type="checkbox" id="delete" class="modal-toggle" />
+  <div class="modal" role="dialog">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">Confirmation requise</h3>
+      <p class="py-4">Confirmez vous la suppression de l'historique ?</p>
+      <div class="modal-action">
+        <label for="delete" class="btn">Annuler</label>
+        <label for="delete" @click="deleteHistory()" class="btn btn-success">Valider</label>
+      </div>
+    </div>
+  </div>
+</div>
 
-                <!-- Pagination -->
-                <div class="flex justify-center gap-2 my-4">
+        <!-- Pagination -->
+        <div class="flex justify-center gap-2 my-4">
             <button 
                 class="btn" 
                 :disabled="currentPage === 1"

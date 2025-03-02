@@ -1,203 +1,399 @@
 <template>
     <div>
-        <div v-if="isLoaded">
-
-            <!-- Partie ajout d'un accord -->
-            <div class="m-5 my-20">
-                <div class="m-5 flex justify-center items-center flex-col" >
-                    <p class="text-lg font-bold">Ajout université</p>
-                    <form @submit.prevent="addUniv" class="w-2/5 *:my-2">
-                        <!-- Formulaire université -->
-                        <label class="form-control w-full items-center justify-center">
-                        
-
-                            <input type="text" placeholder="Nom de l'université" v-model="newUniv.univ_name" class="input input-bordered w-full my-1" />
-                            <input type="text" placeholder="Nom de la ville" v-model="newUniv.univ_city" class="input input-bordered w-full my-1" />
-
-                            <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newUniv.parco_id">
-                                <option disabled selected value="selectACountry">Selectionnez un pays</option>
-                                <option value="addNew"> + Créer un pays</option>
-                                <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
-                            </select>
-                            <span class="flex items-center justify-center w-full" v-if="newUniv.parco_id === 'addNew'" type="text">
-                                <input placeholder="Nouveau pays (ex: France)" v-model="newUniv.newparco.parco_name" class="input input-bordered w-5/6 my-1" />
-                                <input type="text" placeholder="Code pays (ex: fr, de, it)" v-model="newUniv.newparco.parco_code" class="input input-bordered w-5/6 my-1" />
-                            </span>
-
-                            
-                        </label>
-                        <div class="flex items-center justify-center">
-                            <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'accord</button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-
-
-            <p class="font-bold text-xl mb-5">Liste des Universités:</p>
-            <!-- Partie filtre -->
-            <div class="bg-base-200 w-full drop-shadow-lg block my-10">
-                <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
-                <p>{{ filteredUniversities.length }} résultats ({{ selectedCountries.length}} filtre{{ selectedCountries.length > 1 ? 's' : '' }})</p>
-                <!-- Pays -->
-                <div>
-                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('pays')">
-                        <p>Pays ({{ selectedCountries.length }} séléctionné{{ selectedCountries.length > 1 ? 's' : '' }})</p>
-                        <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
-                    </div>
-                    <div class="p-1" v-show="isOpen.pays">
-                        <button class="hover:opacity-70 underline" @click="deselectAllCountry">Tout désélectionner</button>
-                        <div class="flex flex-wrap">
-                            <div v-for="(country, index) in partnercountry" :key="index" class="flex items-center hover:opacity-60 my-1 w-1/2 sm:w-1/3 lg:w-1/4 xl:w-1/5">
-                                <input :id="'filt_pays_' + index" type="checkbox" class="checkbox" :value="country.parco_name" v-model="selectedCountries">
-                                <label :for="'filt_pays_' + index" class="flex w-full items-center cursor-pointer pl-2">
-                                    <span class="fi mr-1" :class="'fi-' + country.parco_code"></span>
-                                    <label :for="'filt_pays_' + index" class="select-none w-full cursor-pointer">{{ country.parco_name }}</label>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Liste des universités -->
-            <div class="flex flex-wrap justify-center gap-2">
-                <div v-for="(univ, index) in filteredUniversities" :key="index" class="bg-base-300 min-h-40 p-3 my-2 min-w-96 max-w-96 relative">
-                    <span class="relative flex items—center justify-between">
-                        <!-- Drapeau -->
-                        <div class="flex items-center">
-
-                            <!-- Drapeau -->
-                            <span class="fi text-2xl" :class="'fi-' + (univ.partnercountry?.parco_code || '')"></span>
-                            
-                            <!-- Point d'interrogation si pas de drapeau -->
-                            <template v-if="!univ.partnercountry?.parco_code">
-                                <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                    ?
-                                </span>
-                            </template>
-                            
-                            
-                            <p class="ml-2">{{ univ.partnercountry?.parco_name ?? 'Pays indisponible' }}</p>
-                        </div>
-                        <div class="flex">
-                        <!-- Bouton de modification -->
-                        <label for="modal_modif" class="hover:opacity-70 hover:cursor-pointer bg-base-300 flex items-center justify-center p-3" @click="modifUniv(univ)">
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                            </svg>
-                        </label>
-                        <!-- Bouton de suppression -->
-                        <button class="hover:opacity-70 p-3 hover:cursor-pointer bg-base-300 " @click="openConfirmModal(univ)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
-                    </span>
-                    <p class="mt-1"><strong>{{ univ.univ_name ? univ.univ_name : 'Nom université indisponible'  }}</strong> à {{ univ.univ_city ? univ.univ_city : 'Nom ville indisponible' }}</p>
-                    <p>Nombre d'accords relié à cette Université: {{ countAgreementsByUniv(univ.univ_id) }}</p>
-                
-
-                </div>
-            </div>
-
-            <!-- Modal modification -->
-            <input type="checkbox" id="modal_modif" class="modal-toggle" />
-            <div class="modal modal-bottom sm:modal-middle" role="dialog">
-                <div class="modal-box">
-                    <h3 class="font-bold text-lg">Modification de l'université n° {{ currentUnivModif.univ_id }}</h3>
-                    <form @submit.prevent="confirmModifUniv" class="w-full">
-                        <!-- Nom -->
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text">Nom</span>
-                            </div>
-                            <input type="text"  class="input input-bordered w-full" v-model="currentUnivModif.univ_name"/>
-                        </label>
-                        <!-- Ville -->
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text">Ville</span>
-                            </div>
-                            <input type="text"  class="input input-bordered w-full" v-model="currentUnivModif.univ_city"/>
-                        </label>
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text">Pays</span>
-                            </div>
-
-                            <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="currentUnivModif.parco_id">
-                                <option disabled selected value="selectACountry">Selectionnez un pays</option>
-                                <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
-                            </select>
-                        </label>
-                        <div class="modal-action">
-                            <label for="modal_modif" class="btn">Annuler</label>
-                            <button type="submit">
-                                <label for="modal_modif" class="btn btn-success">Enregistrer</label>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!-- Modal de confirmation suppression -->
-            <dialog id="confirmModal" ref="confirmModal" class="modal">
-                <div class="modal-box">
-                    <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
-                    <div class="py-3">
-                        <p>Confirmez vous la supression de l'université:</p>
-                        <p>Cette action entraînera la suppression de l'université dans tous les accords qui y sont liés.</p>
-                        <div class="bg-base-300 p-3 my-2 relative">
-                            <span class="relative flex items—center justify-between">
-                                <div class="flex items-center">
-
-                                    <!-- Drapeau -->
-                                    <span class="fi text-2xl" :class="'fi-' + (confirmDeleteUniv.partnercountry?.parco_code || '')"></span>
-                                    
-                                    <!-- Point d'interrogation si pas de drapeau -->
-                                    <template v-if="!confirmDeleteUniv.partnercountry?.parco_code">
-                                        <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                            ?
-                                        </span>
-                                    </template>
-                                    
-                                    
-                                    <p class="ml-2">{{ confirmDeleteUniv.partnercountry?.parco_name ?? 'Pays indisponible' }}</p>
-                                </div>
-                            </span>
-                            <p class="mt-1"><strong>{{ confirmDeleteUniv.univ_name ? confirmDeleteUniv.univ_name : 'Nom université indisponible'  }}</strong> à {{ confirmDeleteUniv.univ_city ? confirmDeleteUniv.univ_city : 'Nom ville indisponible' }}</p>
-                        
-
-                        </div>
-                        <!-- Liste des accords liés -->
-                        <div class="py-3">
-                                <h4 class="text-lg font-bold">Accords liés à cette université ({{ filteredAgreements.length }}):</h4>
-                                <div class="flex flex-col w-full max-h-64 overflow-y-auto">
-                                    <div v-if="filteredAgreements.length > 0" v-for="(accord, index) in filteredAgreements" :key="index" class="bg-base-300 my-1 p-3">
-                                        <span class="mr-2 flex items-center justify-start">
-                                            <span class="fi text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name) "></span>
-                                        </span>
-                                        <div class="flex flex-col">
-                                            <p class="w-full select-none">({{ accord.partnercountry.parco_name }}) <span class="font-bold">{{ accord.university?.univ_city ?? 'Aucune ville' }} - {{ accord.university?.univ_name ?? 'Aucune université' }}</span> </p>
-                                            <p>({{ accord.isced?.isc_code ?? '??' }}) - {{ accord.isced?.isc_name ?? 'ISCED indisponible' }} | {{ accord.component?.comp_name ?? 'Aucune composante' }}</p>    
-                                        </div>
-                                    </div>
-                                    <div v-else>
-                                        <p class="text-center my-5">Aucun accords</p>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-                <div class="modal-action">
-                    <button class="btn" @click="closeModal">Annuler</button>
-                    <button class="btn btn-success" @click="deleteUniv(confirmDeleteUniv.univ_id, confirmDeleteUniv.univ_name, confirmDeleteUniv.univ_city)">Confirmer</button>
-                </div>
-                </div>
-            </dialog>
+      <div v-if="isLoaded" class="container mx-auto px-4 py-6">
+        <!-- En-tête avec bannière -->
+        <div class="bg-base-200 rounded-xl shadow-lg mb-8 p-6">
+          <h1 class="text-2xl font-bold text-center">Gestion des Universités</h1>
+          <div class="divider"></div>
+          <p class="text-center opacity-75">Gérez les universités partenaires pour les échanges internationaux</p>
         </div>
-        <LoadingComp v-else></LoadingComp>
+  
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- SECTION AJOUT D'UNE UNIVERSITÉ -->
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h2 class="card-title flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Ajouter une université
+              </h2>
+              
+              <form @submit.prevent="addUniv" class="space-y-4 mt-4">
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text">Nom de l'université</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="Ex: Université de Sorbonne, MIT..." 
+                    v-model="newUniv.univ_name" 
+                    class="input input-bordered w-full" 
+                  />
+                </div>
+                
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text">Ville</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="Ex: Paris, New York, Berlin..." 
+                    v-model="newUniv.univ_city" 
+                    class="input input-bordered w-full" 
+                  />
+                </div>
+                
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text">Pays</span>
+                  </label>
+                  <select id="partnercountry_select" class="select select-bordered w-full" v-model="newUniv.parco_id" v-if="partnercountry && partnercountry.length > 0">
+                    <option disabled selected value="selectACountry">Sélectionnez un pays</option>
+                    <option value="addNew">+ Créer un pays</option>
+                    <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
+                  </select>
+                  <div v-else class="alert alert-info">Chargement des pays...</div>
+                </div>
+                
+                <!-- Champs pour ajouter un nouveau pays -->
+                <div class="form-control" v-if="newUniv.parco_id === 'addNew'">
+                  <div class="bg-base-200 p-4 rounded-lg">
+                    <h3 class="font-medium mb-2">Nouveau pays</h3>
+                    <div class="space-y-3">
+                      <div class="form-control">
+                        <label class="label">
+                          <span class="label-text">Nom du pays</span>
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder="Ex: France, Allemagne..." 
+                          v-model="newUniv.newparco.parco_name" 
+                          class="input input-bordered w-full" 
+                        />
+                      </div>
+                      <div class="form-control">
+                        <label class="label">
+                          <span class="label-text">Code ISO du pays</span>
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder="Ex: fr, de, it (2 lettres)" 
+                          v-model="newUniv.newparco.parco_code" 
+                          class="input input-bordered w-full" 
+                        />
+                        <label class="label">
+                          <span class="label-text-alt text-opacity-60">Format à 2 lettres selon le standard ISO 3166-1</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="form-control mt-6">
+                  <button type="submit" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Ajouter l'université
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+  
+          <!-- SECTION STATISTIQUES -->
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h2 class="card-title flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Statistiques
+              </h2>
+              
+              <div class="stats shadow mt-4">
+                <div class="stat">
+                  <div class="stat-figure text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <div class="stat-title">Total universités</div>
+                  <div class="stat-value text-primary">{{ filteredUniversities.length }}</div>
+                </div>
+              </div>
+  
+              <!-- FILTRES -->
+              <div class="mt-6">
+                <h3 class="font-medium mb-2 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                  Filtres
+                </h3>
+                <div class="bg-base-200 rounded-lg p-4">
+                  <p class="text-sm mb-2">{{ filteredUniversities.length }} résultats ({{ selectedCountries.length }} filtre{{ selectedCountries.length > 1 ? 's' : '' }})</p>
+                  
+                  <div class="bg-base-300 rounded-md overflow-hidden mb-4">
+                    <div class="p-3 flex justify-between items-center cursor-pointer hover:bg-opacity-80" @click="toggleCollapse('pays')">
+                      <span class="font-medium">Pays ({{ selectedCountries.length }} sélectionné{{ selectedCountries.length > 1 ? 's' : '' }})</span>
+                      <span :class="isOpen.pays ? 'rotate-180' : ''" class="transform transition-transform text-xl">&#9662;</span>
+                    </div>
+                    
+                    <div class="p-3 bg-base-100 rounded-b-md" v-show="isOpen.pays">
+                      <button class="text-xs text-primary hover:underline mb-2" @click="deselectAllCountry">Tout désélectionner</button>
+                      <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        <div v-for="(country, index) in partnercountry" :key="index" class="flex items-center">
+                          <input :id="'filt_pays_' + index" type="checkbox" class="checkbox checkbox-sm mr-2" :value="country.parco_name" v-model="selectedCountries">
+                          <label :for="'filt_pays_' + index" class="flex items-center cursor-pointer text-sm">
+                            <span class="fi mr-1" :class="'fi-' + country.parco_code"></span>
+                            <span class="truncate">{{ country.parco_name }}</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- LISTE DES UNIVERSITÉS -->
+        <div class="card bg-base-100 shadow-xl mt-8">
+          <div class="card-body">
+            <h2 class="card-title flex items-center gap-2 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+              </svg>
+              Liste des universités ({{ filteredUniversities.length }})
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div v-for="(univ, index) in filteredUniversities" :key="index" 
+                class="card bg-base-200 shadow-sm hover:shadow-md transition-shadow">
+                <div class="card-body p-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex items-center gap-3">
+                      <!-- Drapeau -->
+                      <div class="relative inline-block">
+                        <span class="fi text-4xl" :class="'fi-' + (univ.partnercountry?.parco_code || '')"></span>
+                        <span v-if="!univ.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full">
+                          ?
+                        </span>
+                      </div>
+                      
+                      <div>
+                        <h3 class="font-bold text-lg">{{ univ.univ_name || 'Nom indisponible' }}</h3>
+                        <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span>{{ univ.univ_city || 'Ville indisponible' }}</span>
+                        </div>
+                        <div class="badge badge-outline mt-1">{{ univ.partnercountry?.parco_name || 'Pays indisponible' }}</div>
+                      </div>
+                    </div>
+                    
+                    <div class="flex gap-1">
+                      <!-- Bouton de modification -->
+                      <label for="modal_modif" 
+                        class="btn btn-circle btn-sm btn-ghost" 
+                        @click="modifUniv(univ)">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" 
+                            fill="none" stroke="currentColor" stroke-linecap="round" 
+                            stroke-linejoin="round" stroke-width="2"/>
+                          <polygon fill="none" 
+                            points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" 
+                            stroke="currentColor" stroke-linecap="round" 
+                            stroke-linejoin="round" stroke-width="2"/>
+                        </svg>
+                      </label>
+                      
+                      <!-- Bouton de suppression -->
+                      <button class="btn btn-circle btn-sm btn-ghost" 
+                        @click="openConfirmModal(univ)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" 
+                          fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" 
+                            stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center gap-2 mt-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" 
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <div class="text-sm">
+                      Accords liés: 
+                      <span class="font-semibold">{{ countAgreementsByUniv(univ.univ_id) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- MODAL MODIFICATION -->
+        <input type="checkbox" id="modal_modif" class="modal-toggle" />
+        <div class="modal modal-bottom sm:modal-middle" role="dialog">
+          <div class="modal-box">
+            <h3 class="font-bold text-lg flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" 
+                  fill="none" stroke="currentColor" stroke-linecap="round" 
+                  stroke-linejoin="round" stroke-width="2"/>
+                <polygon fill="none" 
+                  points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" 
+                  stroke="currentColor" stroke-linecap="round" 
+                  stroke-linejoin="round" stroke-width="2"/>
+              </svg>
+              Modification de l'université n° {{ currentUnivModif?.univ_id || '' }}
+            </h3>
+            
+            <form @submit.prevent="confirmModifUniv" class="mt-4 space-y-4" v-if="currentUnivModif">
+              <!-- Nom -->
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Nom de l'université</span>
+                </label>
+                <input type="text" class="input input-bordered w-full" 
+                  v-model="currentUnivModif.univ_name"/>
+              </div>
+              
+              <!-- Ville -->
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Ville</span>
+                </label>
+                <input type="text" class="input input-bordered w-full" 
+                  v-model="currentUnivModif.univ_city"/>
+              </div>
+  
+              <!-- Pays -->
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Pays</span>
+                </label>
+                                <select class="select select-bordered w-full" v-model="currentUnivModif.parco_id">
+                    <option disabled selected value="selectACountry">Sélectionnez un pays</option>
+                    <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
+                  </select>
+              </div>
+  
+              <div class="modal-action">
+                <label for="modal_modif" class="btn btn-ghost">Annuler</label>
+                <button type="submit">
+                  <label for="modal_modif" class="btn btn-primary">Enregistrer</label>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+  
+        <!-- MODAL CONFIRMATION SUPPRESSION -->
+        <dialog id="confirmModal" ref="confirmModal" class="modal">
+          <div class="modal-box" v-if="confirmDeleteUniv">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning" 
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              Confirmer la suppression
+            </h3>
+            
+            <div class="py-4">
+              <div class="alert alert-warning">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" 
+                  fill="none" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>Cette action supprimera l'université dans tous les accords qui y sont liés.</span>
+              </div>
+              
+              <div class="bg-base-200 p-4 rounded-lg mt-4 flex items-center gap-3">
+                <!-- Drapeau -->
+                <div class="relative inline-block">
+                  <span class="fi text-4xl" :class="'fi-' + (confirmDeleteUniv.partnercountry?.parco_code || '')"></span>
+                  <span v-if="!confirmDeleteUniv.partnercountry?.parco_code" 
+                    class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full">
+                    ?
+                  </span>
+                </div>
+                
+                <div>
+                  <h4 class="font-bold text-lg">{{ confirmDeleteUniv.univ_name || 'Nom indisponible' }}</h4>
+                  <div class="text-sm">{{ confirmDeleteUniv.univ_city || 'Ville indisponible' }}</div>
+                  <div class="badge badge-outline mt-1">{{ confirmDeleteUniv.partnercountry?.parco_name || 'Pays indisponible' }}</div>
+                </div>
+              </div>
+  
+              <!-- Liste des accords liés -->
+              <div class="mt-6">
+                <h4 class="font-bold mb-2 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Accords liés ({{ filteredAgreements.length }})
+                </h4>
+                
+                <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
+                  <div v-if="filteredAgreements.length > 0">
+                    <div v-for="(accord, index) in filteredAgreements" :key="index" 
+                      class="border-b last:border-b-0 border-base-300 p-3">
+                      <div class="flex items-center gap-3">
+                        <span class="fi text-xl" 
+                          :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name)"></span>
+                        <div>
+                          <p class="font-semibold">
+                            {{ accord.university?.univ_name || 'Université non spécifiée' }}
+                          </p>
+                          <p class="text-sm opacity-70">
+                            ({{ accord.isced?.isc_code || '??' }}) - {{ accord.isced?.isc_name || 'ISCED indisponible' }} | {{ accord.component?.comp_name || 'Aucune composante' }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else class="p-4 text-center opacity-70">
+                    Aucun accord lié à cette université
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+                        <div class="modal-action">
+              <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+              <button class="btn btn-error" 
+                @click="deleteUniv(confirmDeleteUniv?.univ_id || '', confirmDeleteUniv?.univ_name || '', confirmDeleteUniv?.univ_city || '')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" 
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Confirmer la suppression
+              </button>
+            </div>
+          </div>
+        </dialog>
+      </div>
+      <LoadingComp v-else></LoadingComp>
     </div>
-</template> 
+  </template>
 
 <script setup>
     import { ref, onMounted, computed, nextTick } from 'vue';
