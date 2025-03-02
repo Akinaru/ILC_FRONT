@@ -194,6 +194,13 @@ const routes = [
                 beforeEnter: checkMultipleAccess(1, 2),
                 meta: { title: route => `Dashboard - Profile de ${route.params.acc_id}`, requiresAuth: true }
             },
+            { 
+                path: 'anciens', 
+                name: 'AnciensDash', 
+                component: () => import('./pages/dashboard/anciens.vue'),
+                beforeEnter: requireAccess(1),
+                meta: { title: 'Dashboard - Anciens', requiresAuth: true } 
+            },
         ]
     },
 ];
