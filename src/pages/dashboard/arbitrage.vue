@@ -328,50 +328,20 @@
               }"
             >
               <div class="flex items-center justify-between w-full p-1">
-                <p
-                  v-if="etu.department"
-                  :style="{ backgroundColor: etu.department.dept_color }"
-                  class="p-2 rounded-lg min-w-16 text-center"
-                >
-                  {{ etu.department.dept_shortname }}
-                </p>
-                <p
-                  v-else
-                  class="bg-gray-500 p-2 rounded-lg min-w-16 text-center"
-                >
-                  Aucun
-                </p>
+                <div class="badge badge-md" 
+             :style="{ backgroundColor: etu.department ? etu.department.dept_color : '#aaaaaa', color: 'white' }">
+          {{ etu.department ? etu.department.dept_shortname : 'N/A' }}
+        </div>
                 <div class="flex flex-col w-full items-center justify-start">
                   <p class="w-full text-center">{{ etu.acc_fullname }}</p>
                 </div>
-                <label
-                  for="modal_info_etu"
-                  class="px-2 hover:opacity-70 btn btn-neutral"
-                  @click="changeEtuInfo(etu)"
-                >
-                  <svg
-                    class="stroke-current shrink-0 h-5 w-5"
-                    fill="currentColor"
-                    height="24px"
-                    width="24px"
-                    version="1.1"
-                    id="Capa_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 488.85 488.85"
-                    xml:space="preserve"
-                  >
-                    <g>
-                      <path
-                        d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
-                                                s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
-                                                c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
-                                                C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
-                                                c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"
-                      />
-                    </g>
-                  </svg>
-                </label>
+                <label @click="changeEtuInfo(etu)" for="modal_info_etu"
+                              class="btn btn-circle btn-xs btn-ghost flex items-center justify-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </label>
               </div>
 
               <!-- Si létudiant a des voeux -->
@@ -1139,10 +1109,14 @@ function openConfirmModal() {
   modal.showModal();
 }
 
-async function confirmArchivage(){
-    await request("POST", true, response, config.apiUrl + "api/arbitrage/archiver");
-    if(response.value.status == 200)
-      fetch();
+async function confirmArchivage() {
+  await request(
+    "POST",
+    true,
+    response,
+    config.apiUrl + "api/arbitrage/archiver"
+  );
+  if (response.value.status == 200) fetch();
 }
 
 // Initialisation des données et mise en place des drops
