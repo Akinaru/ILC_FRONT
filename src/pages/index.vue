@@ -20,10 +20,10 @@
         <div class="bg-base-100 rounded-lg shadow-lg lg:w-96 w-full lg:my-0 my-5 z-10 overflow-hidden border border-base-300"v-if="accords && accords.agreements">
           <!-- En-tête -->
           <div class="bg-base-300 p-4">
-            <h3 class="font-bold text-lg">Filtres des Accords</h3>
+            <h3 class="font-bold text-lg select-none">Filtres des Accords</h3>
             <div class="flex justify-between items-center mt-2">
               <button 
-                class="btn btn-sm btn-ghost text-xs" 
+                class="btn btn-sm btn-ghost text-xs select-none" 
                 @click="deselectAll"
               >
                 <span class="">
@@ -46,11 +46,11 @@
               class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
               @click="toggleCollapse('pays')"
             >
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 select-none">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
                 </svg>
-                <span class="font-medium">Pays</span>
+                <span class="font-medium select-none">Pays</span>
                 <span v-if="selectedCountries.length" class="badge badge-sm">{{ selectedCountries.length }}</span>
               </div>
               <svg 
@@ -68,7 +68,7 @@
 
             <div class="p-4 pt-0 bg-base-100" v-show="isOpen.pays">
               <button
-                class="btn btn-xs btn-ghost mb-3"
+                class="btn btn-xs btn-ghost mb-3 select-none"
                 @click="deselectAllCountry"
               >
                 Tout désélectionner
@@ -87,12 +87,12 @@
                     <input
                       :id="'filt_pays_' + index"
                       type="checkbox"
-                      class="checkbox checkbox-sm  mr-2"
+                      class="checkbox checkbox-sm  mr-2 select-none"
                       :value="country.parco_name"
                       v-model="selectedCountries"
                     />
                     <span class="fi mr-2" :class="'fi-' + country.parco_code"></span>
-                    <span class="text-sm">{{ country.parco_name }}</span>
+                    <span class="text-sm select-none">{{ country.parco_name }}</span>
                   </label>
                 </div>
               </div>
@@ -105,7 +105,7 @@
               class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
               @click="toggleCollapse('departments')"
             >
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 select-none">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
                 </svg>
@@ -127,7 +127,7 @@
 
             <div class="p-4 pt-0 bg-base-100" v-show="isOpen.departments">
               <button
-                class="btn btn-xs btn-ghost mb-3"
+                class="btn btn-xs btn-ghost mb-3 select-none"
                 @click="deselectAllDept"
                
               >
@@ -136,7 +136,7 @@
 
               <div v-for="(comp, compIndex) in components.components" :key="compIndex" class="mb-4" >
 
-                  <p class="font-medium text-sm mb-2">{{ comp.comp_name }}</p>
+                  <p class="font-medium text-sm mb-2 select-none">{{ comp.comp_name }}</p>
                   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 pl-2" v-if="comp.departments  && comp.departments.length > 0">
                     <div
                       v-for="(dept, deptIndex) in comp.departments"
@@ -144,7 +144,7 @@
                     >
                       <label
                         :for="'filt_dept_' + compIndex + '_' + deptIndex"
-                        class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                        class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
                       >
                         <input
                           :id="'filt_dept_' + compIndex + '_' + deptIndex"
@@ -157,11 +157,11 @@
                           class="w-4 h-4 rounded-full mr-2"
                           :style="{ backgroundColor: dept.dept_color }"
                         ></div>
-                        <span class="text-sm">{{ dept.dept_shortname }}</span>
+                        <span class="text-sm select-none">{{ dept.dept_shortname }}</span>
                       </label>
                     </div>
                   </div>
-                <div v-if="comp.departments.length == 0" class="text-sm text-gray-500 italic p-2">
+                <div v-if="comp.departments.length == 0" class="text-sm text-gray-500 italic p-2 select-none">
                   Aucun département disponible
                 </div>
               </div>
