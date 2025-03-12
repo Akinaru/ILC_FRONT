@@ -8,305 +8,309 @@
 
         <!-- Partie filtre étudiants -->
         <div class="flex items-center justify-center pt-5">
-  <div class="bg-base-100 rounded-lg shadow-lg w-96 overflow-hidden border border-base-300" v-if="accords && accords.agreements">
-    <!-- En-tête -->
-    <div class="bg-base-300 p-4">
-      <h3 class="font-bold text-lg select-none">Filtres</h3>
-      <div class="flex justify-between items-center mt-2">
-        <button 
-          class="btn btn-sm btn-ghost text-xs" 
-          @click="deselectAll"
-        >
-          <span class="">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </span>
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-        <p class="text-sm select-none">
-          {{ filteredEtus.length }} résultats
-        </p>
-      </div>
-    </div>
+          <div class="bg-base-100 rounded-lg shadow-lg w-96 overflow-hidden border border-base-300" v-if="accords && accords.agreements">
+            <!-- En-tête -->
+            <div class="bg-base-300 p-4">
+              <h3 class="font-bold text-lg select-none">Filtres</h3>
+              <div class="flex justify-between items-center mt-2">
+                <button 
+                  class="btn btn-sm btn-ghost text-xs" 
+                  @click="deselectAll"
+                >
+                  <span class="">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </span>
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+                <p class="text-sm select-none">
+                  {{ filteredEtus.length }} résultats
+                </p>
+              </div>
+            </div>
 
-    <!-- Section Départements -->
-    <div class="border-b border-base-300">
-      <div
-        class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-        @click="toggleCollapse('departments')"
-      >
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
-          </svg>
-          <span class="font-medium select-none">Départements</span>
-          <span v-if="selectedDepartment.length" class="badge badge-sm select-none">{{ selectedDepartment.length }}</span>
-        </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke-width="1.5" 
-          stroke="currentColor" 
-          class="w-5 h-5 transition-transform duration-200"
-          :class="isOpen.departments ? 'rotate-180' : ''"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-
-      <div class="p-4 pt-0 bg-base-100" v-show="isOpen.departments">
-        <button
-          class="btn btn-xs btn-ghost mb-3"
-          @click="deselectAllDept"
-        >
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-
-        <div class="mb-3">
-          <label
-            for="filt_dept_zero"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-          >
-            <input
-              id="filt_dept_zero"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              value="Aucun"
-              v-model="selectedDepartment"
-            />
-            <div
-              class="w-4 h-4 rounded-full mr-2"
-              style="background-color: #aaaaaa"
-            ></div>
-            <span class="text-sm select-none">Aucun</span>
-          </label>
-        </div>
-
-        <div v-for="(comp, index) in components.components" :key="index" class="mb-4">
-          <p class="font-medium text-sm mb-2 select-none">{{ comp.comp_name }}</p>
-          <div class="grid grid-cols-1 gap-2 pl-2">
-            <div
-              v-for="(dept, index) in comp.departments"
-              :key="index"
-            >
-              <label
-                :for="'filt_dept_' + dept.dept_id"
-                class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+            <!-- Section Départements -->
+            <div class="border-b border-base-300">
+              <div
+                class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                @click="toggleCollapse('departments')"
               >
-                <input
-                  :id="'filt_dept_' + dept.dept_id"
-                  type="checkbox"
-                  class="checkbox checkbox-sm mr-2"
-                  :value="dept.dept_shortname"
-                  v-model="selectedDepartment"
-                />
-                <div
-                  class="w-4 h-4 rounded-full mr-2"
-                  :style="{ backgroundColor: dept.dept_color }"
-                ></div>
-                <span class="text-sm select-none">{{ dept.dept_shortname }}</span>
-              </label>
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+                  </svg>
+                  <span class="font-medium select-none">Départements</span>
+                  <span v-if="selectedDepartment.length" class="badge badge-sm select-none">{{ selectedDepartment.length }}</span>
+                </div>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor" 
+                  class="w-5 h-5 transition-transform duration-200"
+                  :class="isOpen.departments ? 'rotate-180' : ''"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+
+              <div class="p-4 pt-0 bg-base-100" v-show="isOpen.departments">
+                <button
+                  class="btn btn-xs btn-ghost mb-3"
+                  @click="deselectAllDept"
+                >
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+
+                <div class="mb-3">
+                  <label
+                    for="filt_dept_zero"
+                    class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                  >
+                    <input
+                      id="filt_dept_zero"
+                      type="checkbox"
+                      class="checkbox checkbox-sm mr-2"
+                      value="Aucun"
+                      v-model="selectedDepartment"
+                    />
+                    <div
+                      class="w-4 h-4 rounded-full mr-2"
+                      style="background-color: #aaaaaa"
+                    ></div>
+                    <span class="text-sm select-none">Aucun</span>
+                  </label>
+                </div>
+
+                <div v-for="(comp, index) in components.components" :key="index" class="mb-4">
+                  <p class="font-medium text-sm mb-2 select-none">{{ comp.comp_name }}</p>
+                  <div class="grid grid-cols-1 gap-2 pl-2">
+                    <div
+                      v-for="(dept, index) in comp.departments"
+                      :key="index"
+                    >
+                      <label
+                        :for="'filt_dept_' + dept.dept_id"
+                        class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                      >
+                        <input
+                          :id="'filt_dept_' + dept.dept_id"
+                          type="checkbox"
+                          class="checkbox checkbox-sm mr-2"
+                          :value="dept.dept_shortname"
+                          v-model="selectedDepartment"
+                        />
+                        <div
+                          class="w-4 h-4 rounded-full mr-2"
+                          :style="{ backgroundColor: dept.dept_color }"
+                        ></div>
+                        <span class="text-sm select-none">{{ dept.dept_shortname }}</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section Nombre de voeux -->
+            <div class="border-b border-base-300">
+              <div
+                class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                @click="toggleCollapse('voeux')"
+              >
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                  </svg>
+                  <span class="font-medium select-none">Nombre de voeux</span>
+                  <span v-if="selectedVoeux.length" class="badge badge-sm select-none">{{ selectedVoeux.length }}</span>
+                </div>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor" 
+                  class="w-5 h-5 transition-transform duration-200"
+                  :class="isOpen.voeux ? 'rotate-180' : ''"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+
+              <div class="p-4 pt-0 bg-base-100" v-show="isOpen.voeux">
+                <button
+                  class="btn btn-xs btn-ghost mb-3"
+                  @click="deselectAllVoeux"
+                >
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+
+                <div class="grid grid-cols-1 gap-2">
+                  <div
+                    v-for="(voeu, index) in voeuxNoms"
+                    :key="index"
+                    class="flex items-center"
+                  >
+                    <label
+                      :for="'filt_voeux_' + index"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    >
+                      <input
+                        :id="'filt_voeux_' + index"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        :value="voeu.val"
+                        v-model="selectedVoeux"
+                      />
+                      <span class="text-sm select-none">{{ voeu.name }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section Accords (voeux) -->
+            <div class="border-b border-base-300">
+              <div
+                class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                @click="toggleCollapse('accords')"
+              >
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                  <span class="font-medium select-none">Accords (voeux)</span>
+                  <span v-if="selectedAccord.length" class="badge badge-sm select-none">{{ selectedAccord.length }}</span>
+                </div>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor" 
+                  class="w-5 h-5 transition-transform duration-200"
+                  :class="isOpen.accords ? 'rotate-180' : ''"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+
+              <div class="p-4 pt-0 bg-base-100" v-show="isOpen.accords">
+                <button
+                  class="btn btn-xs btn-ghost mb-3"
+                  @click="deselectAllAccord"
+                >
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+
+                <div class="grid grid-cols-1 gap-2">
+                  <div
+                    v-for="(accord, index) in accords.agreements"
+                    :key="index"
+                    class="flex items-center"
+                  >
+                    <label
+                      :for="'filt_accord_' + index"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    >
+                      <input
+                        :id="'filt_accord_' + index"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        :value="accord.agree_id"
+                        v-model="selectedAccord"
+                      />
+                      <span class="relative inline-block mr-2">
+                        <!-- Drapeau -->
+                        <span class="fi" :class="'fi-' + accord.partnercountry?.parco_code"></span>
+
+                        <!-- Point d'interrogation si pas de drapeau -->
+                        <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">
+                          ?
+                        </span>
+                      </span>
+                      <span class="text-sm select-none">{{ accord.university?.univ_name || 'Université indisponible' }} - {{ accord.isced?.isc_code || 'Code ISCED ?' }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section Années de mobilité -->
+            <div>
+              <div
+                class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                @click="toggleCollapse('anneemobilite')"
+              >
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                  </svg>
+                  <span class="font-medium select-none">Années de mobilité</span>
+                  <span v-if="selectedAnneeMobilite.length" class="badge badge-sm select-none">{{ selectedAnneeMobilite.length }}</span>
+                </div>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor" 
+                  class="w-5 h-5 transition-transform duration-200"
+                  :class="isOpen.anneemobilite ? 'rotate-180' : ''"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+
+              <div class="p-4 pt-0 bg-base-100" v-show="isOpen.anneemobilite">
+                <button
+                  class="btn btn-xs btn-ghost mb-3"
+                  @click="deselectAllAnneeMobilite"
+                >
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+
+                <div class="grid grid-cols-1 gap-2">
+                  <div
+                    v-for="(annee, index) in anneesmobilite"
+                    :key="index"
+                    class="flex items-center"
+                  >
+                    <label
+                      :for="'filt_annee_' + index"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    >
+                      <input
+                        :id="'filt_annee_' + index"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        :value="annee"
+                        v-model="selectedAnneeMobilite"
+                      />
+                      <span class="text-sm select-none">{{ annee }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Section Nombre de voeux -->
-    <div class="border-b border-base-300">
-      <div
-        class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-        @click="toggleCollapse('voeux')"
-      >
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-          </svg>
-          <span class="font-medium select-none">Nombre de voeux</span>
-          <span v-if="selectedVoeux.length" class="badge badge-sm select-none">{{ selectedVoeux.length }}</span>
-        </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke-width="1.5" 
-          stroke="currentColor" 
-          class="w-5 h-5 transition-transform duration-200"
-          :class="isOpen.voeux ? 'rotate-180' : ''"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-
-      <div class="p-4 pt-0 bg-base-100" v-show="isOpen.voeux">
-        <button
-          class="btn btn-xs btn-ghost mb-3"
-          @click="deselectAllVoeux"
-        >
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-
-        <div class="grid grid-cols-1 gap-2">
-          <div
-            v-for="(voeu, index) in voeuxNoms"
-            :key="index"
-            class="flex items-center"
-          >
-            <label
-              :for="'filt_voeux_' + index"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-            >
-              <input
-                :id="'filt_voeux_' + index"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                :value="voeu.val"
-                v-model="selectedVoeux"
-              />
-              <span class="text-sm select-none">{{ voeu.name }}</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section Accords (voeux) -->
-    <div class="border-b border-base-300">
-      <div
-        class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-        @click="toggleCollapse('accords')"
-      >
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-          </svg>
-          <span class="font-medium select-none">Accords (voeux)</span>
-          <span v-if="selectedAccord.length" class="badge badge-sm select-none">{{ selectedAccord.length }}</span>
-        </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke-width="1.5" 
-          stroke="currentColor" 
-          class="w-5 h-5 transition-transform duration-200"
-          :class="isOpen.accords ? 'rotate-180' : ''"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-
-      <div class="p-4 pt-0 bg-base-100" v-show="isOpen.accords">
-        <button
-          class="btn btn-xs btn-ghost mb-3"
-          @click="deselectAllAccord"
-        >
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-
-        <div class="grid grid-cols-1 gap-2">
-          <div
-            v-for="(accord, index) in accords.agreements"
-            :key="index"
-            class="flex items-center"
-          >
-            <label
-              :for="'filt_accord_' + index"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-            >
-              <input
-                :id="'filt_accord_' + index"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                :value="accord.agree_id"
-                v-model="selectedAccord"
-              />
-              <span class="relative inline-block mr-2">
-                <!-- Drapeau -->
-                <span class="fi" :class="'fi-' + accord.partnercountry?.parco_code"></span>
-
-                <!-- Point d'interrogation si pas de drapeau -->
-                <span v-if="!accord.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">
-                  ?
-                </span>
-              </span>
-              <span class="text-sm select-none">{{ accord.university?.univ_name || 'Université indisponible' }} - {{ accord.isced?.isc_code || 'Code ISCED ?' }}</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section Années de mobilité -->
-    <div>
-      <div
-        class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-        @click="toggleCollapse('anneemobilite')"
-      >
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-          </svg>
-          <span class="font-medium select-none">Années de mobilité</span>
-          <span v-if="selectedAnneeMobilite.length" class="badge badge-sm select-none">{{ selectedAnneeMobilite.length }}</span>
-        </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke-width="1.5" 
-          stroke="currentColor" 
-          class="w-5 h-5 transition-transform duration-200"
-          :class="isOpen.anneemobilite ? 'rotate-180' : ''"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-
-      <div class="p-4 pt-0 bg-base-100" v-show="isOpen.anneemobilite">
-        <button
-          class="btn btn-xs btn-ghost mb-3"
-          @click="deselectAllAnneeMobilite"
-        >
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-
-        <div class="grid grid-cols-1 gap-2">
-          <div
-            v-for="(annee, index) in anneesmobilite"
-            :key="index"
-            class="flex items-center"
-          >
-            <label
-              :for="'filt_annee_' + index"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-            >
-              <input
-                :id="'filt_annee_' + index"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                :value="annee"
-                v-model="selectedAnneeMobilite"
-              />
-              <span class="text-sm select-none">{{ annee }}</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-        <!-- Affichage des etudiants -->
+        <!-- Affichage des étudiants -->
         <div class="flex flex-col items-center justify-start w-full">
-          <div class="w-full flex items-center justify-start">
+          <div class="w-full flex items-center justify-between mb-4">
             <button
-              class="w-fit py-2 hover:opacity-70 underline text-start"
+              class="btn btn-ghost btn-sm"
               @click="watchAllWish"
             >
-              Voir tous les voeux
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span class="select-none">Voir tous les voeux</span>
             </button>
           </div>
 
@@ -314,12 +318,6 @@
           <label
             class="input input-bordered flex items-center gap-2 w-full my-2"
           >
-            <input
-              type="text"
-              class="grow"
-              placeholder="Recherche par nom et prénom"
-              v-model="searchQuery"
-            />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -332,93 +330,105 @@
                 clip-rule="evenodd"
               />
             </svg>
+            <input
+              type="text"
+              class="grow"
+              placeholder="Recherche par nom et prénom"
+              v-model="searchQuery"
+            />
           </label>
 
-          <div class="w-full max-h-screen overflow-auto">
+          <div class="w-full">
             <div
-              class="elementDrag bg-base-300 w-96 mb-2 flex items-center justify-center cursor-move select-none hover:opacity-80 flex-col"
+              class="elementDrag bg-base-100 w-96 mb-2 rounded-md shadow-sm hover:shadow transition-all duration-200 select-none cursor-move border border-base-200"
               :draggable="true"
               :id="'etu_drag_' + etu.acc_id"
               v-for="(etu, index) in filteredEtus"
               :key="index"
               :style="{
-                borderBottom: `4px solid ${
-                  etu.department ? etu.department.dept_color : '#aaaaaa'
-                }`,
+                borderLeft: `4px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}`,
               }"
             >
-              <div class="flex items-center justify-between w-full p-1">
-                <div class="badge badge-md" 
-             :style="{ backgroundColor: etu.department ? etu.department.dept_color : '#aaaaaa', color: 'white' }">
-          {{ etu.department ? etu.department.dept_shortname : 'N/A' }}
-        </div>
-                <div class="flex flex-col w-full items-center justify-start">
-                  <p class="w-full text-center">{{ etu.acc_fullname }}</p>
+              <!-- En-tête avec informations de l'étudiant -->
+              <div class="flex items-center justify-between w-full p-2 bg-base-200/50">
+                <div class="flex items-center">
+                  <div 
+                    class="badge badge-md mr-2" 
+                    :style="{ backgroundColor: etu.department ? etu.department.dept_color : '#aaaaaa', color: 'white' }"
+                  >
+                    {{ etu.department ? etu.department.dept_shortname : 'N/A' }}
+                  </div>
+                  <h3 class="font-medium text-base select-none">{{ etu.acc_fullname }}</h3>
                 </div>
-                <label @click="changeEtuInfo(etu)" for="modal_info_etu"
-                              class="btn btn-circle btn-xs btn-ghost flex items-center justify-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
-                            </label>
-              </div>
 
-              <!-- Si létudiant a des voeux -->
-              <div
-                v-if="etu.wishes.count > 0"
-                class="bg-base-200 w-full p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer"
-                @click="toggleCollapseEtu(etu.acc_id)"
-              >
-                <p>Voir les voeux</p>
-                <span
-                  :class="isOpen.etudiants[etu.acc_id] ? 'rotate-180' : ''"
-                  class="transform transition-transform text-xl select-none"
-                  >&#9662;</span
+                <button 
+                  @click="changeEtuInfo(etu)" 
+                  for="modal_info_etu"
+                  class="btn btn-circle btn-xs btn-ghost"
                 >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
               </div>
 
-              <!-- Affichage des voeux -->
-              <div class="p-1 w-full" v-show="isOpen.etudiants[etu.acc_id]">
-                <div>
-                  <div>
-                    <div
-                      v-for="(accord, index) in getFilteredAgreements(etu)"
-                      :key="index"
-                      class="flex justify-between"
-                    >
-                      <p class="min-w-fit flex items-start justify-center">
-                        Voeu {{ accord.place }}
-                      </p>
-                      <div class="flex w-full items-start justify-start ml-2">
-                        <span class="relative inline-block mr-1">
-                          <!-- Drapeau -->
-                          <span
-                            class="fi"
-                            :class="
-                              'fi-' +
-                              accord.agreement?.partnercountry?.parco_code
-                            "
-                          ></span>
+              <!-- Section des voeux s'il y en a -->
+              <div v-if="etu.wishes && etu.wishes.count > 0">
+                <div
+                  class="bg-base-100 p-2 mt-1 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors"
+                  @click="toggleCollapseEtu(etu.acc_id)"
+                >
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                    </svg>
+                    <span class="text-sm font-medium select-none">Voir les voeux</span>
+                    <span class="badge badge-sm badge-primary ml-2">{{ etu.wishes.count }}</span>
+                  </div>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke-width="1.5" 
+                    stroke="currentColor" 
+                    class="w-4 h-4 transition-transform duration-200"
+                    :class="isOpen.etudiants[etu.acc_id] ? 'rotate-180' : ''"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </div>
 
-                          <!-- Point d'interrogation si pas de drapeau -->
-                          <span
-                            v-if="!accord.agreement?.partnercountry?.parco_code"
-                            class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none"
-                          >
-                            ?
-                          </span>
+                <!-- Affichage des voeux -->
+                <div class="p-2 bg-base-100 border-t border-base-200 overflow-visible" v-show="isOpen.etudiants[etu.acc_id]">
+                  <div
+                    v-for="(accord, index) in getFilteredAgreements(etu)"
+                    :key="index"
+                    class="flex justify-between p-2 hover:bg-base-200/50 rounded transition-colors"
+                  >
+                    <div class="min-w-fit flex items-start justify-center">
+                      <span class="badge badge-sm badge-outline badge-primary">Voeu {{ accord.place }}</span>
+                    </div>
+                    <div class="flex w-full items-start justify-start ml-2">
+                      <span class="relative inline-block mr-1">
+                        <!-- Drapeau -->
+                        <span
+                          class="fi"
+                          :class="'fi-' + accord.agreement?.partnercountry?.parco_code"
+                        ></span>
+
+                        <!-- Point d'interrogation si pas de drapeau -->
+                        <span
+                          v-if="!accord.agreement?.partnercountry?.parco_code"
+                          class="absolute inset-0 flex items-center justify-center text-black text-sm font-bold bg-white select-none"
+                        >
+                          ?
                         </span>
+                      </span>
 
-                        <p>
-                          {{
-                            accord.agreement.university?.univ_name ||
-                            "Université indisponible"
-                          }}
-                          {{
-                            accord.agreement.isced?.isc_code || "Code ISCED ?"
-                          }}
-                        </p>
+                      <div class="text-sm">
+                        <span class="font-medium">{{ accord.agreement.university?.univ_name || "Université indisponible" }}</span>
+                        <span class="text-xs text-base-content/70 ml-1">{{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}</span>
                       </div>
                     </div>
                   </div>
@@ -435,9 +445,9 @@
           />
           <div class="modal" role="dialog">
             <div
-              class="modal-box w-170 max-w-full"
+              class="modal-box w-170 max-w-full bg-base-100"
               :style="{
-                borderBottom: `4px solid ${
+                borderLeft: `6px solid ${
                   infoetudiant.department
                     ? infoetudiant.department.dept_color
                     : '#aaaaaa'
@@ -451,129 +461,138 @@
                   >✕</label
                 >
               </form>
-              <h3 class="text-xl font-bold">
-                {{
-                  infoetudiant.acc_fullname
-                    ? infoetudiant.acc_fullname
-                    : "Inconnu"
-                }}
-                <span class="text-sm"
-                  >({{
-                    infoetudiant.acc_id ? infoetudiant.acc_id : "Inconnu"
-                  }})</span
-                >
-              </h3>
 
-              <div class="mt-3">
-                <div class="divider"></div>
-                <h4 class="font-bold text-lg mb-2">Informations</h4>
-                <div class="flex flex-col">
-                  <p class="text-gray-400">
-                    <strong>Nombre de vœux:</strong>
-                    {{ infoetudiant.wishes ? infoetudiant.wishes.count : 0
-                    }}<br />
-                    <strong>Documents ajouté(s):</strong>
-                    {{ infoetudiant.documents?.count || 0 }}/{{
-                      infoetudiant.documents?.countmax
-                    }}<br />
-                    <strong>Dernière connexion:</strong>
-                    {{ formatDate(infoetudiant.acc_lastlogin) }}<br />
-                    <strong>Aménagement aux éxams:</strong>
-                    {{ infoetudiant.acc_amenagement == true ? "Oui" : "Non" }}
+              <div class="flex items-center mb-4">
+                <div 
+                  class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3"
+                  :style="{ backgroundColor: infoetudiant.department ? infoetudiant.department.dept_color : '#aaaaaa' }"
+                >
+                  {{ infoetudiant.acc_fullname ? infoetudiant.acc_fullname.charAt(0).toUpperCase() : 'N' }}
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold">
+                    {{ infoetudiant.acc_fullname ? infoetudiant.acc_fullname : "Inconnu" }}
+                  </h3>
+                  <p class="text-sm text-base-content/70">
+                    ID: {{ infoetudiant.acc_id ? infoetudiant.acc_id : "Inconnu" }}
                   </p>
                 </div>
               </div>
-              <div class="mt-3">
-                <div class="divider"></div>
-                <div class="flex flex-col">
-                  <p class="text-gray-400">
-                    <strong>Email:</strong>
-                    {{ infoetudiant.acc_mail ? infoetudiant.acc_mail : "Aucun"
-                    }}<br />
-                    <strong>Numéro étudiant:</strong>
-                    {{
-                      infoetudiant.acc_studentnum
-                        ? infoetudiant.acc_studentnum
-                        : "Aucun"
-                    }}<br />
-                    <strong>Années de mobilité:</strong>
-                    {{
-                      infoetudiant.acc_anneemobilite
-                        ? infoetudiant.acc_anneemobilite
-                        : "Aucune"
-                    }}<br />
-                    <strong>Score TOEIC:</strong>
-                    {{
-                      infoetudiant.acc_toeic ? infoetudiant.acc_toeic : "Aucun"
-                    }}<br />
-                    <strong>Département:</strong>
-                    {{
-                      infoetudiant.department
-                        ? infoetudiant.department.dept_name
-                        : "Aucun"
-                    }}<br />
-                    <strong>Parcours:</strong>
-                    {{
-                      infoetudiant.acc_parcours
-                        ? infoetudiant.acc_parcours
-                        : "Aucun"
-                    }}
-                  </p>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Informations principales -->
+                <div class="bg-base-200 p-3 rounded-md">
+                  <h4 class="font-bold text-md mb-2">Informations</h4>
+                  <div class="space-y-1">
+                    <div class="flex justify-between">
+                      <span class="font-medium">Nombre de vœux:</span>
+                      <span>{{ infoetudiant.wishes ? infoetudiant.wishes.count : 0 }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Documents ajoutés:</span>
+                      <span>{{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Dernière connexion:</span>
+                      <span>{{ formatDate(infoetudiant.acc_lastlogin) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Aménagement aux examens:</span>
+                      <span>{{ infoetudiant.acc_amenagement == true ? "Oui" : "Non" }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Informations complémentaires -->
+                <div class="bg-base-200 p-3 rounded-md">
+                  <h4 class="font-bold text-md mb-2">Coordonnées</h4>
+                  <div class="space-y-1">
+                    <div class="flex justify-between">
+                      <span class="font-medium">Email:</span>
+                      <span class="truncate">{{ infoetudiant.acc_mail ? infoetudiant.acc_mail : "Aucun" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Numéro étudiant:</span>
+                      <span>{{ infoetudiant.acc_studentnum ? infoetudiant.acc_studentnum : "Aucun" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Année de mobilité:</span>
+                      <span>{{ infoetudiant.acc_anneemobilite ? infoetudiant.acc_anneemobilite : "Aucune" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Score TOEIC:</span>
+                      <span>{{ infoetudiant.acc_toeic ? infoetudiant.acc_toeic : "Aucun" }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="mt-3">
-                <div class="divider"></div>
-                <h4 class="font-bold text-lg mb-2">Voeux</h4>
-                <p v-if="infoetudiant.wishes && infoetudiant.wishes.count == 0">
-                  Aucun :(
+
+              <!-- Informations académiques -->
+              <div class="bg-base-200 p-3 rounded-md mt-3">
+                <h4 class="font-bold text-md mb-2">Information académique</h4>
+                <div class="space-y-1">
+                  <div class="flex justify-between">
+                    <span class="font-medium">Département:</span>
+                    <span>{{ infoetudiant.department ? infoetudiant.department.dept_name : "Aucun" }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="font-medium">Parcours:</span>
+                    <span>{{ infoetudiant.acc_parcours ? infoetudiant.acc_parcours : "Aucun" }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section Voeux -->
+              <div class="bg-base-200 p-3 rounded-md mt-3">
+                <h4 class="font-bold text-md mb-2">Voeux</h4>
+                <p v-if="infoetudiant.wishes && infoetudiant.wishes.count == 0" class="text-center text-base-content/70 italic">
+                  Aucun voeu enregistré
                 </p>
                 <div
                   v-for="(accord, index) in getFilteredAgreements(infoetudiant)"
                   :key="index"
-                  class="flex justify-between"
+                  class="flex justify-between p-2 hover:bg-base-100 rounded"
                 >
-                  <p class="min-w-fit">Voeu {{ accord.place }}</p>
+                  <div class="min-w-fit">
+                    <span class="badge badge-sm badge-primary">Voeu {{ accord.place }}</span>
+                  </div>
                   <div class="flex w-full items-center justify-start ml-2">
                     <span class="relative inline-block mr-1">
                       <!-- Drapeau -->
                       <span
                         class="fi"
-                        :class="
-                          'fi-' + accord.agreement?.partnercountry?.parco_code
-                        "
+                        :class="'fi-' + accord.agreement?.partnercountry?.parco_code"
                       ></span>
 
                       <!-- Point d'interrogation si pas de drapeau -->
                       <span
                         v-if="!accord.agreement?.partnercountry?.parco_code"
-                        class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none"
+                        class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none"
                       >
                         ?
                       </span>
                     </span>
 
-                    <p>
-                      {{
-                        accord.agreement.university?.univ_name ||
-                        "Université indisponible"
-                      }}
-                      {{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}
-                    </p>
+                    <div class="text-sm">
+                      <span class="font-medium">{{ accord.agreement.university?.univ_name || "Université indisponible" }}</span>
+                      <span class="text-xs text-base-content/70">{{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="mt-3" v-if="infoetudiant && infoetudiant.acc_id">
-                <div class="divider"></div>
+
+              <!-- Bouton profil -->
+              <div class="mt-4" v-if="infoetudiant && infoetudiant.acc_id">
                 <a
-                  :href="
-                    $router.resolve({
-                      name: 'Profile',
-                      params: { acc_id: infoetudiant.acc_id },
-                    }).href
-                  "
+                  :href="$router.resolve({ name: 'Profile', params: { acc_id: infoetudiant.acc_id }}).href"
                   target="_blank"
                 >
-                  <button class="btn w-full">Voir le profil</button>
+                  <button class="btn btn-primary w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Voir le profil complet
+                  </button>
                 </a>
               </div>
             </div>
@@ -588,400 +607,400 @@
 
         <!-- Partie filtre accords -->
         <div class="flex items-center justify-center py-5 w-full">
-  <div class="bg-base-100 rounded-lg shadow-lg w-11/12 overflow-hidden border border-base-300" v-if="accords && accords.agreements">
-    <!-- En-tête -->
-    <div class="bg-base-300 p-4">
-      <h3 class="font-bold text-lg select-none">Filtres</h3>
-      <div class="flex justify-between items-center mt-2">
-        <button 
-          class="btn btn-sm btn-ghost text-xs" 
-          @click="deselectAllArb"
-        >
-          <span class="">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </span>
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-        <p class="text-sm select-none">
-          {{ filteredArbitrage.length }} résultats
-        </p>
-      </div>
-    </div>
+          <div class="bg-base-100 rounded-lg shadow-lg w-11/12 overflow-hidden border border-base-300" v-if="accords && accords.agreements">
+            <!-- En-tête -->
+            <div class="bg-base-300 p-4">
+              <h3 class="font-bold text-lg select-none">Filtres</h3>
+              <div class="flex justify-between items-center mt-2">
+                <button 
+                  class="btn btn-sm btn-ghost text-xs" 
+                  @click="deselectAllArb"
+                >
+                  <span class="">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </span>
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+                <p class="text-sm select-none">
+                  {{ filteredArbitrage.length }} résultats
+                </p>
+              </div>
+            </div>
 
-    <!-- Section Pays -->
-    <div class="border-b border-base-300">
-      <div
-        class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-        @click="toggleCollapse('pays')"
-      >
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-          </svg>
-          <span class="font-medium select-none">Pays</span>
-          <span v-if="selectedCountries.length" class="badge badge-sm select-none">{{ selectedCountries.length }}</span>
-        </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke-width="1.5" 
-          stroke="currentColor" 
-          class="w-5 h-5 transition-transform duration-200"
-          :class="isOpen.pays ? 'rotate-180' : ''"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
+            <!-- Section Pays -->
+            <div class="border-b border-base-300">
+              <div
+                class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                @click="toggleCollapse('pays')"
+              >
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                  </svg>
+                  <span class="font-medium select-none">Pays</span>
+                  <span v-if="selectedCountries.length" class="badge badge-sm select-none">{{ selectedCountries.length }}</span>
+                </div>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor" 
+                  class="w-5 h-5 transition-transform duration-200"
+                  :class="isOpen.pays ? 'rotate-180' : ''"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
 
-      <div class="p-4 pt-0 bg-base-100" v-show="isOpen.pays">
-        <button
-          class="btn btn-xs btn-ghost mb-3"
-          @click="deselectAllCountry"
-        >
-          <span class="select-none">Tout désélectionner</span>
-        </button>
+              <div class="p-4 pt-0 bg-base-100" v-show="isOpen.pays">
+                <button
+                  class="btn btn-xs btn-ghost mb-3"
+                  @click="deselectAllCountry"
+                >
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-2">
-          <div
-            v-for="(country, index) in partnercountry"
-            :key="index"
-            class="flex items-center"
-          >
-            <label
-              :for="'filt_pays_' + index"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-            >
-              <input
-                :id="'filt_pays_' + index"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                :value="country.parco_name"
-                v-model="selectedCountries"
-              />
-              <span class="fi mr-2" :class="'fi-' + country.parco_code"></span>
-              <span class="text-sm select-none">{{ country.parco_name }}</span>
-            </label>
+                <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-2">
+                  <div
+                    v-for="(country, index) in partnercountry"
+                    :key="index"
+                    class="flex items-center"
+                  >
+                    <label
+                      :for="'filt_pays_' + index"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    >
+                      <input
+                        :id="'filt_pays_' + index"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        :value="country.parco_name"
+                        v-model="selectedCountries"
+                      />
+                      <span class="fi mr-2" :class="'fi-' + country.parco_code"></span>
+                      <span class="text-sm select-none">{{ country.parco_name }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section ISCED -->
+            <div class="border-b border-base-300">
+              <div
+                class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                @click="toggleCollapse('isced')"
+              >
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                  </svg>
+                  <span class="font-medium select-none">ISCED</span>
+                  <span v-if="selectedIsced.length" class="badge badge-sm select-none">{{ selectedIsced.length }}</span>
+                </div>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor" 
+                  class="w-5 h-5 transition-transform duration-200"
+                  :class="isOpen.isced ? 'rotate-180' : ''"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+
+              <div class="p-4 pt-0 bg-base-100" v-show="isOpen.isced">
+                <button
+                  class="btn btn-xs btn-ghost mb-3"
+                  @click="deselectAllIsced"
+                >
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+                  <div
+                    v-for="(isced, index) in availableIsceds"
+                    :key="index"
+                    class="flex items-center"
+                  >
+                    <label
+                      :for="'filt_isced_' + index"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    >
+                      <input
+                        :id="'filt_isced_' + index"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        :value="isced.isc_id"
+                        v-model="selectedIsced"
+                      />
+                      <span class="text-sm select-none">{{ isced.isc_code || "XX" }} - {{ isced.isc_name || "Sans code" }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section Universités -->
+            <div class="border-b border-base-300">
+              <div
+                class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                @click="toggleCollapse('university')"
+              >
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+                  </svg>
+                  <span class="font-medium select-none">Universités</span>
+                  <span v-if="selectedUniversity.length" class="badge badge-sm select-none">{{ selectedUniversity.length }}</span>
+                </div>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor" 
+                  class="w-5 h-5 transition-transform duration-200"
+                  :class="isOpen.university ? 'rotate-180' : ''"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+
+              <div class="p-4 pt-0 bg-base-100" v-show="isOpen.university">
+                <button
+                  class="btn btn-xs btn-ghost mb-3"
+                  @click="deselectAllUniversity"
+                >
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div
+                    v-for="(univ, index) in availableUniversities"
+                    :key="index"
+                    class="flex items-center"
+                  >
+                    <label
+                      :for="'filt_univ_' + index"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    >
+                      <input
+                        :id="'filt_univ_' + index"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        :value="univ.univ_id"
+                        v-model="selectedUniversity"
+                      />
+                      <span class="relative inline-block mr-2">
+                        <!-- Drapeau -->
+                        <span class="fi" :class="'fi-' + univ.partnercountry?.parco_code"></span>
+
+                        <!-- Point d'interrogation si pas de drapeau -->
+                        <span v-if="!univ.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">
+                          ?
+                        </span>
+                      </span>
+                      <span class="text-sm select-none">
+                        {{ univ.univ_name || "Université indisponible" }}
+                        <span class="text-gray-500">({{ univ.iscedCount }} ISCED{{ univ.iscedCount > 1 ? "s" : "" }})</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section Arbitrage -->
+            <div>
+              <div
+                class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                @click="toggleCollapse('arbitrage')"
+              >
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                  </svg>
+                  <span class="font-medium select-none">Arbitrage</span>
+                  <span v-if="selectedArbitrage.length" class="badge badge-sm select-none">{{ selectedArbitrage.length }}</span>
+                </div>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor" 
+                  class="w-5 h-5 transition-transform duration-200"
+                  :class="isOpen.arbitrage ? 'rotate-180' : ''"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+
+              <div class="p-4 pt-0 bg-base-100" v-show="isOpen.arbitrage">
+                <button
+                  class="btn btn-xs btn-ghost mb-3"
+                  @click="deselectAllArbitrage"
+                >
+                  <span class="select-none">Tout désélectionner</span>
+                </button>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div class="flex items-center">
+                    <label
+                      for="filt_arbitrage_1"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    >
+                      <input
+                        id="filt_arbitrage_1"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        value="aucun"
+                        v-model="selectedArbitrage"
+                      />
+                      <span class="text-sm select-none">Aucun étudiant</span>
+                    </label>
+                  </div>
+                  <div class="flex items-center">
+                    <label
+                      for="filt_arbitrage_2"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    >
+                      <input
+                        id="filt_arbitrage_2"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        value="aumoinsun"
+                        v-model="selectedArbitrage"
+                      />
+                      <span class="text-sm select-none">Au moins un étudiant</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Section ISCED -->
-    <div class="border-b border-base-300">
-      <div
-        class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-        @click="toggleCollapse('isced')"
-      >
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-          </svg>
-          <span class="font-medium select-none">ISCED</span>
-          <span v-if="selectedIsced.length" class="badge badge-sm select-none">{{ selectedIsced.length }}</span>
-        </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke-width="1.5" 
-          stroke="currentColor" 
-          class="w-5 h-5 transition-transform duration-200"
-          :class="isOpen.isced ? 'rotate-180' : ''"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-
-      <div class="p-4 pt-0 bg-base-100" v-show="isOpen.isced">
-        <button
-          class="btn btn-xs btn-ghost mb-3"
-          @click="deselectAllIsced"
-        >
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
-          <div
-            v-for="(isced, index) in availableIsceds"
-            :key="index"
-            class="flex items-center"
-          >
-            <label
-              :for="'filt_isced_' + index"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-            >
-              <input
-                :id="'filt_isced_' + index"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                :value="isced.isc_id"
-                v-model="selectedIsced"
-              />
-              <span class="text-sm select-none">{{ isced.isc_code || "XX" }} - {{ isced.isc_name || "Sans code" }}</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section Universités -->
-    <div class="border-b border-base-300">
-      <div
-        class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-        @click="toggleCollapse('university')"
-      >
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
-          </svg>
-          <span class="font-medium select-none">Universités</span>
-          <span v-if="selectedUniversity.length" class="badge badge-sm select-none">{{ selectedUniversity.length }}</span>
-        </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke-width="1.5" 
-          stroke="currentColor" 
-          class="w-5 h-5 transition-transform duration-200"
-          :class="isOpen.university ? 'rotate-180' : ''"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-
-      <div class="p-4 pt-0 bg-base-100" v-show="isOpen.university">
-        <button
-          class="btn btn-xs btn-ghost mb-3"
-          @click="deselectAllUniversity"
-        >
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <div
-            v-for="(univ, index) in availableUniversities"
-            :key="index"
-            class="flex items-center"
-          >
-            <label
-              :for="'filt_univ_' + index"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-            >
-              <input
-                :id="'filt_univ_' + index"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                :value="univ.univ_id"
-                v-model="selectedUniversity"
-              />
-              <span class="relative inline-block mr-2">
-                <!-- Drapeau -->
-                <span class="fi" :class="'fi-' + univ.partnercountry?.parco_code"></span>
-
-                <!-- Point d'interrogation si pas de drapeau -->
-                <span v-if="!univ.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">
-                  ?
-                </span>
-              </span>
-              <span class="text-sm select-none">
-                {{ univ.univ_name || "Université indisponible" }}
-                <span class="text-gray-500">({{ univ.iscedCount }} ISCED{{ univ.iscedCount > 1 ? "s" : "" }})</span>
-              </span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section Arbitrage -->
-    <div>
-      <div
-        class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-        @click="toggleCollapse('arbitrage')"
-      >
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-          </svg>
-          <span class="font-medium select-none">Arbitrage</span>
-          <span v-if="selectedArbitrage.length" class="badge badge-sm select-none">{{ selectedArbitrage.length }}</span>
-        </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke-width="1.5" 
-          stroke="currentColor" 
-          class="w-5 h-5 transition-transform duration-200"
-          :class="isOpen.arbitrage ? 'rotate-180' : ''"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-
-      <div class="p-4 pt-0 bg-base-100" v-show="isOpen.arbitrage">
-        <button
-          class="btn btn-xs btn-ghost mb-3"
-          @click="deselectAllArbitrage"
-        >
-          <span class="select-none">Tout désélectionner</span>
-        </button>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <div class="flex items-center">
-            <label
-              for="filt_arbitrage_1"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-            >
-              <input
-                id="filt_arbitrage_1"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                value="aucun"
-                v-model="selectedArbitrage"
-              />
-              <span class="text-sm select-none">Aucun étudiant</span>
-            </label>
-          </div>
-          <div class="flex items-center">
-            <label
-              for="filt_arbitrage_2"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-            >
-              <input
-                id="filt_arbitrage_2"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                value="aumoinsun"
-                v-model="selectedArbitrage"
-              />
-              <span class="text-sm select-none">Au moins un étudiant</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
         <!-- Partie rendu accord -->
-        <div
-          class="flex flex-col items-center justify-start w-full select-none h-screen overflow-auto"
-        >
-          <div
-            v-for="(arbitrage, accordIndex) in filteredArbitrage"
-            :key="'accord-' + accordIndex"
-            class="bg-base-300 w-11/12 mb-4 p-4 rounded-lg"
-          >
-            <div class="flex items-center justify-center mb-2">
-              <span class="relative inline-block mr-2">
-                <!-- Drapeau -->
-                <span
-                  class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out"
-                  :class="
-                    'fi-' + arbitrage.agreement?.partnercountry?.parco_code
-                  "
-                ></span>
+        <div class="flex flex-col items-center w-full flex-grow relative">
+          <div class="flex flex-col items-center justify-start w-full select-none overflow-auto absolute inset-0">
+            <div
+              v-for="(arbitrage, accordIndex) in filteredArbitrage"
+              :key="'accord-' + accordIndex"
+              class="bg-base-300 w-11/12 mb-4 p-4 rounded-lg"
+            >
+              <div class="flex items-center justify-center mb-2">
+                <span class="relative inline-block mr-2">
+                  <!-- Drapeau -->
+                  <span
+                    class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out"
+                    :class="
+                      'fi-' + arbitrage.agreement?.partnercountry?.parco_code
+                    "
+                  ></span>
 
-                <!-- Point d'interrogation si pas de drapeau -->
-                <span
-                  v-if="!arbitrage.agreement?.partnercountry?.parco_code"
-                  class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none"
-                >
-                  ?
+                  <!-- Point d'interrogation si pas de drapeau -->
+                  <span
+                    v-if="!arbitrage.agreement?.partnercountry?.parco_code"
+                    class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none"
+                  >
+                    ?
+                  </span>
                 </span>
-              </span>
 
-              <p class="font-bold text-lg">
+                <p class="font-bold text-lg">
+                  {{
+                    arbitrage.agreement.partnercountry?.parco_name ||
+                    "Pays indisponible"
+                  }}
+                </p>
+              </div>
+              <p class="text-center mb-3">
                 {{
-                  arbitrage.agreement.partnercountry?.parco_name ||
-                  "Pays indisponible"
+                  arbitrage.agreement.university?.univ_name ||
+                  "Université indisponible"
+                }}
+                -
+                {{
+                  arbitrage.agreement.isced?.isc_code || "Code ISCED indisponible"
+                }}
+                {{
+                  arbitrage.agreement.isced?.isc_name || "Nom ISCED indisponible"
                 }}
               </p>
-            </div>
-            <p class="text-center mb-3">
-              {{
-                arbitrage.agreement.university?.univ_name ||
-                "Université indisponible"
-              }}
-              -
-              {{
-                arbitrage.agreement.isced?.isc_code || "Code ISCED indisponible"
-              }}
-              {{
-                arbitrage.agreement.isced?.isc_name || "Nom ISCED indisponible"
-              }}
-            </p>
 
-            <div class="w-full flex justify-center">
-              <div class="flex flex-wrap gap-4 justify-center w-full">
-                <!-- Rendu des cases -->
-                <div
-                  :id="
-                    'drop_' + arbitrage.agreement.agree_id + '_' + placeIndex
-                  "
-                  v-for="(place, placeIndex) in getNumberOfPlace(
-                    arbitrage.agreement.agree_id
-                  )"
-                  :key="'place-' + placeIndex"
-                  class="dropZones bg-base-200 m-1 h-20 w-72 relative flex items-center justify-center"
-                >
+              <div class="w-full flex justify-center">
+                <div class="flex flex-wrap gap-4 justify-center w-full">
+                  <!-- Rendu des cases -->
                   <div
-                    v-if="
-                      arbitrage.accounts[placeIndex] &&
-                      arbitrage.accounts[placeIndex].account
-                    "
-                    draggable="true"
                     :id="
-                      'etu_drag_' +
-                      arbitrage.accounts[placeIndex].account.acc_id
+                      'drop_' + arbitrage.agreement.agree_id + '_' + placeIndex
                     "
-                    class="h-full w-full flex items-center justify-center elementDrag cursor-move hover:opacity-60"
-                    :style="{
-                      borderBottom: `4px solid ${
-                        arbitrage.accounts[placeIndex]?.account?.department
-                          ?.dept_color || '#aaaaaa'
-                      }`,
-                    }"
+                    v-for="(place, placeIndex) in getNumberOfPlace(
+                      arbitrage.agreement.agree_id
+                    )"
+                    :key="'place-' + placeIndex"
+                    class="dropZones bg-base-200 m-1 h-20 w-72 relative flex items-center justify-center"
                   >
-                    <p>
-                      {{ arbitrage.accounts[placeIndex].account.acc_fullname }}
-                    </p>
-                    <button
-                      @click="
-                        removeEtuFromPlace(
-                          arbitrage.agreement.agree_id,
-                          placeIndex
-                        )
+                    <div
+                      v-if="
+                        arbitrage.accounts[placeIndex] &&
+                        arbitrage.accounts[placeIndex].account
                       "
-                      class="hover:cursor-pointer hover:opacity-60 absolute top-0 right-0 p-2"
+                      draggable="true"
+                      :id="
+                        'etu_drag_' +
+                        arbitrage.accounts[placeIndex].account.acc_id
+                      "
+                      class="h-full w-full flex items-center justify-center elementDrag cursor-move hover:opacity-60"
+                      :style="{
+                        borderBottom: `4px solid ${
+                          arbitrage.accounts[placeIndex]?.account?.department
+                            ?.dept_color || '#aaaaaa'
+                        }`,
+                      }"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="stroke-current shrink-0 h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
+                      <p>
+                        {{ arbitrage.accounts[placeIndex].account.acc_fullname }}
+                      </p>
+                      <button
+                        @click="
+                          removeEtuFromPlace(
+                            arbitrage.agreement.agree_id,
+                            placeIndex
+                          )
+                        "
+                        class="hover:cursor-pointer hover:opacity-60 absolute top-0 right-0 p-2"
                       >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        ></path>
-                      </svg>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="stroke-current shrink-0 h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          ></path>
+                        </svg>
+                      </button>
+                    </div>
+                    <p v-else class="">Aucun étudiant</p>
                   </div>
-                  <p v-else class="">Aucun étudiant</p>
-                </div>
-                <div
-                  class="w-72 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer"
-                  @click="addPlace(arbitrage.agreement.agree_id)"
-                >
-                  <p class="text-lg font-bold">+</p>
+                  <div
+                    class="w-72 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer"
+                    @click="addPlace(arbitrage.agreement.agree_id)"
+                  >
+                    <p class="text-lg font-bold">+</p>
+                  </div>
                 </div>
               </div>
             </div>
