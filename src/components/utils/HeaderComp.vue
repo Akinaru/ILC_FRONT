@@ -7,120 +7,47 @@
       <div class="flex items-center justify-end">
         <!-- Connexion -->
         <div v-if="!isUserLoggedIn">
-          <!-- Afficher le portail de connexion -->
+          <!-- Afficher le portail de connexion avec redirection vers l'URL actuelle -->
           <p class=" hover:opacity-70 transition-all mr-2">
-            <a :href="config.apiUrl+'cas.php'+(isPreprod ? '?preprod=true' : '')">Connexion</a>
+            <a :href="config.apiUrl+'cas.php?redirect='+getCurrentURL()">Connexion</a>
           </p>
         </div>
 
-        
-        <!-- Profil -->
-        <div v-else-if="account && account != null && account.acc_fullname != null" class="flex items-center justify-center">
-  <ul class="menu menu-horizontal">
-    <li class="dropdown dropdown-end">
-      <details>
-        <summary class="flex items-center gap-2 whitespace-nowrap">
-          <!-- Affichage du rôle uniquement pour les grands écrans -->
-          <span 
-            v-if="account?.role?.role" 
-            class="p-1 hidden sm:block rounded-lg shrink-0" 
-            :style="{ backgroundColor: `${account?.role?.color ? account?.role?.color : '#aaaaaa'}` }"
-          >
-            {{ account?.role?.role }}
-          </span>
-          <!-- Nom d'utilisateur avec bordure inférieure pour les petits écrans -->
-          <span 
-            :class="{
-              'border-b-2': true,
-              'border-dept-color': true
-            }"
-            :style="{ borderBottomColor: `${account?.role?.color ? account?.role?.color : '#000000'}` }"
-            class="block sm:hidden text-xs font-semibold truncate"
-          >
-            {{ account.acc_fullname != null ? account.acc_fullname : 'Compte Inconnu' }}
-          </span>
-          <!-- Nom d'utilisateur affiché sur les grands écrans -->
-          <span class="hidden sm:inline font-semibold truncate">
-            {{ account.acc_fullname != null ? account.acc_fullname : 'Compte Inconnu' }}
-          </span>
-        </summary>
-        
-        <!-- Sous menu avec alignement à droite -->
-        <ul class="dropdown-content menu bg-base-100 z-[60] p-3 shadow-lg right-0" 
-            style="margin-top: 0.25rem !important; min-width: 18rem; width: max-content;">
-          <!-- Student Info Section -->
-          <div class="mb-3 border-b border-base-300 pb-3">
-            <!-- Student Status -->
-            <div class="grid grid-cols-1 gap-1 mt-2 text-sm">
-              <div>
-                <p class="opacity-70 text-xs">Statut de l'arbitrage:</p>
-                <p class="font-medium">
-                  <span class="badge badge-sm" :class="arbitrageStatus === 'Confirmé' ? 'badge-success' : 'badge-warning'">
-                    {{ arbitrageStatus || 'En attente' }}
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Destination Info - Simplified -->
-          <div v-if="account?.role?.access_type == null" class="mb-3 border-b border-base-300 pb-3">
-            <h4 class="font-medium mb-2 text-sm">Destination</h4>
-            <div class="bg-base-200 rounded-lg p-2">
-              <div class="flex justify-between items-center">
-                <span class="font-medium text-sm">{{ account.destination?.university || 'Universidad de Barcelona' }}</span>
-                <span class="badge badge-sm">{{ account.destination?.country || 'Espagne' }}</span>
-              </div>
-              <div class="text-xs opacity-70 mt-1">
-                <p>Période: {{ account.destination?.period || 'S1 2025-2026' }}</p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Days Remaining and Documents -->
-          <div class="mb-3 border-b border-base-300 pb-3">
-            <div class="grid grid-cols-2 gap-2">
-              <div class="text-center">
-                <div class="text-lg font-bold">{{ daysRemaining || '45j' }}</div>
-                <div class="text-xs opacity-70">Avant départ</div>
-              </div>
-              <div class="text-center">
-                <div class="text-lg font-bold">{{ documentsCompleted || '2/3' }}</div>
-                <div class="text-xs opacity-70">Documents</div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Navigation Links -->
-          <div v-if="account?.role?.access_type === 1">
-            <!-- Admin links -->
-            <li><a @click="goToPage('Dashboard')">Dashboard</a></li>
-            <li><a @click="goToPage('EtudiantsDash')">Liste des étudiants</a></li>
-            <li><a @click="goToPage('AccordDash')">Accords</a></li>
-            <li><a @click="goToPage('ArticleDash')">Articles</a></li>
-            <li><a @click="goToPage('Arbitrage')">Arbitrage</a></li>
-            <li><a @click="goToPage('DocumentsDash')">Documents</a></li>
-            
-            <!-- Logout for all users -->
-            <li><a @click="logout" class="text-error">Déconnexion</a></li>
-          </div>
-          <div v-else> 
-            <li v-if="fullname != null && account?.role?.access_type === 2">
-              <a @click="goToPage('EtudiantsDash')">Liste des étudiants</a>
-            </li>
-            <li v-else-if="fullname != null">
-              <a @click="goToPage('Dashboard')">Profil étudiant</a>
-            </li>
-            <li>
-              <a @click="logout" class="text-red-600">Déconnexion</a>
-            </li>
-          </div>
-        </ul>
-      </details>
-    </li>
-  </ul>
-</div>
 
+        <!-- Profil -->
+        <div v-else class="flex items-center justify-center">
+          <ul class="menu menu-horizontal">
+            <li>
+              <details>
+                <summary>
+                  <!-- Affichage du rôle uniquement pour les grands écrans -->
+                  <span v-if="role.role != 'Aucun'" class="p-1 hidden sm:block rounded-lg" :style="{ backgroundColor: `${role.color ? role.color : '#aaaaaa'}` }">
+                    {{ role.role }}
+                  </span>
+                  <!-- Nom d'utilisateur avec bordure inférieure pour les petits écrans -->
+                  <span 
+                    :class="{
+                      'border-b-2': true,
+                      'border-dept-color': true
+                    }"
+                    :style="{ borderBottomColor: `${role.color ? role.color : '#000000'}` }"
+                    class="block sm:hidden text-xs font-semibold"
+                  >
+                    {{ fullname != null ? fullname : 'Compte Inconnu' }}
+                  </span>
+                  <!-- Nom d'utilisateur affiché sur les grands écrans -->
+                  <span class="hidden sm:inline font-semibold">
+                    {{ fullname != null ? fullname : 'Compte Inconnu' }}
+                  </span>
+                </summary>
+                <ul class="bg-base-100 rounded-t-none z-[60]">
+                  <li v-if="fullname != null"><a @click="profil">{{ accountStore.access == 0 ? 'Profil étudiant' : 'Dashboard' }}</a></li>
+                  <li><a @click="logout" class="text-red-600">Déconnexion</a></li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
         <!-- Changement de thème -->
         <div class="scale-75 hover:opacity-60 transition-all flex items-center justify-center w-fit">
           <label class="swap swap-rotate">
@@ -136,7 +63,7 @@
       </div>
     </div>
   </header>
-  
+
 </template>
 
 <script setup>
@@ -152,15 +79,20 @@ const accountStore = useAccountStore();
 const { fullname, logged, acc_validateacc } = storeToRefs(accountStore);
 const theme = ref(localStorage.getItem('theme') || 'light');
 
-const account = ref([]);
+const role = ref([]);
 const response = ref([]);
-// Remplacer la ref isPreprod par une propriété computed
-const isPreprod = computed(() => {
-  return window.location.href.includes('preprod');
-});
 
 // Propriété computed pour vérifier l'état de connexion
 const isUserLoggedIn = computed(() => logged.value);
+
+// Fonction pour obtenir l'URL courante pour la déconnexion
+function getCurrentURL() {
+  // Vérifier si window est défini (pour éviter les erreurs pendant le SSR)
+  if (typeof window !== 'undefined' && window.location) {
+    return encodeURIComponent(window.location.href);
+  }
+  return '';
+}
 
 async function logout() {
   // Appel API logout
@@ -171,8 +103,8 @@ async function logout() {
   localStorage.removeItem('auth');
   localStorage.removeItem('token');
   
-  // Ajout du paramètre preprod lors de la déconnexion aussi
-  window.open(config.apiUrl + 'cas.php?logout=true', '_blank');
+  // Utilisation du paramètre redirect pour la déconnexion
+  window.open(config.apiUrl + 'cas.php?logout=true&redirect=' + getCurrentURL(), '_blank');
   router.push({ name: 'Accueil' });
   accountStore.logoutAccount();
 }
@@ -185,9 +117,9 @@ function closeMenu() {
   }
 }
 
+function profil() {
+  router.push({ name: 'Dashboard' });
 
-function goToPage(route){
-  router.push({ name: route });
   closeMenu();
 }
 
@@ -203,10 +135,9 @@ function applyTheme(theme) {
 
 async function load() {
   await nextTick();
-  // Vérifier l'environnement preprod au chargement
   
   if(accountStore.isLogged()){
-    await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
+    await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
   }
   applyTheme(theme.value);
 }
@@ -216,7 +147,7 @@ watch(logged, async (newVal) => {
 });
 
 watch(acc_validateacc, async (newVal) => {
-  await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
+  await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
 });
 
 onMounted(load);
