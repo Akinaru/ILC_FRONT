@@ -8,141 +8,433 @@
         </div>
         <div v-if="isLoaded" class="flex">
             <!-- Filtres -->
-            <div class="max-w-80 bg-base-200 min-w-72 h-fit min-h-screen drop-shadow-lg" >
-                <p class="bg-base-300 p-3 flex items-center justify-center font-bold text-lg ">Filtres</p>
-                <button class="hover:opacity-70 underline" @click="deselectAll">Tout désélectionner</button>
-                
-                <!-- Départements -->
-                <div v-if="account.access.acs_accounttype == 1">
-                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('departments')">
-                        <p>Départements ({{ selectedDepartment.length }} séléctionné{{ selectedDepartment.length > 1 ? 's' : '' }})</p>
-                        <span :class="isOpen.departments ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
-                    </div>
-                    <div class="p-1" v-show="isOpen.departments">
-                        <button class="hover:opacity-70 underline" @click="deselectAllDept">Tout désélectionner</button>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_dept_zero" type="checkbox" class="checkbox " value="Aucun" v-model="selectedDepartment">
-                            <label for="filt_dept_zero" class="flex items-center justify-center w-full cursor-pointer pl-2">
-                                <div class="w-3 h-3 mr-1" :style="{backgroundColor: '#aaaaaa'}"></div>
-                                <label for="filt_dept_zero" class="select-none w-full cursor-pointer">Aucun</label>
-                            </label>
-                        </div>
-                        <div v-for="(comp, index) in components.components" :key="index">
-                            <p>{{ comp.comp_name }}</p>
-                            <div v-for="(dept,index) in comp.departments" :key="index" class="flex items-center hover:opacity-60 my-1">
-                                <input :id="'filt_dept_'+index" type="checkbox" class="checkbox" :value="dept.dept_shortname" v-model="selectedDepartment">
-                                <label :for="'filt_dept_'+index" class="cursor-pointer w-full flex items-center justify-center pl-2">
-                                    <div class="w-3 h-3 mr-1" :style="{backgroundColor: dept.dept_color}"></div>
-                                    <label :for="'filt_dept_'+index" class="select-none w-full cursor-pointer">{{ dept.dept_shortname }}</label>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Voeux -->
-                <div>
-                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('voeux')">
-                        <p>Voeux ({{ selectedVoeux.length }} séléctionné{{ selectedVoeux.length > 1 ? 's' : '' }})</p>
-                        <span :class="isOpen.voeux ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
-                    </div>
-                    <div class="p-1" v-show="isOpen.voeux">
-                        <button class="hover:opacity-70 underline" @click="deselectAllVoeux">Tout désélectionner</button>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_voeux_1" type="checkbox" class="checkbox " value="Aucun" v-model="selectedVoeux">
-                            <label for="filt_voeux_1" class="select-none w-full cursor-pointer pl-2">Aucun</label>
-                        </div>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_voeux_2" type="checkbox" class="checkbox " value="AuMoinsUn" v-model="selectedVoeux">
-                            <label for="filt_voeux_2" class="select-none w-full cursor-pointer pl-2">Au moins un</label>
-                        </div>
+            <div class="bg-base-100 rounded-lg shadow-lg w-full overflow-hidden border border-base-300 max-w-80 min-w-72 h-fit min-h-screen">
+  <!-- En-tête -->
+  <div class="bg-base-300 p-4">
+    <h3 class="font-bold text-lg select-none">Filtres</h3>
+    <div class="flex justify-between items-center mt-2">
+      <button 
+        class="btn btn-sm btn-ghost text-xs" 
+        @click="deselectAll"
+      >
+        <span class="">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </span>
+        <span class="select-none">Tout désélectionner</span>
+      </button>
+    </div>
+  </div>
 
-                    </div>
-                </div>
-                <!-- Documents -->
-                <div>
-                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('document')">
-                        <p>Documents ({{ selectedDocument.length }} séléctionné{{ selectedDocument.length > 1 ? 's' : '' }})</p>
-                        <span :class="isOpen.document ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
-                    </div>
-                    <div class="p-1" v-show="isOpen.document">
-                        <button class="hover:opacity-70 underline" @click="deselectAllDocuments">Tout désélectionner</button>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_4" type="checkbox" class="checkbox" value="ChoixCoursValide" v-model="selectedDocument">
-                            <label for="filt_document_4" class="select-none w-full cursor-pointer pl-2">Choix cours validés</label>
-                        </div>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_0" type="checkbox" class="checkbox" value="0" v-model="selectedDocument">
-                            <label for="filt_document_0" class="select-none w-full cursor-pointer pl-2">0</label>
-                        </div>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_1" type="checkbox" class="checkbox " value="1" v-model="selectedDocument">
-                            <label for="filt_document_1" class="select-none w-full cursor-pointer pl-2">1</label>
-                        </div>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_2" type="checkbox" class="checkbox " value="2" v-model="selectedDocument">
-                            <label for="filt_document_2" class="select-none w-full cursor-pointer pl-2">2</label>
-                        </div>
-                        <div class="flex items-center hover:opacity-60 my-1">
-                            <input id="filt_document_3" type="checkbox" class="checkbox " value="3" v-model="selectedDocument">
-                            <label for="filt_document_3" class="select-none w-full cursor-pointer pl-2">3</label>
-                        </div>
-                    </div>
-                </div>
-                <!--  de mobilité -->
-                <div>
-                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('anneemobilite')">
-                        <p class="select-none">Année de mobilité ({{ selectedAnneeMobilite.length }} séléctionné{{ selectedAnneeMobilite.length > 1 ? 's' : '' }})</p>
-                        <span :class="isOpen.anneemobilite ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
-                    </div>
-                    <div class="p-1" v-show="isOpen.anneemobilite">
-                        <button class="hover:opacity-70 underline" @click="deselectAllAnneeMobilite">Tout désélectionner</button>
-                        <div v-for="(annee, index) in anneesmobilite" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
-                            <input :id="'filt_annee_'+index" type="checkbox" class="checkbox" :value="annee" v-model="selectedAnneeMobilite">
-                            <label :for="'filt_annee_'+index" class="cursor-pointer w-full pl-2">
-                                <label :for="'filt_annee_'+index" class="select-none w-full hover:cursor-pointer">{{ annee }}</label>
-                            </label>
-                        </div>
-                    </div>
-                </div> 
-                <!-- Destination -->
-                <div>
-                    <div class="bg-base-300 p-2 mt-1 flex justify-between items-center hover:opacity-60 hover:cursor-pointer" @click="toggleCollapse('destination')">
-                        <p class="select-none">Destination ({{ selectedDestination.length }} séléctionné{{ selectedDestination.length > 1 ? 's' : '' }})</p>
-                        <span :class="isOpen.destination ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>    
-                    </div>
-                    <div class="p-1" v-show="isOpen.destination">
-                        <button class="hover:opacity-70 underline" @click="deselectAllDestination">Tout désélectionner</button>
+  <!-- Section Départements (seulement visible pour les comptes de type 1) -->
+  <div class="border-b border-base-300" v-if="account.access.acs_accounttype == 1">
+    <div
+      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+      @click="toggleCollapse('departments')"
+    >
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+        </svg>
+        <span class="font-medium select-none">Départements</span>
+        <span v-if="selectedDepartment.length" class="badge badge-sm select-none">{{ selectedDepartment.length }}</span>
+      </div>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke-width="1.5" 
+        stroke="currentColor" 
+        class="w-5 h-5 transition-transform duration-200"
+        :class="isOpen.departments ? 'rotate-180' : ''"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
 
-                        <!-- Option "Aucune" -->
-                        <div class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
-                            <input id="filt_dest_none" type="checkbox" class="checkbox" value="null" v-model="selectedDestination">
-                            <label for="filt_dest_none" class="cursor-pointer w-full pl-2">
-                                <label for="filt_dest_none" class="select-none w-full hover:cursor-pointer">Aucune destination</label>
-                            </label>
-                        </div>
+    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.departments">
+      <button
+        class="btn btn-xs btn-ghost mb-3"
+        @click="deselectAllDept"
+      >
+        <span class="select-none">Tout désélectionner</span>
+      </button>
 
-                        <!-- Liste des destinations arbitrées -->
-                        <div  v-for="(dest, index) in destinations" :key="index" class="flex items-center hover:opacity-60 my-1 hover:cursor-pointer">
-                            <input :id="'filt_dest_'+index" type="checkbox" class="checkbox" :value="dest.agree_id" v-model="selectedDestination">
-                            <label :for="'filt_dest_'+index" class="cursor-pointer w-full pl-2">
-                                <span class="relative inline-block mr-1">
-                                    <!-- Drapeau -->
-                                    <span class="fi" :class="'fi-' + (dest.partnercountry?.parco_code)"></span>
+      <div class="mb-3">
+        <label
+          for="filt_dept_zero"
+          class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+        >
+          <input
+            id="filt_dept_zero"
+            type="checkbox"
+            class="checkbox checkbox-sm mr-2"
+            value="Aucun"
+            v-model="selectedDepartment"
+          />
+          <div
+            class="w-4 h-4 rounded-full mr-2"
+            style="background-color: #aaaaaa"
+          ></div>
+          <span class="text-sm select-none">Aucun</span>
+        </label>
+      </div>
 
-                                    <!-- Point d'interrogation si pas de drapeau -->
-                                    <span v-if="!dest.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">
-                                        ?
-                                    </span>
-                                </span>
+      <div v-for="(comp, index) in components.components" :key="index" class="mb-4">
+        <p class="font-medium text-sm mb-2 select-none">{{ comp.comp_name }}</p>
+        <div class="grid grid-cols-1 gap-2 pl-2">
+          <div
+            v-for="(dept, deptIndex) in comp.departments"
+            :key="deptIndex"
+          >
+            <label
+              :for="'filt_dept_' + deptIndex"
+              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+            >
+              <input
+                :id="'filt_dept_' + deptIndex"
+                type="checkbox"
+                class="checkbox checkbox-sm mr-2"
+                :value="dept.dept_shortname"
+                v-model="selectedDepartment"
+              />
+              <div
+                class="w-4 h-4 rounded-full mr-2"
+                :style="{ backgroundColor: dept.dept_color }"
+              ></div>
+              <span class="text-sm select-none">{{ dept.dept_shortname }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                                <label :for="'filt_dest_'+index" class="select-none w-full hover:cursor-pointer">{{ dest.university?.univ_name || 'Université indisponible' }} à {{ dest.university?.univ_city || 'Ville indisponible' }} - {{ dest.isced?.isc_code || 'Code ISCED ?' }}</label>
-                            </label>
-                        </div>
+  <!-- Section Voeux -->
+  <div class="border-b border-base-300">
+    <div
+      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+      @click="toggleCollapse('voeux')"
+    >
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+        </svg>
+        <span class="font-medium select-none">Voeux</span>
+        <span v-if="selectedVoeux.length" class="badge badge-sm select-none">{{ selectedVoeux.length }}</span>
+      </div>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke-width="1.5" 
+        stroke="currentColor" 
+        class="w-5 h-5 transition-transform duration-200"
+        :class="isOpen.voeux ? 'rotate-180' : ''"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
 
-                    </div>
+    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.voeux">
+      <button
+        class="btn btn-xs btn-ghost mb-3"
+        @click="deselectAllVoeux"
+      >
+        <span class="select-none">Tout désélectionner</span>
+      </button>
 
-                </div> 
-            </div>
+      <div class="grid grid-cols-1 gap-2">
+        <div class="flex items-center">
+          <label
+            for="filt_voeux_1"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              id="filt_voeux_1"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              value="Aucun"
+              v-model="selectedVoeux"
+            />
+            <span class="text-sm select-none">Aucun</span>
+          </label>
+        </div>
+        <div class="flex items-center">
+          <label
+            for="filt_voeux_2"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              id="filt_voeux_2"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              value="AuMoinsUn"
+              v-model="selectedVoeux"
+            />
+            <span class="text-sm select-none">Au moins un</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Documents -->
+  <div class="border-b border-base-300">
+    <div
+      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+      @click="toggleCollapse('document')"
+    >
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+        <span class="font-medium select-none">Documents</span>
+        <span v-if="selectedDocument.length" class="badge badge-sm select-none">{{ selectedDocument.length }}</span>
+      </div>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke-width="1.5" 
+        stroke="currentColor" 
+        class="w-5 h-5 transition-transform duration-200"
+        :class="isOpen.document ? 'rotate-180' : ''"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+
+    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.document">
+      <button
+        class="btn btn-xs btn-ghost mb-3"
+        @click="deselectAllDocuments"
+      >
+        <span class="select-none">Tout désélectionner</span>
+      </button>
+
+      <div class="grid grid-cols-1 gap-2">
+        <div class="flex items-center">
+          <label
+            for="filt_document_4"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              id="filt_document_4"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              value="ChoixCoursValide"
+              v-model="selectedDocument"
+            />
+            <span class="text-sm select-none">Choix cours validés</span>
+          </label>
+        </div>
+        <div class="flex items-center">
+          <label
+            for="filt_document_0"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              id="filt_document_0"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              value="0"
+              v-model="selectedDocument"
+            />
+            <span class="text-sm select-none">0</span>
+          </label>
+        </div>
+        <div class="flex items-center">
+          <label
+            for="filt_document_1"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              id="filt_document_1"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              value="1"
+              v-model="selectedDocument"
+            />
+            <span class="text-sm select-none">1</span>
+          </label>
+        </div>
+        <div class="flex items-center">
+          <label
+            for="filt_document_2"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              id="filt_document_2"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              value="2"
+              v-model="selectedDocument"
+            />
+            <span class="text-sm select-none">2</span>
+          </label>
+        </div>
+        <div class="flex items-center">
+          <label
+            for="filt_document_3"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              id="filt_document_3"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              value="3"
+              v-model="selectedDocument"
+            />
+            <span class="text-sm select-none">3</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Année de mobilité -->
+  <div class="border-b border-base-300">
+    <div
+      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+      @click="toggleCollapse('anneemobilite')"
+    >
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+        </svg>
+        <span class="font-medium select-none">Année de mobilité</span>
+        <span v-if="selectedAnneeMobilite.length" class="badge badge-sm select-none">{{ selectedAnneeMobilite.length }}</span>
+      </div>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke-width="1.5" 
+        stroke="currentColor" 
+        class="w-5 h-5 transition-transform duration-200"
+        :class="isOpen.anneemobilite ? 'rotate-180' : ''"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+
+    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.anneemobilite">
+      <button
+        class="btn btn-xs btn-ghost mb-3"
+        @click="deselectAllAnneeMobilite"
+      >
+        <span class="select-none">Tout désélectionner</span>
+      </button>
+
+      <div class="grid grid-cols-1 gap-2">
+        <div
+          v-for="(annee, index) in anneesmobilite"
+          :key="index"
+          class="flex items-center"
+        >
+          <label
+            :for="'filt_annee_' + index"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              :id="'filt_annee_' + index"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              :value="annee"
+              v-model="selectedAnneeMobilite"
+            />
+            <span class="text-sm select-none">{{ annee }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Destination -->
+  <div>
+    <div
+      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+      @click="toggleCollapse('destination')"
+    >
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+        </svg>
+        <span class="font-medium select-none">Destination</span>
+        <span v-if="selectedDestination.length" class="badge badge-sm select-none">{{ selectedDestination.length }}</span>
+      </div>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke-width="1.5" 
+        stroke="currentColor" 
+        class="w-5 h-5 transition-transform duration-200"
+        :class="isOpen.destination ? 'rotate-180' : ''"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+
+    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.destination">
+      <button
+        class="btn btn-xs btn-ghost mb-3"
+        @click="deselectAllDestination"
+      >
+        <span class="select-none">Tout désélectionner</span>
+      </button>
+
+      <div class="grid grid-cols-1 gap-2">
+        <div class="flex items-center">
+          <label
+            for="filt_dest_none"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              id="filt_dest_none"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              value="null"
+              v-model="selectedDestination"
+            />
+            <span class="text-sm select-none">Aucune destination</span>
+          </label>
+        </div>
+
+        <div
+          v-for="(dest, index) in destinations"
+          :key="index"
+          class="flex items-center"
+        >
+          <label
+            :for="'filt_dest_' + index"
+            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+          >
+            <input
+              :id="'filt_dest_' + index"
+              type="checkbox"
+              class="checkbox checkbox-sm mr-2"
+              :value="dest.agree_id"
+              v-model="selectedDestination"
+            />
+            <span class="relative inline-block mr-2">
+              <!-- Drapeau -->
+              <span class="fi" :class="'fi-' + (dest.partnercountry?.parco_code)"></span>
+
+              <!-- Point d'interrogation si pas de drapeau -->
+              <span v-if="!dest.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">
+                ?
+              </span>
+            </span>
+            <span class="text-sm select-none">{{ dest.university?.univ_name || 'Université indisponible' }} à {{ dest.university?.univ_city || 'Ville indisponible' }} - {{ dest.isced?.isc_code || 'Code ISCED ?' }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
             <!-- Liste des étudiants -->
             <div v-if="account && account.acc_id && etudiants && etudiants.accounts" class="w-full px-2">
                 <!-- Infos -->

@@ -7,13 +7,13 @@
       <div class="flex items-center justify-end">
         <!-- Connexion -->
         <div v-if="!isUserLoggedIn">
-          <!-- Afficher le portail de connexion -->
+          <!-- Afficher le portail de connexion avec redirection vers l'URL actuelle -->
           <p class=" hover:opacity-70 transition-all mr-2">
             <a :href="config.apiUrl+'cas.php?redirect='+currentUrl">Connexion</a>
           </p>
         </div>
 
-        
+
         <!-- Profil -->
         <div v-else-if="account && account != null && account.acc_fullname != null" class="flex items-center justify-center">
           <ul class="menu menu-horizontal">
@@ -74,7 +74,7 @@
       </div>
     </div>
   </header>
-  
+
 </template>
 
 <script setup>
@@ -92,13 +92,18 @@ const theme = ref(localStorage.getItem('theme') || 'light');
 const currentUrl = ref('');
 const account = ref([]);
 const response = ref([]);
-// Remplacer la ref isPreprod par une propriété computed
-const isPreprod = computed(() => {
-  return window.location.href.includes('preprod');
-});
 
 // Propriété computed pour vérifier l'état de connexion
 const isUserLoggedIn = computed(() => logged.value);
+
+// Fonction pour obtenir l'URL courante pour la déconnexion
+function getCurrentURL() {
+  // Vérifier si window est défini (pour éviter les erreurs pendant le SSR)
+  if (typeof window !== 'undefined' && window.location) {
+    return encodeURIComponent(window.location.href);
+  }
+  return '';
+}
 
 async function logout() {
   // Appel API logout
@@ -109,8 +114,8 @@ async function logout() {
   localStorage.removeItem('auth');
   localStorage.removeItem('token');
   
-  // Ajout du paramètre preprod lors de la déconnexion aussi
-  window.open(config.apiUrl + 'cas.php?logout=true', '_blank');
+  // Utilisation du paramètre redirect pour la déconnexion
+  window.open(config.apiUrl + 'cas.php?logout=true&redirect=' + getCurrentURL(), '_blank');
   router.push({ name: 'Accueil' });
   accountStore.logoutAccount();
 }
@@ -123,9 +128,9 @@ function closeMenu() {
   }
 }
 
+function profil() {
+  router.push({ name: 'Dashboard' });
 
-function goToPage(route){
-  router.push({ name: route });
   closeMenu();
 }
 
@@ -143,10 +148,9 @@ async function load() {
   currentUrl.value = window.location.href;
 
   await nextTick();
-  // Vérifier l'environnement preprod au chargement
   
   if(accountStore.isLogged()){
-    await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
+    await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
   }
   applyTheme(theme.value);
 }
@@ -156,7 +160,7 @@ watch(logged, async (newVal) => {
 });
 
 watch(acc_validateacc, async (newVal) => {
-  await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
+  await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
 });
 
 onMounted(load);
