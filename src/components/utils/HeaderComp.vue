@@ -150,7 +150,7 @@ async function load() {
   await nextTick();
   
   if(accountStore.isLogged()){
-    await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
+    await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
   }
   applyTheme(theme.value);
 }
@@ -160,7 +160,7 @@ watch(logged, async (newVal) => {
 });
 
 watch(acc_validateacc, async (newVal) => {
-  await request('GET', false, role, config.apiUrl + 'api/access/getrole/' + accountStore.login);
+  await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
 });
 
 onMounted(load);
