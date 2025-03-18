@@ -134,6 +134,11 @@ function profil() {
   closeMenu();
 }
 
+function goToPage(route) {
+  router.push({ name: route });
+  closeMenu();
+}
+
 function toggleTheme() {
   theme.value = theme.value == 'light' ? 'dark' : 'light';
   applyTheme(theme.value);
