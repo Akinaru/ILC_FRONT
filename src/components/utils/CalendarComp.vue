@@ -14,13 +14,13 @@
 
       <!-- Month & Year Selectors -->
       <div class="flex flex-1 mx-2 gap-2">
-        <select id="month" v-model="selectedMonth" class="select select-primary w-full font-bold bg-base-100/50 backdrop-blur-sm select-sm sm:select-md text-xs sm:text-sm md:text-base">
+        <select id="month" v-model="selectedMonth" class="select select-primary w-full font-bold bg-base-100/50 select-sm sm:select-md text-xs sm:text-sm md:text-base">
           <option v-for="(month, index) in months" :key="index" :value="index">
             {{ month }}
           </option>
         </select>
     
-        <select id="year" v-model="selectedYear" class="select select-primary w-full font-bold bg-base-100/50 backdrop-blur-sm select-sm sm:select-md text-xs sm:text-sm md:text-base">
+        <select id="year" v-model="selectedYear" class="select select-primary w-full font-bold bg-base-100/50 select-sm sm:select-md text-xs sm:text-sm md:text-base">
           <option v-for="year in years" :key="year" :value="year">
             {{ year }}
           </option>
@@ -39,7 +39,7 @@
     
     <!-- Calendar Table -->
     <div class="overflow-hidden rounded-lg shadow-lg">
-      <table class="w-full bg-base-100/50 backdrop-blur-sm">
+      <table class="w-full bg-base-100/50">
         <!-- Day Names Header -->
         <thead>
           <tr class="border-b border-base-300">
@@ -67,8 +67,8 @@
               <RouterLink 
                 :to="{ name: 'Evenement', query: { date: formatDayQuery(day) } }"
                 @click="checkAndReload(formatDayQuery(day))"
-                class="flex items-center justify-center aspect-square w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full hover:bg-base-300/50 transition-all duration-200"
-                :class="{ 'hover:bg-primary-focus': day.isToday }"
+                class="flex items-center justify-center aspect-square w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full transition-all duration-200"
+                :class="day.isToday ? 'hover:bg-primary-focus' : 'hover:bg-base-300/50'"
               >
                 <span class="text-xs sm:text-sm md:text-base lg:text-lg font-medium">{{ day.date }}</span>
               </RouterLink>

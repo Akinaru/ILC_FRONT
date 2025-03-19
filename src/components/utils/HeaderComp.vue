@@ -12,8 +12,7 @@
             <a :href="config.apiUrl+'cas.php?redirect='+currentUrl">Connexion</a>
           </p>
         </div>
-
-
+        
         <!-- Profil -->
         <div v-else class="flex items-center justify-center">
           <ul class="menu menu-horizontal">
@@ -22,11 +21,10 @@
                 <summary class="flex items-center gap-2 whitespace-nowrap">
                   <!-- Affichage du rôle uniquement pour les grands écrans -->
                   <span 
-                    v-if="account?.role?.role" 
                     class="p-1 hidden sm:block rounded-lg shrink-0" 
                     :style="{ backgroundColor: `${account?.role?.color ? account?.role?.color : '#aaaaaa'}` }"
                   >
-                    {{ account?.role?.role }}
+                    {{ account?.role?.role ? account?.role.role : 'Dossier Incomplet' }}
                   </span>
                   <!-- Nom d'utilisateur avec bordure inférieure pour les petits écrans -->
                   <span 

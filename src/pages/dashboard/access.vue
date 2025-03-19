@@ -263,11 +263,6 @@
                 <div class="input-group">
                   <input type="text" placeholder="Recherche par nom ou login" 
                     v-model="searchQuery" class="input input-bordered w-full" />
-                  <button class="btn btn-square btn-ghost">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </button>
                 </div>
               </div>
               
@@ -377,7 +372,7 @@
                   <ImportComp text="Importer des étudiants en CSV" @csv-imported="handleCsvImported" class="w-full"></ImportComp>
                   
                   <div class="mt-4">
-                    <div class="alert alert-info">
+                    <div class="alert">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>

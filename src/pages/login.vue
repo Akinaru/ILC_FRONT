@@ -41,27 +41,33 @@ async function loginUser() {
 
         await request('POST', false, response, config.apiUrl + 'api/login', {login: login.value});
 
+        await request('GET', false, acceptedResponse, config.apiUrl + 'api/acceptedaccount/getbylogin/' + login.value);
+        await request('GET', false, accessResponse, config.apiUrl + 'api/access/getbylogin/' + login.value);
+        const isLoginAccepted = acceptedResponse.value && acceptedResponse.value.account;
+        const isLoginAccess = accessResponse.value && accessResponse.value.access;
 
+        
         if(response.value.status != 404){
             //Le compte du user existe deja
             localStorage.setItem('token', response.value.token);
-
-
-            await request('GET', false, acceptedResponse, config.apiUrl + 'api/acceptedaccount/getbylogin/' + login.value);
-            await request('GET', false, accessResponse, config.apiUrl + 'api/access/getbylogin/' + login.value);
-
-            const isLoginAccepted = acceptedResponse.value && acceptedResponse.value.account;
-            const isLoginAccess = accessResponse.value && accessResponse.value.access;
 
             if (isLoginAccepted || isLoginAccess) {
                 await authLogAccount(login.value, router);
             } else {
                 addAlert('error', { data: { error: 'Vous n\'êtes pas autorisé à accéder à la partie connectée.', message: 'Veuillez vous renseigner auprès du service ILC.' } });
                 router.push({ name: 'Accueil' });
+                
             }
         }else{
-            //Le compte du user n'existe pas
-            await authRegisterAccount(login.value, router);
+            // Le compte n'existe pas
+            if (isLoginAccepted || isLoginAccess) {
+                //Le compte du user n'existe pas mais il est atorisé a le créer
+                await authRegisterAccount(login.value, router);
+            } else {
+                localStorage.removeItem('token');
+                addAlert('error', { data: { error: 'Vous n\'êtes pas autorisé à accéder à la partie connectée.', message: 'Veuillez vous renseigner auprès du service ILC.' } });
+                router.push({ name: 'Accueil' });
+            }
         }
     } catch (error) {
         addAlert('error', { data: { error: 'Une erreur s\'est produite lors de la connexion.', message: error.message } });
