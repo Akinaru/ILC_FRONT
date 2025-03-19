@@ -15,7 +15,7 @@
 
 
         <!-- Profil -->
-        <div v-else-if="account && account != null && account.acc_fullname != null" class="flex items-center justify-center">
+        <div v-else class="flex items-center justify-center">
           <ul class="menu menu-horizontal">
             <li class="dropdown dropdown-end">
               <details>
