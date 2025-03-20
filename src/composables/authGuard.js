@@ -15,15 +15,15 @@ export async function authLogAccount(login, router) {
         acc_lastlogin: response.value.acc_lastlogin,
         acc_validateacc: response.value.acc_validateacc
     };
-    await request('GET', false, response, config.apiUrl+'api/access/getbylogin/'+login);
-    if(response.value.count == 1){
-        requestData.acc_access = response.value.access.acs_accounttype;
+    if(response.value.access.count == 1){
+        requestData.acc_access = response.value.access.access.acs_accounttype;
     }
     else{
         requestData.acc_access = 0;
     }
-    authStoreUser(requestData);
+    await authStoreUser(requestData);
     router.push({ name: 'Dashboard' });
+    
 }
 
 export async function authRegisterAccount(login, router) {
@@ -65,7 +65,7 @@ export async function authRegisterAccount(login, router) {
 
             localStorage.setItem('token', response.value.token);
 
-            authStoreUser(userData);
+            await authStoreUser(userData);
             router.push({ name: 'Dashboard' });
         }
 
@@ -80,7 +80,7 @@ export async function authRegisterAccount(login, router) {
 }
 
 
-function authStoreUser(data) {
+async function authStoreUser(data) {
     const accountStore = useAccountStore();
-    accountStore.loginAccount(data);
+    await accountStore.loginAccount(data);
 }

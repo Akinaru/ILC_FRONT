@@ -22,8 +22,10 @@ const response = ref([])
 const accountStore = useAccountStore();
 
 onMounted(() => {
+    // Récupération des données de l'utilisateur
     login.value = localStorage.getItem('login');
     auth.value = localStorage.getItem('auth');
+
     if(auth.value == 'success'){
         loginUser();
     }else{
@@ -35,20 +37,20 @@ onMounted(() => {
     }
 });
 
+// Fonction pour login l'utilisateur
 async function loginUser() {
     try {
-        // Appel API Laravel login
-
+        // Appel API login pour recuperer le token
         await request('POST', false, response, config.apiUrl + 'api/login', {login: login.value});
 
+        // Appel API pour recuperer les informations de l'utilisateur (access ou accepted)
         await request('GET', false, acceptedResponse, config.apiUrl + 'api/acceptedaccount/getbylogin/' + login.value);
         await request('GET', false, accessResponse, config.apiUrl + 'api/access/getbylogin/' + login.value);
         const isLoginAccepted = acceptedResponse.value && acceptedResponse.value.account;
         const isLoginAccess = accessResponse.value && accessResponse.value.access;
 
-        
+        // Si le compte existe
         if(response.value.status != 404){
-            //Le compte du user existe deja
             localStorage.setItem('token', response.value.token);
 
             if (isLoginAccepted || isLoginAccess) {
@@ -58,11 +60,12 @@ async function loginUser() {
                 router.push({ name: 'Accueil' });
                 
             }
+        // Le compte n'existe pas
         }else{
-            // Le compte n'existe pas
+            // Il est autorisé à accéder à la partie connectée
             if (isLoginAccepted || isLoginAccess) {
-                //Le compte du user n'existe pas mais il est atorisé a le créer
                 await authRegisterAccount(login.value, router);
+            // Il est pas autorisé à accéder à la partie connectée
             } else {
                 localStorage.removeItem('token');
                 addAlert('error', { data: { error: 'Vous n\'êtes pas autorisé à accéder à la partie connectée.', message: 'Veuillez vous renseigner auprès du service ILC.' } });

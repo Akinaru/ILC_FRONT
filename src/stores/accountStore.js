@@ -10,7 +10,7 @@ export const useAccountStore = defineStore("account", {
     acc_validateacc: false
   }),
   actions: {
-    loginAccount(data) {
+    async loginAccount(data) {
       this.login = data.acc_id;
       this.fullname = data.acc_fullname;
       this.last_login = new Date().toISOString(); // Met à jour last_login lors de la connexion
@@ -19,6 +19,8 @@ export const useAccountStore = defineStore("account", {
       this.access = data.acc_access;
 
       this.saveAccountToLocal();
+      
+
     },
     setAccess(level) {
       this.access = level;
