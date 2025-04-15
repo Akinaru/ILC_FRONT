@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isLoaded" class="container">
+  <div v-if="isLoaded">
     <div v-if="events && events.count > 0" class="flex flex-col lg:flex-row gap-6">
       <!-- Calendrier - largeur naturelle -->
       <div class="bg-base-100 rounded-xl shadow-md p-4 lg:w-auto flex-shrink-0">
@@ -32,72 +32,124 @@
           </div>
         </div>
 
-        <!-- Section date limite et arbitrage -->
-        <div class="bg-base-100 rounded-xl shadow-md p-4">
-          <div class="grid md:grid-cols-2 gap-4">
-            <!-- Date limite des voeux -->
-            <div class="bg-base-200 rounded-lg p-4">
-              <h3 class="text-lg font-medium mb-2">Date limite des voeux</h3>
-              <div class="flex flex-col items-center justify-center h-24">
-                <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite) }}</div>
-                <div class="mt-1 text-sm" :class="joursRestants(admin.adm_datelimite) < 0 ? 'text-error' : 'text-success'">
-                  {{ getJoursRestants(admin.adm_datelimite) }}
-                </div>
-                <label for="modal_date" class="btn btn-sm btn-primary mt-2">
-                  Modifier
-                </label>
-              </div>
-
-              <!-- Modal modification date -->
-              <input type="checkbox" id="modal_date" class="modal-toggle" />
-              <div class="modal" role="dialog">
-                <div class="modal-box">
-                  <h3 class="font-bold text-lg">Modification de la date limite</h3>
-                  <form @submit.prevent="confirmModifDate" class="w-full">
-                    <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
-                    <div class="modal-action">
-                      <button type="submit">
-                        <label for="modal_date" class="btn btn-success">Valider</label>
-                      </button>  
-                      <label for="modal_date" class="btn">Annuler</label>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <!-- Status Arbitrage -->
-            <div class="bg-base-200 rounded-lg p-4">
-              <h3 class="text-lg font-medium mb-2">Statut de l'arbitrage</h3>
-              <div class="flex items-center justify-between py-4">
-                <div class="flex flex-col items-center">
-                  <span class="font-medium" :class="admin.adm_arbitragetemporaire ? 'text-warning' : 'opacity-50'">
-                    Temporaire
-                  </span>
-                  <div class="h-3 w-3 rounded-full border-2 border-warning mt-1"
-                       :class="admin.adm_arbitragetemporaire ? 'bg-warning' : ''"></div>
-                </div>
-                
-                <input type="checkbox" 
-                       class="toggle toggle-lg toggle-primary" 
-                       :checked="!admin.adm_arbitragetemporaire"
-                       @change="updateArbitrageStatus" />
-                       
-                <div class="flex flex-col items-center">
-                  <span class="font-medium" :class="!admin.adm_arbitragetemporaire ? 'text-success' : 'opacity-50'">
-                    Définitif
-                  </span>
-                  <div class="h-3 w-3 rounded-full border-2 border-success mt-1"
-                       :class="!admin.adm_arbitragetemporaire ? 'bg-success' : ''"></div>
-                </div>
-              </div>
-            </div>
+<!-- Section date limite et arbitrage -->
+<div class="bg-base-100 rounded-xl shadow-xl p-6">
+  <div class="grid gap-6">
+    <!-- Ligne 1: Les deux dates -->
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Date limite des voeux - Printemps -->
+      <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-lg p-5 transition-all hover:shadow-md">
+        <h3 class="text-lg font-medium mb-3 flex items-center">
+          <span class="mr-2">🌱</span> Date limite - Printemps
+        </h3>
+        <div class="flex flex-col items-center justify-center h-28">
+          <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite) }}</div>
+          <div class="mt-2 badge" :class="joursRestants(admin.adm_datelimite) < 0 ? 'badge-error' : 'badge-success'">
+            {{ getJoursRestants(admin.adm_datelimite) }}
           </div>
+          <label for="modal_date_printemps" class="btn btn-sm btn-primary mt-3 gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            Modifier
+          </label>
+        </div>
+
+        <!-- Modal modification date printemps -->
+        <input type="checkbox" id="modal_date_printemps" class="modal-toggle" />
+        <div class="modal" role="dialog">
+          <div class="modal-box">
+            <h3 class="font-bold text-lg">Modification date limite - Printemps</h3>
+            <form @submit.prevent="confirmModifDate" class="w-full">
+              <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
+              <div class="modal-action">
+                <button type="submit">
+                  <label for="modal_date_printemps" class="btn btn-success">Valider</label>
+                </button>  
+                <label for="modal_date_printemps" class="btn">Annuler</label>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date limite des voeux - Automne -->
+      <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-lg p-5 transition-all hover:shadow-md">
+        <h3 class="text-lg font-medium mb-3 flex items-center">
+          <span class="mr-2">🍂</span> Date limite - Automne
+        </h3>
+        <div class="flex flex-col items-center justify-center h-28">
+          <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite) }}</div>
+          <div class="mt-2 badge" :class="joursRestants(admin.adm_datelimite) < 0 ? 'badge-error' : 'badge-success'">
+            {{ getJoursRestants(admin.adm_datelimite) }}
+          </div>
+          <label for="modal_date_automne" class="btn btn-sm btn-primary mt-3 gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            Modifier
+          </label>
+        </div>
+
+        <!-- Modal modification date automne -->
+        <input type="checkbox" id="modal_date_automne" class="modal-toggle" />
+        <div class="modal" role="dialog">
+          <div class="modal-box">
+            <h3 class="font-bold text-lg">Modification date limite - Automne</h3>
+            <form @submit.prevent="confirmModifDate" class="w-full">
+              <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
+              <div class="modal-action">
+                <button type="submit">
+                  <label for="modal_date_automne" class="btn btn-success">Valider</label>
+                </button>  
+                <label for="modal_date_automne" class="btn">Annuler</label>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ligne 2: Status Arbitrage étiré -->
+    <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-lg p-5 transition-all hover:shadow-md">
+      <h3 class="text-lg font-medium mb-3 flex items-center">
+        <span class="mr-2">⚖️</span> Statut de l'arbitrage
+      </h3>
+      <div class="flex flex-col items-center justify-center py-4">
+        <div class="text-center mb-4">
+          <div class="text-3xl font-bold" :class="admin.adm_arbitragetemporaire ? 'text-warning' : 'text-success'">
+            {{ admin.adm_arbitragetemporaire ? 'Temporaire' : 'Définitif' }}
+          </div>
+        </div>
+        
+        <div class="form-control w-full max-w-xs">
+          <label class="label cursor-pointer justify-center gap-6">
+            <span class="label-text text-lg font-medium opacity-75">Temporaire</span>
+            <input type="checkbox" 
+                  class="toggle toggle-lg toggle-primary" 
+                  :checked="!admin.adm_arbitragetemporaire"
+                  @change="updateArbitrageStatus" />
+            <span class="label-text text-lg font-medium opacity-75">Définitif</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+        <!-- Section étapes -->
+        <div class="bg-base-100 rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-semibold mb-4 text-center">🍂 Avancement du processus automne</h2>
+          <ul class="steps steps-vertical sm:steps-horizontal w-full">
+            <li class="step step-primary">Inscriptions</li>
+            <li class="step step-primary">Choix des voeux</li>
+            <li class="step" :class="{'step-primary': joursRestants(admin.adm_datelimite) < 0}">Arbitrage</li>
+          </ul>
         </div>
 
         <!-- Section étapes -->
         <div class="bg-base-100 rounded-xl shadow-md p-6">
-          <h2 class="text-xl font-semibold mb-4 text-center">Avancement du processus</h2>
+          <h2 class="text-xl font-semibold mb-4 text-center">🌱 Avancement du processus printemps</h2>
           <ul class="steps steps-vertical sm:steps-horizontal w-full">
             <li class="step step-primary">Inscriptions</li>
             <li class="step step-primary">Choix des voeux</li>

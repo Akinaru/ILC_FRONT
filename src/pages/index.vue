@@ -2,19 +2,46 @@
   <div v-if="isLoaded">
     <!-- Partie accord -->
     <div>
-      <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
-        <img
-          v-if="images.find((img) => img.nom === 'banner_dest').exists"
-          :src="`${config.apiUrl}api/image?path=private/images/site&name=banner_dest`"
-          alt="Bannière"
-          className="w-full h-full object-cover"
-        />
-        <div v-else class="w-full h-full flex items-center justify-center">
-          <div class="text-center">
-            <span class="text-3xl font-bold">Destinations</span>
+      <!-- Titre de section Destinations version plus aérienne -->
+      <div class="w-full pb-6 pt-8">
+        <div class="relative">
+          <!-- Fond décoratif avec gradient subtil -->
+          <div class="absolute -left-6 -top-6 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl"></div>
+          
+          <!-- Conteneur principal -->
+          <div class="relative z-10">
+            <!-- Badge catégorie -->
+            <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/5 text-primary text-xs font-medium mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              INTERNATIONAL
+            </div>
+            
+            <!-- Titre avec design plus aérien -->
+            <div class="flex items-center gap-3 mb-3">
+              <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Destinations</h2>
+              <!-- Icône globe avec animation plus subtile -->
+              <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Texte descriptif plus léger -->
+            <div class="max-w-lg">
+              <p class="text-base-content/60 text-sm">
+                Découvrez nos <span class="text-primary font-medium">partenaires universitaires</span> à travers le monde
+              </p>
+            </div>
+            
+            <!-- Séparateur fin sur toute la longueur -->
+            <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent mt-4"></div>
           </div>
         </div>
       </div>
+      
       <div class="block lg:flex my-5">
         <!-- Partie filtres -->
         <div class="bg-base-100 rounded-lg shadow-lg lg:w-96 w-full lg:my-0 my-5 z-10 overflow-hidden border border-base-300"v-if="accords && accords.agreements">
@@ -298,7 +325,7 @@
 
                       <div
                         v-if="
-                          accountStore.isLogged() && accountStore.isStudent()
+                          accountStore.isLogged() && accountStore.isStudent() && accountStore.getAccountValidate()
                         "
                         class="flex-shrink-0 pr-3 pl-2 py-2 md:py-0"
                       >
@@ -379,19 +406,47 @@
 
     <!-- Espace communication -->
     <div class="w-full">
-      <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
-        <img
-          v-if="images.find((img) => img.nom === 'banner_art').exists"
-          :src="`${config.apiUrl}api/image?path=private/images/site&name=banner_art`"
-          alt="Bannière"
-          className="w-full h-full object-cover"
-        />
-        <div v-else class="w-full h-full flex items-center justify-center">
-          <div class="text-center">
-            <span class="text-3xl font-bold">Articles</span>
+
+      <!-- Titre de section Articles version aérienne -->
+      <div class="w-full pb-6 pt-8">
+        <div class="relative">
+          <!-- Fond décoratif avec gradient subtil -->
+          <div class="absolute -left-6 -top-6 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl"></div>
+          
+          <!-- Conteneur principal -->
+          <div class="relative z-10">
+            <!-- Badge catégorie -->
+            <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/5 text-primary text-xs font-medium mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+              ACTUALITÉS
+            </div>
+            
+            <!-- Titre avec design plus aérien -->
+            <div class="flex items-center gap-3 mb-3">
+              <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Articles</h2>
+              <!-- Icône document avec animation plus subtile -->
+              <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Texte descriptif plus léger -->
+            <div class="max-w-lg">
+              <p class="text-base-content/60 text-sm">
+                Informations et <span class="text-primary font-medium">actualités internationales</span> à ne pas manquer
+              </p>
+            </div>
+            
+            <!-- Séparateur fin sur toute la longueur -->
+            <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent mt-4"></div>
           </div>
         </div>
       </div>
+
       <!-- Articles -->
       <div v-if="articles && articles.articles" class="py-8">
         <div
@@ -400,28 +455,47 @@
         >
           <!-- Carte d'article -->
           <RouterLink
-            v-for="(article, index) in articles.articles
+            v-for="(article) in articles.articles
               .filter((article) => {
                 if (!article.art_datesortie) return true; // si pas de date, on affiche
                 return new Date(article.art_datesortie) <= new Date(); // sinon on compare avec maintenant
               })
               .slice(0, 6)"
-            :key="index"
+            :key="article.art_id"
             :to="{ name: 'Article', params: { art_id: article.art_id } }"
-            class="card bg-base-300 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-102 w-full overflow-hidden"
+            class="card bg-base-300 shadow-xl hover:shadow-2xl transition-transform duration-200 ease-out hover:scale-[1.02] w-full overflow-hidden transform-gpu will-change-transform"
           >
-            <!-- Image de couverture -->
+            <!-- Image de couverture optimisée avec fallback intégré -->
             <figure class="relative">
               <div
+                v-if="article.art_image"
                 :style="{
-                  backgroundImage: `url(${
-                    article.art_image
-                      ? config.apiUrl + 'api/article/image/' + article.art_id
-                      : config.apiUrl + 'images/no_image.jpg'
-                  })`,
+                  backgroundImage: `url(${config.apiUrl + 'api/article/image/' + article.art_id})`,
                 }"
-                class="bg-cover bg-center w-full h-56"
+                class="bg-cover bg-center w-full h-56 transform-gpu will-change-transform backface-hidden"
               ></div>
+              <!-- Fallback quand pas d'image disponible -->
+              <div
+                v-else
+                class="w-full h-56 bg-gradient-to-br from-base-200 to-base-300 flex items-center justify-center transform-gpu will-change-transform backface-hidden"
+              >
+                <div class="text-base-content/50 flex flex-col items-center">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    class="h-12 w-12 mb-2 opacity-60" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round" 
+                      stroke-width="1.5" 
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                    />
+                  </svg>
+                </div>
+              </div>
               <span
                 v-if="article.art_pin"
                 class="badge badge-primary badge-lg absolute top-3 left-3 shadow-md gap-1"
@@ -523,21 +597,47 @@
         </div>
       </div>
 
-      <!-- Agenda -->
-      <div className="w-full h-24 sm:h-32 md:h-36 lg:h-44">
-        <img
-          v-if="images.find((img) => img.nom === 'banner_evt').exists"
-          :src="`${config.apiUrl}api/image?path=private/images/site&name=banner_evt`"
-          alt="Bannière"
-          className="w-full h-full object-cover"
-        />
-        <div v-else class="w-full h-full flex items-center justify-center">
-          <div class="text-center">
-            <span class="text-3xl font-bold">Evenements</span>
+      <!-- Titre de section Événements version aérienne -->
+      <div class="w-full pb-6 pt-8">
+        <div class="relative">
+          <!-- Fond décoratif avec gradient subtil -->
+          <div class="absolute -left-6 -top-6 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl"></div>
+          
+          <!-- Conteneur principal -->
+          <div class="relative z-10">
+            <!-- Badge catégorie -->
+            <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/5 text-primary text-xs font-medium mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              AGENDA
+            </div>
+            
+            <!-- Titre avec design plus aérien -->
+            <div class="flex items-center gap-3 mb-3">
+              <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Événements</h2>
+              <!-- Icône calendrier avec animation plus subtile -->
+              <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Texte descriptif plus léger -->
+            <div class="max-w-lg">
+              <p class="text-base-content/60 text-sm">
+                Calendrier des <span class="text-primary font-medium">rendez-vous</span> et manifestations à venir
+              </p>
+            </div>
+            
+            <!-- Séparateur fin sur toute la longueur -->
+            <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent mt-4"></div>
           </div>
         </div>
       </div>
 
+      <!-- Evenements -->
       <div class="m-5 flex items-center justify-center flex-col">
         <div
           class="flex h-full items-center justify-center flex-col pt-10"
@@ -605,7 +705,7 @@
                   class="group"
                 >
                   <div
-                    class="relative h-full flex flex-col bg-base-100 rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:translate-y-[-4px]"
+                    class="relative h-full flex flex-col bg-base-200 rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:translate-y-[-4px]"
                   >
                     <!-- Bande colorée en haut -->
                     <div
@@ -849,26 +949,6 @@ const components = ref([]);
 const events = ref([]);
 const eventspf = ref([]);
 const favoris = ref([]);
-const images = ref([
-  {
-    vrainom: "Destinations Accueil",
-    nom: "banner_dest",
-    path: "private/images/site",
-    exists: false,
-  },
-  {
-    vrainom: "Articles Accueil",
-    nom: "banner_art",
-    path: "private/images/site",
-    exists: false,
-  },
-  {
-    vrainom: "Evenements Accueil",
-    nom: "banner_evt",
-    path: "private/images/site",
-    exists: false,
-  },
-]);
 
 const itemsToShow = ref(12);
 
@@ -926,25 +1006,8 @@ async function fetchAll() {
   await request("GET", false, components, config.apiUrl + "api/component");
   await request("GET", false, events, config.apiUrl + "api/event");
   await request("GET", false, eventspf, config.apiUrl + "api/event/pfonly");
-  for (const image of images.value) {
-    await request(
-      "GET",
-      false,
-      response,
-      `${config.apiUrl}api/image?path=${image.path}&name=${image.nom}`
-    );
-    if (!response?.value?.error) {
-      image.exists = true;
-    } else {
-      image.exists = false;
-    }
-  }
   if (accountStore.isLogged()) {
-    await request(
-      "GET",
-      false,
-      favoris,
-      config.apiUrl + "api/favoris/getbylogin/" + accountStore.login
+    await request("GET", false, favoris, config.apiUrl + "api/favoris/getbylogin/" + accountStore.login
     );
   }
   isLoaded.value = true;

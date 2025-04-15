@@ -267,7 +267,7 @@ router.beforeEach(async (to, from, next) => {
                             fullname: account.value.acc_fullname,
                             logged: true,
                             last_login: new Date().toISOString(),
-                            access: account.value.access ? account.value.access.access.acs_accounttype : 0,
+                            access: account.value.access.access ? account.value.access.access.acs_accounttype : 0,
                             acc_validateacc: account.value.acc_validateacc
                         };
                         accountStore.$patch(patchedValues);

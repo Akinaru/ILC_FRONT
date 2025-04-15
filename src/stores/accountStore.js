@@ -7,7 +7,8 @@ export const useAccountStore = defineStore("account", {
     logged: false,
     last_login: null,
     access: 0,
-    acc_validateacc: false
+    acc_validateacc: false,
+    role: null,
   }),
   actions: {
     async loginAccount(data) {
@@ -17,6 +18,7 @@ export const useAccountStore = defineStore("account", {
       this.logged = true;
       this.acc_validateacc = data.acc_validateacc;
       this.access = data.acc_access;
+      this.role = data.role;
 
       this.saveAccountToLocal();
       
@@ -24,9 +26,15 @@ export const useAccountStore = defineStore("account", {
     },
     setAccess(level) {
       this.access = level;
+      this.saveAccountToLocal();
     },
     setValidate(val) {
       this.acc_validateacc = val;
+      this.saveAccountToLocal();
+    },
+    setRole(val) {
+      this.role = val;
+      this.saveAccountToLocal();
     },
     
     logoutAccount() {
@@ -36,6 +44,7 @@ export const useAccountStore = defineStore("account", {
       this.logged = false;
       this.acc_validateacc = false;
       this.access = 0;
+      this.role = null;
 
       localStorage.removeItem('account');
     },
@@ -45,6 +54,14 @@ export const useAccountStore = defineStore("account", {
     },
     isStudent() {
       return this.access === 0;
+    },
+
+    isAdmin() {
+      return this.access === 1;
+    },
+
+    isChefDept() {
+      return this.access === 2;
     },
 
     getAccessLevel() {
@@ -66,6 +83,7 @@ export const useAccountStore = defineStore("account", {
         Last Login: ${this.last_login || 'N/A'}, 
         Logged In: ${this.logged ? 'Yes' : 'No'}, 
         Access Level: ${this.access}, 
+        Role: ${this.role}, 
         Account Validated: ${this.acc_validateacc ? 'Yes' : 'No'}`;
     },
     saveAccountToLocal() {
@@ -75,7 +93,8 @@ export const useAccountStore = defineStore("account", {
         logged: this.logged,
         last_login: this.last_login,
         access: this.access,
-        acc_validateacc: this.acc_validateacc
+        acc_validateacc: this.acc_validateacc,
+        role: this.role
       };
       localStorage.setItem('account', JSON.stringify(accountData));
     },
@@ -90,6 +109,7 @@ export const useAccountStore = defineStore("account", {
         this.last_login = data.last_login;
         this.access = data.access;
         this.acc_validateacc = data.acc_validateacc;
+        this.role = data.role;
       }
     },
   },

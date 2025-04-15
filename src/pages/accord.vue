@@ -4,7 +4,7 @@
       <div class="flex justify-end pb-20">
         <!-- Favoris -->
         <div
-          v-if="accountStore.isLogged() && accountStore.isStudent()"
+          v-if="accountStore.isLogged() && accountStore.isStudent() && accountStore.getAccountValidate()"
           @click="toggleFavoris(accord.agreement.agree_id)"
           class="w-fit group p-2 flex items-center justify-center hover:cursor-pointer hover:scale-105 transition-all"
           :class="{ 'hover:opacity-60': isFavorited(accord.agree_id) }"

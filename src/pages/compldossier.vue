@@ -72,6 +72,18 @@
                   </select>
               </label>
 
+              <!-- Periode de mobilité -->
+              <label class="form-control w-full max-w-lg">
+                  <div class="label">
+                      <span class="label-text">Periode de mobilité</span>
+                  </div>
+                  <select class="select select-bordered" v-model="complDossier.periodemobilite">
+                      <option disabled selected value="">Séléctionnez une periode de mobilité</option>
+                              <option value="1">Mobilité d'automne</option>
+                              <option value="2">Mobilité de printemps</option>
+                  </select>
+              </label>
+
               <!-- Aménagement -->
               <div class="form-control w-full max-w-lg">
                   <label class="label cursor-pointer">
@@ -122,6 +134,7 @@
                 </p>
                 <p v-else>Département : <strong>Aucun</strong></p>
                 <p>Années de mobilité : <strong>{{ complDossier.anneesmobilite ? complDossier.anneesmobilite : 'Aucune' }}</strong></p>
+                <p>Periode de mobilité : <strong>{{ complDossier.periodemobilite ? complDossier.periodemobilite : 'Aucune' }}</strong></p>
                 <p>Parcours : <strong>{{ complDossier.parcours ? complDossier.parcours : 'Aucun' }}</strong></p>
                 <p>Email : <strong>{{ complDossier.email ? complDossier.email : 'Aucun' }}</strong></p>
                 <p>Aménagements : <strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></p>
@@ -156,6 +169,7 @@
     department: '',
     email: '',
     anneesmobilite: '',
+    periodemobilite: '',
     amenagement: false,
     consent: false,
     consentancien: true,
@@ -180,6 +194,10 @@
       addAlert('error', { data: { error: 'Veuillez renseigner vos années de mobilité.' } })
       closeModal()
       return
+    } else if (!complDossier.value.periodemobilite || complDossier.value.periodemobilite === '') {
+      addAlert('error', { data: { error: 'Veuillez renseigner votre periode de mobilité.' } })
+      closeModal()
+      return
     } else if (!complDossier.value.consent) {
       addAlert('error', { data: { error: 'Votre consentement au droit à l\'image est obligatoire.', message: 'Veuillez vous renseigner auprès du service ILC en cas de soucis.' } })
       closeModal()
@@ -193,6 +211,7 @@
       acc_amenagement: complDossier.value.amenagement,
       acc_mail: complDossier.value.email,
       acc_anneemobilite: complDossier.value.anneesmobilite,
+      acc_periodemobilite: complDossier.value.periodemobilite,
       acc_parcours: complDossier.value.parcours,
       acc_consent: complDossier.value.consent
     }
@@ -204,6 +223,7 @@
     await request('PUT', false, response, config.apiUrl + 'api/account/compldossier', requestData)
     if (!response.value.response) {
       accountStore.setValidate(true)
+      accountStore.setRole(response.value.account.role)
       router.push({ name: 'Dashboard' })
     }
   
@@ -252,6 +272,8 @@ function getDeptColor(deptId) {
     complDossier.value.parcours = ''
     complDossier.value.amenagement = false
     complDossier.value.consent = false
+    complDossier.value.anneesmobilite = ''
+    complDossier.value.periodemobilite = ''
     complDossier.value.department = document.querySelector('.select').options[0].value
   }
   

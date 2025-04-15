@@ -1328,6 +1328,10 @@ async function saveArbitrage() {
 const filteredEtus = computed(() => {
   return Object.values(localEtus.value)
     .filter((etu) => {
+      // Filtre par défaut: prend uniquement les étudiants avec acc_validateacc à true
+      return etu.acc_validateacc === true;
+    })
+    .filter((etu) => {
       // Filtre par département avec possibilité de filtrer par "Aucun"
       const matchesDepartments =
         selectedDepartment.value.length === 0 ||

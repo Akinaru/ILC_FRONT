@@ -183,7 +183,7 @@
                       {{ account.acc_validechoixcours ? 'Annuler validation' : 'Valider' }}
                     </button>
                   </div>
-                  <div v-else class="alert alert-info">
+                  <div v-else class="alert ">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Aucun fichier uploadé</span>
                   </div>
@@ -208,7 +208,7 @@
                       Supprimer
                     </button>
                   </div>
-                  <div v-else class="alert alert-info">
+                  <div v-else class="alert ">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Aucun fichier uploadé</span>
                   </div>
@@ -233,7 +233,7 @@
                       Supprimer
                     </button>
                   </div>
-                  <div v-else class="alert alert-info">
+                  <div v-else class="alert ">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Aucun fichier uploadé</span>
                   </div>
@@ -279,6 +279,15 @@
                     <div class="text-sm font-medium">Année mobilité</div>
                     <div class="col-span-2 bg-base-200 p-2 rounded-md">{{ account.acc_anneemobilite || 'Aucune' }}</div>
                   </div>
+
+                  <div class="grid grid-cols-3 gap-2 items-center">
+                    <div class="text-sm font-medium">Periode de mobilité</div>
+                    <div class="col-span-2 bg-base-200 p-2 rounded-md">{{ 
+                        account.acc_periodemobilite === 1 ? 'Mobilité d\'automne' : 
+                        account.acc_periodemobilite === 2 ? 'Mobilité de printemps' : 
+                        'Aucune' 
+                      }}</div>
+                  </div>
                   
                   <div class="grid grid-cols-3 gap-2 items-center">
                     <div class="text-sm font-medium">Département</div>
@@ -301,6 +310,19 @@
                   <div class="grid grid-cols-3 gap-2 items-center">
                     <div class="text-sm font-medium">Dernière connexion</div>
                     <div class="col-span-2 bg-base-200 p-2 rounded-md">{{ formatDate(account.acc_lastlogin) || 'Jamais' }}</div>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-2 items-center">
+                    <div class="text-sm font-medium">Aménagement aux examens</div>
+                    <div class="col-span-2">
+                      <div v-if="account.acc_amenagement" class="bg-success bg-opacity-10 p-2 rounded-md flex items-center">
+                        <div class="badge badge-success mr-2">Oui</div>
+                        <span v-if="account.acc_amenagemendesc" class="text-sm">{{ account.acc_amenagemendesc }}</span>
+                      </div>
+                      <div v-else class="bg-base-200 p-2 rounded-md">
+                        <div class="badge badge-neutral">Non</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -429,6 +451,18 @@
             <select class="select select-bordered w-full" v-model="modifCompte.acc_anneemobilite">
               <option disabled selected value="">Sélectionnez une paire d'années</option>
               <option v-for="(annee, index) in anneesmobilite" :key="index" :value="annee">{{ annee }}</option>
+            </select>
+          </label>
+
+          <!-- Periode de mobilité -->
+          <label class="form-control w-full">
+            <div class="label">
+              <span class="label-text font-medium">Periode de mobilité</span>
+            </div>
+            <select class="select select-bordered w-full" v-model="modifCompte.acc_periodemobilite">
+              <option disabled selected value="">Sélectionnez une periode de mobilité</option>
+              <option value="1">Mobilité d'automne</option>
+              <option value="2">Mobilité de printemps</option>
             </select>
           </label>
           
@@ -673,6 +707,7 @@ import { addAction } from '../../composables/actionType';
             acc_studentnum: modifCompte.value.acc_studentnum != null ? modifCompte.value.acc_studentnum : 0,
             dept_id: modifCompte.value.dept_id != 'no_dept' ? modifCompte.value.dept_id : null,
             acc_anneemobilite: modifCompte.value.acc_anneemobilite != null ? modifCompte.value.acc_anneemobilite : null,
+            acc_periodemobilite: modifCompte.value.acc_periodemobilite != null ? modifCompte.value.acc_periodemobilite : null,
             acc_mail: modifCompte.value.acc_mail != null ? modifCompte.value.acc_mail : 'Aucun mail' ,
             acc_toeic: modifCompte.value.acc_toeic != null ? modifCompte.value.acc_toeic : 0, 
             acc_parcours: modifCompte.value.acc_parcours != null ? modifCompte.value.acc_parcours : null, 
@@ -720,6 +755,7 @@ import { addAction } from '../../composables/actionType';
         modifCompte.value.acc_mail = account.value.acc_mail;
         modifCompte.value.acc_toeic = account.value.acc_toeic;
         modifCompte.value.acc_anneemobilite = account.value.acc_anneemobilite;
+        modifCompte.value.acc_periodemobilite = account.value.acc_periodemobilite;
         modifCompte.value.acc_parcours = account.value.acc_parcours;
         modifCompte.value.dept_id = account.value.department ? account.value.department.dept_id : 'no_dept' 
 
