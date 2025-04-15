@@ -35,7 +35,7 @@
             <p v-if="!isFavorited(accord.agreement.agree_id)">
               Ajouter aux favoris
             </p>
-            <p v-else>Supprimer des favoris</p>
+            <p v-else>Retirer des favoris</p>
           </button>
         </div>
       </div>
@@ -157,7 +157,7 @@
 
         <!-- Autres accords -->
         <p class="flex items-start w-full py-2">
-          Autres accords qui pourraient vous plaire:
+          Autres accords susceptibles de vous intéresser :
         </p>
         <div
           class=" w-full h-64 overflow-x-auto whitespace-nowrap flex items-center text-sm"

@@ -30,118 +30,131 @@
                 <ExportComp texte="Exporter des accords en csv" :link="config.apiUrl+'api/agreement/export'"></ExportComp>
             </div>
         </div>
-            <!-- Partie ajout d'un accord -->
-            <div class="m-5 my-20">
-                <div class="m-5 flex justify-center items-center flex-col" >
-                    <p class="text-lg font-bold">Ajout accord</p>
-                    <form @submit.prevent="addAgreement" class="w-2/5 *:my-2">
-                        <!-- Formulaire Isced -->
-                        <label class="form-control w-full items-center justify-center">
-                            <div class="label">
-                                <span class="label-text">Isced</span>
-                            </div>
-                            <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
-                                <option disabled selected>Selectionnez un isced</option>
-                                <option value="addNew"> + Créer un isced</option>
-                                <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
-                            </select>
-                            <label class="form-control w-5/6 my-1" v-if="newAgreement.isced === 'addNew'">
-                                <div class="label">
-                                    <span class="label-text">Créer un Isced</span>
-                                </div>
-                                <input type="number" placeholder="Code (ex: 061)" v-model="newAgreement.newisced.code" class="input input-bordered w-full" />
-                                <input type="text" placeholder="Nom (ex: Information and Communication Technologies)" v-model="newAgreement.newisced.name" class="input input-bordered w-full " />
-                            </label>
-                        </label>
-                        <!-- Formualire composante -->
-                        <label class="form-control w-full items-center justify-center">
-                            <div class="label">
-                                <span class="label-text">Composante</span>
-                            </div>
-                            <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
-                                <option disabled selected>Selectionnez une composante</option>
-                                <option value="addNew"> + Créer une composante</option>
-                                <option v-if="composantes && composantes.components" v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
-                            </select>
-                            <label class="form-control w-5/6 my-1" v-if="newAgreement.compo === 'addNew'">
-                                <div class="label">
-                                    <span class="label-text">Créer une composante</span>
-                                </div>
-                                <input type="text" placeholder="Nom (ex: IUT Annecy)" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
-                                <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full " />
-                            </label>
-                        </label>
-                        <!-- Formulaire université -->
-                        <label class="form-control w-full items-center justify-center">
-                            <div class="label">
-                                <span class="label-text">Université</span>
-                            </div>
-                            <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
-                                <option disabled selected>Selectionnez une université</option>
-                                <option value="addNew"> + Créer une université</option>
-                                <option v-if="universites && universites.length > 0" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">(<span v-if="univ.partnercountry && univ.partnercountry.parco_id">{{ univ.partnercountry.parco_name }}</span>) {{ univ.univ_name }} à {{ univ.univ_city }}</option>
-                            </select>
-                            <label class="form-control w-5/6 my-1" v-if="newAgreement.univ === 'addNew'">
-                                <div class="label">
-                                    <span class="label-text">Créer une université</span>
-                                </div>
-                                <span class="my-1">
-                                    <input type="text" placeholder="Nom (ex: Université Savoie Mont Blanc)" v-model="newAgreement.newuniv.name" class="input input-bordered w-full " />
-                                    <input type="text" placeholder="Ville (ex: Annecy)" v-model="newAgreement.newuniv.city" class="input input-bordered w-full " />
-                                </span>
-                                <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
-                                    <option disabled selected>Selectionnez un pays</option>
-                                    <option value="addNew"> + Créer un pays</option>
-                                    <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
-                                </select>
-                                <span class="flex items-center justify-center">
+          <!-- Partie ajout d'un accord -->
+          <div class="my-20 px-4">
+            <!-- En-tête inspiré de la DA d'accueil -->
+            <div class="w-full max-w-3xl mx-auto pb-6 pt-8">
+              <div class="relative">
+                <!-- Fond décoratif -->
+                <div class="absolute -left-6 -top-6 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl"></div>
 
-                                    <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.newpartnercountry" class="input input-bordered w-5/6 my-1" />
-                                    <input v-if="newAgreement.newuniv.partnercountry === 'addNew'" type="text" placeholder="Code pays (ex: fr, de, it)" v-model="newAgreement.newuniv.newpartnercountrycode" class="input input-bordered w-5/6 my-1" />
-                                </span>
+                <!-- Conteneur -->
+                <div class="relative z-10">
+                  <!-- Badge -->
+                  <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/5 text-primary text-xs font-medium mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6M9 16h6M8 8h8" />
+                    </svg>
+                    ADMINISTRATION
+                  </div>
 
-                            </label>
-                        </label>
-                        <!-- Formulaire Typeaccord -->
-                        <label class="form-control w-full items-center justify-center">
-                            <div class="label">
-                                <span class="label-text">Type accord</span>
-                            </div>
-                            <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="newAgreement.typeaccord">
-                                <option disabled selected>Selectionnez un type d'accord</option>
-                                <option>Bilatéral</option>
-                                <option>Erasmus</option>
-                            </select>
-                        </label>
-                        <!-- Formulaire Nombre de places -->
-                        <label class="form-control w-full items-center justify-center">
-                            <div class="label">
-                                <span class="label-text">Nombre de places</span>
-                            </div>
-                            <input type="number" class="input input-bordered w-full" v-model="newAgreement.nbplace"/>
-                        </label>
-                        <!-- Formulaire lien -->
-                        <label class="form-control w-full items-center justify-center">
-                            <div class="label">
-                                <span class="label-text">Lien (facultatif)</span>
-                            </div>
-                            <input type="text" placeholder="Lien vers le site correspondant à l'accord" class="input input-bordered w-full" v-model="newAgreement.lien"/>
-                        </label>
-                        <!-- Formulaire description -->
-                        <label class="form-control w-full items-center justify-center">
-                            <div class="label">
-                                <span class="label-text">Description (facultatif)</span>
-                            </div>
-                            <input type="text" placeholder="Description de l'accord" class="input input-bordered w-full" v-model="newAgreement.description"/>
-                        </label>
-                        <div class="flex items-center justify-center">
-                            <button class="btn btn-primary hover:scale-105 transition-all hover:opacity-70" type="submit">Ajouter l'accord</button>
-                        </div>
-                    </form>
+                  <!-- Titre -->
+                  <div class="flex items-center gap-3 mb-3">
+                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Ajouter un accord</h2>
+                  </div>
+
+                  <!-- Texte explicatif -->
+                  <p class="text-base-content/60 text-sm max-w-lg mb-4">
+                    Créez un nouvel accord international avec ses composantes, son université partenaire et toutes les informations nécessaires.
+                  </p>
+
+                  <!-- Séparateur -->
                 </div>
-
+              </div>
             </div>
 
+            <!-- Formulaire -->
+            <div class="max-w-3xl mx-auto card bg-base-100 shadow-xl p-6 rounded-2xl">
+              <form @submit.prevent="addAgreement" class="space-y-4">
+                <!-- ISCED -->
+                <div>
+                  <label class="label-text font-semibold">ISCED</label>
+                  <select class="select select-bordered w-full select-primary" id="isced_select" v-model="newAgreement.isced">
+                    <option disabled selected>Selectionnez un isced</option>
+                    <option value="addNew"> + Créer un isced</option>
+                    <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{isced.isc_code}}) {{ isced.isc_name }}</option>
+                  </select>
+                  <div v-if="newAgreement.isced === 'addNew'" class="mt-2 space-y-2">
+                    <input type="number" placeholder="Code (ex: 061)" v-model="newAgreement.newisced.code" class="input input-bordered w-full" />
+                    <input type="text" placeholder="Nom (ex: Information and Communication Technologies)" v-model="newAgreement.newisced.name" class="input input-bordered w-full" />
+                  </div>
+                </div>
+
+                <!-- Composante -->
+                <div>
+                  <label class="label-text font-semibold">Composante</label>
+                  <select class="select select-bordered w-full select-primary" id="compo_select" v-model="newAgreement.compo">
+                    <option disabled selected>Selectionnez une composante</option>
+                    <option value="addNew"> + Créer une composante</option>
+                    <option v-if="composantes?.components" v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
+                  </select>
+                  <div v-if="newAgreement.compo === 'addNew'" class="mt-2 space-y-2">
+                    <input type="text" placeholder="Nom (ex: IUT Annecy)" v-model="newAgreement.newcompo.name" class="input input-bordered w-full" />
+                    <input type="text" placeholder="Nom raccourci (ex: IUT-A)" v-model="newAgreement.newcompo.shortname" class="input input-bordered w-full" />
+                  </div>
+                </div>
+
+                <!-- Université -->
+                <div>
+                  <label class="label-text font-semibold">Université</label>
+                  <select class="select select-bordered w-full select-primary" id="univ_select" v-model="newAgreement.univ">
+                    <option disabled selected>Selectionnez une université</option>
+                    <option value="addNew"> + Créer une université</option>
+                    <option v-if="universites?.length" v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">
+                      ({{ univ.partnercountry?.parco_name || 'Pays inconnu' }}) {{ univ.univ_name }} à {{ univ.univ_city }}
+                    </option>
+                  </select>
+
+                  <div v-if="newAgreement.univ === 'addNew'" class="mt-2 space-y-2">
+                    <input type="text" placeholder="Nom (ex: Université Savoie Mont Blanc)" v-model="newAgreement.newuniv.name" class="input input-bordered w-full" />
+                    <input type="text" placeholder="Ville (ex: Annecy)" v-model="newAgreement.newuniv.city" class="input input-bordered w-full" />
+                    <select class="select select-bordered w-full select-primary" id="partnercountry_select" v-model="newAgreement.newuniv.partnercountry">
+                      <option disabled selected>Selectionnez un pays</option>
+                      <option value="addNew"> + Créer un pays</option>
+                      <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
+                    </select>
+                    <div v-if="newAgreement.newuniv.partnercountry === 'addNew'" class="space-y-2">
+                      <input type="text" placeholder="Nouveau pays (ex: France)" v-model="newAgreement.newuniv.newpartnercountry" class="input input-bordered w-full" />
+                      <input type="text" placeholder="Code pays (ex: fr, de, it)" v-model="newAgreement.newuniv.newpartnercountrycode" class="input input-bordered w-full" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Type d'accord -->
+                <div>
+                  <label class="label-text font-semibold">Type d'accord</label>
+                  <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="newAgreement.typeaccord">
+                    <option disabled selected>Selectionnez un type d'accord</option>
+                    <option>Bilatéral</option>
+                    <option>Erasmus</option>
+                  </select>
+                </div>
+
+                <!-- Nombre de places -->
+                <div>
+                  <label class="label-text font-semibold">Nombre de places</label>
+                  <input type="number" class="input input-bordered w-full" v-model="newAgreement.nbplace" />
+                </div>
+
+                <!-- Lien -->
+                <div>
+                  <label class="label-text font-semibold">Lien (facultatif)</label>
+                  <input type="text" placeholder="Lien vers le site correspondant à l'accord" class="input input-bordered w-full" v-model="newAgreement.lien" />
+                </div>
+
+                <!-- Description -->
+                <div>
+                  <label class="label-text font-semibold">Description (facultatif)</label>
+                  <input type="text" placeholder="Description de l'accord" class="input input-bordered w-full" v-model="newAgreement.description" />
+                </div>
+
+                <!-- Bouton -->
+                <div class="pt-4 flex justify-center">
+                  <button class="btn btn-primary btn-wide hover:scale-105 transition-transform">Ajouter l'accord</button>
+                </div>
+              </form>
+            </div>
+          </div>
 
             <!-- Partie liste des accords -->
             <div>
@@ -149,483 +162,496 @@
 
                 <!-- Partie filtre -->
                 <div class="bg-base-100 rounded-lg shadow-lg w-full overflow-hidden border border-base-300" v-if="accords && accords.agreements">
-  <!-- En-tête -->
-  <div class="bg-base-300 p-4">
-    <h3 class="font-bold text-lg select-none">Filtres des Accords</h3>
-    <div class="flex justify-between items-center mt-2">
-      <button 
-        class="btn btn-sm btn-ghost text-xs" 
-        @click="deselectAll"
-      >
-        <span class="">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </span>
-        Tout désélectionner
-      </button>
-      <p class="text-sm select-none">
-        {{ filteredAccords.length }} résultats 
-        <span v-if="selectedDepartments.length + selectedCountries.length + selectedComponent.length > 0">
-          ({{ selectedDepartments.length + selectedCountries.length + selectedComponent.length }} 
-          filtre{{ selectedCountries.length + selectedDepartments.length + selectedComponent.length > 1 ? 's' : '' }})
-        </span>
-      </p>
-    </div>
-  </div>
 
-  <!-- Section Pays -->
-  <div class="border-b border-base-300">
-    <div
-      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-      @click="toggleCollapse('pays')"
-    >
-      <div class="flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-        </svg>
-        <span class="font-medium select-none">Pays</span>
-        <span v-if="selectedCountries.length" class="badge badge-sm">{{ selectedCountries.length }}</span>
-      </div>
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24" 
-        stroke-width="1.5" 
-        stroke="currentColor" 
-        class="w-5 h-5 transition-transform duration-200"
-        :class="isOpen.pays ? 'rotate-180' : ''"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-      </svg>
-    </div>
+                  <!-- En-tête -->
+                  <div class="bg-base-300 p-4">
+                  <h3 class="font-bold text-lg select-none">Filtres des Accords</h3>
+                  <div class="flex justify-between items-center mt-2">
+                    <button
+                      class="btn btn-sm btn-ghost text-xs"
+                      @click="deselectAll"
+                    >
+                      <span class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </span>
+                      Tout désélectionner
+                    </button>
+                    <p class="text-sm select-none">
+                      {{ filteredAccords.length }} résultats
+                      <span v-if="selectedDepartments.length + selectedCountries.length + selectedComponent.length > 0">
+                        ({{ selectedDepartments.length + selectedCountries.length + selectedComponent.length }}
+                        filtre{{ selectedCountries.length + selectedDepartments.length + selectedComponent.length > 1 ? 's' : '' }})
+                      </span>
+                    </p>
+                  </div>
+                </div>
 
-    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.pays">
-      <button
-        class="btn btn-xs btn-ghost mb-3"
-        @click="deselectAllCountry"
-      >
-        Tout désélectionner
-      </button>
+                  <!-- Section Pays -->
+                  <div class="border-b border-base-300">
+                    <div
+                      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                      @click="toggleCollapse('pays')"
+                    >
+                      <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                        </svg>
+                        <span class="font-medium select-none">Pays</span>
+                        <span v-if="selectedCountries.length" class="badge badge-sm">{{ selectedCountries.length }}</span>
+                      </div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-5 h-5 transition-transform duration-200"
+                        :class="isOpen.pays ? 'rotate-180' : ''"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-        <div
-          v-for="(country, index) in partnercountry"
-          :key="index"
-          class="flex items-center"
-        >
-          <label
-            :for="'filt_pays_' + index"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-          >
-            <input
-              :id="'filt_pays_' + index"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              :value="country.parco_name"
-              v-model="selectedCountries"
-            />
-            <span class="fi mr-2" :class="'fi-' + country.parco_code"></span>
-            <span class="text-sm select-none">{{ country.parco_name }}</span>
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
+                    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.pays">
+                      <button
+                        class="btn btn-xs btn-ghost mb-3"
+                        @click="deselectAllCountry"
+                      >
+                        Tout désélectionner
+                      </button>
 
-  <!-- Section Départements -->
-  <div class="border-b border-base-300">
-    <div
-      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-      @click="toggleCollapse('departments')"
-    >
-      <div class="flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
-        </svg>
-        <span class="font-medium select-none">Départements</span>
-        <span v-if="selectedDepartments.length" class="badge badge-sm">{{ selectedDepartments.length }}</span>
-      </div>
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24" 
-        stroke-width="1.5" 
-        stroke="currentColor" 
-        class="w-5 h-5 transition-transform duration-200"
-        :class="isOpen.departments ? 'rotate-180' : ''"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-      </svg>
-    </div>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <div
+                          v-for="(country, index) in partnercountry"
+                          :key="index"
+                          class="flex items-center"
+                        >
+                          <label
+                            :for="'filt_pays_' + index"
+                            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                          >
+                            <input
+                              :id="'filt_pays_' + index"
+                              type="checkbox"
+                              class="checkbox checkbox-sm mr-2"
+                              :value="country.parco_name"
+                              v-model="selectedCountries"
+                            />
+                            <span class="fi mr-2" :class="'fi-' + country.parco_code"></span>
+                            <span class="text-sm select-none">{{ country.parco_name }}</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.departments">
-      <button
-        class="btn btn-xs btn-ghost mb-3"
-        @click="deselectAllDept"
-      >
-        Tout désélectionner
-      </button>
+                  <!-- Section Départements -->
+                  <div class="border-b border-base-300">
+                    <div
+                      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                      @click="toggleCollapse('departments')"
+                    >
+                      <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+                        </svg>
+                        <span class="font-medium select-none">Départements</span>
+                        <span v-if="selectedDepartments.length" class="badge badge-sm">{{ selectedDepartments.length }}</span>
+                      </div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-5 h-5 transition-transform duration-200"
+                        :class="isOpen.departments ? 'rotate-180' : ''"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </div>
 
-      <div v-for="(comp, index) in composantes.components" :key="index" class="mb-4">
-        <p class="font-medium text-sm mb-2 select-none">{{ comp.comp_name }}</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-2">
-          <div
-            v-for="(dept, deptIndex) in comp.departments"
-            :key="deptIndex"
-          >
-            <label
-              :for="'filt_dept_' + deptIndex"
-              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
-            >
-              <input
-                :id="'filt_dept_' + deptIndex"
-                type="checkbox"
-                class="checkbox checkbox-sm mr-2"
-                :value="dept.dept_shortname"
-                v-model="selectedDepartments"
-              />
-              <div
-                class="w-4 h-4 rounded-full mr-2"
-                :style="{ backgroundColor: dept.dept_color }"
-              ></div>
-              <span class="text-sm select-none">{{ dept.dept_shortname }}</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+                    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.departments">
+                      <button
+                        class="btn btn-xs btn-ghost mb-3"
+                        @click="deselectAllDept"
+                      >
+                        Tout désélectionner
+                      </button>
 
-  <!-- Section Composante -->
-  <div class="border-b border-base-300">
-    <div
-      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-      @click="toggleCollapse('component')"
-    >
-      <div class="flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-        </svg>
-        <span class="font-medium select-none">Composante</span>
-        <span v-if="selectedComponent.length" class="badge badge-sm">{{ selectedComponent.length }}</span>
-      </div>
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24" 
-        stroke-width="1.5" 
-        stroke="currentColor" 
-        class="w-5 h-5 transition-transform duration-200"
-        :class="isOpen.component ? 'rotate-180' : ''"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-      </svg>
-    </div>
+                      <div v-for="(comp, index) in composantes.components" :key="index" class="mb-4">
+                        <p class="font-medium text-sm mb-2 select-none">{{ comp.comp_name }}</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-2">
+                          <div
+                            v-for="(dept, deptIndex) in comp.departments"
+                            :key="deptIndex"
+                          >
+                            <label
+                              :for="'filt_dept_' + deptIndex"
+                              class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                            >
+                              <input
+                                :id="'filt_dept_' + deptIndex"
+                                type="checkbox"
+                                class="checkbox checkbox-sm mr-2"
+                                :value="dept.dept_shortname"
+                                v-model="selectedDepartments"
+                              />
+                              <div
+                                class="w-4 h-4 rounded-full mr-2"
+                                :style="{ backgroundColor: dept.dept_color }"
+                              ></div>
+                              <span class="text-sm select-none">{{ dept.dept_shortname }}</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.component">
-      <button
-        class="btn btn-xs btn-ghost mb-3"
-        @click="deselectAllComp"
-      >
-        Tout désélectionner
-      </button>
+                  <!-- Section Composante -->
+                  <div class="border-b border-base-300">
+                    <div
+                      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                      @click="toggleCollapse('component')"
+                    >
+                      <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                        </svg>
+                        <span class="font-medium select-none">Composante</span>
+                        <span v-if="selectedComponent.length" class="badge badge-sm">{{ selectedComponent.length }}</span>
+                      </div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-5 h-5 transition-transform duration-200"
+                        :class="isOpen.component ? 'rotate-180' : ''"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <div
-          v-for="(compo, index) in composantes.components"
-          :key="index"
-          class="flex items-center"
-        >
-          <label
-            :for="'filt_compo_' + index"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
-          >
-            <input
-              :id="'filt_compo_' + index"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              :value="compo.comp_name"
-              v-model="selectedComponent"
-            />
-            <span class="text-sm select-none">{{ compo.comp_name }}</span>
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
+                    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.component">
+                      <button
+                        class="btn btn-xs btn-ghost mb-3"
+                        @click="deselectAllComp"
+                      >
+                        Tout désélectionner
+                      </button>
 
-  <!-- Section Champs vides -->
-  <div>
-    <div
-      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
-      @click="toggleCollapse('unknown')"
-    >
-      <div class="flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-        </svg>
-        <span class="font-medium select-none">Champs vides</span>
-        <span v-if="selectedUnknowns.length" class="badge badge-sm">{{ selectedUnknowns.length }}</span>
-      </div>
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24" 
-        stroke-width="1.5" 
-        stroke="currentColor" 
-        class="w-5 h-5 transition-transform duration-200"
-        :class="isOpen.unknown ? 'rotate-180' : ''"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-      </svg>
-    </div>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div
+                          v-for="(compo, index) in composantes.components"
+                          :key="index"
+                          class="flex items-center"
+                        >
+                          <label
+                            :for="'filt_compo_' + index"
+                            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                          >
+                            <input
+                              :id="'filt_compo_' + index"
+                              type="checkbox"
+                              class="checkbox checkbox-sm mr-2"
+                              :value="compo.comp_name"
+                              v-model="selectedComponent"
+                            />
+                            <span class="text-sm select-none">{{ compo.comp_name }}</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.unknown">
-      <button
-        class="btn btn-xs btn-ghost mb-3"
-        @click="deselectAllUnkn"
-      >
-        Tout désélectionner
-      </button>
+                  <!-- Section Champs vides -->
+                  <div>
+                    <div
+                      class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                      @click="toggleCollapse('unknown')"
+                    >
+                      <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                        </svg>
+                        <span class="font-medium select-none">Champs vides</span>
+                        <span v-if="selectedUnknowns.length" class="badge badge-sm">{{ selectedUnknowns.length }}</span>
+                      </div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-5 h-5 transition-transform duration-200"
+                        :class="isOpen.unknown ? 'rotate-180' : ''"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <div class="flex items-center">
-          <label
-            for="filt_unknown_1"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
-          >
-            <input
-              id="filt_unknown_1"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              value="component.comp_id"
-              v-model="selectedUnknowns"
-            />
-            <span class="text-sm select-none">Composante</span>
-          </label>
-        </div>
-        <div class="flex items-center">
-          <label
-            for="filt_unknown_2"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
-          >
-            <input
-              id="filt_unknown_2"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              value="university.univ_id"
-              v-model="selectedUnknowns"
-            />
-            <span class="text-sm select-none">Université</span>
-          </label>
-        </div>
-        <div class="flex items-center">
-          <label
-            for="filt_unknown_3"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
-          >
-            <input
-              id="filt_unknown_3"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              value="departments"
-              v-model="selectedUnknowns"
-            />
-            <span class="text-sm select-none">Départements</span>
-          </label>
-        </div>
-        <div class="flex items-center">
-          <label
-            for="filt_unknown_4"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
-          >
-            <input
-              id="filt_unknown_4"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              value="isced.isc_id"
-              v-model="selectedUnknowns"
-            />
-            <span class="text-sm select-none">Isced</span>
-          </label>
-        </div>
-        <div class="flex items-center">
-          <label
-            for="filt_unknown_5"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
-          >
-            <input
-              id="filt_unknown_5"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              value="agree_lien"
-              v-model="selectedUnknowns"
-            />
-            <span class="text-sm select-none">Lien</span>
-          </label>
-        </div>
-        <div class="flex items-center">
-          <label
-            for="filt_unknown_6"
-            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
-          >
-            <input
-              id="filt_unknown_6"
-              type="checkbox"
-              class="checkbox checkbox-sm mr-2"
-              value="agree_description"
-              v-model="selectedUnknowns"
-            />
-            <span class="text-sm select-none">Description</span>
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                    <div class="p-4 pt-0 bg-base-100" v-show="isOpen.unknown">
+                      <button
+                        class="btn btn-xs btn-ghost mb-3"
+                        @click="deselectAllUnkn"
+                      >
+                        Tout désélectionner
+                      </button>
+
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div class="flex items-center">
+                          <label
+                            for="filt_unknown_1"
+                            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                          >
+                            <input
+                              id="filt_unknown_1"
+                              type="checkbox"
+                              class="checkbox checkbox-sm mr-2"
+                              value="component.comp_id"
+                              v-model="selectedUnknowns"
+                            />
+                            <span class="text-sm select-none">Composante</span>
+                          </label>
+                        </div>
+                        <div class="flex items-center">
+                          <label
+                            for="filt_unknown_2"
+                            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                          >
+                            <input
+                              id="filt_unknown_2"
+                              type="checkbox"
+                              class="checkbox checkbox-sm mr-2"
+                              value="university.univ_id"
+                              v-model="selectedUnknowns"
+                            />
+                            <span class="text-sm select-none">Université</span>
+                          </label>
+                        </div>
+                        <div class="flex items-center">
+                          <label
+                            for="filt_unknown_3"
+                            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                          >
+                            <input
+                              id="filt_unknown_3"
+                              type="checkbox"
+                              class="checkbox checkbox-sm mr-2"
+                              value="departments"
+                              v-model="selectedUnknowns"
+                            />
+                            <span class="text-sm select-none">Départements</span>
+                          </label>
+                        </div>
+                        <div class="flex items-center">
+                          <label
+                            for="filt_unknown_4"
+                            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                          >
+                            <input
+                              id="filt_unknown_4"
+                              type="checkbox"
+                              class="checkbox checkbox-sm mr-2"
+                              value="isced.isc_id"
+                              v-model="selectedUnknowns"
+                            />
+                            <span class="text-sm select-none">Isced</span>
+                          </label>
+                        </div>
+                        <div class="flex items-center">
+                          <label
+                            for="filt_unknown_5"
+                            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                          >
+                            <input
+                              id="filt_unknown_5"
+                              type="checkbox"
+                              class="checkbox checkbox-sm mr-2"
+                              value="agree_lien"
+                              v-model="selectedUnknowns"
+                            />
+                            <span class="text-sm select-none">Lien</span>
+                          </label>
+                        </div>
+                        <div class="flex items-center">
+                          <label
+                            for="filt_unknown_6"
+                            class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150"
+                          >
+                            <input
+                              id="filt_unknown_6"
+                              type="checkbox"
+                              class="checkbox checkbox-sm mr-2"
+                              value="agree_description"
+                              v-model="selectedUnknowns"
+                            />
+                            <span class="text-sm select-none">Description</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Liste -->
                 <div>
-                    <div v-if="filteredAccords.length > 0">
-                        <!-- Affichage des accords -->
-                        <div v-for="(accord, indexAccord) in filteredAccords" :key="indexAccord" class="m-5 p-3 flex">
-                            <div class="w-full bg-base-300 p-2">
-                                <div class="flex">
-                                    <span class="tooltip mr-2" :data-tip="accord.partnercountry?.parco_name || 'Introuvable'">
-                                        <span class="relative inline-block">
-                                            <!-- Drapeau -->
-                                            <span class="fi text-5xl" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
+                    <div v-if="filteredAccords.length > 0" class="grid gap-6">
+                    <div
+                        v-for="(accord, indexAccord) in filteredAccords"
+                        :key="indexAccord"
+                        class="bg-base-100 shadow-md rounded-xl p-5 border border-base-300"
+                    >
+                      <!-- En-tête Accord -->
+                      <div class="flex items-start gap-4 mb-3">
+                        <!-- Drapeau ou fallback -->
+                        <span class="tooltip" :data-tip="accord.partnercountry?.parco_name || 'Introuvable'">
+                          <span class="relative inline-block">
+                            <span class="fi text-4xl" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
+                            <template v-if="!accord.partnercountry?.parco_code">
+                              <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">?</span>
+                            </template>
+                          </span>
+                        </span>
 
-                                            <!-- Point d'interrogation si pas de drapeau -->
-                                            <template v-if="!accord.partnercountry?.parco_code">
-                                                <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                                    ?
-                                                </span>
-                                            </template>
-                                        </span>
-                                    </span>
-
-                                    <div>
-                                        <p>
-                                            <span class="font-bold">{{ accord.university?.univ_name || 'Nom université non disponible' }}</span>
-                                            à {{ accord.university?.univ_city || 'Ville non disponible' }}
-                                            ({{ accord.partnercountry?.parco_name || 'Pays non disponible' }})
-                                            <span>
-                                                <span>Nombre de places: {{ accord.agree_nbplace != null ? accord.agree_nbplace : 'Non spécifié' }}</span>,
-                                                <span>Type accord: {{ accord.agree_typeaccord || 'Non spécifié' }}</span>
-                                            </span>
-                                        </p>
-                                        <p>
-                                            [{{ accord.isced?.isc_code || 'Code ISCED non disponible' }} - {{ accord.isced?.isc_name || 'Nom ISCED non disponible' }}]
-                                            Composante: {{ accord.component?.comp_name || 'Nom composante non disponible' }} 
-                                            N°: {{ accord.agree_id }}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="flex mt-3">
-                                    <a v-if="accord.agree_lien" target="_blank"  :href="accord.agree_lien" class="hover:opacity-80 text-blue-700 hover:cursor-pointer hover:underline">
-                                        Cliquez ici pour accéder au site de l'université
-                                    </a>
-                                </div>
-
-                                <div>
-                                    <p>Description: <span v-if="accord.agree_description">{{ accord.agree_description }}</span><span v-if="!accord.agree_description">Aucune</span></p>
-                                    <p v-if="accord.agree_note">Note: <span>{{ accord.agree_note }}</span></p>
-                                    
-                                </div>
-                                
-                                <!-- Liste des départements d'un accord -->
-                                <p>Les départements: </p>
-                                <div class="flex flex-wrap items-center justify-start">
-                                    <div v-for="(dept, indexDept) in accord.departments" :key="indexDept">
-                                        <div class="w-fit p-2 flex items-center justify-center mx-1 tooltip select-none font-bold"
-                                            :class="{ 'opacity-50': dept.pivot?.deptagree_valide === 0 }"
-                                            :data-tip="(dept.pivot?.deptagree_valide === 0 ? '(INVISIBLE) ' : '') + 'Département ' + (dept.dept_name || 'Nom département non disponible')"
-                                            :style="{ backgroundColor: dept.dept_color || '#FFFFFF' }">
-                                            <p>
-                                                {{ dept.dept_shortname || 'Abréviation département non disponible' }}
-                                                <span class="font-bold">{{ dept.pivot?.deptagree_valide === 0 ? ' (Invisible)' : '' }}</span>
-                                            </p>
-                                            <!-- Bouton de changement de visibilité des départements -->
-                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2"
-                                                    @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot?.deptagree_valide, dept.dept_shortname)">
-                                                <svg v-if="dept.pivot?.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
-                                                    version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85"
-                                                    xml:space="preserve">
-                                                    <g>
-                                                        <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
-                                                            s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
-                                                            c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
-                                                            C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
-                                                            c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
-                                                    </g>
-                                                </svg>
-                                                <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1"
-                                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.85 488.85"
-                                                    xml:space="preserve">
-                                                    <g>
-                                                        <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
-                                                            s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1C422.525,149.825,337.825,98.725,244.425,98.725z M251.125,347.025
-                                                            c-62,3.9-113.2-47.2-109.3-109.3c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
-                                                            C343.725,302.225,302.225,343.725,251.125,347.025z M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8c1.7-27.6,24.1-49.9,51.7-51.7
-                                                            c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"/>
-                                                        <line x1="100" y1="100" x2="400" y2="400" style="stroke:currentColor;stroke-width:40"/>
-                                                    </g>
-                                                </svg>
-                                            </button>
-
-                                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-1 ml-2"
-                                                    @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <p class="bg-base-200 p-4 hover:cursor-pointer hover:opacity-60 select-none mx-1" @click="showForm(accord.agree_id)">Ajouter un département</p>
-                                </div>
-                                <!-- Formulaire pour ajouter un département -->
-                                <div v-if="showForms[accord.agree_id]">
-                                    <form @submit.prevent="submitForm(accord.agree_id)">
-                                        <p>Ajouter un département</p>
-                                        <div class="flex items-center justify-start *:m-1">
-                                            <select class="select select-bordered w-full max-w-xs" :id="'form_dept_select_'+accord.agree_id" v-model="selectedDepartment[accord.agree_id]">
-                                                <option disabled selected>Selectionnez un département</option>
-                                                <option v-for="(dept, indexDept) in filteredDepartments(accord)" :key="indexDept" :value="dept.dept_id" :style="{ color: dept.dept_color + ' !important' }">
-                                                    ({{ dept.component?.comp_name || 'Nom composante non disponible' }}) {{ dept.dept_shortname || 'Abréviation département non disponible' }}
-                                                </option>
-                                            </select>
-
-                                            <div class="flex items-center justify-center">
-                                                <button class="btn btn-primary" type="submit">Ajouter le département</button>
-                                            </div>
-                                            <div class="flex items-center justify-center" @click="showForm(accord.agree_id)">
-                                                <button class="btn btn-neutral">Annuler</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <!-- Bouton de modification de l'accord -->
-                            <label @click="ModifAccord(accord)" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5">
-                                <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                </svg>
-                            </label>
-
-
-                            
-                            <!-- Bouton de suppression de l'accord -->
-                            <button class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-5" @click="openConfirmModal(accord)">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
+                        <!-- Infos principales -->
+                        <div class="flex-1">
+                          <p class="font-bold text-lg">
+                            {{ accord.university?.univ_name || 'Université non disponible' }}
+                          </p>
+                          <p class="text-sm text-base-content/70">
+                            à {{ accord.university?.univ_city || 'Ville non disponible' }} – {{ accord.partnercountry?.parco_name || 'Pays non disponible' }}
+                          </p>
+                          <p class="text-sm mt-1">
+                            <strong>Type :</strong> {{ accord.agree_typeaccord || 'Non spécifié' }},
+                            <strong>Places :</strong> {{ accord.agree_nbplace ?? 'Non spécifié' }}
+                          </p>
+                          <p class="text-sm text-base-content/70 mt-1">
+                            [{{ accord.isced?.isc_code || 'ISCED manquant' }} - {{ accord.isced?.isc_name || 'Nom ISCED manquant' }}]
+                            – Composante : {{ accord.component?.comp_name || 'Non disponible' }} (ID: {{ accord.agree_id }})
+                          </p>
                         </div>
+
+                        <!-- Actions accord -->
+                        <div class="flex gap-2">
+                          <!-- Modifier -->
+                          <label @click="ModifAccord(accord)" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-3 rounded">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                              <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            </svg>
+                          </label>
+
+                          <!-- Supprimer -->
+                          <button @click="openConfirmModal(accord)" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-3 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Lien vers université -->
+                      <div v-if="accord.agree_lien" class="mt-1">
+                        <a :href="accord.agree_lien" target="_blank" class="text-primary hover:underline text-sm">
+                          🌐 Site de l’université
+                        </a>
+                      </div>
+
+                      <!-- Description + Note -->
+                      <div class="mt-2 text-sm text-base-content/80">
+                        <p><strong>Description :</strong> {{ accord.agree_description || 'Aucune' }}</p>
+                        <p v-if="accord.agree_note"><strong>Note :</strong> {{ accord.agree_note }}</p>
+                      </div>
+
+                      <!-- Départements -->
+                      <div class="mt-4">
+                        <p class="text-sm font-medium mb-1">Départements :</p>
+                        <div class="flex flex-wrap gap-2">
+                          <div
+                              v-for="(dept, indexDept) in accord.departments"
+                              :key="indexDept"
+                              class="flex items-center gap-2 px-2 py-1 rounded select-none"
+                              :class="{ 'opacity-50': dept.pivot?.deptagree_valide === 0 }"
+                              :style="{ backgroundColor: dept.dept_color || '#ddd' }"
+                              :data-tip="(dept.pivot?.deptagree_valide === 0 ? '(INVISIBLE) ' : '') + dept.dept_name"
+                          >
+                            <span class="font-bold text-xs">{{ dept.dept_shortname }}</span>
+                            <!-- Œil (visibilité) -->
+                            <button class="hover:opacity-60 hover:cursor-pointer flex items-center justify-center ml-2"
+                                    @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot?.deptagree_valide, dept.dept_shortname)">
+                              <svg v-if="dept.pivot?.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
+                                   version="1.1" viewBox="0 0 488.85 488.85">
+                                <g>
+                                  <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1
+               c62.5,83.1,147.2,134.2,240.6,134.2s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1
+               C422.525,149.825,337.825,98.725,244.425,98.725z
+               M251.125,347.025c-62,3.9-113.2-47.2-109.3-109.3
+               c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
+               C343.725,302.225,302.225,343.725,251.125,347.025z
+               M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8
+               c1.7-27.6,24.1-49.9,51.7-51.7c33.4-2.1,61,25.4,58.8,58.8
+               C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                </g>
+                              </svg>
+                              <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" viewBox="0 0 488.85 488.85">
+                                <g>
+                                  <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1
+               c62.5,83.1,147.2,134.2,240.6,134.2s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1
+               C422.525,149.825,337.825,98.725,244.425,98.725z
+               M251.125,347.025c-62,3.9-113.2-47.2-109.3-109.3
+               c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
+               C343.725,302.225,302.225,343.725,251.125,347.025z
+               M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8
+               c1.7-27.6,24.1-49.9,51.7-51.7c33.4-2.1,61,25.4,58.8,58.8
+               C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                  <line x1="100" y1="100" x2="400" y2="400" style="stroke:currentColor;stroke-width:40"/>
+                                </g>
+                              </svg>
+                            </button>
+
+                            <!-- Supprimer le département -->
+                            <button class="hover:opacity-60 hover:cursor-pointer  flex items-center justify-center ml-1"
+                                    @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                              </svg>
+                            </button>
+                          </div>
+                          <span class="bg-base-200 text-sm px-3 py-1 rounded hover:cursor-pointer hover:opacity-70" @click="showForm(accord.agree_id)">
+          ➕ Ajouter un département
+        </span>
+                        </div>
+                      </div>
+
+                      <!-- Formulaire pour ajouter un département -->
+                      <div v-if="showForms[accord.agree_id]" class="mt-4">
+                        <form @submit.prevent="submitForm(accord.agree_id)" class="flex items-center gap-2 flex-wrap">
+                          <select
+                              class="select select-bordered w-full max-w-xs"
+                              v-model="selectedDepartment[accord.agree_id]"
+                          >
+                            <option disabled selected>Selectionnez un département</option>
+                            <option
+                                v-for="(dept, indexDept) in filteredDepartments(accord)"
+                                :key="indexDept"
+                                :value="dept.dept_id"
+                                :style="{ color: dept.dept_color + ' !important' }"
+                            >
+                              ({{ dept.component?.comp_name || 'Non disponible' }}) {{ dept.dept_shortname }}
+                            </option>
+                          </select>
+                          <button class="btn btn-sm btn-primary" type="submit">Ajouter</button>
+                          <button class="btn btn-sm btn-neutral" @click="showForm(accord.agree_id)">Annuler</button>
+                        </form>
+                      </div>
                     </div>
+                  </div>
                 
                     <div v-else>
                         <p class="text-center py-20">Aucun accord trouvé.</p>
@@ -711,7 +737,7 @@
                             <!-- Formulaire Nombre de place -->
                             <label class="form-control w-full items-center justify-center">
                                 <div class="label">
-                                    <span class="label-text">Nombre de place</span>
+                                  <span class="label-text">Nombre de places</span>
                                 </div>
                                 <input type="number" class="input input-bordered w-full" v-model="currentAccordModif.agree_nbplace" />
                             </label>
