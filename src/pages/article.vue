@@ -14,7 +14,7 @@
         
         <!-- Header with Image -->
         <div class="relative">
-          <div class="w-full h-80 md:h-120 overflow-hidden">
+          <div class="w-full h-80 md:h-120 overflow-hidden" @click="afficherLightbox">
             <img 
               class="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105" 
               :src="article.art_image ? config.apiUrl+'api/article/image/'+article.art_id : config.apiUrl+'images/no_image.jpg'" 
@@ -133,6 +133,55 @@ function printArticle() {
   }
   
   onMounted(fetchAll);
+
+  //Fonction pour afficher l'image en entier
+  function create(tag, container, text=null){
+    let element = document.createElement(tag)
+    if (text)
+      element.innerHTML = text
+    container.appendChild(element)
+    return element
+  }
+
+  function afficherLightbox(){
+    const app = document.querySelector("#app")
+    let bg = create("div", app)
+    bg.id = "bg"
+
+    let box = create("div", bg)
+    box.id = "box"
+    box.classList.add("shadow-xl","bg-base-200")
+
+    let newImage = create("img", box)
+    newImage.src = article.value.art_image ? config.apiUrl+'api/article/image/'+art_id : config.apiUrl+'images/no_image.jpg'
+
+    let closeButton = create("div", box, "X")
+    closeButton.id = "close"
+
+    function remove(){
+      box.classList.add("out")
+      setTimeout(function(){
+        bg.remove()
+      }, 800)
+    }
+
+    closeButton.addEventListener("click", function(){
+      remove()
+    })
+
+    box.addEventListener("click", function(event){
+      event.stopPropagation()
+    })
+
+    bg.addEventListener("click", function(event){
+      remove()
+    })
+
+    app.addEventListener("keyup", function(event){
+      if(event.key == "Escape")
+        remove()
+    })
+  }
   </script>
   
   <style scoped>
@@ -153,3 +202,64 @@ function printArticle() {
     }
   }
   </style>
+
+  
+<style>
+#bg{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+}
+
+#box{
+  margin: calc(10vh - 20px) auto;
+  margin-top: 120px;
+  padding: 20px;
+  width: fit-content;
+  border-radius: 1rem;
+  position: relative;
+  transition: all 1s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  width: 80vw;
+}
+
+#box.out{
+  transform: translateY(-100vh);
+}
+
+#box img{
+  max-height: 100%;
+  max-width: 100%;
+}
+
+#close{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, .8);
+  box-shadow: 0 0 2px black;
+  color: #888888;
+  font-family: sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all .5s ease;
+}
+
+#close:hover{
+  background-color: rgba(255, 255, 255, 1);
+  color: #333333;
+  box-shadow: 0 0 4px black;
+  transform: scale(1.1);
+}
+</style>
