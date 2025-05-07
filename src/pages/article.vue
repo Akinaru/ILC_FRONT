@@ -14,7 +14,7 @@
         
         <!-- Header with Image -->
         <div class="relative">
-          <div class="w-full h-80 md:h-120 overflow-hidden" @click="afficherLightbox">
+          <div class="w-full h-80 md:h-120 overflow-hidden cursor-pointer" @click="afficherLightbox">
             <img 
               class="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105" 
               :src="article.art_image ? config.apiUrl+'api/article/image/'+article.art_id : config.apiUrl+'images/no_image.jpg'" 
@@ -36,6 +36,11 @@
         <!-- Content -->
         <div class="px-6 py-8">
           <div id="description" v-html="article.art_description"></div>
+          <br>
+          <p style="font-weight: bold; font-size: larger;">Pièces jointes :</p>
+          <br>
+          <p v-if="documentsArticle.count == 0">Aucune pièce jointe</p>
+          <p v-for="(document, index) in documentsArticle.documents" @click="openDocumentArticleInNewTab(document.doc_name)" style="cursor: pointer; text-decoration: underline; color: oklch(0.4912 0.3096 275.75); width: fit-content;">{{ document.doc_name }}</p>
         </div>
         
         <!-- Footer -->
@@ -78,9 +83,9 @@
     <div v-else class="min-h-screen">
       <LoadingComp></LoadingComp>
     </div>
-  </template>
+</template>
   
-  <script setup>
+<script setup>
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { request } from '../composables/httpRequest';
@@ -91,6 +96,8 @@
   const art_id = route.params.art_id;
   const article = ref([]);
   const isLoaded = ref(false);
+
+  const documentsArticle = ref({});
   
   // Formater la date pour un affichage plus convivial
   function formatDate(dateString) {
@@ -129,12 +136,15 @@ function printArticle() {
     isLoaded.value = false;
     await request('GET', false, article, config.apiUrl+'api/article/getbyid/'+art_id);
     document.title = `ILC - ${article.value.art_title || 'Article non trouvé'}`;
+    await request('GET', false, documentsArticle, config.apiUrl+'api/documents/article/'+art_id);
     isLoaded.value = true;
   }
   
   onMounted(fetchAll);
 
-  //Fonction pour afficher l'image en entier
+  //Fonctions pour afficher l'image en entier
+
+  //Fonction pour créer les éléments requis à l'affichage de l'image
   function create(tag, container, text=null){
     let element = document.createElement(tag)
     if (text)
@@ -143,6 +153,7 @@ function printArticle() {
     return element
   }
 
+  //Affichage de l'image dans une lightbox
   function afficherLightbox(){
     const app = document.querySelector("#app")
     let bg = create("div", app)
@@ -177,12 +188,32 @@ function printArticle() {
       remove()
     })
 
-    app.addEventListener("keyup", function(event){
-      if(event.key == "Escape")
-        remove()
-    })
+    //Enlève l'image si l'utilisateur retourne en arrière
+    window.onhashchange = function() {
+      remove()
+    }
   }
-  </script>
+
+  //Visualiser ou télécharger les documents de l'article
+  function openDocumentArticleInNewTab(fileName) {
+  
+    // Construire l'URL complète pour accéder au fichier
+    const fileUrl = config.apiUrl + `api/documents/article/get/${fileName}`;
+
+    // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
+    if (fileName.toLowerCase().endsWith('.pdf')) {
+      window.open(fileUrl, '_blank');
+    } else {
+      // Si ce n'est pas un PDF, forcer le téléchargement du fichier
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = fileName;  // Propose le téléchargement avec le nom du fichier
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+</script>
   
   <style scoped>
   /* Animations */
@@ -203,7 +234,7 @@ function printArticle() {
   }
   </style>
 
-  
+<!-- Style pour l'affichage entière de l'image -->
 <style>
 #bg{
   position: fixed;

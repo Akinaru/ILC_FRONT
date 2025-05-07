@@ -13,6 +13,26 @@
                 <input type="file" @change="handleFileInputChange" name="image" accept="image/*" class="file-input file-input-bordered w-full mb-4" />
                 <input type="text" placeholder="Titre" v-model="newArticle.title" class="input input-bordered w-full mb-4" />
                 <TextEditor ref="editorRef" v-model="newArticle.art_description"></TextEditor>
+
+                <!--Formulaire rajouté pour ajout de documents-->
+                <div class="mb-6 w-3/4 flex items-center justify-center flex-col shadow-lg rounded-lg bg-base-300 p-1 w-full">
+                    <p class="font-semibold text-md mb-2 text-start w-full p-3">Formulaire d'ajout de pièces jointes</p>
+
+                    <p class="font-semibold text-md mb-2 text-start w-full pt-3 pl-3">Sélectionner des fichiers existants (CTRL + Clic pour sélectionner plusieurs)</p>
+                    <select v-model="modifiedArticleFiles" class="select select-bordered w-full select-primary h-200px" id="file_select" @change="handleFileInputChangeDocument($event, 'existingFiles')" multiple>
+                        <option v-for="(document, index) in existingDocuments.documents" :key="index" :value="document.doc_id">{{ document.doc_name }}</option>
+                    </select>
+                    <p class="font-semibold text-md mb-2 text-start w-full pt-3 pl-3">Importer de nouveaux fichiers</p>
+                    <div class="flex w-full">
+                        <input type="file" accept=".pdf, .xls, .xlsx, .pptx, .docx, .odt" @change="handleFileInputChangeDocument($event, 'newFiles')" class="file-input file-input-bordered min-w-2xl w-full" id="file_add" multiple/>
+                    </div>
+
+                    <p class="text-md mb-2 text-start w-full pt-3 pl-3">Nouveaux documents importés / documents à écraser : </p>
+                    <div class="w-full mb-4 pl-3">
+                        <span v-for="file in recapNewDoc">{{ file }}, </span>
+                    </div>
+                </div>
+
                 <label class="label cursor-pointer justify-start w-fit">
                     <input type="checkbox" class="checkbox mr-2" v-model="newArticle.pinned" />
                     <span class="label-text">Épinglé ?</span> 
@@ -262,6 +282,37 @@ async function addArticle(){
                console.log("Erreur ajout image: "+error)
            }
        }
+        if(files.value.newFiles != null){ //Permet d'enregistrer de nouveau document et de les associer au nouvel article
+            for(const doc in files.value.newFiles) {
+                try{
+                    const formDataNewDoc = new FormData();
+                    formDataNewDoc.append('file', files.value.newFiles[doc].file);
+                    formDataNewDoc.append('title', files.value.newFiles[doc].name);
+                    formDataNewDoc.append('folder', '/admin/article');
+                    formDataNewDoc.append('articleId', rep.value.article.art_id);
+                    formDataNewDoc.append('isNewOrOverride', "true");
+
+                    console.log("post new")
+                    await request('POST', true, response, config.apiUrl + 'api/documents/article', formDataNewDoc)
+                } catch (error){
+                    console.log("Erreur ajout image: "+error)
+                }
+            };
+        }
+       if(files.value.existingFiles != null){ //Permet d'associer des doucments pré-existant au nouvel article 
+            for(const doc in files.value.existingFiles) {
+                try{                    
+                    const formDataExistingDoc = new FormData();
+                    formDataExistingDoc.append('fileId', files.value.existingFiles[doc].file_id);
+                    formDataExistingDoc.append('articleId', rep.value.article.art_id);
+                    formDataExistingDoc.append('isNewOrOverride', "false");
+
+                    await request('POST', true, response, config.apiUrl + 'api/documents/article', formDataExistingDoc)                  
+                } catch (error){
+                    console.log("Erreur ajout image: "+error)
+                }
+            };
+        }
        addAction(accountStore.login, 'article', response, 'Ajout de l\'article '+rep.value.article.art_title+'.');
        await fetchAll();
        resetInput();
@@ -371,6 +422,15 @@ function resetInput(){
     newArticle.value.datesortie = '';
     imagePreview.value = null;
     editorRef.value.clear();
+
+    files.value.existingFiles = {};
+    files.value.newFiles = {};
+    recapNewDoc.value = [];
+    modifiedArticleFiles.value = [];
+    const fileselect = document.querySelector("#file_select");
+    const fileadd = document.querySelector("#file_add");
+    fileselect.value = null;
+    fileadd.value = null;
 }
 
 // Suppression d'article
@@ -394,6 +454,7 @@ function modifArticle(article) {
     currentArticleModif.value.art_image = article.art_image;
     currentArticleModif.value.art_datesortiebool = true;
     currentArticleModif.value.art_datesortie = article.art_datesortie;
+    currentArticleModif.value.documents = article.documents;
     
     const editor = document.querySelector('.editor-content');
     editor.innerHTML = currentArticleModif.value.art_description;
@@ -415,6 +476,20 @@ function modifArticle(article) {
     } else {
         imagePreviewModif.value = `${config.apiUrl}images/no_image.jpg`;
     }
+
+    //Récupère les fichiers de l'article pour pouvoir les sélectionner parmis les fichiers existants
+    files.value.existingFiles = {};
+    for(const file in currentArticleModif.value.documents){
+        const id = currentArticleModif.value.documents[file].doc_id;
+        modifiedArticleFiles.value.push(id)
+        files.value.existingFiles[id] = {
+            file_id: id,
+        };
+    }
+    files.value.newFiles = {};
+    const fileadd = document.querySelector("#file_add");
+    fileadd.value = null;
+    recapNewDoc.value = [];
 }
 
 // Annulation de la modification d'article, remise a 0 des valeurs
@@ -432,6 +507,15 @@ function cancelModifArticle() {
     imagePreviewModif.value = null;
     const editor = document.querySelector('.editor-content');
     editor.innerHTML = '';
+
+    files.value.existingFiles = {};
+    files.value.newFiles = {};
+    recapNewDoc.value = [];
+    modifiedArticleFiles.value = [];
+    const fileselect = document.querySelector("#file_select");
+    const fileadd = document.querySelector("#file_add");
+    fileselect.value = null;
+    fileadd.value = null;
 }
 
 // confirmation de modification d'article
@@ -485,6 +569,41 @@ async function confirmModifArticle() {
             }
         }
 
+        await request('GET', false, response, config.apiUrl + 'api/article/unlinkdocuments/'+currentArticleModif.value.art_id)
+
+        if(files.value.newFiles != null){ //Permet d'enregistrer de nouveau document et de les associer au nouvel article
+            for(const doc in files.value.newFiles) {
+                try{
+                    const formDataNewDoc = new FormData();
+                    formDataNewDoc.append('file', files.value.newFiles[doc].file);
+                    formDataNewDoc.append('title', files.value.newFiles[doc].name);
+                    formDataNewDoc.append('folder', '/admin/article');
+                    formDataNewDoc.append('articleId', currentArticleModif.value.art_id);
+                    formDataNewDoc.append('isNewOrOverride', "true");
+
+                    console.log("post new")
+                    await request('POST', true, response, config.apiUrl + 'api/documents/article', formDataNewDoc)
+                } catch (error){
+                    console.log("Erreur ajout image: "+error)
+                }
+            };
+        }
+       if(files.value.existingFiles != null){ //Permet d'associer des doucments pré-existant au nouvel article 
+            for(const doc in files.value.existingFiles) {
+                try{                    
+                    const formDataExistingDoc = new FormData();
+                    formDataExistingDoc.append('fileId', files.value.existingFiles[doc].file_id);
+                    formDataExistingDoc.append('articleId', currentArticleModif.value.art_id);
+                    formDataExistingDoc.append('isNewOrOverride', "false");
+
+                    console.log(formDataExistingDoc)
+                    await request('POST', true, response, config.apiUrl + 'api/documents/article', formDataExistingDoc)                  
+                } catch (error){
+                    console.log("Erreur ajout image: "+error)
+                }
+            };
+        }
+
         addAction(accountStore.login, 'article', response, 'Modification de l\'article ' + currentArticleModif.value.art_title + '.');
         cancelModifArticle();
         await nextTick();
@@ -496,8 +615,61 @@ async function confirmModifArticle() {
 // récupération des données
 async function fetchAll(){
     await request('GET', false, articles, config.apiUrl+'api/article');
+    await request('GET', false, existingDocuments, config.apiUrl+'api/documents/article');
     isEditing.value = false;
 }
 
+//Partie Ajout de fichiers
+const existingDocuments = ref({});
+const modifiedArticleFiles=ref([]);
+const recapNewDoc=ref([]);
+const files = ref({
+        existingFiles: ref([]),
+        newFiles: {}
+    });
+
+    const handleFileInputChangeDocument = (event, fileType) => {
+
+        //Supression doc enregistrés pour écraser les données
+        files.value[fileType] = {};
+
+        if (fileType == "existingFiles"){
+            //Créé un array avec les valeurs sélectionnées par l'utilisateur
+            const selectedOptions = Array.from(event.target.selectedOptions);
+            const idFilesAdded = selectedOptions.map(option => option.value);
+
+            //Stocke les ids (créé un objet à chaque fois)
+            if (idFilesAdded.count != 0) {
+                for(const id of idFilesAdded){
+                files.value.existingFiles[id] = {
+                    file_id: id,
+                };
+                }
+            } else {
+                files.value[fileType] = {};
+            }
+        }
+        else{
+            //Récupère les fichiers sélectionnées par l'utilisateur
+            const filesadded = event.target.files;
+            recapNewDoc.value = [];
+
+            //Stocke les fichiers (créé un objet à chaque fois)
+            if (filesadded.count != 0) {
+
+                for (var i = 0; i < event.target.files.length; ++i) {
+                    const file = event.target.files.item(i)
+                    recapNewDoc.value.push(file.name);
+
+                    files.value.newFiles[i] = {
+                        file: file,
+                        name: file.name,
+                    };
+                }
+            } else {
+                files.value[fileType] = {};
+            }
+        }
+    };
 onMounted(fetchAll);
 </script>
