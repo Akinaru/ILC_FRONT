@@ -871,14 +871,21 @@
       <dialog id="archivageModal" ref="archivageModal" class="modal">
         <div class="modal-box max-w-3xl">
           <h3 class="text-lg font-bold">Archiver l'arbitrage</h3>
-          <div class="py-3">
+
+          <div class="py-3" v-if="!archivageEnCours">
             <p>
-              Souhaitez-vous vraiment archiver l'arbitrage ? Cette action ne
-              pourra pas être annulée.
+              Souhaitez-vous vraiment archiver l'arbitrage ?
+              Cette action ne pourra pas être annulée.
             </p>
           </div>
 
-          <div class="modal-action">
+          <!-- Loader pendant le traitement -->
+          <div class="py-6 flex flex-col items-center justify-center" v-else>
+            <span class="loading loading-spinner loading-lg text-success mb-2"></span>
+            <p>Archivage en cours...</p>
+          </div>
+
+          <div class="modal-action" v-if="!archivageEnCours">
             <button class="btn" @click="closeModal">Annuler</button>
             <button class="btn btn-success" @click="confirmArchivage">
               Confirmer
@@ -1085,6 +1092,8 @@ const anneesmobilite = ref([]);
 const localEtus = ref([]);
 const localArbitrage = ref([]);
 
+const archivageEnCours = ref(false);
+
 const voeuxNoms = [
   { val: 0, name: "Aucun voeux" },
   { val: 1, name: "1 voeu" },
@@ -1135,9 +1144,9 @@ async function fetch() {
     "GET",
     false,
     etudiants,
-    config.apiUrl + "api/account/students"
+    config.apiUrl + "api/account/students/actuel"
   );
-  await request("GET", false, arbitrage, config.apiUrl + "api/arbitrage");
+  await request("GET", false, arbitrage, config.apiUrl + "api/arbitrage/actuel");
   const currentYear = new Date().getFullYear();
 
   for (let i = 0; i < 4; i++) {
@@ -1176,6 +1185,7 @@ function openEtuModal(etu) {
 }
 
 async function confirmArchivage() {
+  archivageEnCours.value = true;
   await request(
     "POST",
     true,
@@ -1183,6 +1193,7 @@ async function confirmArchivage() {
     config.apiUrl + "api/arbitrage/archiver"
   );
   if (response.value.status == 200) fetch();
+  archivageEnCours.value = false;
 }
 
 // Initialisation des données et mise en place des drops
