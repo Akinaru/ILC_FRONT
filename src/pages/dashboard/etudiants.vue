@@ -469,7 +469,7 @@
                       </label>
                       <div tabindex="0" class="dropdown-content z-[10] card compact shadow bg-base-100 rounded-box w-72">
                         <div class="card-body">
-                          <h3 class="card-title text-info flex items-center gap-2">
+                          <h3 class="card-title text-primary flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -505,7 +505,7 @@
                 </div>
               </div>
                 <!-- Liste des etudiants -->
-                <div v-if="filteredEtudiants && filteredEtudiants.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                <div v-if="filteredEtudiants && filteredEtudiants.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div v-for="(etu, index) in filteredEtudiants" :key="index" class="w-full">
                     <template v-if="etu.acc_id">
                       <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden relative h-full"
@@ -521,7 +521,7 @@
 
                         <!-- Le reste du contenu enveloppé dans le RouterLink -->
                         <RouterLink :to="{ name: 'Profile', params: { acc_id: etu.acc_id }}" class="block h-full">
-                          <div class="card-body p-4 flex flex-col h-full cursor-pointer hover:bg-base-200">
+                          <div class="card-body p-4 flex flex-col h-full cursor-pointer hover:bg-base-300 bg-base-200">
                             <!-- En-tête avec nom et ID -->
                             <div class="mb-3">
                               <h2 class="card-title text-lg font-bold truncate">{{ etu.acc_fullname }}</h2>
@@ -562,8 +562,8 @@
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                                 <span>Période de mobilité: {{
-                                    etu.acc_periodemobilite === 1 ? 'Mobilité d\'automne' : 
-                                    etu.acc_periodemobilite === 2 ? 'Mobilité de printemps' : 
+                                    etu.acc_periodemobilite === 1 ? 'Mobilité d\'automne 🍂' : 
+                                    etu.acc_periodemobilite === 2 ? 'Mobilité de printemps 🌱' : 
                                     'Aucune' 
                                   }}</span>
                               </div>
@@ -579,15 +579,14 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
-                                <span>Aménagement aux exams: {{ etu.acc_amenagement ? 'Oui' : 'Non' }}</span>
+                                <span>Aménagement aux exams: {{ etu.acc_amenagement ? '✅' : '❌' }}</span>
                               </div>
                               
-                              <div class="flex items-center gap-2" :class="etu.acc_validechoixcours ? 'text-success' : 'text-error'">
+                              <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path v-if="etu.acc_validechoixcours" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                  <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Validation choix de cours</span>
+                                <span>Validation choix de cours: {{ etu.acc_validechoixcours ? '✅' : '❌' }}</span>
                               </div>
                             </div>
                             
