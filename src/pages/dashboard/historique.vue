@@ -72,38 +72,7 @@
   </div>
 </div>
 
-        <!-- Pagination -->
-        <div class="flex justify-center gap-2 my-4">
-            <button 
-                class="btn" 
-                :disabled="currentPage === 1"
-                @click="currentPage--"
-            >
-                Précédent
-            </button>
-            
-            <template v-for="page in pagesToShow" :key="page">
-                <template v-if="page === '...'">
-                    <span class="flex items-center px-4">...</span>
-                </template>
-                <button 
-                    v-else
-                    class="btn"
-                    :class="{ 'btn-active': page === currentPage }"
-                    @click="currentPage = page"
-                >
-                    {{ page }}
-                </button>
-            </template>
-            
-            <button 
-                class="btn" 
-                :disabled="currentPage === totalPages"
-                @click="currentPage++"
-            >
-                Suivant
-            </button>
-        </div>
+
 
         <table class="table table-zebra" v-if="paginatedActions.length > 0">
             <thead>
@@ -142,7 +111,38 @@
             </tbody>
         </table>
 
-
+        <!-- Pagination -->
+        <div class="flex justify-center gap-2 my-4">
+            <button 
+                class="btn" 
+                :disabled="currentPage === 1"
+                @click="currentPage--"
+            >
+                Précédent
+            </button>
+            
+            <template v-for="page in pagesToShow" :key="page">
+                <template v-if="page === '...'">
+                    <span class="flex items-center px-4">...</span>
+                </template>
+                <button 
+                    v-else
+                    class="btn"
+                    :class="{ 'btn-active': page === currentPage }"
+                    @click="currentPage = page"
+                >
+                    {{ page }}
+                </button>
+            </template>
+            
+            <button 
+                class="btn" 
+                :disabled="currentPage === totalPages"
+                @click="currentPage++"
+            >
+                Suivant
+            </button>
+        </div>
 
         <div v-if="filteredActions.length === 0" class="flex items-center justify-center p-44">
             <p>Aucune action n'a été trouvée.</p>

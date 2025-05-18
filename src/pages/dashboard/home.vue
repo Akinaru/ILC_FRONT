@@ -28,7 +28,7 @@
     <!-- Destination finale -->
     <div
       v-if="destination.agreement"
-      class="flex items-center justify-center flex-col bg-base-100 rounded-lg shadow-md p-6 mb-8 mt-4 max-w-3xl mx-auto"
+      class="flex items-center justify-center flex-col bg-base-100 rounded-lg shadow-md p-6 mb-8 mt-4 max-w-6xl mx-auto w-full"
     >
       <div class="flex items-center justify-between w-full mb-4">
         <h2 class="text-lg font-bold text-primary">Destination finale</h2>
@@ -38,9 +38,7 @@
         <div v-else class="badge badge-success">Validée</div>
       </div>
 
-      <div
-        class="select-none flex flex-col justify-between items-center w-full transition-all duration-200 ease-in-out"
-      >
+      <div class="select-none flex flex-col justify-between items-center w-full transition-all duration-200 ease-in-out">
         <RouterLink
           :to="{
             name: 'Accord',
@@ -822,7 +820,7 @@
       <!-- Partie voeux -->
       <div class="hidden md:block pt-8">
           <!-- Section d'en-tête avec informations -->
-          <div class="bg-base-100 rounded-lg shadow-md p-6 mb-8 max-w-3xl mx-auto">
+          <div class="bg-base-100 rounded-lg shadow-md p-6 mb-8 max-w-6xl mx-auto">
               <div class="flex flex-col items-center gap-2">
                   <div class="stats shadow">
                       <div class="stat place-items-center">
@@ -1514,18 +1512,20 @@
         </div>
 
         <!-- Message d'information -->
-        <div class="bg-base-200 rounded-lg p-4 mb-6 max-w-xl text-center">
-            <div class="flex items-center justify-center mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <p class="font-medium">Vous ne pouvez plus modifier vos vœux car la date limite a été atteinte.</p>
-            </div>
-            <p class="text-sm">Si votre destination finale correspond à un de vos vœux, alors la case sera entourée en jaune.</p>
+         <div class="w-full max-w-6xl p-4">
+          <div class="bg-base-200 rounded-lg p-4 mb-6 w-full text-center">
+              <div class="flex items-center justify-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <p class="font-medium">Vous ne pouvez plus modifier vos vœux car la date limite a été atteinte.</p>
+              </div>
+              <p class="text-sm">Si votre destination finale correspond à un de vos vœux, alors la case sera entourée en jaune.</p>
+          </div>
         </div>
 
         <!-- Liste des voeux -->
-        <div class="bg-base-100 rounded-lg shadow-md w-full max-w-3xl">
+        <div class="bg-base-100 rounded-lg shadow-md w-full max-w-6xl">
             <div class="divide-y divide-base-200">
                 <div v-for="(i, index) in 6" :key="index" class="flex items-center p-3 sm:p-4">
                     <div class="badge badge-lg badge-primary mr-3 sm:mr-4">{{ i }}</div>
@@ -1615,9 +1615,6 @@
         </div>
     </div>
     </div>
-
-    <!-- Séparateur -->
-    <div class="divider max-w-6xl mx-auto"></div>
 
     <!-- Partie suppression du compte -->
     <div class="w-full flex justify-center mb-10">
