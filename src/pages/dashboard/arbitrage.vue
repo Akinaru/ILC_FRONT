@@ -477,7 +477,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
                   </svg>
                   <span class="font-medium select-none">Pays</span>
-                  <span v-if="selectedCountries.length" class="badge badge-sm select-none">{{ selectedCountries.length }}</span>
+                  <span class="badge badge-sm select-none">
+                    {{ selectedCountries.length }}/{{ partnercountry.length }}
+                  </span>
                 </div>
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -506,9 +508,10 @@
                     :key="index"
                     class="flex items-center"
                   >
-                    <label
+                  <label
                       :for="'filt_pays_' + index"
                       class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                      :class="{ 'opacity-50 pointer-events-none': disabledCountries.has(country.parco_name) }"
                     >
                       <input
                         :id="'filt_pays_' + index"
@@ -516,6 +519,7 @@
                         class="checkbox checkbox-sm mr-2"
                         :value="country.parco_name"
                         v-model="selectedCountries"
+                        :disabled="disabledCountries.has(country.parco_name)"
                       />
                       <span class="fi mr-2" :class="'fi-' + country.parco_code"></span>
                       <span class="text-sm select-none">{{ country.parco_name }}</span>
@@ -536,7 +540,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                   </svg>
                   <span class="font-medium select-none">ISCED</span>
-                  <span v-if="selectedIsced.length" class="badge badge-sm select-none">{{ selectedIsced.length }}</span>
+<span class="badge badge-sm select-none">
+  {{ selectedIsced.length }}/{{ availableIsceds.length }}
+</span>
                 </div>
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -565,19 +571,21 @@
                     :key="index"
                     class="flex items-center"
                   >
-                    <label
-                      :for="'filt_isced_' + index"
-                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-                    >
-                      <input
-                        :id="'filt_isced_' + index"
-                        type="checkbox"
-                        class="checkbox checkbox-sm mr-2"
-                        :value="isced.isc_id"
-                        v-model="selectedIsced"
-                      />
-                      <span class="text-sm select-none">{{ isced.isc_code || "XX" }} - {{ isced.isc_name || "Sans code" }}</span>
-                    </label>
+                  <label
+  :for="'filt_isced_' + index"
+  class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+  :class="{ 'opacity-50 pointer-events-none': disabledIsceds.has(isced.isc_id) }"
+>
+  <input
+    :id="'filt_isced_' + index"
+    type="checkbox"
+    class="checkbox checkbox-sm mr-2"
+    :value="isced.isc_id"
+    v-model="selectedIsced"
+    :disabled="disabledIsceds.has(isced.isc_id)"
+  />
+  <span class="text-sm select-none">{{ isced.isc_code || "XX" }} - {{ isced.isc_name || "Sans code" }}</span>
+</label>
                   </div>
                 </div>
               </div>
@@ -594,8 +602,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
                   </svg>
                   <span class="font-medium select-none">Universités</span>
-                  <span v-if="selectedUniversity.length" class="badge badge-sm select-none">{{ selectedUniversity.length }}</span>
-                </div>
+<span class="badge badge-sm select-none">
+  {{ selectedUniversity.length }}/{{ availableUniversities.length }}
+</span>
+</div>
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
                   fill="none" 
@@ -623,31 +633,33 @@
                     :key="index"
                     class="flex items-center"
                   >
-                    <label
-                      :for="'filt_univ_' + index"
-                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-                    >
-                      <input
-                        :id="'filt_univ_' + index"
-                        type="checkbox"
-                        class="checkbox checkbox-sm mr-2"
-                        :value="univ.univ_id"
-                        v-model="selectedUniversity"
-                      />
-                      <span class="relative inline-block mr-2">
-                        <!-- Drapeau -->
-                        <span class="fi" :class="'fi-' + univ.partnercountry?.parco_code"></span>
-
-                        <!-- Point d'interrogation si pas de drapeau -->
-                        <span v-if="!univ.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">
-                          ?
-                        </span>
-                      </span>
-                      <span class="text-sm select-none">
-                        {{ univ.univ_name || "Université indisponible" }}
-                        <span class="text-gray-500">({{ univ.iscedCount }} ISCED{{ univ.iscedCount > 1 ? "s" : "" }})</span>
-                      </span>
-                    </label>
+                  <label
+  :for="'filt_univ_' + index"
+  class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+  :class="{ 'opacity-50 pointer-events-none': disabledUniversities.has(univ.univ_id) }"
+>
+  <input
+    :id="'filt_univ_' + index"
+    type="checkbox"
+    class="checkbox checkbox-sm mr-2"
+    :value="univ.univ_id"
+    v-model="selectedUniversity"
+    :disabled="disabledUniversities.has(univ.univ_id)"
+  />
+  <span class="relative inline-block mr-2">
+    <span class="fi" :class="'fi-' + univ.partnercountry?.parco_code"></span>
+    <span
+      v-if="!univ.partnercountry?.parco_code"
+      class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none"
+    >
+      ?
+    </span>
+  </span>
+  <span class="text-sm select-none">
+    {{ univ.univ_name || "Université indisponible" }}
+    <span class="text-gray-500">({{ univ.univ_city }})</span>
+  </span>
+</label>
                   </div>
                 </div>
               </div>
@@ -725,7 +737,7 @@
         </div>
 
         <!-- Partie rendu accord -->
-        <div class="flex flex-col items-center w-full flex-grow relative">
+        <div class="flex flex-col items-center w-full flex-grow relative" style="min-height: 1000px;">
           <div class="flex flex-col items-center justify-start w-full select-none overflow-auto absolute inset-0">
             <div
               v-for="(arbitrage, accordIndex) in filteredArbitrage"
@@ -1324,6 +1336,54 @@ async function saveArbitrage() {
   }
 }
 
+const disabledUniversities = computed(() => {
+  if (selectedCountries.value.length === 0) return new Set();
+  return new Set(
+    university.value
+      .filter((univ) => {
+        const isLinked = accords.value.agreements.some(
+          (a) =>
+            a.university?.univ_id === univ.univ_id &&
+            selectedCountries.value.includes(a.partnercountry?.parco_name)
+        );
+        return !isLinked;
+      })
+      .map((u) => u.univ_id)
+  );
+});
+
+const disabledIsceds = computed(() => {
+  if (selectedUniversity.value.length === 0) return new Set();
+  return new Set(
+    isceds.value
+      .filter((isced) => {
+        const isLinked = accords.value.agreements.some(
+          (a) =>
+            a.isced?.isc_id === isced.isc_id &&
+            selectedUniversity.value.includes(a.university?.univ_id)
+        );
+        return !isLinked;
+      })
+      .map((i) => i.isc_id)
+  );
+});
+
+const disabledCountries = computed(() => {
+  if (selectedUniversity.value.length === 0) return new Set();
+  return new Set(
+    partnercountry.value
+      .filter((country) => {
+        const isLinked = accords.value.agreements.some(
+          (a) =>
+            a.partnercountry?.parco_name === country.parco_name &&
+            selectedUniversity.value.includes(a.university?.univ_id)
+        );
+        return !isLinked;
+      })
+      .map((c) => c.parco_name)
+  );
+});
+
 // Liste des étudiants après filtres
 const filteredEtus = computed(() => {
   return Object.values(localEtus.value)
@@ -1642,12 +1702,21 @@ const availableUniversities = computed(() => {
 watch(selectedDepartment, handleFiltreEtu);
 watch(selectedAccord, handleFiltreEtu);
 watch(selectedVoeux, handleFiltreEtu);
-watch(selectedCountries, handleFiltreEtu);
-watch(selectedIsced, handleFiltreEtu);
+watch(selectedCountries, () => {
+  applyCrossFilters();
+  handleFiltreEtu();
+});
+watch(selectedIsced, () => {
+  applyCrossFilters();
+  handleFiltreEtu();
+});
 watch(selectedAnneeMobilite, handleFiltreEtu);
 watch(selectedAccordArbitrage, handleFiltreEtu);
 watch(selectedArbitrage, handleFiltreEtu);
-watch(selectedUniversity, handleFiltreEtu);
+watch(selectedUniversity, () => {
+  applyCrossFilters();
+  handleFiltreEtu();
+});
 
 // définit les drop zones
 async function refreshDrop() {
@@ -1843,3 +1912,36 @@ function deselectAllUniversity() {
 }
 onMounted(fetch);
 </script>
+
+// Cross-filtering logic for arbitrage filters (Pays, Universités, ISCED, Arbitrage)
+function applyCrossFilters() {
+  // Pays → Universités
+  if (selectedCountries.value.length > 0) {
+    const allowedUnivIds = new Set(
+      accords.value.agreements
+        .filter((a) =>
+          selectedCountries.value.includes(a.partnercountry?.parco_name)
+        )
+        .map((a) => a.university?.univ_id)
+        .filter(Boolean)
+    );
+    selectedUniversity.value = selectedUniversity.value.filter((id) =>
+      allowedUnivIds.has(id)
+    );
+  }
+
+  // Universités → ISCED
+  if (selectedUniversity.value.length > 0) {
+    const allowedIscedIds = new Set(
+      accords.value.agreements
+        .filter((a) =>
+          selectedUniversity.value.includes(a.university?.univ_id)
+        )
+        .map((a) => a.isced?.isc_id)
+        .filter(Boolean)
+    );
+    selectedIsced.value = selectedIsced.value.filter((id) =>
+      allowedIscedIds.has(id)
+    );
+  }
+}
