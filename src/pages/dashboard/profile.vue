@@ -241,6 +241,43 @@
               </div>
             </div>
 
+<!-- Suppression du compte -->
+<div class="card bg-base-100 shadow-md mb-10">
+  <div class="card-body">
+    <h2 class="card-title text-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+      Suppression du compte
+    </h2>
+
+    <div class="divider"></div>
+
+    <div class="alert mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <div>
+        <h3 class="font-bold">Attention !</h3>
+        <p class="text-sm">Cette action est <strong>définitive</strong> et entraînera la suppression de toutes vos données. Cette opération ne peut pas être annulée.</p>
+      </div>
+    </div>
+
+    <div class="flex justify-end">
+      <button @click="openConfirmDeleteModal" class="btn btn-outline btn-error">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        Supprimer mon compte
+      </button>
+    </div>
+  </div>
+</div>
+
+
 
 
 
@@ -288,8 +325,8 @@
                   <div class="grid grid-cols-3 gap-2 items-center">
                     <div class="text-sm font-medium">Periode de mobilité</div>
                     <div class="col-span-2 bg-base-200 p-2 rounded-md">{{ 
-                        account.acc_periodemobilite === 1 ? 'Mobilité d\'automne' : 
-                        account.acc_periodemobilite === 2 ? 'Mobilité de printemps' : 
+                        account.acc_periodemobilite === 1 ? '🍂 Mobilité d\'automne' : 
+                        account.acc_periodemobilite === 2 ? '🌱 Mobilité de printemps' : 
                         'Aucune' 
                       }}</div>
                   </div>
@@ -334,38 +371,38 @@
             </div>
 
             <!-- Témoignage -->
-<div class="card bg-base-100 shadow-md">
-  <div class="card-body">
-    <h2 class="card-title">Témoignage</h2>
-    <div class="divider"></div>
+            <div class="card bg-base-100 shadow-md">
+              <div class="card-body">
+                <h2 class="card-title">Témoignage</h2>
+                <div class="divider"></div>
 
-    <div v-if="account.acc_temoignage && account.acc_temoignage.trim() !== ''">
-      <!-- Contenu du témoignage -->
-      <blockquote class="border-l-4 border-primary pl-4 italic text-sm leading-relaxed whitespace-pre-line break-words">
-        {{ account.acc_temoignage }}
-      </blockquote>
+                <div v-if="account.acc_temoignage && account.acc_temoignage.trim() !== ''">
+                  <!-- Contenu du témoignage -->
+                  <blockquote class="border-l-4 border-primary pl-4 italic text-sm leading-relaxed whitespace-pre-line break-words">
+                    {{ account.acc_temoignage }}
+                  </blockquote>
 
-      <!-- Bouton supprimer -->
-      <div class="mt-4 flex justify-end">
-        <button class="btn btn-sm btn-outline btn-error" @click="supprimerTemoignage()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          Supprimer
-        </button>
-      </div>
-    </div>
+                  <!-- Bouton supprimer -->
+                  <div class="mt-4 flex justify-end">
+                    <button class="btn btn-sm btn-outline btn-error" @click="supprimerTemoignage()">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      Supprimer
+                    </button>
+                  </div>
+                </div>
 
-    <!-- Si pas de témoignage -->
-    <div v-else class="alert">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <span>Aucun témoignage renseigné</span>
-    </div>
-  </div>
-</div>
+                <!-- Si pas de témoignage -->
+                <div v-else class="alert">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Aucun témoignage renseigné</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -500,8 +537,8 @@
             </div>
             <select class="select select-bordered w-full" v-model="modifCompte.acc_periodemobilite">
               <option disabled selected value="">Sélectionnez une periode de mobilité</option>
-              <option value="1">Mobilité d'automne</option>
-              <option value="2">Mobilité de printemps</option>
+              <option value="1">🍂 Mobilité d'automne</option>
+              <option value="2">🌱 Mobilité de printemps</option>
             </select>
           </label>
           
@@ -576,6 +613,25 @@
         </div>
       </div>
     </dialog>
+
+    <!-- Modal de confirmation suppression de compte -->
+    <dialog id="confirmModalAccount" ref="confirmModalAccount" class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Confirmer la suppression du compte?</h3>
+        <div class="py-3">
+          <p>Confirmez vous la suppression du compte ?</p>
+          <p>
+            Cette action est irréversible et les informations du compte seront supprimées.
+          </p>
+        </div>
+        <div class="modal-action">
+          <button class="btn" @click="closeModal">Annuler</button>
+          <button class="btn btn-success" @click="deleteAccount">
+            Confirmer
+          </button>
+        </div>
+      </div>
+    </dialog>
   </template>
 
 <script setup>
@@ -585,8 +641,10 @@
     import config from '../../config';
     import { useAccountStore } from '../../stores/accountStore';
     import LoadingComp from '../../components/utils/LoadingComp.vue';
-import { addAction } from '../../composables/actionType';
- 
+    import { addAction } from '../../composables/actionType';
+    import { useRouter } from "vue-router";
+
+    const router = useRouter();
     const accountStore = useAccountStore();
     const route = useRoute();
     const acc_id = route.params.acc_id;
@@ -683,14 +741,29 @@ import { addAction } from '../../composables/actionType';
         modal.showModal();
     }
 
+    // Ouvrir le modal de confirmation de suppression du compte
+  function openConfirmDeleteModal() {
+    const modal = document.getElementById("confirmModalAccount");
+    modal.showModal();
+  }
+
     // Fermer le modal de confirmation de suppression
     function closeModal() {
         const modal = document.getElementById('confirmModalDoc');
         modal.close();
         const modal2 = document.getElementById('confirmModalDoc');
         modal2.close();
+        const modal3 = document.getElementById("confirmModalAccount");
+        modal3.close();
     }
 
+    async function deleteAccount() {
+      await request("DELETE", true, response, config.apiUrl + "api/account/deletebyid/" + acc_id);
+      if (response.value.status == 202) {
+
+        router.push({ name: "EtudiantsDash" });
+      }
+    }
 
     // Supprimer un fichier
     async function deleteFile(fileFolder, fileTitle, fileType) {

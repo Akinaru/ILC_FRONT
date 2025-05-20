@@ -79,8 +79,8 @@
                   </div>
                   <select class="select select-bordered" v-model="complDossier.periodemobilite">
                       <option disabled selected value="">Séléctionnez une periode de mobilité</option>
-                              <option value="1">Mobilité d'automne</option>
-                              <option value="2">Mobilité de printemps</option>
+                              <option value="1">🍂 Mobilité d'automne</option>
+                              <option value="2">🌱 Mobilité de printemps</option>
                   </select>
               </label>
 

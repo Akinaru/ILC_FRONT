@@ -348,6 +348,40 @@
                         <span class="text-sm select-none">{{ annee }}</span>
                       </label>
                     </div>
+
+                    <div class="flex items-center">
+                      <label
+                        :for="'filt_annee_automne'"
+                        class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                      >
+                        <input
+                          :id="'filt_annee_automne'"
+                          type="checkbox"
+                          class="checkbox checkbox-sm mr-2"
+                          :value="1"
+                          v-model="selectedPeriodeMobilite"
+                        />
+                        <span class="text-sm select-none">🍂 Mobilité d'automne</span>
+                      </label>
+                    </div>
+
+                    <div class="flex items-center">
+                      <label
+                        :for="'filt_annee_printemps'"
+                        class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                      >
+                        <input
+                          :id="'filt_annee_printemps'"
+                          type="checkbox"
+                          class="checkbox checkbox-sm mr-2"
+                          :value="2"
+                          v-model="selectedPeriodeMobilite"
+                        />
+                        <span class="text-sm select-none">🌱 Mobilité de printemps</span>
+                      </label>
+                    </div>
+
+               
                   </div>
                 </div>
               </div>
@@ -693,6 +727,7 @@ const selectedDepartment = ref([]);
 const selectedVoeux = ref([]);
 const selectedDocument = ref([]);
 const selectedAnneeMobilite = ref([]);
+const selectedPeriodeMobilite = ref([]);
 const selectedDestination = ref([]);
 const isOpen = ref({
     voeux: true,
@@ -736,14 +771,17 @@ const isOpen = ref({
                 (selectedDestination.value.includes('null') && !etu.arbitrage) ||
                 (etu.arbitrage?.agree_id && selectedDestination.value.includes(etu.arbitrage.agree_id));
 
+                      const matchesPeriodeMobilite = selectedPeriodeMobilite.value.length === 0 ||
+        selectedPeriodeMobilite.value.includes(etu.acc_periodemobilite);
+
             return matchesDepartments && hasAccess && matchesVoeux && 
                    matchesSearchQuery && matchesDocuments && 
-                   matchesAnneeMobilite && matchesDestination;
+                   matchesAnneeMobilite && matchesDestination && matchesPeriodeMobilite;
         })
         .sort((a, b) => {
             return a.acc_fullname.localeCompare(b.acc_fullname);
         });
-});
+    });
 
 // Fonction pour extraire les destinations uniques des arbitrages
 function extractDestinations() {
@@ -839,6 +877,7 @@ const exportUrl = computed(() => {
         const savedVoeux = sessionStorage.getItem('etu_dashboard.selectedVoeux');
         const savedAnneeMobilite = sessionStorage.getItem('etu_dashboard.selectedAnneeMobilite');
         const savedDestination = sessionStorage.getItem('etu_dashboard.selectedDestination');
+        const savedPeriode = sessionStorage.getItem('etu_dashboard.selectedPeriodeMobilite');
 
 
 
@@ -863,6 +902,10 @@ const exportUrl = computed(() => {
             selectedDestination.value = JSON.parse(savedDestination);
         }
 
+        if(savedPeriode){
+          selectedPeriodeMobilite.value = JSON.parse(savedPeriode);
+        }
+
     }
 
     function saveFilters() {
@@ -871,11 +914,13 @@ const exportUrl = computed(() => {
         sessionStorage.setItem('etu_dashboard.selectedDocument', JSON.stringify(selectedDocument.value));
         sessionStorage.setItem('etu_dashboard.selectedAnneeMobilite', JSON.stringify(selectedAnneeMobilite.value));
         sessionStorage.setItem('etu_dashboard.selectedDestination', JSON.stringify(selectedDestination.value));
+        sessionStorage.setItem('etu_dashboard.selectedPeriodeMobilite', JSON.stringify(selectedPeriodeMobilite.value));
     }
 
     watch(selectedDepartment, saveFilters);
     watch(selectedVoeux, saveFilters);
     watch(selectedAnneeMobilite, saveFilters);
+    watch(selectedPeriodeMobilite, saveFilters);
     watch(selectedDocument, saveFilters);
     watch(selectedDestination, saveFilters);
 
@@ -890,6 +935,7 @@ onMounted(() => {
         selectedDocument.value = [];
         selectedAnneeMobilite.value = [];
         selectedDestination.value = [];
+        selectedPeriodeMobilite.value = [];
     }
     function deselectAllDept() {
         selectedDepartment.value = [];
@@ -902,6 +948,7 @@ onMounted(() => {
     }
     function deselectAllAnneeMobilite() {
         selectedAnneeMobilite.value = [];
+        selectedPeriodeMobilite.value = [];
     }
     function deselectAllDestination() {
         selectedDestination.value = [];
