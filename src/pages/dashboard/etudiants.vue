@@ -657,9 +657,15 @@
                     </template>
                   </div>
                 </div>
-                <div v-else>
-                        <p>Aucun résultat</p>
-                    </div>
+                <div v-else class="w-full flex flex-col items-center justify-center text-center py-10 text-base-content/70">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9.75 9.75L14.25 14.25M14.25 9.75L9.75 14.25M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+  </svg>
+  <p class="text-lg font-semibold">Aucun résultat trouvé</p>
+  <p class="text-sm opacity-70">Aucun étudiant ne correspond à vos filtres.</p>
+</div>
+
                 <!-- Modal de confirmation suppression -->
                 <dialog id="confirmModal" ref="confirmModal" class="modal">
                     <div class="modal-box">
@@ -871,62 +877,9 @@ const exportUrl = computed(() => {
 });
 
     // Fonction pour charger les filtres depuis sessionStorage pour la page d'accueil
-    function loadFilters() {
-        const savedDepartments = sessionStorage.getItem('etu_dashboard.selectedDepartment');
-        const savedDocument = sessionStorage.getItem('etu_dashboard.selectedDocument');
-        const savedVoeux = sessionStorage.getItem('etu_dashboard.selectedVoeux');
-        const savedAnneeMobilite = sessionStorage.getItem('etu_dashboard.selectedAnneeMobilite');
-        const savedDestination = sessionStorage.getItem('etu_dashboard.selectedDestination');
-        const savedPeriode = sessionStorage.getItem('etu_dashboard.selectedPeriodeMobilite');
-
-
-
-        if (savedDepartments) {
-            selectedDepartment.value = JSON.parse(savedDepartments);
-
-        }
-        if (savedVoeux) {
-            selectedVoeux.value = JSON.parse(savedVoeux);
-
-        }
-        if (savedDocument) {
-            selectedDocument.value = JSON.parse(savedDocument);
-
-        }
-        if (savedAnneeMobilite) {
-            selectedAnneeMobilite.value = JSON.parse(savedAnneeMobilite);
-
-        }
-
-        if(savedDestination){
-            selectedDestination.value = JSON.parse(savedDestination);
-        }
-
-        if(savedPeriode){
-          selectedPeriodeMobilite.value = JSON.parse(savedPeriode);
-        }
-
-    }
-
-    function saveFilters() {
-        sessionStorage.setItem('etu_dashboard.selectedDepartment', JSON.stringify(selectedDepartment.value));
-        sessionStorage.setItem('etu_dashboard.selectedVoeux', JSON.stringify(selectedVoeux.value));
-        sessionStorage.setItem('etu_dashboard.selectedDocument', JSON.stringify(selectedDocument.value));
-        sessionStorage.setItem('etu_dashboard.selectedAnneeMobilite', JSON.stringify(selectedAnneeMobilite.value));
-        sessionStorage.setItem('etu_dashboard.selectedDestination', JSON.stringify(selectedDestination.value));
-        sessionStorage.setItem('etu_dashboard.selectedPeriodeMobilite', JSON.stringify(selectedPeriodeMobilite.value));
-    }
-
-    watch(selectedDepartment, saveFilters);
-    watch(selectedVoeux, saveFilters);
-    watch(selectedAnneeMobilite, saveFilters);
-    watch(selectedPeriodeMobilite, saveFilters);
-    watch(selectedDocument, saveFilters);
-    watch(selectedDestination, saveFilters);
 
 onMounted(() => {
     fetch();
-    loadFilters();
 });
 
     function deselectAll() {

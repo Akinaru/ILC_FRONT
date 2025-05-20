@@ -281,32 +281,32 @@
                           </div>
                         </div>
 
-<!-- Départements -->
-<div class="flex items-center justify-start md:justify-end mt-2 md:mt-0 w-full md:w-auto">
-  <div
-    v-if="countVisibleDepartments(accord)"
-    class="flex flex-wrap w-full md:justify-end gap-2"
-  >
-    <div
-      v-for="(dept, index) in accord.departments.filter(d => d.pivot?.deptagree_valide)"
-      :key="index"
-      class="flex-shrink-0"
-    >
-      <p
-        class="transition-all duration-100 ease-in-out font-bold text-xs text-center select-none rounded min-w-[2.5rem] px-2 py-1"
-        :style="{
-          backgroundColor: dept.dept_color,
-          color: getTextColor(dept.dept_color)
-        }"
-      >
-        {{ dept.dept_shortname }}
-      </p>
-    </div>
-  </div>
-  <div v-else class="hidden md:block text-sm text-base-content/70">
-    <p class="px-3 py-2">Aucun département</p>
-  </div>
-</div>
+                        <!-- Départements -->
+                        <div class="flex items-center justify-start md:justify-end mt-2 md:mt-0 w-full md:w-auto">
+                          <div
+                            v-if="countVisibleDepartments(accord)"
+                            class="flex flex-wrap w-full md:justify-end gap-2"
+                          >
+                            <div
+                              v-for="(dept, index) in accord.departments.filter(d => d.pivot?.deptagree_valide)"
+                              :key="index"
+                              class="flex-shrink-0"
+                            >
+                              <p
+                                class="transition-all duration-100 ease-in-out font-bold text-xs text-center select-none rounded min-w-[2.5rem] px-2 py-1"
+                                :style="{
+                                  backgroundColor: dept.dept_color,
+                                  color: getTextColor(dept.dept_color)
+                                }"
+                              >
+                                {{ dept.dept_shortname }}
+                              </p>
+                            </div>
+                          </div>
+                          <div v-else class="hidden md:block text-sm text-base-content/70">
+                            <p class="px-3 py-2">Aucun département</p>
+                          </div>
+                        </div>
 
 
 
@@ -471,7 +471,7 @@
                 :style="{
                   backgroundImage: `url(${config.apiUrl + 'api/article/image/' + article.art_id})`,
                 }"
-                class="bg-cover bg-center w-full h-56 transform-gpu will-change-transform backface-hidden"
+                class="bg-cover bg-center w-full h-56 transform-gpu will-change-transform backface-hidden bg-base-200"
               ></div>
               <!-- Fallback quand pas d'image disponible -->
               <div

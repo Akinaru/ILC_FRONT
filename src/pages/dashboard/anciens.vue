@@ -111,7 +111,7 @@
                           </div>
                           <span v-else class="text-opacity-50 text-sm">Aucun</span>
                         </td>
-                        <td>
+                        <td class="flex gap-2">
                             <RouterLink target="_blank" :to="{name: 'Profile', params: {acc_id: student.acc_id}}" 
                               class="btn btn-circle btn-xs btn-ghost tooltip flex items-center justify-center" data-tip="Afficher le profil">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,6 +119,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                               </svg>
                             </RouterLink>
+                            <button
+                                @click="desarchiverEtudiant(student.acc_id)"
+                                class="btn btn-circle btn-xs btn-ghost tooltip flex items-center justify-center text-success"
+                                data-tip="Désarchiver l'étudiant"
+                              >
+                              <svg fill="#000000" class="h-4 w-4" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M960 0v112.941c467.125 0 847.059 379.934 847.059 847.059 0 467.125-379.934 847.059-847.059 847.059-467.125 0-847.059-379.934-847.059-847.059 0-267.106 126.607-515.915 338.824-675.727v393.374h112.94V112.941H0v112.941h342.89C127.058 407.38 0 674.711 0 960c0 529.355 430.645 960 960 960s960-430.645 960-960S1489.355 0 960 0" fill-rule="evenodd"/>
+                              </svg>
+                              </button>
+
                         </td>
                       </tr>
                     </tbody>
@@ -147,6 +157,7 @@
   
   const accounts = ref([]);
   const isLoaded = ref(false);
+  const response = ref([]);
   
   // Année académique actuelle (par défaut)
   const currentYear = new Date().getFullYear();
@@ -226,6 +237,18 @@
     } finally {
       isLoaded.value = true;
     }
+  }
+
+  async function desarchiverEtudiant(acc_id){
+    const requestData = {acc_id: acc_id};
+    await request(
+    "POST",
+    true,
+    response,
+    config.apiUrl + "api/arbitrage/desarchiver",
+    requestData
+  );
+  if (response.value.status == 200) fetchAccounts();
   }
   
   onMounted(() => {
