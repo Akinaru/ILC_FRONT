@@ -571,6 +571,13 @@
                             <!-- Informations en liste -->
                             <div class="space-y-1 text-sm mb-3">
                               <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Profil complété: {{ etu.acc_validateacc ? '✅' : '❌' }}</span>
+                              </div>
+
+                              <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
@@ -622,6 +629,8 @@
                                 </svg>
                                 <span>Validation choix de cours: {{ etu.acc_validechoixcours ? '✅' : '❌' }}</span>
                               </div>
+
+                              
                             </div>
                             
                             <!-- Destination (hauteur fixe) -->

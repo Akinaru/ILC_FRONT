@@ -1978,7 +1978,7 @@ async function fetch() {
     account,
     config.apiUrl + "api/account/getbylogin/" + accountStore.login
   );
-  await request("GET", false, accords, config.apiUrl + "api/agreement");
+  await request("GET", false, accords, config.apiUrl + "api/agreement/home/"+accountStore.account.acc_id);
   await request(
     "GET",
     false,

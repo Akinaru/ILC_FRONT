@@ -306,9 +306,6 @@ watch(logged, async (newVal) => {
   isUserLoggedIn.value = logged.value;
 });
 
-watch(acc_validateacc, async (newVal) => {
-  await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
-});
 
 onMounted(load);
 </script>
