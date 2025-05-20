@@ -212,13 +212,14 @@
       </p>
     </div>
     
-    <!-- Hover overlay -->
-    <div class="absolute inset-0 bg-base-300 opacity-0 hover:opacity-80 flex items-center justify-center transition-opacity duration-300">
-      <span class="btn btn-ghost btn-circle text-lg">
-        <i class="fas fa-arrow-right"></i>
-        <span class="ml-2">Voir plus</span>
-      </span>
-    </div>
+<!-- Hover overlay -->
+<div class="absolute inset-0 w-full h-full bg-black bg-opacity-0 hover:bg-opacity-60 flex items-center justify-center transition-all duration-300 group">
+  <span class="text-white text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+    Voir plus
+  </span>
+</div>
+
+
   </div>
 </RouterLink>
         </div>

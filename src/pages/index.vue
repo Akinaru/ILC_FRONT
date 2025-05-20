@@ -281,35 +281,34 @@
                           </div>
                         </div>
 
-                        <!-- Départements -->
-                        <div
-                          class="flex items-center justify-start md:justify-end mt-2 md:mt-0 w-full md:w-auto"
-                        >
-                          <div
-                            v-if="countVisibleDepartments(accord)"
-                            class="flex flex-wrap w-full md:justify-end"
-                          >
-                            <div
-                              v-for="(dept, index) in accord.departments"
-                              :key="index"
-                              class="flex-shrink-0"
-                            >
-                              <p
-                                v-if="dept.pivot?.deptagree_valide"
-                                class="transition-all duration-100 ease-in-out mx-1 px-2 py-1 md:px-3 md:py-2 min-w-[2.5rem] font-bold text-xs text-center select-none rounded"
-                                :style="{ backgroundColor: dept.dept_color }"
-                              >
-                                {{ dept.dept_shortname }}
-                              </p>
-                            </div>
-                          </div>
-                          <div
-                            v-else
-                            class="hidden md:block text-sm text-base-content/70"
-                          >
-                            <p class="px-3 py-2">Aucun département</p>
-                          </div>
-                        </div>
+<!-- Départements -->
+<div class="flex items-center justify-start md:justify-end mt-2 md:mt-0 w-full md:w-auto">
+  <div
+    v-if="countVisibleDepartments(accord)"
+    class="flex flex-wrap w-full md:justify-end gap-2"
+  >
+    <div
+      v-for="(dept, index) in accord.departments.filter(d => d.pivot?.deptagree_valide)"
+      :key="index"
+      class="flex-shrink-0"
+    >
+      <p
+        class="transition-all duration-100 ease-in-out font-bold text-xs text-center select-none rounded min-w-[2.5rem] px-2 py-1"
+        :style="{
+          backgroundColor: dept.dept_color,
+          color: getTextColor(dept.dept_color)
+        }"
+      >
+        {{ dept.dept_shortname }}
+      </p>
+    </div>
+  </div>
+  <div v-else class="hidden md:block text-sm text-base-content/70">
+    <p class="px-3 py-2">Aucun département</p>
+  </div>
+</div>
+
+
 
                         <div
                           class="absolute inset-0 bg-base-300/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -1018,6 +1017,24 @@ function formatDate(date) {
   const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
   return new Date(date).toLocaleDateString("fr-FR", options);
 }
+
+function getTextColor(bgColor) {
+  // Nettoyage éventuel
+  if (!bgColor) return '#000'
+
+  // Extraction R, G, B
+  const hex = bgColor.replace('#', '')
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+
+  // Calcul de la luminance
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+
+  // Retourne noir si fond clair, blanc si fond foncé
+  return luminance > 0.6 ? '#000' : '#fff'
+}
+
 
 const filteredAccords = computed(() => {
   return accords.value.agreements

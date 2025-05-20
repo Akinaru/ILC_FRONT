@@ -1597,11 +1597,15 @@
                 {{ account.acc_temoignage?.length || 0 }} / {{ CHAR_LIMIT }} caractères
             </span>
             <div class="w-32 h-2 bg-base-200 rounded-full ml-3">
-                <div 
-                class="h-full rounded-full transition-all duration-300" 
-                :class="account.acc_temoignage?.length > CHAR_LIMIT * 0.9 ? 'bg-error' : 'bg-success'" 
-                :style="{width: Math.min(100, (account.acc_temoignage?.length || 0) / CHAR_LIMIT * 100) + '%'}"
-                ></div>
+              <div 
+  class="h-full rounded-full transition-all duration-300"
+  :class="{
+    'bg-success': (account.acc_temoignage?.length || 0) <= CHAR_LIMIT * 0.9,
+    'bg-warning': (account.acc_temoignage?.length || 0) > CHAR_LIMIT * 0.9 && (account.acc_temoignage?.length || 0) <= CHAR_LIMIT,
+    'bg-error': (account.acc_temoignage?.length || 0) > CHAR_LIMIT
+  }"
+  :style="{ width: Math.min(100, (account.acc_temoignage?.length || 0) / CHAR_LIMIT * 100) + '%' }"
+></div>
             </div>
             </div>
             

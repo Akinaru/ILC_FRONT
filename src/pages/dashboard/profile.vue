@@ -240,10 +240,15 @@
                 </div>
               </div>
             </div>
+
+
+
+
           </div>
   
           <!-- Right column - Information -->
           <div class="space-y-6">
+
             <div class="card bg-base-100 shadow-md">
               <div class="card-body">
                 <div class="flex justify-between items-center">
@@ -327,6 +332,40 @@
                 </div>
               </div>
             </div>
+
+            <!-- Témoignage -->
+<div class="card bg-base-100 shadow-md">
+  <div class="card-body">
+    <h2 class="card-title">Témoignage</h2>
+    <div class="divider"></div>
+
+    <div v-if="account.acc_temoignage && account.acc_temoignage.trim() !== ''">
+      <!-- Contenu du témoignage -->
+      <blockquote class="border-l-4 border-primary pl-4 italic text-sm leading-relaxed whitespace-pre-line break-words">
+        {{ account.acc_temoignage }}
+      </blockquote>
+
+      <!-- Bouton supprimer -->
+      <div class="mt-4 flex justify-end">
+        <button class="btn btn-sm btn-outline btn-error" @click="supprimerTemoignage()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Supprimer
+        </button>
+      </div>
+    </div>
+
+    <!-- Si pas de témoignage -->
+    <div v-else class="alert">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>Aucun témoignage renseigné</span>
+    </div>
+  </div>
+</div>
           </div>
         </div>
       </div>
@@ -673,6 +712,29 @@ import { addAction } from '../../composables/actionType';
         if(response.value.status == 200){
             account.value.acc_validechoixcours = !account.value.acc_validechoixcours;
         }
+    }
+
+    async function supprimerTemoignage() {
+      if (!account.value.acc_temoignage) {
+        addAlert("error", {
+          data: {
+            error: `Il n'y a pas de témoignage à supprimer.`,
+          },
+        });
+        return;
+      }
+
+      const requestData = {
+        acc_id: account.value.acc_id,
+      };
+      await request(
+        "DELETE",
+        true,
+        response,
+        config.apiUrl + "api/account/temoignage",
+        requestData
+      );
+      fetchAll();
     }
 
     async function openMyFileInNewTab(filePath) {
