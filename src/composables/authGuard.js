@@ -14,7 +14,8 @@ export async function authLogAccount(login, router) {
         acc_fullname: response.value.acc_fullname,
         acc_lastlogin: response.value.acc_lastlogin,
         acc_validateacc: response.value.acc_validateacc,
-        role: response.value.role
+        role: response.value.role,
+        account: response.value
     };
     if(response.value.access.count == 1){
         requestData.acc_access = response.value.access.access.acs_accounttype;
@@ -62,7 +63,8 @@ export async function authRegisterAccount(login, router) {
                 acc_lastlogin: response.value.account.acc_lastlogin,
                 acc_validateacc: response.value.account.acc_validateacc,
                 acc_access: response.value.access,
-                role: response.value.account.role
+                role: response.value.account.role,
+                account: response.value.account
             };
 
             localStorage.setItem('token', response.value.token);

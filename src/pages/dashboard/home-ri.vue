@@ -15,9 +15,9 @@
           
           <div v-if="limitedActions.length > 0" class="space-y-2">
             <div v-for="(action, index) in limitedActions" :key="index" 
-                 class="flex items-start p-2 rounded-lg hover:bg-base-200 transition-colors">
+                 class="flex items-start p-2 rounded-lg hover:bg-base-200 transition-colors flex-col">
               <div v-if="getType(action.act_type)" 
-                   :class="['badge', getType(action.act_type).color, 'mr-3 mt-1']">
+                   :class="['badge', getType(action.act_type).color, 'my-1']">
                 {{ getType(action.act_type).name }}
               </div>
               <div>
@@ -191,7 +191,7 @@ const backupSuccess = ref(false);
 async function fetch() {
   isLoaded.value = false;
   await request('GET', false, events, config.apiUrl + 'api/event');
-  await request('GET', false, actions, config.apiUrl + 'api/action/getbylogin/' + accountStore.login);
+  await request('GET', false, actions, config.apiUrl + 'api/action/getfivebylogin/' + accountStore.login);
   await request('GET', false, admin, config.apiUrl + 'api/admin');
   modifDate.value = formatDateModif(admin.value.adm_datelimite);
   isLoaded.value = true;

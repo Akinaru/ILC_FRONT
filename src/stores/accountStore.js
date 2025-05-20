@@ -9,7 +9,9 @@ export const useAccountStore = defineStore("account", {
     access: 0,
     acc_validateacc: false,
     role: null,
+    account: null
   }),
+  persist: true,
   actions: {
     async loginAccount(data) {
       this.login = data.acc_id;
@@ -19,6 +21,8 @@ export const useAccountStore = defineStore("account", {
       this.acc_validateacc = data.acc_validateacc;
       this.access = data.acc_access;
       this.role = data.role;
+      this.account = data.account;
+
 
       this.saveAccountToLocal();
       
@@ -36,6 +40,10 @@ export const useAccountStore = defineStore("account", {
       this.role = val;
       this.saveAccountToLocal();
     },
+    setAccount(val){
+      this.account = vam;
+      this.saveAccountToLocal();
+    },
     
     logoutAccount() {
       this.login = null;
@@ -45,6 +53,7 @@ export const useAccountStore = defineStore("account", {
       this.acc_validateacc = false;
       this.access = 0;
       this.role = null;
+      this.account = null;
 
       localStorage.removeItem('account');
     },
@@ -72,10 +81,15 @@ export const useAccountStore = defineStore("account", {
       return this.acc_validateacc;
     },
 
+    getAccount(){
+      return this.account;
+    },
+
     // Nouvelle méthode pour mettre à jour last_login
     updateLastLogin() {
       this.last_login = new Date().toISOString(); // Met à jour avec le timestamp actuel
     },
+    
     toString() {
       return `Account Info: 
         Login: ${this.login || 'N/A'}, 
@@ -94,7 +108,8 @@ export const useAccountStore = defineStore("account", {
         last_login: this.last_login,
         access: this.access,
         acc_validateacc: this.acc_validateacc,
-        role: this.role
+        role: this.role,
+        account: this.account
       };
       localStorage.setItem('account', JSON.stringify(accountData));
     },
@@ -110,6 +125,7 @@ export const useAccountStore = defineStore("account", {
         this.access = data.access;
         this.acc_validateacc = data.acc_validateacc;
         this.role = data.role;
+        this.account = data.account;
       }
     },
   },

@@ -236,8 +236,30 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const accountStore = useAccountStore();
     const [isLogged, userLogin] = await checkUserLogin();
-    if(isLogged){
+    accountStore.loadAccountFromLocal();
+    if(isLogged && accountStore.isLogged()){
         accountStore.loadAccountFromLocal();
+        try {
+            await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + userLogin);
+
+            if (account.value) {
+                const patchedValues = {
+                    login: account.value.acc_id,
+                    fullname: account.value.acc_fullname,
+                    logged: true,
+                    last_login: new Date().toISOString(),
+                    access: account.value.access.access ? account.value.access.access.acs_accounttype : 0,
+                    acc_validateacc: account.value.acc_validateacc,
+                    account: account.value
+                };
+                accountStore.$patch(patchedValues);
+                accountStore.saveAccountToLocal();
+            }
+        } catch (error) {
+            console.log("Erreur lors de la récupération du compte:", error);
+            accountStore.logoutAccount();
+            return next({ name: 'Accueil' });
+        }
     }
 
     // Si la route nécessite une authentification
@@ -251,33 +273,14 @@ router.beforeEach(async (to, from, next) => {
         } else {
             // Mettez à jour le store si l'utilisateur est connecté
             if (userLogin != null) {
-                try {
-                    await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + userLogin);
+                // Vérifiez la validation du compte ici
+                const accessLevel = accountStore.getAccessLevel();
+                const isValidated = accountStore.getAccountValidate();
 
-                    if (account.value) {
-                        const patchedValues = {
-                            login: account.value.acc_id,
-                            fullname: account.value.acc_fullname,
-                            logged: true,
-                            last_login: new Date().toISOString(),
-                            access: account.value.access.access ? account.value.access.access.acs_accounttype : 0,
-                            acc_validateacc: account.value.acc_validateacc
-                        };
-                        accountStore.$patch(patchedValues);
-
-                        // Vérifiez la validation du compte ici
-                        const accessLevel = accountStore.getAccessLevel();
-                        const isValidated = accountStore.getAccountValidate();
-
-                        if (accessLevel == 0 && !isValidated) {
-                            if (to.name !== 'ComplDossier') {
-                                return next({ name: 'ComplDossier' });
-                            }
-                        }
+                if (accessLevel == 0 && !isValidated) {
+                    if (to.name !== 'ComplDossier') {
+                        return next({ name: 'ComplDossier' });
                     }
-                } catch (error) {
-                    console.log("Erreur lors de la récupération du compte:", error);
-                    return next({ name: 'Accueil' });
                 }
             }
         }

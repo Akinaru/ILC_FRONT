@@ -13,7 +13,8 @@
           
           <!-- Partie droite avec les actions -->
           <div class="flex items-center space-x-1 sm:space-x-3">
-            <!-- Bouton connexion avec style amélioré (visible si non connecté) -->
+
+            <!-- Bouton connexion (visible si non connecté) -->
             <div v-if="!isUserLoggedIn" class="mr-2">
               <a :href="config.apiUrl+'cas.php?redirect='+currentUrl" class="btn btn-sm btn-primary btn-outline rounded-full px-4 gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -23,7 +24,7 @@
               </a>
             </div>
             
-            <!-- Menu utilisateur avec design amélioré (visible si connecté) -->
+            <!-- Menu utilisateur (visible si connecté) -->
             <div v-else class="relative">
               <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-ghost btn-sm px-2 sm:px-3 rounded-full border border-base-300 hover:bg-base-200 cursor-pointer">
@@ -31,21 +32,21 @@
                     <!-- Badge de rôle -->
                     <div class="px-1.5 py-0.5 text-xs rounded-md transition-all" 
                       :style="{ 
-                        backgroundColor: accountStore?.role?.color || '#aaaaaa',
-                        color: getOptimalTextColor(accountStore?.role?.color || '#aaaaaa')
+                        backgroundColor: accountStore?.account?.role.color || '#aaaaaa',
+                        color: getOptimalTextColor(accountStore?.account?.role.color || '#aaaaaa')
                       }">
-                      {{ accountStore?.role?.role || 'Étudiant' }}
+                      {{ accountStore?.account?.role.role || 'Étudiant' }}
                     </div>
                     
                     <!-- Nom d'utilisateur avec traitement différent selon taille d'écran -->
                     <span class="hidden sm:inline font-medium text-sm">
-                      {{ accountStore.fullname != null ? accountStore.fullname : 'Compte' }}
+                      {{ accountStore.account.acc_fullname != null ? accountStore.account.acc_fullname : 'Compte' }}
                     </span>
                     
                     <!-- Avatar/Initiales pour mobile -->
                     <div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary sm:hidden">
                       <span class="text-xs font-bold">
-                        {{ accountStore.fullname ? accountStore.fullname.charAt(0) : 'U' }}
+                        {{ accountStore.account.acc_fullname ? accountStore.account.acc_fullname.charAt(0) : 'U' }}
                       </span>
                     </div>
                     
@@ -70,12 +71,15 @@
 
 
                   <div  class="px-4 py-2 text-sm">
-                    <div v-if="accountStore.isStudent()" class="text-xs text-base-content/70">Profil complété: <span class="badge badge-sm">Bientôt</span></div>
-                    <div v-if="accountStore.isStudent()" class="text-xs text-base-content/70">Temps restant: <span class="badge badge-sm">Bientôt</span></div>
-                    <div v-if="accountStore.isStudent()" class="text-xs text-base-content/70">Nombre de voeux: <span class="badge badge-sm">Bientôt</span></div>
-                    <div v-if="accountStore.isAdmin() || accountStore.isChefDept()" class="text-xs text-base-content/70">Nombre d'étudiants: <span class="badge badge-sm">Bientôt</span></div>
-                    <div v-if="accountStore.isAdmin() " class="text-xs text-base-content/70">Nombre d'accords: <span class="badge badge-sm">Bientôt</span></div>
-                    <div v-if="accountStore.isAdmin() " class="text-xs text-base-content/70">Nombre d'articles: <span class="badge badge-sm">Bientôt</span></div>
+
+                    <div v-if="accountStore.isStudent() && accountStore.account?.acc_validateacc" class="text-xs text-base-content/70">Profil complété: <span class="badge badge-sm">{{ accountStore.account.acc_validateacc ? '✅' : '❌' }}</span></div>
+                    <div v-if="accountStore.isStudent() && accountStore.account?.wishes?.count" class="text-xs text-base-content/70">Temps restant: <span class="badge badge-sm">Bientôt</span></div>
+                    <div v-if="accountStore.isStudent() && accountStore.account?.wishes?.count" class="text-xs text-base-content/70">Nombre de voeux: <span class="badge badge-sm">{{ accountStore.account.wishes.count }}</span></div>
+                    <div v-if="accountStore.isStudent() && accountStore.account?.favoris?.count" class="text-xs text-base-content/70">Nombre de favoris: <span class="badge badge-sm">{{ accountStore.account.favoris.count }}</span></div>
+
+                    <div v-if="(accountStore.isAdmin() || accountStore.isChefDept()) && accountStore.account?.metrics?.students" class="text-xs text-base-content/70">Nombre d'étudiants: <span class="badge badge-sm">{{ accountStore.account.metrics.students }}</span></div>
+                    <div v-if="accountStore.isAdmin() && accountStore.account?.metrics?.agreements" class="text-xs text-base-content/70">Nombre d'accords: <span class="badge badge-sm">{{ accountStore.account.metrics.agreements }}</span></div>
+                    <div v-if="accountStore.isAdmin() && accountStore.account?.metrics?.articles" class="text-xs text-base-content/70">Nombre d'articles: <span class="badge badge-sm">{{ accountStore.account.metrics.articles }}</span></div>
                   </div>
 
                   <div class="divider my-1"></div>
@@ -138,7 +142,7 @@
               </div>
             </div>
             
-            <!-- Switch thème redesigné sans contour ni fond -->
+            <!-- Switch thème -->
             <div class="p-1">
               <label class="swap swap-rotate hover:opacity-80 transition-opacity" style="margin-top: 6px;">
                 <input type="checkbox" class="theme-controller" @change="toggleTheme" :checked="theme === 'dark'" />
