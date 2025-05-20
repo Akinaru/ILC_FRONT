@@ -60,6 +60,7 @@
 
         </div>
         <!-- Modal de confirmation suppression -->
+        <Teleport to="body">
         <dialog id="confirmModal" ref="confirmModal" class="modal">
             <div class="modal-box">
                 <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
@@ -73,6 +74,7 @@
                 </div>
             </div>
         </dialog>
+        </Teleport>
     </div>
     <div v-else>
         <LoadingComp></LoadingComp>

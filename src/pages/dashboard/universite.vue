@@ -531,6 +531,8 @@ import { addAction } from '../../composables/actionType';
             addAction(accountStore.account.acc_id, 'university', response, 'Suppression de l\'université '+univ_name+' (' + univ_city + ').');
         }
         fetchAll();
+        closeModal();
+
     }
 
     // Liste des accords concerné par l'univ qu'on supprime

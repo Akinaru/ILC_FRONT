@@ -180,7 +180,7 @@
   async function confirmCompl() {
     if (!complDossier.value.ine || complDossier.value.ine === '') {
       addAlert('error', { data: { error: 'Veuillez renseigner le numéro étudiant (INE).' } })
-      closeModal()
+      closeModal();
       return
     } else if (!complDossier.value.email || complDossier.value.email === '') {
       addAlert('error', { data: { error: 'Veuillez renseigner votre email.' } })

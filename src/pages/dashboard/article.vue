@@ -105,6 +105,7 @@
             </div>
         </div>
         <!-- Modal de confirmation suppression -->
+        <Teleport to="body">
         <dialog id="confirmModal" ref="confirmModal" class="modal">
             <div class="modal-box">
                 <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
@@ -132,6 +133,7 @@
             </div>
             </div>
         </dialog>
+        </Teleport>
 
     </div>
 
@@ -435,12 +437,13 @@ function resetInput(){
 
 // Suppression d'article
 async function removeArticle(title, id){
-    closeModal()
     await request('DELETE', true, response, config.apiUrl+'api/article/deletebyid/'+id);
     if(response.value.status == 202){
         addAction(accountStore.account.acc_id, 'article', response, 'Suppression de l\'article '+title+'.');
     }
     await fetchAll();
+    closeModal();
+
 }
 
 // Gestion de la modification d'article

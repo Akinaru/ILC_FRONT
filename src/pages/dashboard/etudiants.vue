@@ -667,15 +667,16 @@
                   </div>
                 </div>
                 <div v-else class="w-full flex flex-col items-center justify-center text-center py-10 text-base-content/70">
-  <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M9.75 9.75L14.25 14.25M14.25 9.75L9.75 14.25M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
-  </svg>
-  <p class="text-lg font-semibold">Aucun résultat trouvé</p>
-  <p class="text-sm opacity-70">Aucun étudiant ne correspond à vos filtres.</p>
-</div>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9.75 9.75L14.25 14.25M14.25 9.75L9.75 14.25M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+                  </svg>
+                  <p class="text-lg font-semibold">Aucun résultat trouvé</p>
+                  <p class="text-sm opacity-70">Aucun étudiant ne correspond à vos filtres.</p>
+                </div>
 
                 <!-- Modal de confirmation suppression -->
+                <Teleport to="body">
                 <dialog id="confirmModal" ref="confirmModal" class="modal">
                     <div class="modal-box">
                         <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
@@ -710,6 +711,7 @@
                     </div>
                     </div>
                 </dialog>
+                </Teleport>
             </div>
         </div>
         <div v-else>

@@ -190,10 +190,10 @@
           </div>
         </div>
       </div>
-  
-      <!-- Modals: garder la structure mais améliorer le style -->
+
       <div>
         <!-- Modal de modification d'événement -->
+        <Teleport to="body">
         <input type="checkbox" id="modal_modif" class="modal-toggle" />
         <div class="modal" role="dialog">
           <div class="modal-box max-w-2xl">
@@ -252,8 +252,10 @@
             </form>
           </div>
         </div>
+        </Teleport>
   
         <!-- Modal de modification de thématique -->
+        <Teleport to="body">
         <input type="checkbox" id="modal_modif_them" class="modal-toggle" />
         <div class="modal" role="dialog">
           <div class="modal-box">
@@ -287,8 +289,10 @@
             </form>
           </div>
         </div>
+        </Teleport>
   
         <!-- Modal de confirmation suppression thématique -->
+        <Teleport to="body">
         <dialog id="confirmModalThematique" ref="confirmModalThematique" class="modal">
           <div class="modal-box">
             <h3 class="text-lg font-bold mb-4">Confirmer la suppression ?</h3>
@@ -321,8 +325,10 @@
             </div>
           </div>
         </dialog>
+        </Teleport>
   
         <!-- Modal de confirmation suppression événement -->
+        <Teleport to="body">
         <dialog id="confirmModalEvenement" ref="confirmModalEvenement" class="modal">
           <div class="modal-box">
             <h3 class="text-lg font-bold mb-4">Confirmer la suppression ?</h3>
@@ -354,6 +360,7 @@
             </div>
           </div>
         </dialog>
+        </Teleport>
       </div>
     </div>
   </template>

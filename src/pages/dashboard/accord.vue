@@ -659,6 +659,7 @@
                 </div>
 
                 <!-- Modal de confirmation suppression -->
+                <Teleport to="body">
                 <dialog id="confirmModalDeleteAll" ref="confirmModalDeleteAll" class="modal">
                     <div class="modal-box max-w-full w-150">
                         <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
@@ -673,8 +674,10 @@
                         </div>
                     </div>
                 </dialog>
+                </Teleport>
 
                 <!-- Modal de modification d'accord -->
+                <Teleport to="body">
                 <dialog id="modifAccordModal" ref="modifAccordModal" class="modal">
                     <div class="modal-box max-w-full w-150">
                         <h3 class="text-lg font-bold">Modification de l'accord</h3>
@@ -787,8 +790,10 @@
                     </div>
 
                 </dialog>
+                </Teleport>
 
                 <!-- Modal de confirmation suppression d'accord -->
+                <Teleport to="body">
                 <dialog id="confirmModal" ref="confirmModal" class="modal">
                     <div class="modal-box max-w-full w-150">
                         <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
@@ -823,8 +828,10 @@
                         </div>
                     </div>
                 </dialog>
+                </Teleport>
 
                 <!-- Modal d'import d'accord -->
+                <Teleport to="body">
                 <dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
                     <div class="modal-box max-w-full w-150">
                         <h3 class="text-lg font-bold">Import d'accord</h3>
@@ -860,6 +867,7 @@
                         </div>
                     </div>
                 </dialog>
+                </Teleport>
             </div>
             
         </div>
@@ -1011,6 +1019,7 @@
             }
         }, 1000);
     }
+
     //Fermer les modals
     function closeModal() {
         const modal = document.getElementById('confirmModal')
@@ -1358,17 +1367,19 @@
             addAction(accountStore.account.acc_id, 'agreement', response, 'Suppression de tous les accords');
         }
         fetchAll();
+        closeModal();
     }
     
 
     // Supprimer un accord
     async function deleteAgreement(univ_name, agree_id){
-        closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/agreement/deletebyid/'+agree_id);
         if(response.value.status == 202){
             addAction(accountStore.account.acc_id, 'agreement', response, 'Suppression de l\'accord avec '+univ_name+'.');
         }
         fetchAccords();
+        closeModal();
+
     }
 
     // renvoie les départements d'un accord filtré dans l'ordre alphabétique

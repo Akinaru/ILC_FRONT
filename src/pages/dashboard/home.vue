@@ -2258,6 +2258,7 @@ async function saveFile(title, folder, file) {
 }
 
 async function deleteAccount() {
+  closeModal();
   const requestData = {
     acc_id: accountStore.account.acc_id,
   };

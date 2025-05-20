@@ -868,6 +868,7 @@
       </div>
 
       <!-- Modal confirmation d'archivage -->
+      <Teleport to="body">
       <dialog id="archivageModal" ref="archivageModal" class="modal">
         <div class="modal-box max-w-3xl">
           <h3 class="text-lg font-bold">Archiver l'arbitrage</h3>
@@ -893,8 +894,10 @@
           </div>
         </div>
       </dialog>
+      </Teleport>
 
       <!-- Modal Informations étudiant -->
+      <Teleport to="body">
       <dialog id="infoEtu" ref="infoEtu" class="modal">
         <div class="modal-box max-w-3xl">
             <div
@@ -1046,6 +1049,7 @@
             <label class="modal-backdrop" for="modal_info_etu">Close</label>
         </div>
       </dialog>
+      </Teleport>
     </div>
   </div>
   <div v-else>
@@ -1194,6 +1198,8 @@ async function confirmArchivage() {
   );
   if (response.value.status == 200) fetch();
   archivageEnCours.value = false;
+  closeModal();
+
 }
 
 // Initialisation des données et mise en place des drops

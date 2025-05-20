@@ -597,9 +597,10 @@ import { addAction } from '../../composables/actionType.js';
         }
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
         resetInput();
-    }
-    async function removeAccess(acc_id){
         closeModal();
+    }
+
+    async function removeAccess(acc_id){
         const requestData = {
             acc_id: acc_id,
             acc_id_action: accountStore.account.acc_id
@@ -609,6 +610,7 @@ import { addAction } from '../../composables/actionType.js';
             addAction(accountStore.account.acc_id, 'access', response, 'Suppression de l\'access pour '+acc_id+'.');
         }
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
+        closeModal();
     }
 
 
@@ -626,6 +628,7 @@ import { addAction } from '../../composables/actionType.js';
         }
         await request('GET', false, accepted, config.apiUrl+'api/acceptedaccount');
         resetInput();
+        closeModal();
     }
     async function removeAccepted(acc_id){
         const requestData = {

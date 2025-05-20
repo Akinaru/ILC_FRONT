@@ -419,12 +419,15 @@
           </div>
         </div>
       </div>
+
+      
     </div>
     <div v-else>
       <LoadingComp></LoadingComp>
     </div>
   
     <!-- Modal de modification de la destination -->
+    <Teleport to="body">
     <input type="checkbox" id="my_modal_dest" class="modal-toggle" />
     <div class="modal fixed inset-0 z-50" role="dialog">
       <div class="modal-box w-11/12 max-w-3xl"> 
@@ -495,8 +498,10 @@
         </form>
       </div>
     </div>
+    </Teleport>
   
     <!-- Modal de modification des informations -->
+    <Teleport to="body">
     <input type="checkbox" id="my_modal_6" class="modal-toggle" />
     <div class="modal" role="dialog">
       <div class="modal-box w-11/12 max-w-xl">
@@ -593,6 +598,7 @@
         </form>
       </div>
     </div>
+    </Teleport>
   
     <!-- Modal de confirmation suppression -->
     <dialog id="confirmModalDoc" ref="confirmModalDoc" class="modal">
@@ -758,6 +764,7 @@
     }
 
     async function deleteAccount() {
+      closeModal();
       await request("DELETE", true, response, config.apiUrl + "api/account/deletebyid/" + acc_id);
       if (response.value.status == 202) {
 

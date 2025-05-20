@@ -275,6 +275,7 @@
         </div>
   
         <!-- MODAL MODIFICATION DÉPARTEMENT -->
+        <Teleport to="body">
         <input type="checkbox" id="modal_modif" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle" role="dialog">
           <div class="modal-box">
@@ -332,8 +333,10 @@
             </form>
           </div>
         </div>
+        </Teleport>
   
         <!-- MODAL MODIFICATION COMPOSANTE -->
+        <Teleport to="body">
         <input type="checkbox" id="modal_modif_comp" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle" role="dialog">
           <div class="modal-box">
@@ -378,8 +381,10 @@
             </form>
           </div>
         </div>
+        </Teleport>
   
         <!-- MODAL CONFIRMATION SUPPRESSION DÉPARTEMENT -->
+        <Teleport to="body">
         <dialog id="confirmModal" ref="confirmModal" class="modal">
           <div class="modal-box" v-if="confirmDeleteDepartment">
             <h3 class="text-lg font-bold flex items-center gap-2">
@@ -425,8 +430,10 @@
             </div>
           </div>
         </dialog>
+        </Teleport>
   
         <!-- MODAL CONFIRMATION SUPPRESSION COMPOSANTE -->
+        <Teleport to="body">
         <dialog id="confirmModalCompo" ref="confirmModalCompo" class="modal">
           <div class="modal-box" v-if="confirmDeleteComposante">
             <h3 class="text-lg font-bold flex items-center gap-2">
@@ -468,6 +475,7 @@
             </div>
           </div>
         </dialog>
+        </Teleport>
       </div>
     </div>
   </template>
@@ -636,12 +644,16 @@ import { addAction } from '../../composables/actionType';
             addAction(accountStore.account.acc_id, 'department', response, 'Suppression du département '+shortname+'.');
         }
         fetchAll();
+        closeModal();
+
     }
     // Supprimer une composante
     async function removeComp(id){
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/component/deletebyid/'+id);
         fetchAll();
+        closeModal();
+
     }
 
 

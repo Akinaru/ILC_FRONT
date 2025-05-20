@@ -157,6 +157,7 @@
         </div>
   
         <!-- MODAL MODIFICATION -->
+        <Teleport to="body">
         <input type="checkbox" id="modal_modif" class="modal-toggle" />
         <div class="modal modal-bottom sm:modal-middle" role="dialog">
           <div class="modal-box">
@@ -191,8 +192,10 @@
             </form>
           </div>
         </div>
+        </Teleport>
   
         <!-- MODAL CONFIRMATION SUPPRESSION -->
+        <Teleport to="body">
         <dialog id="confirmModal" ref="confirmModal" class="modal">
           <div class="modal-box">
             <h3 class="text-lg font-bold flex items-center gap-2">
@@ -275,6 +278,7 @@
             </div>
           </div>
         </dialog>
+        </Teleport>
       </div>
       <LoadingComp v-else></LoadingComp>
     </div>
@@ -362,6 +366,7 @@ import { addAction } from '../../composables/actionType';
             addAction(accountStore.account.acc_id, 'isced', response, 'Suppression de l\'université (' + isc_code + ') '+isc_name+'.');
         }
         fetchAll();
+        closeModal();
     }
 
     //ouvrir le modal de confirmation de suppression
