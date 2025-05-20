@@ -1006,7 +1006,7 @@ async function fetchAll() {
   await request("GET", false, events, config.apiUrl + "api/event");
   await request("GET", false, eventspf, config.apiUrl + "api/event/pfonly");
   if (accountStore.isLogged()) {
-    await request("GET", false, favoris, config.apiUrl + "api/favoris/getbylogin/" + accountStore.login
+    await request("GET", false, favoris, config.apiUrl + "api/favoris/getbylogin/" + accountStore.account.acc_id
     );
   }
   isLoaded.value = true;
@@ -1104,14 +1104,14 @@ const showMore = () => {
 function isFavorited(agree_id) {
   return favoris.value.favoris.some(
     (favori) =>
-      favori.acc_id === accountStore.login && favori.agree_id === agree_id
+      favori.acc_id === accountStore.account.acc_id && favori.agree_id === agree_id
   );
 }
 
 async function toggleFavoris(agree_id) {
   if (!isFavorited(agree_id)) {
     const requestData = {
-      acc_id: accountStore.login,
+      acc_id: accountStore.account.acc_id,
       agree_id: agree_id,
     };
     await request(
@@ -1123,7 +1123,7 @@ async function toggleFavoris(agree_id) {
     );
     if (response.value.status == 201) {
       favoris.value.favoris.push({
-        acc_id: accountStore.login,
+        acc_id: accountStore.account.acc_id,
         agree_id: agree_id,
       });
     }
@@ -1134,13 +1134,13 @@ async function toggleFavoris(agree_id) {
       response,
       config.apiUrl +
         "api/favoris/delete/" +
-        accountStore.login +
+        accountStore.account.acc_id +
         "/" +
         agree_id
     );
     favoris.value.favoris = favoris.value.favoris.filter(
       (favori) =>
-        !(favori.acc_id === accountStore.login && favori.agree_id === agree_id)
+        !(favori.acc_id === accountStore.account.acc_id && favori.agree_id === agree_id)
     );
   }
 }

@@ -313,7 +313,7 @@ async function addArticle(){
                 }
             };
         }
-       addAction(accountStore.login, 'article', response, 'Ajout de l\'article '+rep.value.article.art_title+'.');
+       addAction(accountStore.account.acc_id, 'article', response, 'Ajout de l\'article '+rep.value.article.art_title+'.');
        await fetchAll();
        resetInput();
    }
@@ -438,7 +438,7 @@ async function removeArticle(title, id){
     closeModal()
     await request('DELETE', true, response, config.apiUrl+'api/article/deletebyid/'+id);
     if(response.value.status == 202){
-        addAction(accountStore.login, 'article', response, 'Suppression de l\'article '+title+'.');
+        addAction(accountStore.account.acc_id, 'article', response, 'Suppression de l\'article '+title+'.');
     }
     await fetchAll();
 }
@@ -604,7 +604,7 @@ async function confirmModifArticle() {
             };
         }
 
-        addAction(accountStore.login, 'article', response, 'Modification de l\'article ' + currentArticleModif.value.art_title + '.');
+        addAction(accountStore.account.acc_id, 'article', response, 'Modification de l\'article ' + currentArticleModif.value.art_title + '.');
         cancelModifArticle();
         await nextTick();
         await fetchAll();

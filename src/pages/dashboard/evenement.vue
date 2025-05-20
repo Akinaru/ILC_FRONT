@@ -424,7 +424,7 @@ import { addAction } from '../../composables/actionType';
         await fetchAll();
 
         if(rep.value.status == 201){
-            addAction(accountStore.login, 'event', response, 'Ajout de l\'évènement '+rep.value.event.evt_name+' pour le '+rep.value.event.evt_datetime);
+            addAction(accountStore.account.acc_id, 'event', response, 'Ajout de l\'évènement '+rep.value.event.evt_name+' pour le '+rep.value.event.evt_datetime);
         }
         resetInput()
 
@@ -447,7 +447,7 @@ import { addAction } from '../../composables/actionType';
                 open: false,
                 name: ''
             }
-            addAction(accountStore.login, 'event', response, 'Ajout de la thématique '+requestData.evthm_name+'.');
+            addAction(accountStore.account.acc_id, 'event', response, 'Ajout de la thématique '+requestData.evthm_name+'.');
             await fetchAll();
         }
     }
@@ -486,7 +486,7 @@ import { addAction } from '../../composables/actionType';
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/eventtheme/deletebyid/'+id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'event', response, 'Suppression de la thématique '+name+'.');
+            addAction(accountStore.account.acc_id, 'event', response, 'Suppression de la thématique '+name+'.');
         }
         await fetchAll();
     }
@@ -497,7 +497,7 @@ import { addAction } from '../../composables/actionType';
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/event/deletebyid/'+id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'event', response, 'Suppression de l\'évènement '+title+'.');
+            addAction(accountStore.account.acc_id, 'event', response, 'Suppression de l\'évènement '+title+'.');
         }
         await fetchAll();
     }
@@ -536,7 +536,7 @@ import { addAction } from '../../composables/actionType';
         };
         await request('PUT', true, response, config.apiUrl+'api/eventtheme', requestData);
         if(response.value.status == 200){
-            addAction(accountStore.login, 'event', response, 'Modification de la thématique '+currentThematiqueModif.value.evthm_name+'.');
+            addAction(accountStore.account.acc_id, 'event', response, 'Modification de la thématique '+currentThematiqueModif.value.evthm_name+'.');
         }
         fetchAll();
     }
@@ -552,7 +552,7 @@ import { addAction } from '../../composables/actionType';
         };
         await request('PUT', true, response, config.apiUrl+'api/event', requestData);
         if(response.value.status == 200){
-            addAction(accountStore.login, 'event', response, 'Modification de l\'évènement '+currentEventModif.value.evt_name+'.');
+            addAction(accountStore.account.acc_id, 'event', response, 'Modification de l\'évènement '+currentEventModif.value.evt_name+'.');
         }
         fetchAll();
     }

@@ -65,8 +65,8 @@
                   
                   <!-- Info utilisateur -->
                   <div class="px-4 py-2 bg-base-200/50 rounded-lg mb-2 text-sm">
-                    <div class="font-semibold">{{ accountStore.fullname || 'Utilisateur' }}</div>
-                    <div class="text-xs text-base-content/70">Login: {{ accountStore.login }}</div>
+                    <div class="font-semibold">{{ accountStore.account.acc_fullname || 'Utilisateur' }}</div>
+                    <div class="text-xs text-base-content/70">Login: {{ accountStore.account.acc_id }}</div>
                   </div>
 
 

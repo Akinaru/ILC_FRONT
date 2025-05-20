@@ -1126,7 +1126,7 @@
         console.log(importFinalAccord.value);
         await request('POST', true, response, config.apiUrl + 'api/agreementexp', importFinalAccord.value);
         if (response.value.status === 201) {
-            addAction(accountStore.login, 'agreement', response, 'Importation de ' + importFinalAccord.value.agreements.length + ' accords.');
+            addAction(accountStore.account.acc_id, 'agreement', response, 'Importation de ' + importFinalAccord.value.agreements.length + ' accords.');
             
         }
         closeModalImport();
@@ -1306,7 +1306,7 @@
 
         // Vérification de la réponse et ajout d'une action si nécessaire
         if (response.value.status === 201) {
-            addAction(accountStore.login, 'agreement', response, 'Ajout de l\'accord avec ' + response.value.agreement.university.univ_name + ' (' + response.value.agreement.partnercountry.parco_name + ').');
+            addAction(accountStore.account.acc_id, 'agreement', response, 'Ajout de l\'accord avec ' + response.value.agreement.university.univ_name + ' (' + response.value.agreement.partnercountry.parco_name + ').');
             await fetchAll();
         }
 
@@ -1355,7 +1355,7 @@
     async function deleteAll(){
         await request('DELETE', true, response, config.apiUrl+'api/agreement/deleteall');
         if(response.value.status == 202){
-            addAction(accountStore.login, 'agreement', response, 'Suppression de tous les accords');
+            addAction(accountStore.account.acc_id, 'agreement', response, 'Suppression de tous les accords');
         }
         fetchAll();
     }
@@ -1366,7 +1366,7 @@
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/agreement/deletebyid/'+agree_id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'agreement', response, 'Suppression de l\'accord avec '+univ_name+'.');
+            addAction(accountStore.account.acc_id, 'agreement', response, 'Suppression de l\'accord avec '+univ_name+'.');
         }
         fetchAccords();
     }
@@ -1442,7 +1442,7 @@
         }
         await request('POST', true, response, config.apiUrl+'api/departmentagreement', requestData);
         if(response.value.status == 201){
-            addAction(accountStore.login, 'agreement', response, `Ajout du département ${response.value.department?.dept_shortname || 'Inconnu'} à l'accord ${response.value.agreement?.university?.univ_name || 'Inconnu'} (${response.value.agreement?.partnercountry?.parco_name || 'Inconnu'}).`);
+            addAction(accountStore.account.acc_id, 'agreement', response, `Ajout du département ${response.value.department?.dept_shortname || 'Inconnu'} à l'accord ${response.value.agreement?.university?.univ_name || 'Inconnu'} (${response.value.agreement?.partnercountry?.parco_name || 'Inconnu'}).`);
         }
         fetchAccords();
     }

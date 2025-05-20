@@ -593,7 +593,7 @@ import { addAction } from '../../composables/actionType.js';
 
         await request("POST", true, response, config.apiUrl+'api/access', requestData);
         if(response.value.status == 201){
-            addAction(accountStore.login, 'access', response, 'Ajout de l\'access pour '+newAccess.value.login+'. (Accès de niveau '+ newAccess.value.access +')');
+            addAction(accountStore.account.acc_id, 'access', response, 'Ajout de l\'access pour '+newAccess.value.login+'. (Accès de niveau '+ newAccess.value.access +')');
         }
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
         resetInput();
@@ -602,11 +602,11 @@ import { addAction } from '../../composables/actionType.js';
         closeModal();
         const requestData = {
             acc_id: acc_id,
-            acc_id_action: accountStore.login
+            acc_id_action: accountStore.account.acc_id
         }
         await request('DELETE', true, response, config.apiUrl+'api/access/delete', requestData);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'access', response, 'Suppression de l\'access pour '+acc_id+'.');
+            addAction(accountStore.account.acc_id, 'access', response, 'Suppression de l\'access pour '+acc_id+'.');
         }
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
     }
@@ -622,7 +622,7 @@ import { addAction } from '../../composables/actionType.js';
         };
         await request("POST", true, response, config.apiUrl+'api/acceptedaccount', requestData);
         if(response.value.status == 201){
-            addAction(accountStore.login, 'access', response, 'Ajout de l\'autorisation pour l\'utilisateur '+requestData.acc_id+'.');
+            addAction(accountStore.account.acc_id, 'access', response, 'Ajout de l\'autorisation pour l\'utilisateur '+requestData.acc_id+'.');
         }
         await request('GET', false, accepted, config.apiUrl+'api/acceptedaccount');
         resetInput();
@@ -633,7 +633,7 @@ import { addAction } from '../../composables/actionType.js';
         }
         await request('DELETE', true, response, config.apiUrl+'api/acceptedaccount', requestData);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'access', response, 'Suppression de l\'autorisation pour l\'utilisateur '+acc_id+'.');
+            addAction(accountStore.account.acc_id, 'access', response, 'Suppression de l\'autorisation pour l\'utilisateur '+acc_id+'.');
         }
         await request('GET', false, accepted, config.apiUrl+'api/acceptedaccount');
         closeModal();
@@ -667,7 +667,7 @@ import { addAction } from '../../composables/actionType.js';
     async function removeDept(acc_id){
         await request('DELETE', true, response, config.apiUrl+'api/account/removedept/'+acc_id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'access', response, 'Suppression du département pour l\'access de '+acc_id+'.');
+            addAction(accountStore.account.acc_id, 'access', response, 'Suppression du département pour l\'access de '+acc_id+'.');
         }
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
     }
@@ -694,7 +694,7 @@ import { addAction } from '../../composables/actionType.js';
         showForms.value[acc_id] = false;
         await request('put', true, response, config.apiUrl+'api/account/changedept/'+acc_id+'/'+selectedDepartment.value[acc_id]);
         if(response.value.status == 200){
-            addAction(accountStore.login, 'access', response, 'Changement du département dans l\'access pour '+acc_id+' (Nouveau: '+ selectedDepartment.value[acc_id] +').');
+            addAction(accountStore.account.acc_id, 'access', response, 'Changement du département dans l\'access pour '+acc_id+' (Nouveau: '+ selectedDepartment.value[acc_id] +').');
         }
         await request('GET', false, access, config.apiUrl+'api/access/filtered');
     }
@@ -724,7 +724,7 @@ import { addAction } from '../../composables/actionType.js';
 
         await request("POST", true, response, config.apiUrl+'api/acceptedaccount/import', requestData);
         if (response.value && response.value.status === 201) {
-            addAction(accountStore.login, 'access', response, `Importation de ${response.value.added_accounts.length} étudiants.`);
+            addAction(accountStore.account.acc_id, 'access', response, `Importation de ${response.value.added_accounts.length} étudiants.`);
         }
         
         fetch();

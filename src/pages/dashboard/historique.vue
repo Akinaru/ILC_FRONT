@@ -227,7 +227,7 @@
   async function deleteHistory() {
     await request('DELETE', true, response, `${config.apiUrl}api/action`);
     if (response.value.status === 202) {
-      addAction(accountStore.login, 'admin', response, 'Suppression de l\'historique des actions.');
+      addAction(accountStore.account.acc_id, 'admin', response, 'Suppression de l\'historique des actions.');
     }
     fetchActions();
   }

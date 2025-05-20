@@ -205,7 +205,7 @@
     }
   
     const requestData = {
-      acc_id: accountStore.login,
+      acc_id: accountStore.account.acc_id,
       acc_studentnum: complDossier.value.ine,
       dept_id: complDossier.value.department,
       acc_amenagement: complDossier.value.amenagement,

@@ -389,7 +389,7 @@
                 v-if="files.choixCours.file != null"
                 @click="
                   saveFile(
-                    'choix_cours_' + accountStore.login,
+                    'choix_cours_' + accountStore.account.acc_id,
                     'documents/etu/choix_cours',
                     files.choixCours.file
                   )
@@ -559,7 +559,7 @@
                 v-if="files.contratPeda.file != null"
                 @click="
                   saveFile(
-                    'contrat_peda_' + accountStore.login,
+                    'contrat_peda_' + accountStore.account.acc_id,
                     'documents/etu/contrat_peda',
                     files.contratPeda.file
                   )
@@ -650,7 +650,7 @@
                 v-if="files.releveNote.file != null"
                 @click="
                   saveFile(
-                    'releve_note_' + accountStore.login,
+                    'releve_note_' + accountStore.account.acc_id,
                     'documents/etu/releve_note',
                     files.releveNote.file
                   )
@@ -1770,7 +1770,7 @@ async function modifTemoignage() {
   }
 
   const requestData = {
-    acc_id: accountStore.login,
+    acc_id: accountStore.account.acc_id,
     acc_temoignage: account.value.acc_temoignage,
   };
   await request(
@@ -1856,7 +1856,7 @@ async function confirmModifEtu() {
     "GET",
     false,
     account,
-    config.apiUrl + "api/account/getbylogin/" + accountStore.login
+    config.apiUrl + "api/account/getbylogin/" + accountStore.account.acc_id
   );
 }
 
@@ -1976,21 +1976,21 @@ async function fetch() {
     "GET",
     false,
     account,
-    config.apiUrl + "api/account/getbylogin/" + accountStore.login
+    config.apiUrl + "api/account/getbylogin/" + accountStore.account.acc_id
   );
   await request("GET", false, accords, config.apiUrl + "api/agreement/home/"+accountStore.account.acc_id);
   await request(
     "GET",
     false,
     favoris,
-    config.apiUrl + "api/favoris/getbylogin/" + accountStore.login
+    config.apiUrl + "api/favoris/getbylogin/" + accountStore.account.acc_id
   );
   await request("GET", false, admin, config.apiUrl + "api/admin");
   await request(
     "GET",
     false,
     destination,
-    config.apiUrl + "api/arbitrage/getbyid/" + accountStore.login
+    config.apiUrl + "api/arbitrage/getbyid/" + accountStore.account.acc_id
   );
   await request(
     "GET",
@@ -2022,7 +2022,7 @@ async function fetch() {
     response,
     config.apiUrl +
       "api/documents/checkexistperso/etu/choix_cours/" +
-      accountStore.login
+      accountStore.account.acc_id
   );
   if (response.value.status == 200) {
     myfiles.value.choixCours.exist = true;
@@ -2034,7 +2034,7 @@ async function fetch() {
     response,
     config.apiUrl +
       "api/documents/checkexistperso/etu/contrat_peda/" +
-      accountStore.login
+      accountStore.account.acc_id
   );
   if (response.value.status == 200) {
     myfiles.value.contratPeda.exist = true;
@@ -2046,7 +2046,7 @@ async function fetch() {
     response,
     config.apiUrl +
       "api/documents/checkexistperso/etu/releve_note/" +
-      accountStore.login
+      accountStore.account.acc_id
   );
   if (response.value.status == 200) {
     myfiles.value.releveNote.exist = true;
@@ -2156,7 +2156,7 @@ async function deleteFile(fileFolder, fileTitle, fileType) {
     "GET",
     true,
     response,
-    `${config.apiUrl}api/documents/deleteperso/${fileFolder}/${fileFolder}_${accountStore.login}`
+    `${config.apiUrl}api/documents/deleteperso/${fileFolder}/${fileFolder}_${accountStore.account.acc_id}`
   );
 
   if (response.value.status == 200) {
@@ -2259,7 +2259,7 @@ async function saveFile(title, folder, file) {
 
 async function deleteAccount() {
   const requestData = {
-    acc_id: accountStore.login,
+    acc_id: accountStore.account.acc_id,
   };
   await request(
     "DELETE",
@@ -2338,7 +2338,7 @@ function formatDate(dateString) {
 
 async function saveWishes() {
   const requestData = {
-    acc_id: accountStore.login,
+    acc_id: accountStore.account.acc_id,
     wsha_one: localVoeux.value[1] != null ? localVoeux.value[1].agree_id : null,
     wsha_two: localVoeux.value[2] != null ? localVoeux.value[2].agree_id : null,
     wsha_three:

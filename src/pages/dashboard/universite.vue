@@ -468,7 +468,7 @@ import { addAction } from '../../composables/actionType';
         };
         await request('PUT', true, response, config.apiUrl+'api/university', requestData);
         if(response.value.status == 200){
-            addAction(accountStore.login, 'university', response, 'Modification de l\'université '+requestData.univ_name+' (' + requestData.univ_city + ').');
+            addAction(accountStore.account.acc_id, 'university', response, 'Modification de l\'université '+requestData.univ_name+' (' + requestData.univ_city + ').');
         }
         fetchAll();
     }
@@ -519,7 +519,7 @@ import { addAction } from '../../composables/actionType';
             
             // Rafraîchir les données après l'ajout
             await fetchAll();
-            addAction(accountStore.login, 'university', response, 'Ajout de l\'université ' + requestData.univ_name + ' (' + requestData.univ_city + ').');
+            addAction(accountStore.account.acc_id, 'university', response, 'Ajout de l\'université ' + requestData.univ_name + ' (' + requestData.univ_city + ').');
         }
 
     }
@@ -528,7 +528,7 @@ import { addAction } from '../../composables/actionType';
     async function deleteUniv(univ_id, univ_name, univ_city){
         await request('DELETE', true, response, config.apiUrl+'api/university/deletebyid/'+univ_id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'university', response, 'Suppression de l\'université '+univ_name+' (' + univ_city + ').');
+            addAction(accountStore.account.acc_id, 'university', response, 'Suppression de l\'université '+univ_name+' (' + univ_city + ').');
         }
         fetchAll();
     }

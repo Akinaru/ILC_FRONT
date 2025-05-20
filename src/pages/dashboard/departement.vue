@@ -534,7 +534,7 @@ import { addAction } from '../../composables/actionType';
         
         await request("POST", true, response, config.apiUrl+'api/department', requestData);
         if(response.value.status == 201){
-            addAction(accountStore.login, 'department', response, 'Ajout du département '+newDep.value.shortname+'.');
+            addAction(accountStore.account.acc_id, 'department', response, 'Ajout du département '+newDep.value.shortname+'.');
         }
         await fetchAll();
         resetInput();
@@ -559,7 +559,7 @@ import { addAction } from '../../composables/actionType';
         
         await request("POST", true, response, config.apiUrl+'api/component', requestData);
         if(response.value.status == 201){
-            addAction(accountStore.login, 'department', response, 'Ajout de la composante '+newComp.value.shortname+'.');
+            addAction(accountStore.account.acc_id, 'department', response, 'Ajout de la composante '+newComp.value.shortname+'.');
         }
         await fetchAll();
         resetInput();
@@ -613,7 +613,7 @@ import { addAction } from '../../composables/actionType';
         };
         await request('PUT', true, response, config.apiUrl+'api/department', requestData);
         if(response.value.status == 200){
-            addAction(accountStore.login, 'department', response, 'Modification du département '+requestData.dept_shortname+'.');
+            addAction(accountStore.account.acc_id, 'department', response, 'Modification du département '+requestData.dept_shortname+'.');
         }
         fetchAll();
     }
@@ -633,7 +633,7 @@ import { addAction } from '../../composables/actionType';
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/department/deletebyid/'+id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'department', response, 'Suppression du département '+shortname+'.');
+            addAction(accountStore.account.acc_id, 'department', response, 'Suppression du département '+shortname+'.');
         }
         fetchAll();
     }

@@ -321,7 +321,7 @@ import { addAction } from '../../composables/actionType';
         };
         await request('PUT', true, response, config.apiUrl+'api/isced', requestData);
         if(response.value.status == 200){
-            addAction(accountStore.login, 'isced', response, 'Modification de l\'isced (' + requestData.isc_code + ') '+requestData.isc_name+'.');
+            addAction(accountStore.account.acc_id, 'isced', response, 'Modification de l\'isced (' + requestData.isc_code + ') '+requestData.isc_name+'.');
         }
         fetchAll();
     }
@@ -350,7 +350,7 @@ import { addAction } from '../../composables/actionType';
             
             // Rafraîchir les données après l'ajout
             await fetchAll();
-            addAction(accountStore.login, 'isced', response, 'Ajout de l\'isced (' + requestData.isc_code + ') '+requestData.isc_name+'.');
+            addAction(accountStore.account.acc_id, 'isced', response, 'Ajout de l\'isced (' + requestData.isc_code + ') '+requestData.isc_name+'.');
         }
 
     }
@@ -359,7 +359,7 @@ import { addAction } from '../../composables/actionType';
     async function deleteIsced(isc_id, isc_name, isc_code){
         await request('DELETE', true, response, config.apiUrl+'api/isced/deletebyid/'+isc_id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'isced', response, 'Suppression de l\'université (' + isc_code + ') '+isc_name+'.');
+            addAction(accountStore.account.acc_id, 'isced', response, 'Suppression de l\'université (' + isc_code + ') '+isc_name+'.');
         }
         fetchAll();
     }

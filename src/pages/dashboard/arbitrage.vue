@@ -1328,7 +1328,7 @@ async function saveArbitrage() {
     // Créer une entrée dans l'historique pour les changements
     for (const data of changes) {
       addAction(
-        accountStore.login,
+        accountStore.account.acc_id,
         "arbitrage",
         response,
         `Changement de l'arbitrage pour ${data.acc_id} sur l'accord ${data.agree_id} à la position ${data.arb_pos}.`
@@ -1338,7 +1338,7 @@ async function saveArbitrage() {
     // Créer une entrée dans l'historique pour les suppressions
     for (const data of removals) {
       addAction(
-        accountStore.login,
+        accountStore.account.acc_id,
         "arbitrage",
         response,
         `Suppression de l'arbitrage pour ${data.acc_id} (précédemment sur l'accord ${data.agree_id}).`

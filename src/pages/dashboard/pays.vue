@@ -361,7 +361,7 @@ import { addAction } from '../../composables/actionType';
         };
         await request('PUT', true, response, config.apiUrl+'api/partnercountry', requestData);
         if(response.value.status == 200){
-            addAction(accountStore.login, 'university', response, 'Modification du pays (' + requestData.parco_code + ') '+requestData.parco_name+'.');
+            addAction(accountStore.account.acc_id, 'university', response, 'Modification du pays (' + requestData.parco_code + ') '+requestData.parco_name+'.');
         }
         fetchAll();
     }
@@ -385,7 +385,7 @@ import { addAction } from '../../composables/actionType';
         await request("POST", true, response, config.apiUrl + 'api/partnercountry', requestData);
 
         if (response.value.status === 201) {
-            addAction(accountStore.login, 'university', response, 'Ajout du pays (' + requestData.parco_code + ') '+requestData.parco_name+'.');
+            addAction(accountStore.account.acc_id, 'university', response, 'Ajout du pays (' + requestData.parco_code + ') '+requestData.parco_name+'.');
             fetchAll();
         }
 
@@ -395,7 +395,7 @@ import { addAction } from '../../composables/actionType';
     async function deletePays(parco_id, parco_name, parco_code){
         await request('DELETE', true, response, config.apiUrl+'api/partnercountry/'+parco_id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'university', response, 'Suppression du pays (' + parco_code + ') '+parco_name+'.');
+            addAction(accountStore.account.acc_id, 'university', response, 'Suppression du pays (' + parco_code + ') '+parco_name+'.');
         }
         fetchAll();
     }

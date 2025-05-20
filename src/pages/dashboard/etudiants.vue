@@ -824,7 +824,7 @@ function extractDestinations() {
 }
 
     async function fetch() {
-        await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.login);
+        await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.account.acc_id);
         if (account.value.access != null && account.value.access.access.acs_accounttype == 1) {
             await request('GET', false, etudiants, config.apiUrl + 'api/account');
         } else if (account.value.access != null && account.value.department != null) {
@@ -862,7 +862,7 @@ function extractDestinations() {
         closeModal();
         await request('DELETE', true, response, config.apiUrl+'api/account/deletebyid/'+acc_id);
         if(response.value.status == 202){
-            addAction(accountStore.login, 'admin', response, 'Suppression de l\'étudiant '+acc_fullname+' (' + dept_shortname + ').');
+            addAction(accountStore.account.acc_id, 'admin', response, 'Suppression de l\'étudiant '+acc_fullname+' (' + dept_shortname + ').');
         }
         fetch();
     }

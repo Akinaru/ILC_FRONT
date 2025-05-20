@@ -548,7 +548,7 @@
               <span class="label-text font-medium">Département</span>
             </div>
             <select
-              :disabled="accountStore.access !== 1"
+              :disabled="!accountStore.isAdmin()"
               class="select select-bordered w-full" 
               v-model="modifCompte.dept_id">
               <template v-for="(compo, index) in components.components" :key="index">
@@ -563,7 +563,7 @@
                 </optgroup>
               </template>
             </select>
-            <div v-if="accountStore.access != 1" class="label">
+            <div v-if="!accountStore.isAdmin()" class="label">
               <span class="label-text-alt text-error">Seul les administrateurs peuvent modifier ce champ</span>
             </div>
           </label>
@@ -851,7 +851,7 @@
         if (response.value.status === 200) {
             
             // Rafraîchir les données après l'ajout
-            addAction(accountStore.login, 'admin', response, 'Modification des informations de '+ account.value.acc_fullname +'.');
+            addAction(accountStore.account.acc_id, 'admin', response, 'Modification des informations de '+ account.value.acc_fullname +'.');
         }
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
         resetModif();
@@ -877,7 +877,7 @@
         if (response.value.status === 200) {
             
             // Rafraîchir les données après l'ajout
-            addAction(accountStore.login, 'admin', response, 'Modification de la destination de '+ account.value.acc_fullname +'.');
+            addAction(accountStore.account.acc_id, 'admin', response, 'Modification de la destination de '+ account.value.acc_fullname +'.');
         }
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
         await nextTick();

@@ -175,7 +175,7 @@ import { addAction } from '../../composables/actionType';
             files.value.choixCours[deptId].file = null; // Réinitialiser le fichier spécifique
             files.value.contratPeda.file = null;
             
-            addAction(accountStore.login, 'admin', response, 'Modification du document: ' + folder + '/' + title + '.');
+            addAction(accountStore.account.acc_id, 'admin', response, 'Modification du document: ' + folder + '/' + title + '.');
         }
         
         fetch();

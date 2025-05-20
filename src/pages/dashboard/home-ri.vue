@@ -191,7 +191,7 @@ const backupSuccess = ref(false);
 async function fetch() {
   isLoaded.value = false;
   await request('GET', false, events, config.apiUrl + 'api/event');
-  await request('GET', false, actions, config.apiUrl + 'api/action/getfivebylogin/' + accountStore.login);
+  await request('GET', false, actions, config.apiUrl + 'api/action/getfivebylogin/' + accountStore.account.acc_id);
   await request('GET', false, admin, config.apiUrl + 'api/admin');
   modifDate.value = formatDateModif(admin.value.adm_datelimite);
   isLoaded.value = true;
