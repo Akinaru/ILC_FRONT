@@ -57,275 +57,294 @@
       </div>
   
       <!-- Liste des thématiques -->
-      <div class="card bg-base-200 shadow-xl mb-10">
-        <div class="card-body">
-          <h2 class="card-title text-xl font-bold">Liste des thématiques</h2>
-          
-          <div v-if="thematiques" class="flex flex-wrap gap-3 mt-4">
-            <div v-for="(them, index) in thematiques" :key="index" 
-                 class="flex items-center bg-base-300 rounded-lg shadow p-2 transition-all hover:shadow-md">
-              <span class="badge badge-warning badge-md mr-2">{{ them.evthm_name }}</span>
-              
-              <div class="flex space-x-1">
-                <!-- Bouton de modification -->
-                <label for="modal_modif_them" 
-                       class="btn btn-circle btn-ghost btn-xs" 
-                       @click="modifThematique(them)">
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                    <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                  </svg>
-                </label>
-                
-                <!-- Bouton de suppression -->
-                <button class="btn btn-circle btn-ghost btn-xs" @click="openConfirmModalThematique(them)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+      <div class="card bg-base-100 shadow-xl mt-8">
+  <div class="card-body">
+    <h2 class="card-title flex items-center gap-2 mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 4.75h.5a.75.75 0 0 1 .75.75v13a.75.75 0 0 1-.75.75h-.5A4.75 4.75 0 0 1 5 14.5V9.5A4.75 4.75 0 0 1 9.75 4.75zM14.75 4.75h.5A4.75 4.75 0 0 1 20 9.5v5a4.75 4.75 0 0 1-4.75 4.75h-.5a.75.75 0 0 1-.75-.75v-13a.75.75 0 0 1 .75-.75z" />
+      </svg>
+      Liste des thématiques ({{ thematiques.length }})
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-for="(them, index) in thematiques" :key="index" class="card bg-base-200 shadow-sm hover:shadow-md transition-shadow">
+        <div class="card-body p-4">
+          <div class="flex justify-between items-center">
+            <span class="badge badge-warning badge-lg">{{ them.evthm_name }}</span>
+            <div class="flex gap-1">
+              <label for="modal_modif_them" class="btn btn-circle btn-sm btn-ghost" @click="modifThematique(them)">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8"
+                    fill="none" stroke="currentColor" stroke-linecap="round"
+                    stroke-linejoin="round" stroke-width="2" />
+                  <polygon fill="none"
+                    points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8"
+                    stroke="currentColor" stroke-linecap="round"
+                    stroke-linejoin="round" stroke-width="2" />
+                </svg>
+              </label>
+              <button class="btn btn-circle btn-sm btn-ghost" @click="openConfirmModalThematique(them)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            
-            <!-- Ajout de thématique -->
-            <div v-if="addThematique.open" class="flex items-center bg-base-300 rounded-lg shadow p-2">
-              <input type="text" 
-                     class="input input-bordered input-sm mr-2"   
-                     v-model="addThematique.name" 
-                     placeholder="Nouvelle thématique" />
-              
-              <div class="flex space-x-1">
-                <button class="btn btn-circle btn-ghost btn-xs text-success" @click="ajouterThematique()">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </button>
-                
-                <button class="btn btn-circle btn-ghost btn-xs text-error" @click="addThematique.open = !addThematique.open">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            
-            <button v-if="!addThematique.open" 
-                    class="btn btn-sm btn-outline btn-primary" 
-                    @click="addThematique.open = !addThematique.open">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              Ajouter
-            </button>
           </div>
         </div>
       </div>
+
+      <div v-if="addThematique.open" class="card bg-base-200 shadow-sm">
+        <div class="card-body p-4">
+          <input type="text" class="input input-bordered input-sm w-full mb-3"
+            v-model="addThematique.name" placeholder="Nouvelle thématique" />
+          <div class="flex justify-end gap-2">
+            <button class="btn btn-sm " @click="addThematique.open = false">Annuler</button>
+            <button class="btn btn-sm btn-primary" @click="ajouterThematique()">Ajouter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="!addThematique.open" class="mt-4">
+      <button class="btn btn-sm btn-outline btn-primary" @click="addThematique.open = true">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Ajouter une thématique
+      </button>
+    </div>
+  </div>
+</div>
   
       <!-- Liste des événements -->
-      <div class="card bg-base-200 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title text-xl font-bold">Liste des évènements</h2>
-          
-          <div v-if="evenements && evenements.events" class="mt-4">
-            <div v-if="evenements.count > 0" class="space-y-4">
-              <div v-for="(event, index) in evenements.events" :key="index" 
-                   class="card bg-base-100 shadow-md hover:shadow-lg transition-all">
-                <div class="flex flex-col md:flex-row">
-                  <!-- Détails de l'événement -->
-                  <RouterLink class="flex-1 card-body" :to="{name: 'EvenementDetail', params: {evt_id: event.evt_id}}">
-                    <div class="flex flex-col space-y-3">
-                      <!-- En-tête: date, titre et thématique -->
-                      <div>
-                        <h3 class="card-title mb-1">
-                          <span :class="getBadgeClass(event.evt_datetime)" class="badge badge-md mr-2">
-                            {{ formatDate(event.evt_datetime) }}
-                          </span>
-                          {{ event.evt_name }}
-                        </h3>
-                        
-                        <!-- Badge thématique -->
-                        <div class="mt-1">
-                          <span v-if="event.theme" class="badge badge-warning badge-md">
-                            {{ event.theme.evthm_name }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </RouterLink>
-                  
-                  <!-- Actions -->
-                  <div class="flex md:flex-col justify-end border-t md:border-t-0 md:border-l border-base-300">
-                    <!-- Bouton de modification -->
-                    <label for="modal_modif" 
-                           class="btn btn-ghost btn-md flex-1 rounded-none" 
-                           @click="modifEvent(event)">
-                      <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                        <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                      </svg>
-                    </label>
-                    
-                    <!-- Bouton de suppression -->
-                    <button class="btn btn-ghost btn-md flex-1 rounded-none text-error" 
-                            @click="openConfirmModalEvenement(event)">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
+      <div class="card bg-base-100 shadow-xl mt-8">
+  <div class="card-body">
+    <h2 class="card-title flex items-center gap-2 mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 4h10M5 11h14M5 15h14M5 19h14" />
+      </svg>
+      Liste des évènements ({{ evenements.count || 0 }})
+    </h2>
+
+    <div v-if="evenements && evenements.events">
+      <div v-if="evenements.count > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-for="(event, index) in evenements.events" :key="index" class="card bg-base-200 shadow-sm hover:shadow-md transition-shadow">
+          <div class="card-body p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-bold text-lg">
+                  <div
+  class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mr-2"
+  :class="joursRestants(event.evt_datetime) < 0 
+    ? 'bg-red-100 text-red-800 border border-red-300' 
+    : 'bg-green-100 text-green-800 border border-green-300'"
+>
+  <svg
+    v-if="joursRestants(event.evt_datetime) < 0"
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-4 w-4 text-red-500"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+  <svg
+    v-else
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-4 w-4 text-green-500"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+  </svg>
+  {{ getJoursRestants(event.evt_datetime) }}
+</div>
+                  {{ event.evt_name }}
+                </h3>
+                <div class="badge badge-warning mt-1" v-if="event.theme">
+                  {{ event.theme.evthm_name }}
                 </div>
               </div>
+              <div class="flex gap-1">
+                <label for="modal_modif" class="btn btn-circle btn-sm btn-ghost" @click="modifEvent(event)">
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8"
+                      fill="none" stroke="currentColor" stroke-linecap="round"
+                      stroke-linejoin="round" stroke-width="2" />
+                    <polygon fill="none"
+                      points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8"
+                      stroke="currentColor" stroke-linecap="round"
+                      stroke-linejoin="round" stroke-width="2" />
+                  </svg>
+                </label>
+                <button class="btn btn-circle btn-sm btn-ghost text-error" @click="openConfirmModalEvenement(event)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
-            
-            <div v-else class="alert alert-info mt-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <span>Aucun évènement trouvé.</span>
-            </div>
-          </div>
-          
-          <!-- Loader -->
-          <div v-else class="flex justify-center py-16">
-            <span class="loading loading-dots loading-lg"></span>
+            <RouterLink :to="{ name: 'EvenementDetail', params: { evt_id: event.evt_id } }"
+              class="text-sm text-primary hover:underline mt-2 inline-block">Voir les détails</RouterLink>
           </div>
         </div>
       </div>
+      <div v-else class="alert alert-info mt-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Aucun évènement trouvé.</span>
+      </div>
+    </div>
+
+    <div v-else class="flex justify-center py-16">
+      <span class="loading loading-dots loading-lg"></span>
+    </div>
+  </div>
+</div>
 
       <div>
         <!-- Modal de modification d'événement -->
         <Teleport to="body">
-  <input type="checkbox" id="modal_modif" class="modal-toggle" />
-  <div class="modal" role="dialog">
-    <div class="modal-box max-w-2xl rounded-2xl border border-base-300 shadow-xl">
-      <h3 class="text-xl font-bold">Modification de l'événement {{ currentEventModif.evt_id }}</h3>
-      <p class="text-sm text-base-content/70 mt-2">Mettez à jour les informations de cet événement à venir ou passé.</p>
-      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+          <input type="checkbox" id="modal_modif" class="modal-toggle" />
+          <div class="modal" role="dialog">
+            <div class="modal-box max-w-2xl rounded-2xl border border-base-300 shadow-xl">
+              <h3 class="text-xl font-bold">Modification de l'événement {{ currentEventModif.evt_id }}</h3>
+              <p class="text-sm text-base-content/70 mt-2">Mettez à jour les informations de cet événement à venir ou passé.</p>
+              <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
 
-      <form @submit.prevent="confirmModifEvent" class="space-y-4">
-        <div class="form-control">
-          <label class="label"><span class="label-text">Titre</span></label>
-          <input type="text" class="input input-bordered w-full" v-model="currentEventModif.evt_name" />
-        </div>
+              <form @submit.prevent="confirmModifEvent" class="space-y-4">
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Titre</span></label>
+                  <input type="text" class="input input-bordered w-full" v-model="currentEventModif.evt_name" />
+                </div>
 
-        <div class="form-control">
-          <label class="label"><span class="label-text">Thématique</span></label>
-          <select class="select select-bordered w-full" v-model="currentEventModif.evthm_id">
-            <option disabled value="">Sélectionnez une thématique</option>
-            <option v-for="(theme, index) in thematiques" :key="index" :value="theme.evthm_id">{{ theme.evthm_name }}</option>
-          </select>
-        </div>
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Thématique</span></label>
+                  <select class="select select-bordered w-full" v-model="currentEventModif.evthm_id">
+                    <option disabled value="">Sélectionnez une thématique</option>
+                    <option v-for="(theme, index) in thematiques" :key="index" :value="theme.evthm_id">{{ theme.evthm_name }}</option>
+                  </select>
+                </div>
 
-        <div class="form-control">
-          <label class="label"><span class="label-text">Date</span></label>
-          <input type="date" class="input input-bordered w-full" v-model="currentEventModif.evt_datetime" />
-        </div>
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Date</span></label>
+                  <input type="date" class="input input-bordered w-full" v-model="currentEventModif.evt_datetime" />
+                </div>
 
-        <div class="form-control">
-          <label class="label"><span class="label-text">Description</span></label>
-          <textarea class="textarea textarea-bordered h-64" v-model="currentEventModif.evt_description"></textarea>
-        </div>
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Description</span></label>
+                  <textarea class="textarea textarea-bordered h-64" v-model="currentEventModif.evt_description"></textarea>
+                </div>
 
-        <div class="modal-action mt-6">
-          <label for="modal_modif" class="btn btn-ghost">Annuler</label>
-          <button type="submit">
-            <label for="modal_modif" class="btn btn-primary">Modifier</label>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</Teleport>
+                <div class="modal-action mt-6">
+                  <label for="modal_modif" class="btn btn-ghost">Annuler</label>
+                  <button type="submit">
+                    <label for="modal_modif" class="btn btn-primary">Modifier</label>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </Teleport>
 
   
         <!-- Modal de modification de thématique -->
         <Teleport to="body">
-  <input type="checkbox" id="modal_modif_them" class="modal-toggle" />
-  <div class="modal" role="dialog">
-    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
-      <h3 class="text-xl font-bold">Modification de la thématique {{ currentThematiqueModif.evthm_id }}</h3>
-      <p class="text-sm text-base-content/70 mt-2">Modifiez le nom et l'aperçu visuel de la thématique.</p>
-      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+          <input type="checkbox" id="modal_modif_them" class="modal-toggle" />
+          <div class="modal" role="dialog">
+            <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+              <h3 class="text-xl font-bold">Modification de la thématique {{ currentThematiqueModif.evthm_id }}</h3>
+              <p class="text-sm text-base-content/70 mt-2">Modifiez le nom et l'aperçu visuel de la thématique.</p>
+              <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
 
-      <form @submit.prevent="confirmModifThematique" class="space-y-4">
-        <div class="form-control">
-          <label class="label"><span class="label-text">Nom</span></label>
-          <input type="text" class="input input-bordered w-full" v-model="currentThematiqueModif.evthm_name" />
-        </div>
+              <form @submit.prevent="confirmModifThematique" class="space-y-4">
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Nom</span></label>
+                  <input type="text" class="input input-bordered w-full" v-model="currentThematiqueModif.evthm_name" />
+                </div>
 
-        <div class="mt-2">
-          <span class="badge badge-warning badge-lg">{{ currentThematiqueModif.evthm_name || 'Aperçu de la thématique' }}</span>
-        </div>
+                <div class="mt-2">
+                  <span class="badge badge-warning badge-lg">{{ currentThematiqueModif.evthm_name || 'Aperçu de la thématique' }}</span>
+                </div>
 
-        <div class="modal-action mt-6">
-          <label for="modal_modif_them" class="btn btn-ghost">Annuler</label>
-          <button type="submit">
-            <label for="modal_modif_them" class="btn btn-primary">Modifier</label>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</Teleport>
+                <div class="modal-action mt-6">
+                  <label for="modal_modif_them" class="btn btn-ghost">Annuler</label>
+                  <button type="submit">
+                    <label for="modal_modif_them" class="btn btn-primary">Modifier</label>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </Teleport>
 
   
         <!-- Modal de confirmation suppression thématique -->
         <Teleport to="body">
-  <dialog id="confirmModalThematique" ref="confirmModalThematique" class="modal">
-    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
-      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
-      <p class="text-sm text-base-content/70 mt-2">
-        {{ confirmDeleteThematique.canDelete
-            ? 'Supprimez cette thématique si elle n’est liée à aucun événement.'
-            : 'Cette thématique est utilisée par au moins un événement et ne peut pas être supprimée.' }}
-      </p>
-      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+          <dialog id="confirmModalThematique" ref="confirmModalThematique" class="modal">
+            <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+              <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+              <p class="text-sm text-base-content/70 mt-2">
+                {{ confirmDeleteThematique.canDelete
+                    ? 'Supprimez cette thématique si elle n’est liée à aucun événement.'
+                    : 'Cette thématique est utilisée par au moins un événement et ne peut pas être supprimée.' }}
+              </p>
+              <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-      <div class="mt-3">
-        <span class="badge badge-warning badge-lg">{{ confirmDeleteThematique.evthm_name }}</span>
-      </div>
+              <div class="mt-3">
+                <span class="badge badge-warning badge-lg">{{ confirmDeleteThematique.evthm_name }}</span>
+              </div>
 
-      <div class="modal-action mt-6">
-        <button class="btn btn-ghost" @click="closeModal">Fermer</button>
-        <button v-if="confirmDeleteThematique.canDelete"
-                class="btn btn-error"
-                @click="removeThematique(confirmDeleteThematique.evthm_name, confirmDeleteThematique.evthm_id)">
-          Supprimer
-        </button>
-      </div>
-    </div>
-  </dialog>
-</Teleport>
+              <div class="modal-action mt-6">
+                <button class="btn btn-ghost" @click="closeModal">Fermer</button>
+                <button v-if="confirmDeleteThematique.canDelete"
+                        class="btn btn-error"
+                        @click="removeThematique(confirmDeleteThematique.evthm_name, confirmDeleteThematique.evthm_id)">
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </dialog>
+        </Teleport>
 
   
         <!-- Modal de confirmation suppression événement -->
         <Teleport to="body">
-  <dialog id="confirmModalEvenement" ref="confirmModalEvenement" class="modal">
-    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
-      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
-      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera définitivement l'événement sélectionné.</p>
-      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+          <dialog id="confirmModalEvenement" ref="confirmModalEvenement" class="modal">
+            <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+              <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+              <p class="text-sm text-base-content/70 mt-2">Cette action supprimera définitivement l'événement sélectionné.</p>
+              <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-      <div class="card bg-base-300 p-4 mt-3">
-        <div class="mb-2">
-          <span :class="getBadgeClass(confirmDeleteEvenement.evt_datetime)" class="badge badge-md mr-2">
-            {{ formatDate(confirmDeleteEvenement.evt_datetime) }}
-          </span>
-          <span v-if="confirmDeleteEvenement.theme" class="badge badge-warning badge-md">
-            {{ confirmDeleteEvenement.theme.evthm_name }}
-          </span>
-        </div>
-        <h4 class="font-bold text-lg">{{ confirmDeleteEvenement.evt_name }}</h4>
-      </div>
+              <div class="card bg-base-300 p-4 mt-3">
+                <div class="mb-2">
+                  <span :class="getBadgeClass(confirmDeleteEvenement.evt_datetime)" class="badge badge-md mr-2">
+                    {{ formatDate(confirmDeleteEvenement.evt_datetime) }}
+                  </span>
+                  <span v-if="confirmDeleteEvenement.theme" class="badge badge-warning badge-md">
+                    {{ confirmDeleteEvenement.theme.evthm_name }}
+                  </span>
+                </div>
+                <h4 class="font-bold text-lg">{{ confirmDeleteEvenement.evt_name }}</h4>
+              </div>
 
-      <div class="modal-action mt-6">
-        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-        <button class="btn btn-error" @click="removeEvent(confirmDeleteEvenement.evt_name, confirmDeleteEvenement.evt_id)">
-          Supprimer
-        </button>
-      </div>
-    </div>
-  </dialog>
-</Teleport>
+              <div class="modal-action mt-6">
+                <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                <button class="btn btn-error" @click="removeEvent(confirmDeleteEvenement.evt_name, confirmDeleteEvenement.evt_id)">
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </dialog>
+        </Teleport>
 
       </div>
     </div>
@@ -475,6 +494,34 @@ import { addAction } from '../../composables/actionType';
         await fetchAll();
     }
 
+    function getJoursRestants(date){
+  if(joursRestants(date) == 0){
+    return "aujourd'hui";
+  }
+  else if(joursRestants(date) == 1){
+    return 'demain';
+  }
+  else if(joursRestants(date) < 0){
+    return 'il y a '+(-joursRestants(date)) + ' jour' + (-joursRestants(date) > 1 ? 's' : '');
+  }
+  return '('+ joursRestants(date) +' jours restants)';
+}
+
+function joursRestants(date) {
+  const dateLimite = new Date(date);
+  const currentDate = new Date();
+  const timeDifference = dateLimite - currentDate;
+  const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  return daysRemaining;
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
 
     
     // Gestion de la modification d'evenement
@@ -537,13 +584,6 @@ import { addAction } from '../../composables/actionType';
         newEvent.value.thematique = document.querySelector('.select').options[0].value;
     }
 
-    function formatDate(dateTime) {
-        const date = new Date(dateTime);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont de 0 à 11
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
     function getBadgeClass(dateTime) {
         const eventDate = new Date(dateTime);
         const now = new Date();

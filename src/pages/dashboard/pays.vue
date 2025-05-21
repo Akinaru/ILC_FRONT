@@ -213,60 +213,60 @@
   
         <!-- MODAL CONFIRMATION SUPPRESSION -->
         <Teleport to="body">
-  <dialog id="confirmModal" ref="confirmModal" class="modal">
-    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeletePays">
-      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
-      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera le pays ainsi que tous les accords et universités liés.</p>
-      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+          <dialog id="confirmModal" ref="confirmModal" class="modal">
+            <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeletePays">
+              <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+              <p class="text-sm text-base-content/70 mt-2">Cette action supprimera le pays ainsi que tous les accords et universités liés.</p>
+              <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-      <div class="bg-base-200 p-4 rounded-lg flex items-center gap-3">
-        <div class="relative inline-block">
-          <span class="fi text-4xl" :class="'fi-' + (confirmDeletePays?.parco_code || '')"></span>
-          <span v-if="!confirmDeletePays?.parco_code"
-                class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full">?</span>
-        </div>
-        <div>
-          <h4 class="font-bold text-lg">{{ confirmDeletePays.parco_name }}</h4>
-          <div class="badge badge-outline">{{ confirmDeletePays?.parco_code?.toUpperCase() || '' }}</div>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <h4 class="font-bold mb-2">Universités liées ({{ filteredUniveristy.length }})</h4>
-        <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
-          <div v-if="filteredUniveristy.length > 0">
-            <div v-for="(univ, index) in filteredUniveristy" :key="index"
-                 class="border-b last:border-b-0 border-base-300 p-3">
-              <div class="flex items-center gap-3">
-                <span class="fi text-xl" :class="'fi-'+ getCountryCode(univ.partnercountry.parco_name)"></span>
+              <div class="bg-base-200 p-4 rounded-lg flex items-center gap-3">
+                <div class="relative inline-block">
+                  <span class="fi text-4xl" :class="'fi-' + (confirmDeletePays?.parco_code || '')"></span>
+                  <span v-if="!confirmDeletePays?.parco_code"
+                        class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full">?</span>
+                </div>
                 <div>
-                  <p class="font-semibold">{{ univ.univ_name ?? 'Université non spécifiée' }}</p>
-                  <p class="text-sm opacity-70">{{ univ.univ_city ?? 'Ville non spécifiée' }}</p>
+                  <h4 class="font-bold text-lg">{{ confirmDeletePays.parco_name }}</h4>
+                  <div class="badge badge-outline">{{ confirmDeletePays?.parco_code?.toUpperCase() || '' }}</div>
                 </div>
               </div>
+
+              <div class="mt-6">
+                <h4 class="font-bold mb-2">Universités liées ({{ filteredUniveristy.length }})</h4>
+                <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
+                  <div v-if="filteredUniveristy.length > 0">
+                    <div v-for="(univ, index) in filteredUniveristy" :key="index"
+                        class="border-b last:border-b-0 border-base-300 p-3">
+                      <div class="flex items-center gap-3">
+                        <span class="fi text-xl" :class="'fi-'+ getCountryCode(univ.partnercountry.parco_name)"></span>
+                        <div>
+                          <p class="font-semibold">{{ univ.univ_name ?? 'Université non spécifiée' }}</p>
+                          <p class="text-sm opacity-70">{{ univ.univ_city ?? 'Ville non spécifiée' }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else class="p-4 text-center opacity-70">
+                    Aucune université liée à ce pays
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-action mt-6">
+                <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                <button class="btn btn-error"
+                        @click="deletePays(confirmDeletePays.parco_id, confirmDeletePays.parco_name, confirmDeletePays.parco_code)">
+                  Supprimer
+                </button>
+              </div>
             </div>
-          </div>
-          <div v-else class="p-4 text-center opacity-70">
-            Aucune université liée à ce pays
-          </div>
-        </div>
-      </div>
+          </dialog>
+        </Teleport>
 
-      <div class="modal-action mt-6">
-        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-        <button class="btn btn-error"
-                @click="deletePays(confirmDeletePays.parco_id, confirmDeletePays.parco_name, confirmDeletePays.parco_code)">
-          Supprimer
-        </button>
-      </div>
     </div>
-  </dialog>
-</Teleport>
-
-      </div>
-      <LoadingComp v-else></LoadingComp>
-    </div>
-  </template>
+    <LoadingComp v-else></LoadingComp>
+  </div>
+</template>
 
 <script setup>
     import { ref, onMounted, computed, nextTick } from 'vue';
