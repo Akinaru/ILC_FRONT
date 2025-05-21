@@ -10,18 +10,7 @@ export async function authLogAccount(login, router) {
     await request('PUT', false, response, config.apiUrl+'api/account/login/'+login)
     
     var requestData = {
-        acc_id: response.value.acc_id,
-        acc_fullname: response.value.acc_fullname,
-        acc_lastlogin: response.value.acc_lastlogin,
-        acc_validateacc: response.value.acc_validateacc,
-        role: response.value.role,
         account: response.value
-    };
-    if(response.value.access.count == 1){
-        requestData.acc_access = response.value.access.access.acs_accounttype;
-    }
-    else{
-        requestData.acc_access = 0;
     }
     await authStoreUser(requestData);
     router.push({ name: 'Dashboard' });
@@ -58,17 +47,9 @@ export async function authRegisterAccount(login, router) {
 
         if (response.value.status && response.value.status === 201) {
             const userData = {
-                acc_id: response.value.account.acc_id,
-                acc_fullname: response.value.account.acc_fullname,
-                acc_lastlogin: response.value.account.acc_lastlogin,
-                acc_validateacc: response.value.account.acc_validateacc,
-                acc_access: response.value.access,
-                role: response.value.account.role,
                 account: response.value.account
             };
-
             localStorage.setItem('token', response.value.token);
-
             await authStoreUser(userData);
             router.push({ name: 'Dashboard' });
         }

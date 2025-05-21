@@ -21,7 +21,6 @@ const requireAccess = (accessLevel) => (to, from, next) => {
 function checkMultipleAccess(...levels) {
     return (to, from, next) => {
         const accountStore = useAccountStore();
-  
       if (levels.some(level => accountStore.getAccessLevel() >= level)) {
         next();
       } else {
@@ -244,12 +243,7 @@ router.beforeEach(async (to, from, next) => {
 
             if (account.value) {
                 const patchedValues = {
-                    login: account.value.acc_id,
-                    fullname: account.value.acc_fullname,
                     logged: true,
-                    last_login: new Date().toISOString(),
-                    access: account.value.access.access ? account.value.access.access.acs_accounttype : 0,
-                    acc_validateacc: account.value.acc_validateacc,
                     account: account.value
                 };
                 accountStore.$patch(patchedValues);
