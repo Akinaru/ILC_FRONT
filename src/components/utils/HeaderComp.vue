@@ -73,8 +73,17 @@
                   <div  class="px-4 py-2 text-sm">
 
                     <div v-if="accountStore.isStudent() && accountStore.account?.acc_validateacc" class="text-xs text-base-content/70">Profil complété: <span class="badge badge-sm">{{ accountStore.account.acc_validateacc ? '✅' : '❌' }}</span></div>
-                    <div v-if="accountStore.isStudent() && accountStore.account?.wishes?.count" class="text-xs text-base-content/70">Temps restant: <span class="badge badge-sm">Bientôt</span></div>
-                    <div v-if="accountStore.isStudent() && accountStore.account?.wishes?.count" class="text-xs text-base-content/70">Nombre de voeux: <span class="badge badge-sm">{{ accountStore.account.wishes.count }}</span></div>
+                    <div v-if="accountStore.isStudent()" class="text-xs text-base-content/70">
+                      Date limite :
+                      <span 
+                        class="badge badge-sm" 
+                        :class="joursRestants(accountStore.account.datelimite) < 0 
+                          ? 'bg-red-100 text-red-800 border border-red-300' 
+                          : 'bg-green-100 text-green-800 border border-green-300'">
+                        {{ getJoursRestants(accountStore.account.datelimite) }}
+                      </span>
+                    </div>
+                    <div v-if="accountStore.isStudent()" class="text-xs text-base-content/70">Nombre de voeux: <span class="badge badge-sm">{{ accountStore.account.wishes.count }}</span></div>
                     <div v-if="accountStore.isStudent() && accountStore.account?.favoris?.count" class="text-xs text-base-content/70">Nombre de favoris: <span class="badge badge-sm">{{ accountStore.account.favoris.count }}</span></div>
 
                     <div v-if="(accountStore.isAdmin() || accountStore.isChefDept()) && accountStore.account?.metrics?.students" class="text-xs text-base-content/70">Nombre d'étudiants: <span class="badge badge-sm">{{ accountStore.account.metrics.students }}</span></div>
@@ -219,6 +228,35 @@ function profil() {
   router.push({ name: 'Dashboard' });
 
   closeMenu();
+}
+
+function getJoursRestants(date){
+  if(joursRestants(date) == 0){
+    return "aujourd'hui";
+  }
+  else if(joursRestants(date) == 1){
+    return 'demain';
+  }
+  else if(joursRestants(date) < 0){
+    return 'il y a '+(-joursRestants(date)) + ' jour' + (-joursRestants(date) > 1 ? 's' : '');
+  }
+  return ''+ joursRestants(date) +' jours restants';
+}
+
+function joursRestants(date) {
+  const dateLimite = new Date(date);
+  const currentDate = new Date();
+  const timeDifference = dateLimite - currentDate;
+  const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  return daysRemaining;
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
 }
 
 function goToPage(route) {

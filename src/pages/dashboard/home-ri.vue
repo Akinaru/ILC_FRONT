@@ -43,98 +43,15 @@
                   <span class="mr-2">🌱</span> Date limite - Printemps
                 </h3>
                 <div class="flex flex-col items-center justify-center h-28">
-                  <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite) }}</div>
-                  <div
-  class="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
-  :class="joursRestants(admin.adm_datelimite) < 0 
-    ? 'bg-red-100 text-red-800 border border-red-300' 
-    : 'bg-green-100 text-green-800 border border-green-300'"
->
-  <svg
-    v-if="joursRestants(admin.adm_datelimite) < 0"
-    xmlns="http://www.w3.org/2000/svg"
-    class="h-4 w-4 text-red-500"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-  </svg>
-  <svg
-    v-else
-    xmlns="http://www.w3.org/2000/svg"
-    class="h-4 w-4 text-green-500"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-  </svg>
-  {{ getJoursRestants(admin.adm_datelimite) }}
-</div>
-                  <label for="modal_date_printemps" class="btn btn-sm btn-primary mt-3 gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                    Modifier
-                  </label>
-                </div>
-
-                <!-- Modal modification date printemps -->
-                <Teleport to="body">
-                <input type="checkbox" id="modal_date_printemps" class="modal-toggle" />
-                <div class="modal" role="dialog">
-                  <div class="modal-box rounded-2xl shadow-xl border border-base-300">
-                    <!-- Titre avec icône -->
-                    <h3 class="text-xl font-bold flex items-center gap-2">
-                      Modification date limite - Printemps
-                    </h3>
-
-                    <!-- Description -->
-                    <p class="text-sm text-base-content/70 mt-2">
-                      Choisissez une nouvelle date limite pour les candidatures du semestre de printemps.
-                    </p>
-
-                    <!-- Séparateur décoratif -->
-                    <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
-
-                    <!-- Formulaire -->
-                    <form @submit.prevent="confirmModifDate" class="w-full space-y-4">
-                      <div class="form-control">
-                        <label class="label">
-                          <span class="label-text">Nouvelle date limite</span>
-                        </label>
-                        <input type="date" v-model="modifDate" class="input input-bordered w-full" />
-                      </div>
-
-                      <div class="modal-action mt-6">
-                        <label for="modal_date_printemps" class="btn btn-ghost">Annuler</label>
-                        <button type="submit">
-                          <label for="modal_date_printemps" class="btn btn-primary">Valider</label>
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-                </Teleport>
-
-              </div>
-
-              <!-- Date limite des voeux - Automne -->
-              <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-lg p-5 transition-all hover:shadow-md">
-                <h3 class="text-lg font-medium mb-3 flex items-center">
-                  <span class="mr-2">🍂</span> Date limite - Automne
-                </h3>
-                <div class="flex flex-col items-center justify-center h-28">
-                  <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite) }}</div>
+                  <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite_printemps) }}</div>
                   <div
                     class="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
-                    :class="joursRestants(admin.adm_datelimite) < 0 
+                    :class="joursRestants(admin.adm_datelimite_printemps) < 0 
                       ? 'bg-red-100 text-red-800 border border-red-300' 
                       : 'bg-green-100 text-green-800 border border-green-300'"
                   >
                     <svg
-                      v-if="joursRestants(admin.adm_datelimite) < 0"
+                      v-if="joursRestants(admin.adm_datelimite_printemps) < 0"
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-4 w-4 text-red-500"
                       fill="none"
@@ -153,7 +70,92 @@
                     >
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    {{ getJoursRestants(admin.adm_datelimite) }}
+                    {{ getJoursRestants(admin.adm_datelimite_printemps) }}
+                  </div>
+                  <label for="modal_date_printemps" class="btn btn-sm btn-primary mt-3 gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    Modifier
+                  </label>
+                </div>
+
+                <!-- Modal modification date printemps -->
+                <Teleport to="body">
+                  <input type="checkbox" id="modal_date_printemps" class="modal-toggle" />
+                  <div class="modal" role="dialog">
+                    <div class="modal-box max-w-md rounded-2xl shadow-xl border border-base-300">
+                      
+                      <!-- Titre -->
+                      <h3 class="text-xl font-bold text-primary">
+                        Modification de la date limite – Printemps
+                      </h3>
+
+                      <!-- Description -->
+                      <p class="text-sm text-base-content/70 mt-2">
+                        Définissez une nouvelle date limite pour les candidatures du semestre de printemps.
+                      </p>
+
+                      <!-- Séparateur -->
+                      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+                      <!-- Formulaire -->
+                      <form @submit.prevent="confirmModifDate('printemps')" class="space-y-4">
+                        <label class="form-control w-full">
+                          <div class="label">
+                            <span class="label-text font-medium">Nouvelle date</span>
+                          </div>
+                          <input type="date" v-model="modifDatePrintemps" class="input input-bordered w-full" />
+                        </label>
+
+                        <!-- Actions -->
+                        <div class="modal-action">
+                          <label for="modal_date_printemps" class="btn btn-ghost">Annuler</label>
+                          <button type="submit">
+                            <label for="modal_date_printemps" class="btn btn-primary">Valider</label>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </Teleport>
+
+              </div>
+
+              <!-- Date limite des voeux - Automne -->
+              <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-lg p-5 transition-all hover:shadow-md">
+                <h3 class="text-lg font-medium mb-3 flex items-center">
+                  <span class="mr-2">🍂</span> Date limite - Automne
+                </h3>
+                <div class="flex flex-col items-center justify-center h-28">
+                  <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite_automne) }}</div>
+                  <div
+                    class="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
+                    :class="joursRestants(admin.adm_datelimite_automne) < 0 
+                      ? 'bg-red-100 text-red-800 border border-red-300' 
+                      : 'bg-green-100 text-green-800 border border-green-300'"
+                  >
+                    <svg
+                      v-if="joursRestants(admin.adm_datelimite_automne) < 0"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4 text-red-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <svg
+                      v-else
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {{ getJoursRestants(admin.adm_datelimite_automne) }}
                   </div>
                   <label for="modal_date_automne" class="btn btn-sm btn-primary mt-3 gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,21 +166,44 @@
                 </div>
 
                 <!-- Modal modification date automne -->
-                <input type="checkbox" id="modal_date_automne" class="modal-toggle" />
-                <div class="modal" role="dialog">
-                  <div class="modal-box">
-                    <h3 class="font-bold text-lg">Modification date limite - Automne</h3>
-                    <form @submit.prevent="confirmModifDate" class="w-full">
-                      <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
-                      <div class="modal-action">
-                        <button type="submit">
-                          <label for="modal_date_automne" class="btn btn-success">Valider</label>
-                        </button>
-                        <label for="modal_date_automne" class="btn">Annuler</label>
-                      </div>
-                    </form>
+                <Teleport to="body">
+                  <input type="checkbox" id="modal_date_automne" class="modal-toggle" />
+                  <div class="modal" role="dialog">
+                    <div class="modal-box max-w-md rounded-2xl shadow-xl border border-base-300">
+                      
+                      <!-- Titre -->
+                      <h3 class="text-xl font-bold text-primary">
+                        Modification de la date limite – Automne
+                      </h3>
+
+                      <!-- Description -->
+                      <p class="text-sm text-base-content/70 mt-2">
+                        Définissez une nouvelle date limite pour les candidatures du semestre d'automne.
+                      </p>
+
+                      <!-- Séparateur -->
+                      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+                      <!-- Formulaire -->
+                      <form @submit.prevent="confirmModifDate('automne')" class="space-y-4">
+                        <label class="form-control w-full">
+                          <div class="label">
+                            <span class="label-text font-medium">Nouvelle date</span>
+                          </div>
+                          <input type="date" v-model="modifDateAutomne" class="input input-bordered w-full" />
+                        </label>
+
+                        <!-- Actions -->
+                        <div class="modal-action">
+                          <label for="modal_date_automne" class="btn btn-ghost">Annuler</label>
+                          <button type="submit">
+                            <label for="modal_date_automne" class="btn btn-primary">Valider</label>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
                   </div>
-                </div>
+                </Teleport>
               </div>
             </div>
 
@@ -255,7 +280,8 @@ const events = ref([]);
 const actions = ref([]);
 const admin = ref([]);
 const isLoaded = ref(false);
-const modifDate = ref(null);
+const modifDatePrintemps = ref(null);
+const modifDateAutomne = ref(null);
 const response = ref([]);
 
 // Variables simplifiées pour la sauvegarde
@@ -273,7 +299,8 @@ async function fetch() {
   await request('GET', false, events, config.apiUrl + 'api/event');
   await request('GET', false, actions, config.apiUrl + 'api/action/getfivebylogin/' + accountStore.account.acc_id);
   await request('GET', false, admin, config.apiUrl + 'api/admin');
-  modifDate.value = formatDateModif(admin.value.adm_datelimite);
+  modifDateAutomne.value = formatDateModif(admin.value.adm_datelimite_automne);
+  modifDatePrintemps.value = formatDateModif(admin.value.adm_datelimite_printemps);
   isLoaded.value = true;
 }
 
@@ -346,19 +373,28 @@ function formatDate(dateString) {
   return `${day}/${month}/${year}`;
 }
 
-async function confirmModifDate(){
-  const selectedDate = new Date(modifDate.value);
-  const currentDate = new Date();
-  
-  if (selectedDate < currentDate) {
-    addAlert('error', { data: {error: 'Le jour que vous avez choisi est déjà passé. Action annulée.'} });
-    modifDate.value = formatDateModif(admin.value.adm_datelimite);
+async function confirmModifDate(periode){
+  var selectedDate = null;
+  if(periode == 'printemps'){
+   selectedDate = new Date(modifDatePrintemps.value);
+
+  }
+  else if (periode == 'automne'){
+    selectedDate = new Date(modifDateAutomne.value);
+  }
+  else{
     return;
   }
-  const requestData = { 
-    adm_datelimite: modifDate.value,
-  };
-  await request('PUT', false, response, config.apiUrl+'api/admin/date', requestData);
+
+  const currentDate = new Date();
+  var requestData = {}
+  if(periode == 'printemps'){
+    requestData.adm_datelimite_printemps = modifDatePrintemps.value;
+  }
+  else{
+    requestData.adm_datelimite_automne = modifDateAutomne.value;
+  }
+  await request('PUT', false, response, config.apiUrl+'api/admin/date/'+ (periode == 'printemps' ? 'printemps' : 'automne'), requestData);
   if(response.value.status == 200){
     await request('GET', false, admin, config.apiUrl + 'api/admin');
   }

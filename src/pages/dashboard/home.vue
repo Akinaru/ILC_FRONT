@@ -48,7 +48,7 @@
           class="step"
           :class="{
             'step-primary':
-              destination.agree_id || joursRestants(admin.adm_datelimite) < 0,
+              destination.agree_id || joursRestants(accountStore.account.datelimite) < 0,
           }"
         >
           Arbitrage
@@ -845,10 +845,9 @@
         </div>
       </div>
     </dialog>
-
     <!-- Modif voeux si temps pas écoulé -->
     <div
-      v-if="joursRestants(admin.adm_datelimite) > 0"
+      v-if="joursRestants(accountStore.account.datelimite) >= 0"
       class="px-5 xl:px-20 transition-all duration-100 ease-in-out"
     >
       <!-- Partie voeux -->
@@ -870,8 +869,8 @@
                   <div class="alert shadow-lg mt-3">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                       <div>
-                          <p>Date limite: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span></p>
-                          <p class="text-sm">{{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }}</p>
+                          <p>Date limite: <span class="font-bold">{{ formatDate(accountStore.account.datelimite) }}</span></p>
+                          <p class="text-sm">{{ joursRestants(accountStore.account.datelimite) }} jour{{ joursRestants(accountStore.account.datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(accountStore.account.datelimite) > 1 ? 's' : '' }}</p>
                       </div>
                   </div>
               </div>
@@ -1021,11 +1020,11 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <div class="font-medium">Date limite: <span class="font-bold">{{ formatDate(admin.adm_datelimite) }}</span></div>
+                    <div class="font-medium">Date limite: <span class="font-bold">{{ formatDate(accountStore.account.datelimite) }}</span></div>
                 </div>
                 
-                <div class="badge badge-lg font-semibold {{ joursRestants(admin.adm_datelimite) < 3 ? 'badge-error' : (joursRestants(admin.adm_datelimite) < 7 ? 'badge-warning' : 'badge-primary') }}">
-                    {{ joursRestants(admin.adm_datelimite) }} jour{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(admin.adm_datelimite) > 1 ? 's' : '' }}
+                <div class="badge badge-lg font-semibold {{ joursRestants(accountStore.account.datelimite) < 3 ? 'badge-error' : (joursRestants(accountStore.account.datelimite) < 7 ? 'badge-warning' : 'badge-primary') }}">
+                    {{ joursRestants(accountStore.account.datelimite) }} jour{{ joursRestants(accountStore.account.datelimite) > 1 ? 's' : '' }} restant{{ joursRestants(accountStore.account.datelimite) > 1 ? 's' : '' }}
                 </div>
             </div>
             
