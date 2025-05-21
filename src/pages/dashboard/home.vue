@@ -1,8 +1,39 @@
 <template>
   <div class="flex flex-col" v-if="isLoaded">
-    <p class="font-bold text-lg pb-5">
-      Bienvenue sur votre profil étudiant lié aux relations internationales.
-    </p>
+    <div class="flex items-center justify-center">
+<!-- Titre de section Bienvenue -->
+<div class="w-full max-w-6xl pb-6 pt-8">
+  <div class="relative ">
+    <!-- Fond décoratif avec gradient subtil -->
+    <div class="absolute -left-6 -top-6 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl"></div>
+
+    <!-- Conteneur principal -->
+    <div class="relative z-10">
+      <!-- Badge catégorie -->
+      <div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        PROFIL ÉTUDIANT
+      </div>
+
+      <!-- Titre principal -->
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">Bienvenue sur votre espace</h2>
+
+      <!-- Texte descriptif -->
+      <div class="max-w-lg">
+        <p class="text-base-content/60 text-sm">
+          Retrouvez ici toutes vos informations liées aux <span class="text-primary font-medium">relations internationales</span>, à vos vœux, documents, mobilités, et plus encore.
+        </p>
+      </div>
+
+      <!-- Séparateur -->
+      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent mt-4"></div>
+    </div>
+  </div>
+</div>
+    </div>
+
 
     <!-- Etapes -->
     <div class="w-full flex items-center justify-center flex-col py-4 md:py-10">
@@ -28,7 +59,7 @@
     <!-- Destination finale -->
     <div
       v-if="destination.agreement"
-      class="flex items-center justify-center flex-col bg-base-100 rounded-lg shadow-md p-6 mb-8 mt-4 max-w-6xl mx-auto w-full"
+      class="flex items-center justify-center flex-col bg-base-100 rounded-lg shadow-md py-6 mb-8 mt-4 max-w-6xl mx-auto w-full"
     >
       <div class="flex items-center justify-between w-full mb-4">
         <h2 class="text-lg font-bold text-primary">Destination finale</h2>
@@ -108,7 +139,7 @@
     <!-- Partie Informations -->
     <div
       v-if="account && account.acc_id"
-      class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mx-auto px-4 mb-12"
+      class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mx-auto mb-12"
     >
       <!-- Informations personnelles -->
       <div class="card bg-base-100 shadow-lg">
@@ -1502,7 +1533,7 @@
     </div>
 
     <!-- Affichage des vœux lorsque la date limite est dépassée -->
-    <div v-else class="flex flex-col items-center pt-6 px-2">
+    <div v-else class="flex flex-col items-center pt-6">
         <!-- En-tête section -->
         <div class="flex items-center justify-center gap-2 mb-4">
             <h2 class="font-bold text-2xl">Vos vœux</h2>

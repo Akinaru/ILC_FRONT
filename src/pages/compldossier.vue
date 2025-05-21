@@ -119,34 +119,71 @@
           </form>
   
       <!-- Modal de confirmation -->
-      <dialog id="confirmModal" ref="confirmModal" class="modal">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Confirmer les informations</h3>
-            <div class="py-3">
-                <p>Numéro étudiant : <strong>{{ complDossier.ine ? complDossier.ine : 'Aucun' }}</strong></p>
-                <p v-if="complDossier.department && complDossier.department != ''">
-                    Département : 
-                    <strong> 
-                    <span  :style="{ backgroundColor: getDeptColor(complDossier.department) }" class="badge p-3">
-                        {{ getDeptShortname(complDossier.department) }} 
+      <Teleport to="body">
+        <dialog id="confirmModal" ref="confirmModal" class="modal">
+          <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+            <h3 class="text-xl font-bold">Confirmer les informations</h3>
+            <p class="text-sm text-base-content/70 mt-1">Merci de vérifier les informations suivantes avant validation définitive.</p>
+            <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+            <div class="space-y-4">
+              <!-- Étudiant -->
+              <div class="bg-base-200 p-3 rounded-md">
+                <h4 class="font-semibold text-md mb-2">Étudiant</h4>
+                <div class="flex flex-col gap-1 text-sm">
+                  <div class="flex justify-between"><span>Numéro étudiant :</span><strong>{{ complDossier.ine || 'Aucun' }}</strong></div>
+                  <div class="flex justify-between"><span>Email :</span><strong>{{ complDossier.email || 'Aucun' }}</strong></div>
+                  <div class="flex justify-between"><span>Parcours :</span><strong>{{ complDossier.parcours || 'Aucun' }}</strong></div>
+                </div>
+              </div>
+
+              <!-- Mobilité -->
+              <div class="bg-base-200 p-3 rounded-md">
+                <h4 class="font-semibold text-md mb-2">Mobilité</h4>
+                <div class="flex flex-col gap-1 text-sm">
+                  <div class="flex justify-between"><span>Années :</span><strong>{{ complDossier.anneesmobilite || 'Aucune' }}</strong></div>
+                  <div class="flex justify-between"><span>Période :</span><strong>{{ complDossier.periodemobilite || 'Aucune' }}</strong></div>
+                </div>
+              </div>
+
+              <!-- Département -->
+              <div class="bg-base-200 p-3 rounded-md">
+                <h4 class="font-semibold text-md mb-2">Département</h4>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-base-content/80">Département associé :</span>
+                  <template v-if="complDossier.department">
+                    <span class="flex items-center gap-2">
+                      <span class="badge p-2" :style="{ backgroundColor: getDeptColor(complDossier.department) }">
+                        {{ getDeptShortname(complDossier.department) }}
+                      </span>
+                      <strong>{{ getDeptName(complDossier.department) }}</strong>
                     </span>
-                     {{ getDeptName(complDossier.department) }}</strong>
-                </p>
-                <p v-else>Département : <strong>Aucun</strong></p>
-                <p>Années de mobilité : <strong>{{ complDossier.anneesmobilite ? complDossier.anneesmobilite : 'Aucune' }}</strong></p>
-                <p>Periode de mobilité : <strong>{{ complDossier.periodemobilite ? complDossier.periodemobilite : 'Aucune' }}</strong></p>
-                <p>Parcours : <strong>{{ complDossier.parcours ? complDossier.parcours : 'Aucun' }}</strong></p>
-                <p>Email : <strong>{{ complDossier.email ? complDossier.email : 'Aucun' }}</strong></p>
-                <p>Aménagements : <strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></p>
-                <p>Consentement utilisation image : <strong>{{ complDossier.consent ? 'Oui' : 'Non' }}</strong></p>
-                <p>Consentement liste anciens étudiants : <strong>{{ complDossier.consentancien ? 'Oui' : 'Non' }}</strong></p>
+                  </template>
+                  <template v-else>
+                    <strong>Aucun</strong>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Consentements -->
+              <div class="bg-base-200 p-3 rounded-md">
+                <h4 class="font-semibold text-md mb-2">Consentements & Aménagements</h4>
+                <div class="flex flex-col gap-1 text-sm">
+                  <div class="flex justify-between"><span>Aménagements :</span><strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></div>
+                  <div class="flex justify-between"><span>Utilisation d’image :</span><strong>{{ complDossier.consent ? 'Oui' : 'Non' }}</strong></div>
+                  <div class="flex justify-between"><span>Liste anciens étudiants :</span><strong>{{ complDossier.consentancien ? 'Oui' : 'Non' }}</strong></div>
+                </div>
+              </div>
             </div>
-          <div class="modal-action">
-            <button class="btn btn-error" @click="closeModal">Annuler</button>
-            <button class="btn btn-success" @click="confirmCompl">Confirmer</button>
+
+            <!-- Actions -->
+            <div class="modal-action mt-6">
+              <button class="btn" @click="closeModal">Annuler</button>
+              <button class="btn btn-primary" @click="confirmCompl">Confirmer</button>
+            </div>
           </div>
-        </div>
-      </dialog>
+        </dialog>
+      </Teleport>
     </div>
   </template>
   
@@ -222,8 +259,7 @@
   
     await request('PUT', false, response, config.apiUrl + 'api/account/compldossier', requestData)
     if (!response.value.response) {
-      accountStore.setValidate(true)
-      accountStore.setRole(response.value.account.role)
+      accountStore.setAccount(response.value.account);
       router.push({ name: 'Dashboard' })
     }
   

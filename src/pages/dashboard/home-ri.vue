@@ -44,9 +44,34 @@
                 </h3>
                 <div class="flex flex-col items-center justify-center h-28">
                   <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite) }}</div>
-                  <div class="mt-2 badge" :class="joursRestants(admin.adm_datelimite) < 0 ? 'badge-error' : 'badge-success'">
-                    {{ getJoursRestants(admin.adm_datelimite) }}
-                  </div>
+                  <div
+  class="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
+  :class="joursRestants(admin.adm_datelimite) < 0 
+    ? 'bg-red-100 text-red-800 border border-red-300' 
+    : 'bg-green-100 text-green-800 border border-green-300'"
+>
+  <svg
+    v-if="joursRestants(admin.adm_datelimite) < 0"
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-4 w-4 text-red-500"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+  <svg
+    v-else
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-4 w-4 text-green-500"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+  </svg>
+  {{ getJoursRestants(admin.adm_datelimite) }}
+</div>
                   <label for="modal_date_printemps" class="btn btn-sm btn-primary mt-3 gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -102,7 +127,32 @@
                 </h3>
                 <div class="flex flex-col items-center justify-center h-28">
                   <div class="text-2xl font-bold">{{ formatDate(admin.adm_datelimite) }}</div>
-                  <div class="mt-2 badge" :class="joursRestants(admin.adm_datelimite) < 0 ? 'badge-error' : 'badge-success'">
+                  <div
+                    class="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium"
+                    :class="joursRestants(admin.adm_datelimite) < 0 
+                      ? 'bg-red-100 text-red-800 border border-red-300' 
+                      : 'bg-green-100 text-green-800 border border-green-300'"
+                  >
+                    <svg
+                      v-if="joursRestants(admin.adm_datelimite) < 0"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4 text-red-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <svg
+                      v-else
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
                     {{ getJoursRestants(admin.adm_datelimite) }}
                   </div>
                   <label for="modal_date_automne" class="btn btn-sm btn-primary mt-3 gap-2">
