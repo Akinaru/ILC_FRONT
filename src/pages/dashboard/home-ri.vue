@@ -158,6 +158,8 @@
             </div>
           </div>
         </div>
+
+        <button @click="launchAlerts">Alert</button>
       </div>
     </div>
   </div>
@@ -187,6 +189,12 @@ const response = ref([]);
 // Variables simplifiées pour la sauvegarde
 const isBackingUp = ref(false);
 const backupSuccess = ref(false);
+
+function launchAlerts(){
+  addAlert('message', { message: 'Ceci est un message de succès !' } );
+addAlert('error', { data: { error: 'Ceci est un message d\'erreur !', message: 'Une erreur est survenue.' } });
+addAlert('save', { save: 'Information', message: 'Ceci est un message d\'info !' });
+}
 
 async function fetch() {
   isLoaded.value = false;
