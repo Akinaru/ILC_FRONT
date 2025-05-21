@@ -52,6 +52,12 @@
             </svg>
             Profil
           </RouterLink>
+          <RouterLink :to="{name: 'Aide'}" class="flex items-center gap-1.5 text-base-content/80 hover:text-primary transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.227 9.157c.25-.65.874-1.157 1.773-1.157 1.105 0 2 .672 2 1.5 0 .513-.242.837-.594 1.073-.275.188-.64.321-.91.584C10.958 11.552 11 12 11 12m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Aide
+          </RouterLink>
           <RouterLink :to="{name: 'MentionsLegales'}" class="flex items-center gap-1.5 text-base-content/80 hover:text-primary transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
