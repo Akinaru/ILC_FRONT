@@ -26,6 +26,18 @@ export const useAccountStore = defineStore("account", {
 
       localStorage.removeItem('account');
     },
+    dateLimitePasse() {
+      const dateLimite = this.account?.datelimite;
+      if (!dateLimite) return true;
+    
+      const today = new Date();
+      const limite = new Date(dateLimite);
+    
+      today.setHours(0, 0, 0, 0);
+      limite.setHours(0, 0, 0, 0);
+    
+      return limite < today;
+    },
 
     isLogged() {
       return this.logged;

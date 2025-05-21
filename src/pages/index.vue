@@ -324,7 +324,7 @@
 
                       <div
                         v-if="
-                          accountStore.isLogged() && accountStore.isStudent() && accountStore.getAccountValidate()
+                          accountStore.isLogged() && accountStore.isStudent() && accountStore.getAccountValidate() && !accountStore.dateLimitePasse()
                         "
                         class="flex-shrink-0 pr-3 pl-2 py-2 md:py-0"
                       >
