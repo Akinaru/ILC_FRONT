@@ -56,21 +56,43 @@
                 </div>
 
                 <!-- Modal modification date printemps -->
+                <Teleport to="body">
                 <input type="checkbox" id="modal_date_printemps" class="modal-toggle" />
                 <div class="modal" role="dialog">
-                  <div class="modal-box">
-                    <h3 class="font-bold text-lg">Modification date limite - Printemps</h3>
-                    <form @submit.prevent="confirmModifDate" class="w-full">
-                      <input type="date" v-model="modifDate" class="input input-bordered w-full my-3">
-                      <div class="modal-action">
+                  <div class="modal-box rounded-2xl shadow-xl border border-base-300">
+                    <!-- Titre avec icône -->
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                      Modification date limite - Printemps
+                    </h3>
+
+                    <!-- Description -->
+                    <p class="text-sm text-base-content/70 mt-2">
+                      Choisissez une nouvelle date limite pour les candidatures du semestre de printemps.
+                    </p>
+
+                    <!-- Séparateur décoratif -->
+                    <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+                    <!-- Formulaire -->
+                    <form @submit.prevent="confirmModifDate" class="w-full space-y-4">
+                      <div class="form-control">
+                        <label class="label">
+                          <span class="label-text">Nouvelle date limite</span>
+                        </label>
+                        <input type="date" v-model="modifDate" class="input input-bordered w-full" />
+                      </div>
+
+                      <div class="modal-action mt-6">
+                        <label for="modal_date_printemps" class="btn btn-ghost">Annuler</label>
                         <button type="submit">
-                          <label for="modal_date_printemps" class="btn btn-success">Valider</label>
+                          <label for="modal_date_printemps" class="btn btn-primary">Valider</label>
                         </button>
-                        <label for="modal_date_printemps" class="btn">Annuler</label>
                       </div>
                     </form>
                   </div>
                 </div>
+                </Teleport>
+
               </div>
 
               <!-- Date limite des voeux - Automne -->

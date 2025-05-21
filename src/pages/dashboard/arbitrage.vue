@@ -869,187 +869,126 @@
 
       <!-- Modal confirmation d'archivage -->
       <Teleport to="body">
-      <dialog id="archivageModal" ref="archivageModal" class="modal">
-        <div class="modal-box max-w-3xl">
-          <h3 class="text-lg font-bold">Archiver l'arbitrage</h3>
+  <dialog id="archivageModal" ref="archivageModal" class="modal">
+    <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Archiver l'arbitrage</h3>
+      <p class="text-sm text-base-content/70 mt-2">Cette action est définitive et ne pourra pas être annulée.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-          <div class="py-3" v-if="!archivageEnCours">
-            <p>
-              Souhaitez-vous vraiment archiver l'arbitrage ?
-              Cette action ne pourra pas être annulée.
-            </p>
-          </div>
+      <div class="py-3" v-if="!archivageEnCours">
+        <p>Souhaitez-vous vraiment archiver l’arbitrage ?</p>
+      </div>
 
-          <!-- Loader pendant le traitement -->
-          <div class="py-6 flex flex-col items-center justify-center" v-else>
-            <span class="loading loading-spinner loading-lg text-success mb-2"></span>
-            <p>Archivage en cours...</p>
-          </div>
+      <div class="py-6 flex flex-col items-center justify-center" v-else>
+        <span class="loading loading-spinner loading-lg text-success mb-2"></span>
+        <p>Archivage en cours...</p>
+      </div>
 
-          <div class="modal-action" v-if="!archivageEnCours">
-            <button class="btn" @click="closeModal">Annuler</button>
-            <button class="btn btn-success" @click="confirmArchivage">
-              Confirmer
-            </button>
-          </div>
-        </div>
-      </dialog>
-      </Teleport>
+      <div class="modal-action mt-4" v-if="!archivageEnCours">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-primary" @click="confirmArchivage">Archiver</button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
 
       <!-- Modal Informations étudiant -->
       <Teleport to="body">
-      <dialog id="infoEtu" ref="infoEtu" class="modal">
-        <div class="modal-box max-w-3xl">
-            <div
-              class="w-170 max-w-full bg-base-100"
-            >
-              <form method="dialog">
-                <label
-                  for="modal_info_etu"
-                  @click="closeModal"
-                  class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                  >✕</label
-                >
-              </form>
+  <dialog id="infoEtu" ref="infoEtu" class="modal">
+    <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+      <form method="dialog">
+        <label for="modal_info_etu" @click="closeModal" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+      </form>
 
-              <div class="flex items-center mb-4">
-                <div 
-                  class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3"
-                  :style="{ backgroundColor: infoetudiant.department ? infoetudiant.department.dept_color : '#aaaaaa' }"
-                >
-                  {{ infoetudiant.acc_fullname ? infoetudiant.acc_fullname.charAt(0).toUpperCase() : 'N' }}
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold">
-                    {{ infoetudiant.acc_fullname ? infoetudiant.acc_fullname : "Inconnu" }}
-                  </h3>
-                  <p class="text-sm text-base-content/70">
-                    ID: {{ infoetudiant.acc_id ? infoetudiant.acc_id : "Inconnu" }}
-                  </p>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Informations principales -->
-                <div class="bg-base-200 p-3 rounded-md">
-                  <h4 class="font-bold text-md mb-2">Informations</h4>
-                  <div class="space-y-1">
-                    <div class="flex justify-between">
-                      <span class="font-medium">Nombre de vœux:</span>
-                      <span>{{ infoetudiant.wishes ? infoetudiant.wishes.count : 0 }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Documents ajoutés:</span>
-                      <span>{{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Dernière connexion:</span>
-                      <span>{{ formatDate(infoetudiant.acc_lastlogin) }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Aménagement aux examens:</span>
-                      <span>{{ infoetudiant.acc_amenagement == true ? "Oui" : "Non" }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Informations complémentaires -->
-                <div class="bg-base-200 p-3 rounded-md">
-                  <h4 class="font-bold text-md mb-2">Coordonnées</h4>
-                  <div class="space-y-1">
-                    <div class="flex justify-between">
-                      <span class="font-medium">Email:</span>
-                      <span class="truncate">{{ infoetudiant.acc_mail ? infoetudiant.acc_mail : "Aucun" }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Numéro étudiant:</span>
-                      <span>{{ infoetudiant.acc_studentnum ? infoetudiant.acc_studentnum : "Aucun" }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Année de mobilité:</span>
-                      <span>{{ infoetudiant.acc_anneemobilite ? infoetudiant.acc_anneemobilite : "Aucune" }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Score TOEIC:</span>
-                      <span>{{ infoetudiant.acc_toeic ? infoetudiant.acc_toeic : "Aucun" }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Informations académiques -->
-              <div class="bg-base-200 p-3 rounded-md mt-3">
-                <h4 class="font-bold text-md mb-2">Information académique</h4>
-                <div class="space-y-1">
-                  <div class="flex justify-between">
-                    <span class="font-medium">Département:</span>
-                    <span>{{ infoetudiant.department ? infoetudiant.department.dept_name : "Aucun" }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="font-medium">Parcours:</span>
-                    <span>{{ infoetudiant.acc_parcours ? infoetudiant.acc_parcours : "Aucun" }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Section Voeux -->
-              <div class="bg-base-200 p-3 rounded-md mt-3">
-                <h4 class="font-bold text-md mb-2">Voeux</h4>
-                <p v-if="infoetudiant.wishes && infoetudiant.wishes.count == 0" class="text-center text-base-content/70 italic">
-                  Aucun voeu enregistré
-                </p>
-                <div
-                  v-for="(accord, index) in getFilteredAgreements(infoetudiant)"
-                  :key="index"
-                  class="flex justify-between p-2 hover:bg-base-100 rounded"
-                >
-                  <div class="min-w-fit">
-                    <span class="badge badge-sm badge-primary">Voeu {{ accord.place }}</span>
-                  </div>
-                  <div class="flex w-full items-center justify-start ml-2">
-                    <span class="relative inline-block mr-1">
-                      <!-- Drapeau -->
-                      <span
-                        class="fi"
-                        :class="'fi-' + accord.agreement?.partnercountry?.parco_code"
-                      ></span>
-
-                      <!-- Point d'interrogation si pas de drapeau -->
-                      <span
-                        v-if="!accord.agreement?.partnercountry?.parco_code"
-                        class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none"
-                      >
-                        ?
-                      </span>
-                    </span>
-
-                    <div class="text-sm flex justify-center items-center gap-3">
-                      <span class="font-medium">{{ accord.agreement.university?.univ_name || "Université indisponible" }}</span>
-                      <span class="text-xs text-base-content/70">{{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bouton profil -->
-              <div class="mt-4" v-if="infoetudiant && infoetudiant.acc_id">
-                <a
-                  :href="$router.resolve({ name: 'Profile', params: { acc_id: infoetudiant.acc_id }}).href"
-                  target="_blank"
-                >
-                  <button class="btn btn-primary w-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Voir le profil complet
-                  </button>
-                </a>
-              </div>
-            </div>
-            <label class="modal-backdrop" for="modal_info_etu">Close</label>
+      <!-- Identité -->
+      <div class="flex items-center mb-4">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3"
+             :style="{ backgroundColor: infoetudiant.department ? infoetudiant.department.dept_color : '#aaaaaa' }">
+          {{ infoetudiant.acc_fullname?.charAt(0).toUpperCase() || 'N' }}
         </div>
-      </dialog>
-      </Teleport>
+        <div>
+          <h3 class="text-xl font-bold">{{ infoetudiant.acc_fullname || "Inconnu" }}</h3>
+          <p class="text-sm text-base-content/70">ID: {{ infoetudiant.acc_id || "Inconnu" }}</p>
+        </div>
+      </div>
+
+      <!-- Grilles -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Infos principales -->
+        <div class="bg-base-200 p-3 rounded-md">
+          <h4 class="font-bold text-md mb-2">Informations</h4>
+          <div class="space-y-1">
+            <div class="flex justify-between"><span>Nombre de vœux:</span><span>{{ infoetudiant.wishes?.count || 0 }}</span></div>
+            <div class="flex justify-between"><span>Documents ajoutés:</span><span>{{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}</span></div>
+            <div class="flex justify-between"><span>Dernière connexion:</span><span>{{ formatDate(infoetudiant.acc_lastlogin) }}</span></div>
+            <div class="flex justify-between"><span>Aménagement aux examens:</span><span>{{ infoetudiant.acc_amenagement ? "Oui" : "Non" }}</span></div>
+          </div>
+        </div>
+
+        <!-- Coordonnées -->
+        <div class="bg-base-200 p-3 rounded-md">
+          <h4 class="font-bold text-md mb-2">Coordonnées</h4>
+          <div class="space-y-1">
+            <div class="flex justify-between"><span>Email:</span><span class="truncate">{{ infoetudiant.acc_mail || "Aucun" }}</span></div>
+            <div class="flex justify-between"><span>Numéro étudiant:</span><span>{{ infoetudiant.acc_studentnum || "Aucun" }}</span></div>
+            <div class="flex justify-between"><span>Année de mobilité:</span><span>{{ infoetudiant.acc_anneemobilite || "Aucune" }}</span></div>
+            <div class="flex justify-between"><span>Score TOEIC:</span><span>{{ infoetudiant.acc_toeic || "Aucun" }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Académique -->
+      <div class="bg-base-200 p-3 rounded-md mt-3">
+        <h4 class="font-bold text-md mb-2">Information académique</h4>
+        <div class="space-y-1">
+          <div class="flex justify-between"><span>Département:</span><span>{{ infoetudiant.department?.dept_name || "Aucun" }}</span></div>
+          <div class="flex justify-between"><span>Parcours:</span><span>{{ infoetudiant.acc_parcours || "Aucun" }}</span></div>
+        </div>
+      </div>
+
+      <!-- Voeux -->
+      <div class="bg-base-200 p-3 rounded-md mt-3">
+        <h4 class="font-bold text-md mb-2">Vœux</h4>
+        <p v-if="infoetudiant.wishes?.count == 0" class="text-center text-base-content/70 italic">
+          Aucun vœu enregistré
+        </p>
+        <div v-for="(accord, index) in getFilteredAgreements(infoetudiant)" :key="index"
+             class="flex justify-between p-2 hover:bg-base-100 rounded">
+          <div class="min-w-fit">
+            <span class="badge badge-sm badge-primary">Vœu {{ accord.place }}</span>
+          </div>
+          <div class="flex w-full items-center justify-start ml-2">
+            <span class="relative inline-block mr-1">
+              <span class="fi" :class="'fi-' + accord.agreement?.partnercountry?.parco_code"></span>
+              <span v-if="!accord.agreement?.partnercountry?.parco_code"
+                    class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">?</span>
+            </span>
+            <div class="text-sm flex justify-center items-center gap-3">
+              <span class="font-medium">{{ accord.agreement.university?.univ_name || "Université indisponible" }}</span>
+              <span class="text-xs text-base-content/70">{{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lien profil -->
+      <div class="mt-4" v-if="infoetudiant && infoetudiant.acc_id">
+        <a :href="$router.resolve({ name: 'Profile', params: { acc_id: infoetudiant.acc_id }}).href" target="_blank">
+          <button class="btn btn-primary w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975M15 9.75a3 3 0 11-6 0 3 3 0 016 0zM12 21a8.966 8.966 0 01-5.982-2.275" />
+            </svg>
+            Voir le profil complet
+          </button>
+        </a>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
     </div>
   </div>
   <div v-else>

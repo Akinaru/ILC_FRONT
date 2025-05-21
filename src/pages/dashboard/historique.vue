@@ -59,17 +59,24 @@
         </div>
   
         <!-- Modal -->
+        <Teleport to="body">
         <input type="checkbox" id="delete" class="modal-toggle" />
         <div class="modal" role="dialog">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg">Confirmation requise</h3>
-            <p class="py-4">Confirmez vous la suppression de l'historique ?</p>
-            <div class="modal-action">
-              <label for="delete" class="btn">Annuler</label>
-              <label for="delete" @click="deleteHistory()" class="btn btn-success">Valider</label>
+          <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+            <h3 class="text-xl font-bold">Confirmation requise</h3>
+            <p class="text-sm text-base-content/70 mt-2">Cette action supprimera définitivement l’historique.</p>
+            <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+            <p>Confirmez-vous la suppression de l'historique ?</p>
+
+            <div class="modal-action mt-6">
+              <label for="delete" class="btn btn-ghost">Annuler</label>
+              <label for="delete" @click="deleteHistory()" class="btn btn-error">Supprimer</label>
             </div>
           </div>
         </div>
+      </Teleport>
+
       </div>
   
       <!-- Table -->

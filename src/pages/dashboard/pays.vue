@@ -81,7 +81,7 @@
                 </div>
               </div>
               
-              <div class="alert alert-info mt-4 flex items-center">
+              <div class="alert mt-4 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
@@ -170,155 +170,99 @@
   
         <!-- MODAL MODIFICATION -->
         <Teleport to="body">
-        <input type="checkbox" id="modal_modif" class="modal-toggle" />
-        <div class="modal modal-bottom sm:modal-middle" role="dialog">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" 
-                  fill="none" stroke="currentColor" stroke-linecap="round" 
-                  stroke-linejoin="round" stroke-width="2"/>
-                <polygon fill="none" 
-                  points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" 
-                  stroke="currentColor" stroke-linecap="round" 
-                  stroke-linejoin="round" stroke-width="2"/>
-              </svg>
-              Modification du pays n° {{ currentPaysModif.parco_id }}
-            </h3>
-            
-            <form @submit.prevent="confirmModifPays" class="mt-4 space-y-4">
-              <!-- Nom -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Nom du pays</span>
-                </label>
-                <input type="text" class="input input-bordered w-full" 
-                  v-model="currentPaysModif.parco_name"/>
-              </div>
-              
-              <!-- Code -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Code ISO du pays</span>
-                </label>
-                <div class="flex gap-2">
-                  <input type="text" class="input input-bordered w-full" 
-                    v-model="currentPaysModif.parco_code"/>
-                  <div class="relative h-12 w-12 flex-shrink-0 overflow-hidden">
-                    <span class="fi text-3xl absolute inset-0 flex items-center justify-center" 
-                      :class="'fi-' + (currentPaysModif?.parco_code || '')"></span>
-                    <span v-if="!currentPaysModif?.parco_code" 
-                      class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-gray-200 rounded-md">
-                      ?
-                    </span>
-                  </div>
+          <input type="checkbox" id="modal_modif" class="modal-toggle" />
+          <div class="modal modal-bottom sm:modal-middle" role="dialog">
+            <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+              <h3 class="text-xl font-bold">Modification du pays n° {{ currentPaysModif.parco_id }}</h3>
+              <p class="text-sm text-base-content/70 mt-2">Modifiez les informations liées à ce pays.</p>
+              <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+              <form @submit.prevent="confirmModifPays" class="space-y-4">
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Nom du pays</span></label>
+                  <input type="text" class="input input-bordered w-full" v-model="currentPaysModif.parco_name" />
                 </div>
-                <label class="label">
-                  <span class="label-text-alt">Le drapeau s'affichera automatiquement si le code est valide</span>
-                </label>
-              </div>
-  
-              <div class="modal-action">
-                <label for="modal_modif" class="btn btn-ghost">Annuler</label>
-                <button type="submit">
-                  <label for="modal_modif" class="btn btn-primary">Enregistrer</label>
-                </button>
-              </div>
-            </form>
+
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Code ISO du pays</span></label>
+                  <div class="flex gap-2">
+                    <input type="text" class="input input-bordered w-full" v-model="currentPaysModif.parco_code" />
+                    <div class="relative h-12 w-12 flex-shrink-0 overflow-hidden">
+                      <span class="fi text-3xl absolute inset-0 flex items-center justify-center"
+                            :class="'fi-' + (currentPaysModif?.parco_code || '')"></span>
+                      <span v-if="!currentPaysModif?.parco_code"
+                            class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-gray-200 rounded-md">?</span>
+                    </div>
+                  </div>
+                  <label class="label">
+                    <span class="label-text-alt">Le drapeau s'affichera automatiquement si le code est valide</span>
+                  </label>
+                </div>
+
+                <div class="modal-action mt-6">
+                  <label for="modal_modif" class="btn btn-ghost">Annuler</label>
+                  <button type="submit">
+                    <label for="modal_modif" class="btn btn-primary">Modifier</label>
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
         </Teleport>
+
   
         <!-- MODAL CONFIRMATION SUPPRESSION -->
         <Teleport to="body">
-        <dialog id="confirmModal" ref="confirmModal" class="modal">
-          <div class="modal-box">
-            <h3 class="text-lg font-bold flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning" 
-                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              Confirmer la suppression
-            </h3>
-            
-            <div class="py-4">
-              <div class="alert alert-warning">
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" 
-                  fill="none" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span>Cette action supprimera le pays dans tous les accords liés.</span>
-              </div>
-              
-              <div class="bg-base-200 p-4 rounded-lg mt-4 flex items-center gap-3">
-                <!-- Drapeau -->
-                <div class="relative inline-block">
-                  <span class="fi text-4xl" :class="'fi-' + (confirmDeletePays?.parco_code || '')"></span>
-                  <span v-if="!confirmDeletePays?.parco_code" 
-                    class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full">
-                    ?
-                  </span>
-                </div>
-                
+  <dialog id="confirmModal" ref="confirmModal" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeletePays">
+      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera le pays ainsi que tous les accords et universités liés.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <div class="bg-base-200 p-4 rounded-lg flex items-center gap-3">
+        <div class="relative inline-block">
+          <span class="fi text-4xl" :class="'fi-' + (confirmDeletePays?.parco_code || '')"></span>
+          <span v-if="!confirmDeletePays?.parco_code"
+                class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full">?</span>
+        </div>
+        <div>
+          <h4 class="font-bold text-lg">{{ confirmDeletePays.parco_name }}</h4>
+          <div class="badge badge-outline">{{ confirmDeletePays?.parco_code?.toUpperCase() || '' }}</div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h4 class="font-bold mb-2">Universités liées ({{ filteredUniveristy.length }})</h4>
+        <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
+          <div v-if="filteredUniveristy.length > 0">
+            <div v-for="(univ, index) in filteredUniveristy" :key="index"
+                 class="border-b last:border-b-0 border-base-300 p-3">
+              <div class="flex items-center gap-3">
+                <span class="fi text-xl" :class="'fi-'+ getCountryCode(univ.partnercountry.parco_name)"></span>
                 <div>
-                  <h4 class="font-bold text-lg">{{ confirmDeletePays.parco_name }}</h4>
-                  <div class="badge badge-outline">{{ confirmDeletePays?.parco_code?.toUpperCase() || '' }}</div>
+                  <p class="font-semibold">{{ univ.univ_name ?? 'Université non spécifiée' }}</p>
+                  <p class="text-sm opacity-70">{{ univ.univ_city ?? 'Ville non spécifiée' }}</p>
                 </div>
               </div>
-  
-              <!-- Liste des universités liées -->
-              <div class="mt-6">
-                <h4 class="font-bold mb-2 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                  Universités liées ({{ filteredUniveristy.length }})
-                </h4>
-                
-                <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
-                  <div v-if="filteredUniveristy.length > 0">
-                    <div v-for="(univ, index) in filteredUniveristy" :key="index" 
-                      class="border-b last:border-b-0 border-base-300 p-3">
-                      <div class="flex items-center gap-3">
-                        <span class="fi text-xl" 
-                          :class="'fi-'+ getCountryCode(univ.partnercountry.parco_name)"></span>
-                        <div>
-                          <p class="font-semibold">
-                            {{ univ.univ_name ?? 'Université non spécifiée' }}
-                          </p>
-                          <p class="text-sm opacity-70">
-                            {{ univ.univ_city ?? 'Ville non spécifiée' }}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div v-else class="p-4 text-center opacity-70">
-                    Aucune université liée à ce pays
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="modal-action">
-              <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-              <button class="btn btn-error" 
-                @click="deletePays(confirmDeletePays.parco_id, confirmDeletePays.parco_name, confirmDeletePays.parco_code)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" 
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Confirmer la suppression
-              </button>
             </div>
           </div>
-        </dialog>
-        </Teleport>
+          <div v-else class="p-4 text-center opacity-70">
+            Aucune université liée à ce pays
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-action mt-6">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-error"
+                @click="deletePays(confirmDeletePays.parco_id, confirmDeletePays.parco_name, confirmDeletePays.parco_code)">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
       </div>
       <LoadingComp v-else></LoadingComp>
     </div>
@@ -331,7 +275,7 @@
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { addAlert } from '../../composables/addAlert';
     import { useAccountStore } from '../../stores/accountStore';
-import { addAction } from '../../composables/actionType';
+    import { addAction } from '../../composables/actionType';
     const accountStore = useAccountStore();
 
     const isLoaded = ref(false);

@@ -164,64 +164,64 @@
         >
           <!-- Afficher les autres accords ici -->
           <RouterLink
-  :to="{ name: 'Accord', params: { agree_id: item.agree_id } }"
-  v-for="(item, index) in accords.agreements"
-  :key="index"
-  class="card bg-base-200 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 m-2 min-w-80 w-80 h-52 overflow-hidden"
->
-  <div class="card-body p-4 flex flex-col justify-between relative">
-    <!-- Header with flag and departments -->
-    <div class="flex justify-between items-start">
-      <!-- Flag or placeholder -->
-      <div class="badge badge-lg p-3 bg-base-100">
-        <span
-          class="fi text-2xl"
-          :class="'fi-' + (item.partnercountry?.parco_code || '')"
-        ></span>
-        <span
-          v-if="!item.partnercountry?.parco_code"
-          class="text-xl font-bold"
-        >?</span>
-      </div>
-      
-      <!-- Departments -->
-      <div class="flex flex-wrap gap-1 justify-end max-w-[70%]" v-if="item.departments.length > 0">
-        <div
-          v-for="(dept, index) in item.departments"
-          :key="index"
-          class="badge badge-sm font-semibold text-xs"
-          :style="{ backgroundColor: dept.dept_color }"
-        >
-          {{ dept.dept_shortname }}
-        </div>
-      </div>
-      <div v-else class="badge badge-outline badge-sm">
-        Aucun département
-      </div>
-    </div>
-    
-    <!-- Main content -->
-    <div class="mt-2">
-      <h2 class="card-title text-lg font-bold line-clamp-2">
-        {{ item.university?.univ_name || "Université indisponible" }}
-      </h2>
-      <p class="text-sm opacity-80">
-        {{ item.university?.univ_city || "Ville indisponible" }}
-        <span class="font-medium">({{ item.partnercountry?.parco_name || "Pays indisponible" }})</span>
-        <span v-if="item.isced?.isc_code" class="badge badge-outline ml-1">{{ item.isced?.isc_code }}</span>
-      </p>
-    </div>
-    
-<!-- Hover overlay -->
-<div class="absolute inset-0 w-full h-full bg-black bg-opacity-0 hover:bg-opacity-60 flex items-center justify-center transition-all duration-300 group">
-  <span class="text-white text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-    Voir plus
-  </span>
-</div>
+            :to="{ name: 'Accord', params: { agree_id: item.agree_id } }"
+            v-for="(item, index) in accords.agreements"
+            :key="index"
+            class="card bg-base-200 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 m-2 min-w-80 w-80 h-52 overflow-hidden"
+          >
+            <div class="card-body p-4 flex flex-col justify-between relative">
+              <!-- Header with flag and departments -->
+              <div class="flex justify-between items-start">
+                <!-- Flag or placeholder -->
+                <div class="badge badge-lg p-3 bg-base-100">
+                  <span
+                    class="fi text-2xl"
+                    :class="'fi-' + (item.partnercountry?.parco_code || '')"
+                  ></span>
+                  <span
+                    v-if="!item.partnercountry?.parco_code"
+                    class="text-xl font-bold"
+                  >?</span>
+                </div>
+                
+                <!-- Departments -->
+                <div class="flex flex-wrap gap-1 justify-end max-w-[70%]" v-if="item.departments.length > 0">
+                  <div
+                    v-for="(dept, index) in item.departments"
+                    :key="index"
+                    class="badge badge-sm font-semibold text-xs"
+                    :style="{ backgroundColor: dept.dept_color }"
+                  >
+                    {{ dept.dept_shortname }}
+                  </div>
+                </div>
+                <div v-else class="badge badge-outline badge-sm">
+                  Aucun département
+                </div>
+              </div>
+              
+              <!-- Main content -->
+              <div class="mt-2">
+                <h2 class="card-title text-lg font-bold line-clamp-2">
+                  {{ item.university?.univ_name || "Université indisponible" }}
+                </h2>
+                <p class="text-sm opacity-80">
+                  {{ item.university?.univ_city || "Ville indisponible" }}
+                  <span class="font-medium">({{ item.partnercountry?.parco_name || "Pays indisponible" }})</span>
+                  <span v-if="item.isced?.isc_code" class="badge badge-outline ml-1">{{ item.isced?.isc_code }}</span>
+                </p>
+              </div>
+              
+              <!-- Hover overlay -->
+              <div class="absolute inset-0 w-full h-full bg-black bg-opacity-0 hover:bg-opacity-60 flex items-center justify-center transition-all duration-300 group">
+                <span class="text-white text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Voir plus
+                </span>
+              </div>
 
 
-  </div>
-</RouterLink>
+            </div>
+          </RouterLink>
         </div>
       </div>
     </div>

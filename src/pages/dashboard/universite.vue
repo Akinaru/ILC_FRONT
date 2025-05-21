@@ -245,151 +245,100 @@
         </div>
   
         <!-- MODAL MODIFICATION -->
-        <input type="checkbox" id="modal_modif" class="modal-toggle" />
-        <div class="modal modal-bottom sm:modal-middle" role="dialog">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" 
-                  fill="none" stroke="currentColor" stroke-linecap="round" 
-                  stroke-linejoin="round" stroke-width="2"/>
-                <polygon fill="none" 
-                  points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" 
-                  stroke="currentColor" stroke-linecap="round" 
-                  stroke-linejoin="round" stroke-width="2"/>
-              </svg>
-              Modification de l'université n° {{ currentUnivModif?.univ_id || '' }}
-            </h3>
-            
-            <form @submit.prevent="confirmModifUniv" class="mt-4 space-y-4" v-if="currentUnivModif">
-              <!-- Nom -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Nom de l'université</span>
-                </label>
-                <input type="text" class="input input-bordered w-full" 
-                  v-model="currentUnivModif.univ_name"/>
-              </div>
-              
-              <!-- Ville -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Ville</span>
-                </label>
-                <input type="text" class="input input-bordered w-full" 
-                  v-model="currentUnivModif.univ_city"/>
-              </div>
-  
-              <!-- Pays -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Pays</span>
-                </label>
-                                <select class="select select-bordered w-full" v-model="currentUnivModif.parco_id">
-                    <option disabled selected value="selectACountry">Sélectionnez un pays</option>
-                    <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">{{ parco.parco_name }}</option>
+        <Teleport to="body">
+          <input type="checkbox" id="modal_modif" class="modal-toggle" />
+          <div class="modal modal-bottom sm:modal-middle" role="dialog">
+            <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="currentUnivModif">
+              <h3 class="text-xl font-bold">Modification de l'université n° {{ currentUnivModif?.univ_id || '' }}</h3>
+              <p class="text-sm text-base-content/70 mt-2">Modifiez les informations de l’université sélectionnée.</p>
+              <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+              <form @submit.prevent="confirmModifUniv" class="space-y-4">
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Nom de l'université</span></label>
+                  <input type="text" class="input input-bordered w-full" v-model="currentUnivModif.univ_name" />
+                </div>
+
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Ville</span></label>
+                  <input type="text" class="input input-bordered w-full" v-model="currentUnivModif.univ_city" />
+                </div>
+
+                <div class="form-control">
+                  <label class="label"><span class="label-text">Pays</span></label>
+                  <select class="select select-bordered w-full" v-model="currentUnivModif.parco_id">
+                    <option disabled value="selectACountry">Sélectionnez un pays</option>
+                    <option v-for="(parco, index) in partnercountry" :key="index" :value="parco.parco_id">
+                      {{ parco.parco_name }}
+                    </option>
                   </select>
+                </div>
+
+                <div class="modal-action mt-6">
+                  <label for="modal_modif" class="btn btn-ghost">Annuler</label>
+                  <button type="submit">
+                    <label for="modal_modif" class="btn btn-primary">Modifier</label>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </Teleport>
+
+        <!-- MODAL CONFIRMATION SUPPRESSION -->
+        <Teleport to="body">
+  <dialog id="confirmModal" ref="confirmModal" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeleteUniv">
+      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera l’université et tous les accords qui y sont liés.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <div class="bg-base-200 p-4 rounded-lg flex items-center gap-3 mt-2">
+        <div class="relative inline-block">
+          <span class="fi text-4xl" :class="'fi-' + (confirmDeleteUniv.partnercountry?.parco_code || '')"></span>
+          <span v-if="!confirmDeleteUniv.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full">?</span>
+        </div>
+        <div>
+          <h4 class="font-bold text-lg">{{ confirmDeleteUniv.univ_name || 'Nom indisponible' }}</h4>
+          <div class="text-sm">{{ confirmDeleteUniv.univ_city || 'Ville indisponible' }}</div>
+          <div class="badge badge-outline mt-1">{{ confirmDeleteUniv.partnercountry?.parco_name || 'Pays indisponible' }}</div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h4 class="font-bold mb-2">Accords liés ({{ filteredAgreements.length }})</h4>
+        <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
+          <div v-if="filteredAgreements.length > 0">
+            <div v-for="(accord, index) in filteredAgreements" :key="index" class="border-b last:border-b-0 border-base-300 p-3">
+              <div class="flex items-center gap-3">
+                <span class="fi text-xl" :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name)"></span>
+                <div>
+                  <p class="font-semibold">{{ accord.university?.univ_name || 'Université non spécifiée' }}</p>
+                  <p class="text-sm opacity-70">
+                    ({{ accord.isced?.isc_code || '??' }}) - {{ accord.isced?.isc_name || 'ISCED indisponible' }} |
+                    {{ accord.component?.comp_name || 'Aucune composante' }}
+                  </p>
+                </div>
               </div>
-  
-              <div class="modal-action">
-                <label for="modal_modif" class="btn btn-ghost">Annuler</label>
-                <button type="submit">
-                  <label for="modal_modif" class="btn btn-primary">Enregistrer</label>
-                </button>
-              </div>
-            </form>
+            </div>
+          </div>
+          <div v-else class="p-4 text-center opacity-70">
+            Aucun accord lié à cette université
           </div>
         </div>
-  
-        <!-- MODAL CONFIRMATION SUPPRESSION -->
-        <dialog id="confirmModal" ref="confirmModal" class="modal">
-          <div class="modal-box" v-if="confirmDeleteUniv">
-            <h3 class="text-lg font-bold flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning" 
-                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              Confirmer la suppression
-            </h3>
-            
-            <div class="py-4">
-              <div class="alert alert-warning">
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" 
-                  fill="none" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span>Cette action supprimera l'université dans tous les accords qui y sont liés.</span>
-              </div>
-              
-              <div class="bg-base-200 p-4 rounded-lg mt-4 flex items-center gap-3">
-                <!-- Drapeau -->
-                <div class="relative inline-block">
-                  <span class="fi text-4xl" :class="'fi-' + (confirmDeleteUniv.partnercountry?.parco_code || '')"></span>
-                  <span v-if="!confirmDeleteUniv.partnercountry?.parco_code" 
-                    class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full">
-                    ?
-                  </span>
-                </div>
-                
-                <div>
-                  <h4 class="font-bold text-lg">{{ confirmDeleteUniv.univ_name || 'Nom indisponible' }}</h4>
-                  <div class="text-sm">{{ confirmDeleteUniv.univ_city || 'Ville indisponible' }}</div>
-                  <div class="badge badge-outline mt-1">{{ confirmDeleteUniv.partnercountry?.parco_name || 'Pays indisponible' }}</div>
-                </div>
-              </div>
-  
-              <!-- Liste des accords liés -->
-              <div class="mt-6">
-                <h4 class="font-bold mb-2 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Accords liés ({{ filteredAgreements.length }})
-                </h4>
-                
-                <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
-                  <div v-if="filteredAgreements.length > 0">
-                    <div v-for="(accord, index) in filteredAgreements" :key="index" 
-                      class="border-b last:border-b-0 border-base-300 p-3">
-                      <div class="flex items-center gap-3">
-                        <span class="fi text-xl" 
-                          :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name)"></span>
-                        <div>
-                          <p class="font-semibold">
-                            {{ accord.university?.univ_name || 'Université non spécifiée' }}
-                          </p>
-                          <p class="text-sm opacity-70">
-                            ({{ accord.isced?.isc_code || '??' }}) - {{ accord.isced?.isc_name || 'ISCED indisponible' }} | {{ accord.component?.comp_name || 'Aucune composante' }}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div v-else class="p-4 text-center opacity-70">
-                    Aucun accord lié à cette université
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-                        <div class="modal-action">
-              <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-              <button class="btn btn-error" 
+      </div>
+
+      <div class="modal-action mt-6">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-error"
                 @click="deleteUniv(confirmDeleteUniv?.univ_id || '', confirmDeleteUniv?.univ_name || '', confirmDeleteUniv?.univ_city || '')">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" 
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Confirmer la suppression
-              </button>
-            </div>
-          </div>
-        </dialog>
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
       </div>
       <LoadingComp v-else></LoadingComp>
     </div>

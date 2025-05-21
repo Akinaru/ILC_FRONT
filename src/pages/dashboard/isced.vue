@@ -158,127 +158,85 @@
   
         <!-- MODAL MODIFICATION -->
         <Teleport to="body">
-        <input type="checkbox" id="modal_modif" class="modal-toggle" />
-        <div class="modal modal-bottom sm:modal-middle" role="dialog">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg">
-              Modification de l'ISCED n° {{ currentIscedModif.isc_id }}
-            </h3>
-            <form @submit.prevent="confirmModifIsced" class="mt-4 space-y-4">
-              <!-- Code -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Code</span>
-                </label>
-                <input type="text" class="input input-bordered w-full" 
-                  v-model="currentIscedModif.isc_code"/>
-              </div>
-              
-              <!-- Nom -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Nom</span>
-                </label>
-                <input type="text" class="input input-bordered w-full" 
-                  v-model="currentIscedModif.isc_name"/>
-              </div>
-  
-              <div class="modal-action">
-                <label for="modal_modif" class="btn btn-ghost">Annuler</label>
-                <button type="submit">
-                  <label for="modal_modif" class="btn btn-primary">Enregistrer</label>
-                </button>
-              </div>
-            </form>
-          </div>
+  <input type="checkbox" id="modal_modif" class="modal-toggle" />
+  <div class="modal modal-bottom sm:modal-middle" role="dialog">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Modification de l'ISCED n° {{ currentIscedModif.isc_id }}</h3>
+      <p class="text-sm text-base-content/70 mt-2">Modifiez le code et le nom de la catégorie ISCED sélectionnée.</p>
+      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+      <form @submit.prevent="confirmModifIsced" class="space-y-4">
+        <div class="form-control">
+          <label class="label"><span class="label-text">Code</span></label>
+          <input type="text" class="input input-bordered w-full" v-model="currentIscedModif.isc_code" />
         </div>
-        </Teleport>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text">Nom</span></label>
+          <input type="text" class="input input-bordered w-full" v-model="currentIscedModif.isc_name" />
+        </div>
+
+        <div class="modal-action mt-6">
+          <label for="modal_modif" class="btn btn-ghost">Annuler</label>
+          <button type="submit">
+            <label for="modal_modif" class="btn btn-primary">Modifier</label>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</Teleport>
+
   
         <!-- MODAL CONFIRMATION SUPPRESSION -->
         <Teleport to="body">
-        <dialog id="confirmModal" ref="confirmModal" class="modal">
-          <div class="modal-box">
-            <h3 class="text-lg font-bold flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning" 
-                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              Confirmer la suppression
-            </h3>
-            
-            <div class="py-4">
-              <div class="alert alert-warning">
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" 
-                  fill="none" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span>Cette action supprimera l'ISCED dans tous les accords liés.</span>
-              </div>
-              
-              <div class="bg-base-200 p-4 rounded-lg mt-4">
-                <div class="flex items-center gap-2">
-                  <div class="badge badge-lg">{{ confirmDeleteIsced.isc_code }}</div>
-                  <h4 class="font-bold">{{ confirmDeleteIsced.isc_name }}</h4>
+  <dialog id="confirmModal" ref="confirmModal" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeleteIsced">
+      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera l’ISCED dans tous les accords liés.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <div class="bg-base-200 p-4 rounded-lg mt-2">
+        <div class="flex items-center gap-2">
+          <div class="badge badge-lg">{{ confirmDeleteIsced.isc_code }}</div>
+          <h4 class="font-bold">{{ confirmDeleteIsced.isc_name }}</h4>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h4 class="font-bold mb-2">Accords liés ({{ filteredAgreements.length }})</h4>
+        <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
+          <div v-if="filteredAgreements.length > 0">
+            <div v-for="(accord, index) in filteredAgreements" :key="index" class="border-b last:border-b-0 border-base-300 p-3">
+              <div class="flex items-center gap-3">
+                <span class="fi text-xl" :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name)"></span>
+                <div>
+                  <p class="font-semibold">{{ accord.university?.univ_name ?? 'Université non spécifiée' }}</p>
+                  <p class="text-sm opacity-70">
+                    {{ accord.partnercountry.parco_name }} – {{ accord.university?.univ_city ?? 'Ville non spécifiée' }}
+                  </p>
+                  <p class="text-sm">{{ accord.component?.comp_name ?? 'Aucune composante' }}</p>
                 </div>
               </div>
-  
-              <!-- Liste des accords liés -->
-              <div class="mt-6">
-                <h4 class="font-bold mb-2 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                  Accords liés ({{ filteredAgreements.length }})
-                </h4>
-                
-                <div class="bg-base-200 rounded-lg max-h-64 overflow-y-auto">
-                  <div v-if="filteredAgreements.length > 0">
-                    <div v-for="(accord, index) in filteredAgreements" :key="index" 
-                      class="border-b last:border-b-0 border-base-300 p-3">
-                      <div class="flex items-center gap-3">
-                        <span class="fi text-xl" 
-                          :class="'fi-'+ getCountryCode(accord.partnercountry.parco_name)"></span>
-                        <div>
-                          <p class="font-semibold">
-                            {{ accord.university?.univ_name ?? 'Université non spécifiée' }}
-                          </p>
-                          <p class="text-sm opacity-70">
-                            {{ accord.partnercountry.parco_name }} - 
-                            {{ accord.university?.univ_city ?? 'Ville non spécifiée' }}
-                          </p>
-                          <p class="text-sm">
-                            {{ accord.component?.comp_name ?? 'Aucune composante' }}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div v-else class="p-4 text-center opacity-70">
-                    Aucun accord lié à cet ISCED
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="modal-action">
-              <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-              <button class="btn btn-error" 
-                @click="deleteIsced(confirmDeleteIsced.isc_id, confirmDeleteIsced.isc_name, confirmDeleteIsced.isc_code)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" 
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Confirmer la suppression
-              </button>
             </div>
           </div>
-        </dialog>
-        </Teleport>
+          <div v-else class="p-4 text-center opacity-70">
+            Aucun accord lié à cet ISCED
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-action mt-6">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-error"
+                @click="deleteIsced(confirmDeleteIsced.isc_id, confirmDeleteIsced.isc_name, confirmDeleteIsced.isc_code)">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
       </div>
       <LoadingComp v-else></LoadingComp>
     </div>

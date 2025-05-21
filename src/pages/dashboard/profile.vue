@@ -428,216 +428,185 @@
   
     <!-- Modal de modification de la destination -->
     <Teleport to="body">
-    <input type="checkbox" id="my_modal_dest" class="modal-toggle" />
-    <div class="modal fixed inset-0 z-50" role="dialog">
-      <div class="modal-box w-11/12 max-w-3xl"> 
-        <h3 class="text-lg font-bold">Modification de la destination</h3>
-        <div class="my-6">
-          <p class="font-medium mb-2">Accord sélectionné:</p>
-          <div v-if="selectedNewDestination != null" class="bg-base-200 rounded-lg p-4 flex items-center gap-4">
-            <span class="relative inline-block tooltip" :data-tip="selectedNewDestination?.partnercountry?.parco_name || 'Introuvable'">
-              <span class="fi text-3xl" :class="'fi-' + (selectedNewDestination?.partnercountry?.parco_code || '')"></span>
-              <span v-if="!selectedNewDestination?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white rounded-full select-none">?</span>
-            </span>
-            
-            <div class="flex-1">
-              <div class="font-bold">{{ selectedNewDestination.university?.univ_name || 'Université indisponible' }}</div>
-              <div class="text-sm opacity-75">
-                {{ selectedNewDestination.university?.univ_city || 'Ville indisponible' }}, 
-                {{ selectedNewDestination.partnercountry?.parco_name || 'Pays indisponible' }}
-              </div>
-              <div class="text-xs mt-1 flex gap-2">
-                <span class="badge badge-sm">ISCED: {{ selectedNewDestination.isced?.isc_code || 'N/A' }}</span>
-                <span class="badge badge-sm badge-outline">{{ selectedNewDestination.isced?.isc_name || 'Nom ISCED indisponible' }}</span>
-              </div>
-            </div>
+  <input type="checkbox" id="my_modal_dest" class="modal-toggle" />
+  <div class="modal" role="dialog">
+    <div class="modal-box w-11/12 max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Modification de la destination</h3>
+      <p class="text-sm text-base-content/70 mt-1">Choisissez une nouvelle destination parmi les accords disponibles.</p>
+      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+      <!-- Accord sélectionné -->
+      <div v-if="selectedNewDestination" class="bg-base-200 rounded-lg p-4 flex items-center gap-4 mb-6">
+        <span class="relative inline-block tooltip" :data-tip="selectedNewDestination.partnercountry?.parco_name || 'Introuvable'">
+          <span class="fi text-3xl" :class="'fi-' + (selectedNewDestination.partnercountry?.parco_code || '')"></span>
+          <span v-if="!selectedNewDestination.partnercountry?.parco_code"
+                class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white rounded-full select-none">?</span>
+        </span>
+        <div class="flex-1">
+          <div class="font-bold">{{ selectedNewDestination.university?.univ_name || 'Université indisponible' }}</div>
+          <div class="text-sm text-base-content/70">{{ selectedNewDestination.university?.univ_city || 'Ville' }}, {{ selectedNewDestination.partnercountry?.parco_name || 'Pays' }}</div>
+          <div class="text-xs mt-1 flex gap-2">
+            <span class="badge badge-sm">ISCED: {{ selectedNewDestination.isced?.isc_code || 'N/A' }}</span>
+            <span class="badge badge-sm badge-outline">{{ selectedNewDestination.isced?.isc_name || 'Nom ISCED indisponible' }}</span>
           </div>
         </div>
-        
-        <div class="border border-base-300 rounded-lg max-h-96 overflow-y-auto">
-          <div class="bg-base-200 p-2 sticky top-0 z-10">
-            <input type="text" placeholder="Rechercher un accord..." class="input input-sm w-full" />
-          </div>
-          
-          <div class="p-2 space-y-2">
-            <div v-for="(accord, index) in accords.agreements" 
-                 :key="index" 
-                 @click="changeDestination(accord)" 
-                 class="bg-base-100 rounded-lg p-3 cursor-pointer hover:bg-base-200 transition-colors"
-                 :class="{ 'border-l-4 border-primary': selectedNewDestination && selectedNewDestination.agree_id == accord.agree_id, 
-                          'opacity-75': selectedNewDestination && selectedNewDestination.agree_id != accord.agree_id}">
-              <div class="flex items-center gap-3">
-                <span class="relative inline-block">
-                  <span class="fi text-2xl" :class="'fi-' + (accord?.partnercountry?.parco_code || '')"></span>
-                  <span v-if="!accord?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white rounded-full select-none">?</span>
-                </span>
-                
-                <div class="flex-1">
-                  <div class="font-bold">{{ accord.university?.univ_name || 'Université indisponible' }}</div>
-                  <div class="text-sm opacity-75">
-                    {{ accord.university?.univ_city || 'Ville indisponible' }}, 
-                    {{ accord.partnercountry?.parco_name || 'Pays indisponible' }}
-                  </div>
-                  <div class="text-xs mt-1 flex gap-2">
-                    <span class="badge badge-sm">ISCED: {{ accord.isced?.isc_code || 'N/A' }}</span>
-                    <span class="badge badge-sm badge-outline">{{ accord.isced?.isc_name || 'Nom ISCED indisponible' }}</span>
-                  </div>
+      </div>
+
+      <!-- Liste des accords -->
+      <div class="border border-base-300 rounded-lg max-h-96 overflow-y-auto">
+        <div class="bg-base-200 p-2 sticky top-0 z-10">
+          <input type="text" placeholder="Rechercher un accord..." class="input input-sm w-full" />
+        </div>
+        <div class="p-2 space-y-2">
+          <div v-for="(accord, index) in accords.agreements" :key="index"
+               @click="changeDestination(accord)"
+               :class="['bg-base-100 rounded-lg p-3 cursor-pointer hover:bg-base-200 transition-all', 
+                        selectedNewDestination?.agree_id === accord.agree_id ? 'border-l-4 border-primary' : 'opacity-75']">
+            <div class="flex items-center gap-3">
+              <span class="relative inline-block">
+                <span class="fi text-2xl" :class="'fi-' + (accord.partnercountry?.parco_code || '')"></span>
+                <span v-if="!accord.partnercountry?.parco_code"
+                      class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white rounded-full select-none">?</span>
+              </span>
+              <div class="flex-1">
+                <div class="font-bold">{{ accord.university?.univ_name || 'Université' }}</div>
+                <div class="text-sm text-base-content/70">{{ accord.university?.univ_city || 'Ville' }}, {{ accord.partnercountry?.parco_name || 'Pays' }}</div>
+                <div class="text-xs mt-1 flex gap-2">
+                  <span class="badge badge-sm">ISCED: {{ accord.isced?.isc_code || 'N/A' }}</span>
+                  <span class="badge badge-sm badge-outline">{{ accord.isced?.isc_name || 'Nom ISCED' }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-  
-        <form @submit.prevent="confirmModifDest" class="mt-6">
-          <div class="modal-action">
-            <label for="my_modal_dest" @click="resetModifDest" class="btn btn-ghost">Annuler</label>
-            <button type="submit">
-              <label for="my_modal_dest" class="btn btn-primary">Enregistrer</label>
-            </button>
-          </div>
-        </form>
       </div>
+
+      <!-- Actions -->
+      <form @submit.prevent="confirmModifDest" class="mt-6">
+        <div class="modal-action">
+          <label for="my_modal_dest" @click="resetModifDest" class="btn btn-ghost">Annuler</label>
+          <button type="submit">
+            <label for="my_modal_dest" class="btn btn-primary">Enregistrer</label>
+          </button>
+        </div>
+      </form>
     </div>
-    </Teleport>
+  </div>
+</Teleport>
+
   
     <!-- Modal de modification des informations -->
     <Teleport to="body">
-    <input type="checkbox" id="my_modal_6" class="modal-toggle" />
-    <div class="modal" role="dialog">
-      <div class="modal-box w-11/12 max-w-xl">
-        <h3 class="text-lg font-bold mb-4">Modification des informations</h3>
-        
-        <form @submit.prevent="confirmModifCompte" class="space-y-4">
-          <!-- Mail -->
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Mail</span>
-            </div>
-            <input type="email" class="input input-bordered w-full" v-model="modifCompte.acc_mail"/>
-          </label>
-          
-          <!-- Numéro étudiant -->
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Numéro étudiant</span>
-            </div>
-            <input type="text" class="input input-bordered w-full" v-model="modifCompte.acc_studentnum"/>
-          </label>
-          
-          <!-- Années mobilité -->
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Années de mobilité</span>
-            </div>
-            <select class="select select-bordered w-full" v-model="modifCompte.acc_anneemobilite">
-              <option disabled selected value="">Sélectionnez une paire d'années</option>
-              <option v-for="(annee, index) in anneesmobilite" :key="index" :value="annee">{{ annee }}</option>
-            </select>
-          </label>
+  <input type="checkbox" id="my_modal_6" class="modal-toggle" />
+  <div class="modal" role="dialog">
+    <div class="modal-box w-11/12 max-w-xl rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Modification des informations</h3>
+      <p class="text-sm text-base-content/70 mt-1">Mettez à jour les données administratives et académiques de l'étudiant.</p>
+      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
 
-          <!-- Periode de mobilité -->
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Periode de mobilité</span>
-            </div>
-            <select class="select select-bordered w-full" v-model="modifCompte.acc_periodemobilite">
-              <option disabled selected value="">Sélectionnez une periode de mobilité</option>
-              <option value="1">🍂 Mobilité d'automne</option>
-              <option value="2">🌱 Mobilité de printemps</option>
-            </select>
-          </label>
-          
-          <!-- Département -->
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Département</span>
-            </div>
-            <select
-              :disabled="!accountStore.isAdmin()"
-              class="select select-bordered w-full" 
-              v-model="modifCompte.dept_id">
-              <template v-for="(compo, index) in components.components" :key="index">
-                <optgroup :label="compo.comp_name">
-                  <option 
-                    v-for="(dept, index) in compo.departments" 
-                    :key="index" 
-                    :value="dept.dept_id" 
-                    :style="{ color: dept.dept_color }">
-                    ({{ dept.dept_shortname }}) {{ dept.dept_name }}
-                  </option>
-                </optgroup>
-              </template>
-            </select>
-            <div v-if="!accountStore.isAdmin()" class="label">
-              <span class="label-text-alt text-error">Seul les administrateurs peuvent modifier ce champ</span>
-            </div>
-          </label>
-          
-          <!-- Parcours -->
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Parcours</span>
-            </div>
-            <input type="text" class="input input-bordered w-full" v-model="modifCompte.acc_parcours"/>
-          </label>
-          
-          <!-- Toeic -->
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Score TOEIC</span>
-            </div>
-            <input type="text" class="input input-bordered w-full" v-model="modifCompte.acc_toeic"/>
-          </label>
-          
-          <div class="modal-action">
-            <label for="my_modal_6" class="btn btn-ghost">Annuler</label>
-            <button type="submit">
-              <label for="my_modal_6" class="btn btn-primary">Enregistrer</label>
-            </button>
+      <form @submit.prevent="confirmModifCompte" class="space-y-4">
+        <!-- Tous les champs -->
+        <label class="form-control w-full" v-for="(label, key) in {
+          acc_mail: 'Mail',
+          acc_studentnum: 'Numéro étudiant',
+          acc_parcours: 'Parcours',
+          acc_toeic: 'Score TOEIC'
+        }" :key="key">
+          <div class="label">
+            <span class="label-text font-medium">{{ label }}</span>
           </div>
-        </form>
-      </div>
+          <input :type="key === 'acc_mail' ? 'email' : 'text'" class="input input-bordered w-full" v-model="modifCompte[key]" />
+        </label>
+
+        <!-- Sélecteurs -->
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text font-medium">Années de mobilité</span></div>
+          <select class="select select-bordered w-full" v-model="modifCompte.acc_anneemobilite">
+            <option disabled value="">Sélectionnez une paire d'années</option>
+            <option v-for="(annee, index) in anneesmobilite" :key="index" :value="annee">{{ annee }}</option>
+          </select>
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text font-medium">Période de mobilité</span></div>
+          <select class="select select-bordered w-full" v-model="modifCompte.acc_periodemobilite">
+            <option disabled value="">Sélectionnez une période</option>
+            <option value="1">🍂 Mobilité d'automne</option>
+            <option value="2">🌱 Mobilité de printemps</option>
+          </select>
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text font-medium">Département</span></div>
+          <select :disabled="!accountStore.isAdmin()" class="select select-bordered w-full" v-model="modifCompte.dept_id">
+            <template v-for="(compo, index) in components.components" :key="index">
+              <optgroup :label="compo.comp_name">
+                <option v-for="(dept, index) in compo.departments" :key="index" :value="dept.dept_id" :style="{ color: dept.dept_color }">
+                  ({{ dept.dept_shortname }}) {{ dept.dept_name }}
+                </option>
+              </optgroup>
+            </template>
+          </select>
+          <div v-if="!accountStore.isAdmin()" class="label">
+            <span class="label-text-alt text-error">Seuls les administrateurs peuvent modifier ce champ</span>
+          </div>
+        </label>
+
+        <div class="modal-action">
+          <label for="my_modal_6" class="btn btn-ghost">Annuler</label>
+          <button type="submit">
+            <label for="my_modal_6" class="btn btn-primary">Enregistrer</label>
+          </button>
+        </div>
+      </form>
     </div>
-    </Teleport>
+  </div>
+</Teleport>
+
   
     <!-- Modal de confirmation suppression -->
-    <dialog id="confirmModalDoc" ref="confirmModalDoc" class="modal">
-      <div class="modal-box">
-        <h3 class="text-lg font-bold">Confirmer la suppression</h3>
-        <div class="py-4">
-          <p>Voulez-vous vraiment supprimer le fichier : <span class="font-bold">{{ confirmDeleteDocument.title }}</span> ?</p>
-          <p class="text-sm text-error mt-2">Cette action est irréversible.</p>
-        </div>
-        <div class="modal-action">
-          <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-          <button class="btn btn-error" @click="deleteFile(confirmDeleteDocument.folder, confirmDeleteDocument.title, confirmDeleteDocument.type)">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            Confirmer
-          </button>
-        </div>
+    <Teleport to="body">
+  <dialog id="confirmModalDoc" ref="confirmModalDoc" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+      <p class="text-sm text-base-content/70 mt-1">Cette action est irréversible.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <div class="py-2">
+        <p>Voulez-vous vraiment supprimer le fichier : <strong>{{ confirmDeleteDocument.title }}</strong> ?</p>
       </div>
-    </dialog>
+
+      <div class="modal-action">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-error" @click="deleteFile(confirmDeleteDocument.folder, confirmDeleteDocument.title, confirmDeleteDocument.type)">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
 
     <!-- Modal de confirmation suppression de compte -->
-    <dialog id="confirmModalAccount" ref="confirmModalAccount" class="modal">
-      <div class="modal-box">
-        <h3 class="text-lg font-bold">Confirmer la suppression du compte?</h3>
-        <div class="py-3">
-          <p>Confirmez vous la suppression du compte ?</p>
-          <p>
-            Cette action est irréversible et les informations du compte seront supprimées.
-          </p>
-        </div>
-        <div class="modal-action">
-          <button class="btn" @click="closeModal">Annuler</button>
-          <button class="btn btn-success" @click="deleteAccount">
-            Confirmer
-          </button>
-        </div>
+    <Teleport to="body">
+  <dialog id="confirmModalAccount" ref="confirmModalAccount" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Suppression du compte</h3>
+      <p class="text-sm text-base-content/70 mt-1">Les données liées seront supprimées de façon définitive.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <div class="py-3">
+        <p>Confirmez-vous la suppression du compte ?</p>
       </div>
-    </dialog>
+
+      <div class="modal-action">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-error" @click="deleteAccount">Supprimer</button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
   </template>
 
 <script setup>

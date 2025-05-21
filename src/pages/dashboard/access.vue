@@ -402,71 +402,73 @@
         </div>
       </div>
       
-      <!-- MODALS DE CONFIRMATION -->
       <!-- Modal de confirmation suppression accès administratif -->
+      <Teleport to="body">
       <dialog id="confirmModal" ref="confirmModal" class="modal">
-        <div class="modal-box">
-          <h3 class="text-lg font-bold">Confirmer la suppression</h3>
-          <div class="py-4">
-            <p>Voulez-vous vraiment supprimer l'accès pour :</p>
-            <div class="mt-3 p-3 bg-base-200 rounded-lg">
-              <div v-if="confirmDeleteAccess.account" class="flex items-center gap-2">
-                <span class="badge p-2" 
-                  :style="{ backgroundColor: `${confirmDeleteAccess.account.role.color ? confirmDeleteAccess.account.role.color : '#aaaaaa'}` }">
-                  {{ confirmDeleteAccess.account.role.role }}
-                </span>
-                <span class="font-bold">{{ confirmDeleteAccess.account.acc_fullname }}</span>
-              </div>
-              <div v-else class="flex items-center gap-2">
-                <span class="badge badge-neutral p-2">Introuvable</span>
-                <span class="font-bold">{{ confirmDeleteAccess.acc_id }}</span>
-              </div>
+        <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+          <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+          <p class="text-sm text-base-content/70 mt-2">Vous êtes sur le point de supprimer un accès administratif.</p>
+          <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+          <p>Voulez-vous vraiment supprimer l'accès pour :</p>
+          <div class="mt-3 p-3 bg-base-200 rounded-lg">
+            <div v-if="confirmDeleteAccess.account" class="flex items-center gap-2">
+              <span class="badge p-2"
+                :style="{ backgroundColor: `${confirmDeleteAccess.account.role.color ? confirmDeleteAccess.account.role.color : '#aaaaaa'}` }">
+                {{ confirmDeleteAccess.account.role.role }}
+              </span>
+              <span class="font-bold">{{ confirmDeleteAccess.account.acc_fullname }}</span>
+            </div>
+            <div v-else class="flex items-center gap-2">
+              <span class="badge badge-neutral p-2">Introuvable</span>
+              <span class="font-bold">{{ confirmDeleteAccess.acc_id }}</span>
             </div>
           </div>
-          <div class="modal-action">
+
+          <div class="modal-action mt-6">
             <button class="btn btn-ghost" @click="closeModal">Annuler</button>
             <button class="btn btn-error" @click="removeAccess(confirmDeleteAccess.acc_id)">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
               Supprimer
             </button>
           </div>
         </div>
       </dialog>
+      </Teleport>
       
       <!-- Modal de confirmation suppression accès étudiant -->
+      <Teleport to="body">
       <dialog id="confirmModalAccepted" ref="confirmModalAccepted" class="modal">
-        <div class="modal-box">
-          <h3 class="text-lg font-bold">Confirmer la suppression</h3>
-          <div class="py-4">
-            <p>Voulez-vous vraiment supprimer l'accès étudiant pour :</p>
-            <div class="mt-3 p-3 bg-base-200 rounded-lg">
-              <div v-if="confirmDeleteAccepted.account" class="flex items-center gap-2">
-                <span v-if="confirmDeleteAccepted.department" class="badge p-2" 
-                  :style="{backgroundColor: confirmDeleteAccepted.department.dept_color}">
-                  {{ confirmDeleteAccepted.department.dept_shortname }}
-                </span>
-                <span v-else class="badge badge-neutral p-2">Aucun département</span>
-                <span class="font-bold">{{ confirmDeleteAccepted.account.acc_fullname }}</span>
-              </div>
-              <div v-else class="flex items-center gap-2">
-                <span class="badge badge-neutral p-2">Introuvable</span>
-                <span class="font-bold">{{ confirmDeleteAccepted.acc_id }}</span>
-              </div>
+        <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+          <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+          <p class="text-sm text-base-content/70 mt-2">Vous êtes sur le point de supprimer un accès étudiant.</p>
+          <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+          <p>Voulez-vous vraiment supprimer l'accès étudiant pour :</p>
+          <div class="mt-3 p-3 bg-base-200 rounded-lg">
+            <div v-if="confirmDeleteAccepted.account" class="flex items-center gap-2">
+              <span v-if="confirmDeleteAccepted.department" class="badge p-2"
+                :style="{backgroundColor: confirmDeleteAccepted.department.dept_color}">
+                {{ confirmDeleteAccepted.department.dept_shortname }}
+              </span>
+              <span v-else class="badge badge-neutral p-2">Aucun département</span>
+              <span class="font-bold">{{ confirmDeleteAccepted.account.acc_fullname }}</span>
+            </div>
+            <div v-else class="flex items-center gap-2">
+              <span class="badge badge-neutral p-2">Introuvable</span>
+              <span class="font-bold">{{ confirmDeleteAccepted.acc_id }}</span>
             </div>
           </div>
-          <div class="modal-action">
+
+          <div class="modal-action mt-6">
             <button class="btn btn-ghost" @click="closeModal">Annuler</button>
             <button class="btn btn-error" @click="removeAccepted(confirmDeleteAccepted.acc_id)">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
               Supprimer
             </button>
           </div>
         </div>
       </dialog>
+      </Teleport>
+
     </div>
     <div v-else>
       <LoadingComp></LoadingComp>

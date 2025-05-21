@@ -658,216 +658,192 @@
                     </div>
                 </div>
 
-                <!-- Modal de confirmation suppression -->
+                <!-- MODAL CONFIRMATION SUPPRESSION TOUS LES ACCORDS -->
                 <Teleport to="body">
-                <dialog id="confirmModalDeleteAll" ref="confirmModalDeleteAll" class="modal">
-                    <div class="modal-box max-w-full w-150">
-                        <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
-                        <div class="py-3">
-                            <p>Confirmez vous la suppression de tous les accords ?</p>
-                            <p>Cela entraînera la suppression de l'arbitrage actuel ainsi que de tous les vœux des étudiants.</p>
-                            <p v-if="isConfirmDisabled.bool">Veuillez patienter {{ isConfirmDisabled.time }} secondes avant de confirmer.</p>
-                        </div>
-                        <div class="modal-action">
-                            <button class="btn" @click="closeModal">Annuler</button>
-                            <button class="btn btn-success" @click="deleteAll()" :disabled="isConfirmDisabled.bool">Confirmer</button>
-                        </div>
+                  <dialog id="confirmModalDeleteAll" ref="confirmModalDeleteAll" class="modal">
+                    <div class="modal-box max-w-full w-150 rounded-2xl border border-base-300 shadow-xl">
+                      <h3 class="text-xl font-bold">Confirmer la suppression ?</h3>
+                      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera tous les accords, l’arbitrage en cours ainsi que tous les vœux étudiants.</p>
+                      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+                      <p>Confirmez vous la suppression de tous les accords ?</p>
+                      <p>Cela entraînera la suppression de l'arbitrage actuel ainsi que de tous les vœux des étudiants.</p>
+                      <p v-if="isConfirmDisabled.bool">Veuillez patienter {{ isConfirmDisabled.time }} secondes avant de confirmer.</p>
+
+                      <div class="modal-action mt-6">
+                        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                        <button class="btn btn-error" @click="deleteAll()" :disabled="isConfirmDisabled.bool">Supprimer</button>
+                      </div>
                     </div>
-                </dialog>
+                  </dialog>
                 </Teleport>
 
-                <!-- Modal de modification d'accord -->
+                <!-- MODAL MODIFICATION ACCORD -->
                 <Teleport to="body">
-                <dialog id="modifAccordModal" ref="modifAccordModal" class="modal">
-                    <div class="modal-box max-w-full w-150">
-                        <h3 class="text-lg font-bold">Modification de l'accord</h3>
-                        <!-- Affichage de l'accord -->
-                        <div class="select-none flex justify-between items-center w-full h-20 mt-3">
-                            <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
-                                <span class="tooltip mr-2" :data-tip="currentAccordModif?.accord?.partnercountry?.parco_name || 'Introuvable'">
-                                    <span class="relative inline-block">
-                                        <!-- Drapeau -->
-                                        <span class="fi text-5xl" :class="'fi-' + (currentAccordModif?.accord?.partnercountry?.parco_code || '')"></span>
-                                        <!-- Point d'interrogation si pas de drapeau -->
-                                        <template v-if="!currentAccordModif?.accord?.partnercountry?.parco_code">
-                                            <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                                ?
-                                            </span>
-                                        </template>
-                                    </span>
-                                </span>
-                                <div class="flex flex-col w-full">
-                                    <p class="w-full select-none"><strong>{{ currentAccordModif?.accord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ currentAccordModif?.accord?.university?.univ_city || 'Ville indisponible' }} ({{ currentAccordModif?.accord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
-                                    <p>[{{ currentAccordModif?.accord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ currentAccordModif?.accord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ currentAccordModif?.accord?.component?.comp_name || 'Indisponible' }}</p>
-                                </div>
-                            </div>
+                  <dialog id="modifAccordModal" ref="modifAccordModal" class="modal">
+                    <div class="modal-box max-w-full w-150 rounded-2xl border border-base-300 shadow-xl">
+                      <h3 class="text-xl font-bold">Modification de l'accord</h3>
+                      <p class="text-sm text-base-content/70 mt-2">Modifiez les informations liées à cet accord d’échange.</p>
+                      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+                      <!-- Affichage accord -->
+                      <div class="bg-base-300 flex items-center justify-center h-20 w-full select-none rounded-md">
+                        <span class="tooltip mr-2" :data-tip="currentAccordModif?.accord?.partnercountry?.parco_name || 'Introuvable'">
+                          <span class="relative inline-block">
+                            <span class="fi text-5xl" :class="'fi-' + (currentAccordModif?.accord?.partnercountry?.parco_code || '')"></span>
+                            <template v-if="!currentAccordModif?.accord?.partnercountry?.parco_code">
+                              <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white">?</span>
+                            </template>
+                          </span>
+                        </span>
+                        <div class="flex flex-col w-full">
+                          <p><strong>{{ currentAccordModif?.accord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ currentAccordModif?.accord?.university?.univ_city || 'Ville indisponible' }} ({{ currentAccordModif?.accord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
+                          <p>[{{ currentAccordModif?.accord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ currentAccordModif?.accord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ currentAccordModif?.accord?.component?.comp_name || 'Indisponible' }}</p>
                         </div>
-                        <!-- Formulaire -->
-                        <form class="w-full *:my-2">
-                            <!-- Formulaire Isced -->
-                            <label class="form-control w-full items-center justify-center">
-                                <div class="label">
-                                    <span class="label-text">Isced</span>
-                                </div>
-                                <select class="select select-bordered w-full select-primary" id="isced_select" v-model="currentAccordModif.isc_id">
-                                    <option :value="null">Aucun isced</option>
-                                    <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{ isced.isc_code }}) {{ isced.isc_name }}</option>
-                                </select>
-                            </label>
-                            <div class="w-full flex">
+                      </div>
 
-                                <!-- Formulaire composante -->
-                                <label class="form-control w-full items-center justify-center">
-                                    <div class="label">
-                                        <span class="label-text">Composante</span>
-                                    </div>
-                                    <select class="select select-bordered w-full select-primary" id="compo_select" v-model="currentAccordModif.comp_id">
-                                        <option :value="null">Aucune composante</option>
-                                        <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
-                                    </select>
-                                </label>
-                                <!-- Formulaire Typeaccord -->
-                                <label class="form-control w-full items-center justify-center">
-                                    <div class="label">
-                                        <span class="label-text">Type accord</span>
-                                    </div>
-                                    <select class="select select-bordered w-full select-primary" id="typeaccord_select" v-model="currentAccordModif.agree_typeaccord">
-                                        <option :value="null">Aucun type d'accord</option>
-                                        <option>Bilatéral</option>
-                                        <option>Erasmus</option>
-                                    </select>
-                                </label>
-                            <!-- Formulaire Nombre de place -->
-                            <label class="form-control w-full items-center justify-center">
-                                <div class="label">
-                                  <span class="label-text">Nombre de places</span>
-                                </div>
-                                <input type="number" class="input input-bordered w-full" v-model="currentAccordModif.agree_nbplace" />
-                            </label>
-                            </div>
+                      <!-- Formulaire -->
+                      <form class="w-full space-y-3 mt-4">
+                        <label class="form-control w-full">
+                          <div class="label"><span class="label-text">Isced</span></div>
+                          <select class="select select-bordered w-full select-primary" v-model="currentAccordModif.isc_id">
+                            <option :value="null">Aucun isced</option>
+                            <option v-for="(isced, index) in isceds" :key="index" :value="isced.isc_id">({{ isced.isc_code }}) {{ isced.isc_name }}</option>
+                          </select>
+                        </label>
 
-                            <!-- Formulaire université -->
-                            <label class="form-control w-full items-center justify-center">
-                                <div class="label">
-                                    <span class="label-text">Université</span>
-                                </div>
-                                <select class="select select-bordered w-full select-primary" id="univ_select" v-model="currentAccordModif.univ_id">
-                                    <option :value="null">Aucune université</option>
-                                    <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
-                                </select>
-                            </label>
-
-
-                            <!-- Formulaire Lien -->
-                            <label class="form-control w-full items-center justify-center">
-                                <div class="label">
-                                    <span class="label-text">Lien (facultatif)</span>
-                                </div>
-                                <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_lien" />
-                            </label>
-
-                            <!-- Formulaire Description -->
-                            <label class="form-control w-full items-center justify-center">
-                                <div class="label">
-                                    <span class="label-text">Description (facultatif)</span>
-                                </div>
-                                <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_description" />
-                            </label>
-
-                            <!-- Formulaire Note -->
-                            <label class="form-control w-full items-center justify-center">
-                                <div class="label">
-                                    <span class="label-text">Note (facultatif & invisible)</span>
-                                </div>
-                                <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_note" />
-                            </label>
-
-                        </form>
-                        <div class="modal-action">
-                            <button class="btn btn-neutral" @click="closeModal">Annuler</button>
-                            <button class="btn btn-success" @click="ConfirmModifAccord()">Confirmer</button>
+                        <div class="flex gap-4">
+                          <label class="form-control w-full">
+                            <div class="label"><span class="label-text">Composante</span></div>
+                            <select class="select select-bordered w-full select-primary" v-model="currentAccordModif.comp_id">
+                              <option :value="null">Aucune composante</option>
+                              <option v-for="(compo, index) in composantes.components" :key="index" :value="compo.comp_id">{{ compo.comp_name }} ({{ compo.comp_shortname }})</option>
+                            </select>
+                          </label>
+                          <label class="form-control w-full">
+                            <div class="label"><span class="label-text">Type accord</span></div>
+                            <select class="select select-bordered w-full select-primary" v-model="currentAccordModif.agree_typeaccord">
+                              <option :value="null">Aucun type d'accord</option>
+                              <option>Bilatéral</option>
+                              <option>Erasmus</option>
+                            </select>
+                          </label>
+                          <label class="form-control w-full">
+                            <div class="label"><span class="label-text">Nombre de places</span></div>
+                            <input type="number" class="input input-bordered w-full" v-model="currentAccordModif.agree_nbplace" />
+                          </label>
                         </div>
+
+                        <label class="form-control w-full">
+                          <div class="label"><span class="label-text">Université</span></div>
+                          <select class="select select-bordered w-full select-primary" v-model="currentAccordModif.univ_id">
+                            <option :value="null">Aucune université</option>
+                            <option v-for="(univ, index) in universites" :key="index" :value="univ.univ_id">{{ univ.univ_name }} ({{ univ.univ_city }} - {{ univ.partnercountry.parco_name }})</option>
+                          </select>
+                        </label>
+
+                        <label class="form-control w-full">
+                          <div class="label"><span class="label-text">Lien (facultatif)</span></div>
+                          <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_lien" />
+                        </label>
+
+                        <label class="form-control w-full">
+                          <div class="label"><span class="label-text">Description (facultatif)</span></div>
+                          <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_description" />
+                        </label>
+
+                        <label class="form-control w-full">
+                          <div class="label"><span class="label-text">Note (facultatif & invisible)</span></div>
+                          <input type="text" class="input input-bordered w-full" v-model="currentAccordModif.agree_note" />
+                        </label>
+                      </form>
+
+                      <div class="modal-action mt-6">
+                        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                        <button class="btn btn-primary" @click="ConfirmModifAccord()">Modifier</button>
+                      </div>
                     </div>
-
-                </dialog>
+                  </dialog>
                 </Teleport>
 
                 <!-- Modal de confirmation suppression d'accord -->
                 <Teleport to="body">
-                <dialog id="confirmModal" ref="confirmModal" class="modal">
-                    <div class="modal-box max-w-full w-150">
-                        <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
-                        <div class="py-3">
-                            <p>Confirmez vous la suppression de l'accord:</p>
-                            <!-- Affichage de l'accord -->
-                            <div class="select-none flex justify-between items-center w-full h-20 mt-3">
-                                <div class="bg-base-300 flex items-center justify-center h-20 select-none w-full">
-                                    <span class="tooltip mr-2" :data-tip="confirmDeleteAccord.partnercountry?.parco_name || 'Introuvable'">
-                                        <span class="relative inline-block">
-                                            <!-- Drapeau -->
-                                            <span class="fi text-5xl" :class="'fi-' + (confirmDeleteAccord.partnercountry?.parco_code || '')"></span>
+                  <dialog id="confirmModal" ref="confirmModal" class="modal">
+                    <div class="modal-box max-w-full w-150 rounded-2xl border border-base-300 shadow-xl">
+                      <h3 class="text-xl font-bold">Confirmer la suppression ?</h3>
+                      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera définitivement l’accord sélectionné.</p>
+                      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-                                            <!-- Point d'interrogation si pas de drapeau -->
-                                            <template v-if="!confirmDeleteAccord.partnercountry?.parco_code">
-                                                <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white select-none">
-                                                    ?
-                                                </span>
-                                            </template>
-                                        </span>
-                                    </span>
-                                    <div class="flex flex-col w-full">
-                                        <p class="w-full select-none"><strong>{{ confirmDeleteAccord?.university?.univ_name || 'Université indisponible' }}</strong> à {{ confirmDeleteAccord?.university?.univ_city || 'Ville indisponible' }} ({{ confirmDeleteAccord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
-                                        <p>[{{ confirmDeleteAccord?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ confirmDeleteAccord?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ confirmDeleteAccord?.component?.comp_name || 'Indisponible' }}</p>
-                                    </div>
-                                </div>
-                            </div>
+                      <div class="bg-base-300 flex items-center justify-center h-20 w-full select-none rounded-md mt-4">
+                        <span class="tooltip mr-2" :data-tip="confirmDeleteAccord.partnercountry?.parco_name || 'Introuvable'">
+                          <span class="relative inline-block">
+                            <span class="fi text-5xl" :class="'fi-' + (confirmDeleteAccord.partnercountry?.parco_code || '')"></span>
+                            <template v-if="!confirmDeleteAccord.partnercountry?.parco_code">
+                              <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white">?</span>
+                            </template>
+                          </span>
+                        </span>
+                        <div class="flex flex-col w-full">
+                          <p class="font-semibold">{{ confirmDeleteAccord?.university?.univ_name || 'Université indisponible' }}</p>
+                          <p>{{ confirmDeleteAccord?.university?.univ_city || 'Ville indisponible' }} ({{ confirmDeleteAccord?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
+                          <p>[{{ confirmDeleteAccord?.isced?.isc_code || 'Code ISCED non dispo' }} - {{ confirmDeleteAccord?.isced?.isc_name || 'Nom ISCED non dispo' }}] Composante : {{ confirmDeleteAccord?.component?.comp_name || 'Indisponible' }}</p>
                         </div>
-                        <div class="modal-action">
-                            <button class="btn " @click="closeModal">Annuler</button>
-                            <button class="btn btn-success" @click="deleteAgreement(confirmDeleteAccord.university?.univ_name || 'Univeristé indisponible' , confirmDeleteAccord.agree_id)">Confirmer</button>
-                        </div>
+                      </div>
+
+                      <div class="modal-action mt-6">
+                        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                        <button class="btn btn-error" @click="deleteAgreement(confirmDeleteAccord.university?.univ_name || 'Université indisponible', confirmDeleteAccord.agree_id)">
+                          Supprimer
+                        </button>
+                      </div>
                     </div>
-                </dialog>
+                  </dialog>
                 </Teleport>
+
 
                 <!-- Modal d'import d'accord -->
                 <Teleport to="body">
-                <dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
-                    <div class="modal-box max-w-full w-150">
-                        <h3 class="text-lg font-bold">Import d'accord</h3>
-                        <div class="py-3">
-                            <p>Note : les problèmes d'accent, comme le symbole "�", pourraient venir du format du fichier CSV.</p>
-                            <p>Assurez-vous de bien choisir le format "<strong>CSV UTF-8 (délimité par des virgules)</strong>".</p>
+                  <dialog id="modalAjoutAccords" ref="modalAjoutAccords" class="modal">
+                    <div class="modal-box max-w-full w-150 rounded-2xl border border-base-300 shadow-xl">
+                      <h3 class="text-xl font-bold">Import d'accord</h3>
+                      <p class="text-sm text-base-content/70 mt-2">Ajoutez plusieurs accords à partir d’un fichier CSV exporté.</p>
+                      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
 
-                            <p>Nombre d'accord séléctionné à ajouter: <strong>{{ exportModal.filter(accord => accord.add).length }}</strong></p>
+                      <p class="mb-2">Note : les problèmes d'accent, comme le symbole "�", pourraient venir du format du fichier CSV.</p>
+                      <p>Choisissez le format <strong>CSV UTF-8 (délimité par des virgules)</strong>.</p>
+                      <p class="mt-2">Nombre d'accords sélectionnés : <strong>{{ exportModal.filter(accord => accord.add).length }}</strong></p>
 
-                            <!-- Boutons pour sélectionner ou désélectionner tous les accords -->
-                            <div class="my-4">
-                                <button class="hover:opacity-70 underline" @click="selectAll">Tout sélectionner</button>
-                                <button class="hover:opacity-70 ml-2 underline" @click="deselectAll">Tout désélectionner</button>
-                            </div>
+                      <div class="my-4">
+                        <button class="hover:opacity-70 underline" @click="selectAll">Tout sélectionner</button>
+                        <button class="hover:opacity-70 ml-2 underline" @click="deselectAll">Tout désélectionner</button>
+                      </div>
 
-                            <div>
-
-                                <div v-for="(accord, index) in exportModal" :key="index" :class="{ 'bg-base-200': !accord.add, 'bg-base-300': accord.add }" class="flex select-none my-2 items-center cursor-pointer " @click="accord.add = !accord.add">
-                                    <input type="checkbox" v-model="accord.add" class="opacity-70 checkbox checkbox-sm m-2 hover:opacity-50 hover:scale-110 transition-all" />
-                                    <span class="mr-2 flex items-center justify-center">
-                                        <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out" :class="'fi-'+ getCountryCode(accord.Pays) "></span>
-                                    </span>
-                                    <div class="flex flex-col">
-                                        <p class="w-full select-none">({{ accord.Pays }}) <span class="font-bold">{{accord.Ville ? accord.Ville : 'Aucune ville'}} - {{ accord.Universite ? accord.Universite : 'Aucune université' }}</span> </p>
-                                        <p>({{ accord.Isced ? accord.Isced : 'Aucun ISCED' }}) {{ accord.Composante ? accord.Composante : 'Aucune composante' }} - {{ accord.Departements ? accord.Departements : 'Aucun départements' }}</p>    
-                                    </div>
-                                </div>
-                            </div>
+                      <div>
+                        <div v-for="(accord, index) in exportModal" :key="index"
+                            :class="{ 'bg-base-200': !accord.add, 'bg-base-300': accord.add }"
+                            class="flex select-none my-2 items-center cursor-pointer rounded-md px-2 py-1"
+                            @click="accord.add = !accord.add">
+                          <input type="checkbox" v-model="accord.add"
+                                class="opacity-70 checkbox checkbox-sm m-2 hover:opacity-50 hover:scale-110 transition-all" />
+                          <span class="mr-2 flex items-center justify-center">
+                            <span class="fi xl:text-5xl text-xl transition-all duration-100 ease-in-out"
+                                  :class="'fi-'+ getCountryCode(accord.Pays)"></span>
+                          </span>
+                          <div class="flex flex-col">
+                            <p class="font-bold">({{ accord.Pays }}) {{ accord.Ville || 'Aucune ville' }} - {{ accord.Universite || 'Aucune université' }}</p>
+                            <p>({{ accord.Isced || 'Aucun ISCED' }}) {{ accord.Composante || 'Aucune composante' }} - {{ accord.Departements || 'Aucun départements' }}</p>
+                          </div>
                         </div>
-                        <div class="modal-action">
-                            <button class="btn" @click="closeModalImport">Annuler</button>
-                            <button class="btn btn-success" @click="confirmImportAccord">Confirmer</button>
-                        </div>
+                      </div>
+
+                      <div class="modal-action mt-6">
+                        <button class="btn btn-ghost" @click="closeModalImport">Annuler</button>
+                        <button class="btn btn-success" @click="confirmImportAccord">Confirmer</button>
+                      </div>
                     </div>
-                </dialog>
+                  </dialog>
                 </Teleport>
+
             </div>
             
         </div>

@@ -194,173 +194,139 @@
       <div>
         <!-- Modal de modification d'événement -->
         <Teleport to="body">
-        <input type="checkbox" id="modal_modif" class="modal-toggle" />
-        <div class="modal" role="dialog">
-          <div class="modal-box max-w-2xl">
-            <h3 class="font-bold text-lg mb-4">Modification de l'évènement {{ currentEventModif.evt_id }}</h3>
-            
-            <form @submit.prevent="confirmModifEvent" class="space-y-4">
-              <!-- Titre -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text font-medium">Titre</span>
-                </label>
-                <input type="text" class="input input-bordered w-full" v-model="currentEventModif.evt_name"/>
-              </div>
-              
-              <!-- Thématique -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text font-medium">Thématique</span>
-                </label>
-                <select class="select select-bordered w-full" v-model="currentEventModif.evthm_id">
-                  <option disabled value="">Sélectionnez une thématique</option>
-                  <option v-for="(theme, index) in thematiques" :key="index" :value="theme.evthm_id">
-                    {{ theme.evthm_name }}
-                  </option>
-                </select>
-              </div>
-              
-              <!-- Date -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text font-medium">Date</span>
-                </label>
-                <input type="date" class="input input-bordered w-full" v-model="currentEventModif.evt_datetime"/>
-              </div>
-              
-              <!-- Description -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text font-medium">Description</span>
-                </label>
-                <textarea class="textarea textarea-bordered h-64" v-model="currentEventModif.evt_description"></textarea>
-              </div>
-              
-              <!-- Actions -->
-              <div class="modal-action mt-6">
-                <label for="modal_modif" class="btn">Annuler</label>
-                <button type="submit">
-                  <label for="modal_modif" class="btn btn-success">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Enregistrer
-                  </label>
-                </button>
-              </div>
-            </form>
-          </div>
+  <input type="checkbox" id="modal_modif" class="modal-toggle" />
+  <div class="modal" role="dialog">
+    <div class="modal-box max-w-2xl rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Modification de l'événement {{ currentEventModif.evt_id }}</h3>
+      <p class="text-sm text-base-content/70 mt-2">Mettez à jour les informations de cet événement à venir ou passé.</p>
+      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+      <form @submit.prevent="confirmModifEvent" class="space-y-4">
+        <div class="form-control">
+          <label class="label"><span class="label-text">Titre</span></label>
+          <input type="text" class="input input-bordered w-full" v-model="currentEventModif.evt_name" />
         </div>
-        </Teleport>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text">Thématique</span></label>
+          <select class="select select-bordered w-full" v-model="currentEventModif.evthm_id">
+            <option disabled value="">Sélectionnez une thématique</option>
+            <option v-for="(theme, index) in thematiques" :key="index" :value="theme.evthm_id">{{ theme.evthm_name }}</option>
+          </select>
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text">Date</span></label>
+          <input type="date" class="input input-bordered w-full" v-model="currentEventModif.evt_datetime" />
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text">Description</span></label>
+          <textarea class="textarea textarea-bordered h-64" v-model="currentEventModif.evt_description"></textarea>
+        </div>
+
+        <div class="modal-action mt-6">
+          <label for="modal_modif" class="btn btn-ghost">Annuler</label>
+          <button type="submit">
+            <label for="modal_modif" class="btn btn-primary">Modifier</label>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</Teleport>
+
   
         <!-- Modal de modification de thématique -->
         <Teleport to="body">
-        <input type="checkbox" id="modal_modif_them" class="modal-toggle" />
-        <div class="modal" role="dialog">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg mb-4">Modification de la thématique {{ currentThematiqueModif.evthm_id }}</h3>
-            
-            <form @submit.prevent="confirmModifThematique" class="space-y-4">
-              <!-- Nom -->
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text font-medium">Nom</span>
-                </label>
-                <input type="text" class="input input-bordered w-full" v-model="currentThematiqueModif.evthm_name"/>
-              </div>
-              
-              <div class="mt-2">
-                <span class="badge badge-warning badge-lg">{{ currentThematiqueModif.evthm_name ? currentThematiqueModif.evthm_name : 'Aperçu de la thématique' }}</span>
-              </div>
-              
-              <!-- Actions -->
-              <div class="modal-action mt-6">
-                <label for="modal_modif_them" class="btn">Annuler</label>
-                <button type="submit">
-                  <label for="modal_modif_them" class="btn btn-success">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    Enregistrer
-                  </label>
-                </button>
-              </div>
-            </form>
-          </div>
+  <input type="checkbox" id="modal_modif_them" class="modal-toggle" />
+  <div class="modal" role="dialog">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Modification de la thématique {{ currentThematiqueModif.evthm_id }}</h3>
+      <p class="text-sm text-base-content/70 mt-2">Modifiez le nom et l'aperçu visuel de la thématique.</p>
+      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+      <form @submit.prevent="confirmModifThematique" class="space-y-4">
+        <div class="form-control">
+          <label class="label"><span class="label-text">Nom</span></label>
+          <input type="text" class="input input-bordered w-full" v-model="currentThematiqueModif.evthm_name" />
         </div>
-        </Teleport>
+
+        <div class="mt-2">
+          <span class="badge badge-warning badge-lg">{{ currentThematiqueModif.evthm_name || 'Aperçu de la thématique' }}</span>
+        </div>
+
+        <div class="modal-action mt-6">
+          <label for="modal_modif_them" class="btn btn-ghost">Annuler</label>
+          <button type="submit">
+            <label for="modal_modif_them" class="btn btn-primary">Modifier</label>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</Teleport>
+
   
         <!-- Modal de confirmation suppression thématique -->
         <Teleport to="body">
-        <dialog id="confirmModalThematique" ref="confirmModalThematique" class="modal">
-          <div class="modal-box">
-            <h3 class="text-lg font-bold mb-4">Confirmer la suppression ?</h3>
-            
-            <div class="py-3">
-              <div v-if="confirmDeleteThematique.canDelete">
-                <p>Confirmez-vous la suppression de la thématique :</p>
-              </div>
-              <p v-else class="text-error">Vous ne pouvez pas supprimer cette thématique car elle appartient à un ou plusieurs évenements.</p>
-              
-              <div class="mt-3">
-                <span class="badge badge-warning badge-lg">{{confirmDeleteThematique.evthm_name}}</span>
-              </div>
-            </div>
-            
-            <!-- Actions si suppression possible -->
-            <div class="modal-action" v-if="confirmDeleteThematique.canDelete">
-              <button class="btn" @click="closeModal">Annuler</button>
-              <button class="btn btn-error" @click="removeThematique(confirmDeleteThematique.evthm_name, confirmDeleteThematique.evthm_id)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Supprimer
-              </button>
-            </div>
-            
-            <!-- Actions si suppression impossible -->
-            <div class="modal-action" v-else>
-              <button class="btn" @click="closeModal">Fermer</button>
-            </div>
-          </div>
-        </dialog>
-        </Teleport>
+  <dialog id="confirmModalThematique" ref="confirmModalThematique" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+      <p class="text-sm text-base-content/70 mt-2">
+        {{ confirmDeleteThematique.canDelete
+            ? 'Supprimez cette thématique si elle n’est liée à aucun événement.'
+            : 'Cette thématique est utilisée par au moins un événement et ne peut pas être supprimée.' }}
+      </p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <div class="mt-3">
+        <span class="badge badge-warning badge-lg">{{ confirmDeleteThematique.evthm_name }}</span>
+      </div>
+
+      <div class="modal-action mt-6">
+        <button class="btn btn-ghost" @click="closeModal">Fermer</button>
+        <button v-if="confirmDeleteThematique.canDelete"
+                class="btn btn-error"
+                @click="removeThematique(confirmDeleteThematique.evthm_name, confirmDeleteThematique.evthm_id)">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
   
         <!-- Modal de confirmation suppression événement -->
         <Teleport to="body">
-        <dialog id="confirmModalEvenement" ref="confirmModalEvenement" class="modal">
-          <div class="modal-box">
-            <h3 class="text-lg font-bold mb-4">Confirmer la suppression ?</h3>
-            
-            <div class="py-3">
-              <p>Confirmez-vous la suppression de l'événement :</p>
-              
-              <div class="card bg-base-300 p-4 mt-3">
-                <div class="mb-2">
-                  <span :class="getBadgeClass(confirmDeleteEvenement.evt_datetime)" class="badge badge-md mr-2">
-                    {{ formatDate(confirmDeleteEvenement.evt_datetime) }}
-                  </span>
-                  <span v-if="confirmDeleteEvenement.theme" class="badge badge-warning badge-md">
-                    {{ confirmDeleteEvenement.theme.evthm_name }}
-                  </span>
-                </div>
-                <h4 class="font-bold text-lg">{{ confirmDeleteEvenement.evt_name }}</h4>
-              </div>
-            </div>
-            
-            <div class="modal-action">
-              <button class="btn" @click="closeModal">Annuler</button>
-              <button class="btn btn-error" @click="removeEvent(confirmDeleteEvenement.evt_name, confirmDeleteEvenement.evt_id)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                Supprimer
-              </button>
-            </div>
-          </div>
-        </dialog>
-        </Teleport>
+  <dialog id="confirmModalEvenement" ref="confirmModalEvenement" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera définitivement l'événement sélectionné.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <div class="card bg-base-300 p-4 mt-3">
+        <div class="mb-2">
+          <span :class="getBadgeClass(confirmDeleteEvenement.evt_datetime)" class="badge badge-md mr-2">
+            {{ formatDate(confirmDeleteEvenement.evt_datetime) }}
+          </span>
+          <span v-if="confirmDeleteEvenement.theme" class="badge badge-warning badge-md">
+            {{ confirmDeleteEvenement.theme.evthm_name }}
+          </span>
+        </div>
+        <h4 class="font-bold text-lg">{{ confirmDeleteEvenement.evt_name }}</h4>
+      </div>
+
+      <div class="modal-action mt-6">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-error" @click="removeEvent(confirmDeleteEvenement.evt_name, confirmDeleteEvenement.evt_id)">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
       </div>
     </div>
   </template>

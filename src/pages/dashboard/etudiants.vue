@@ -677,41 +677,44 @@
 
                 <!-- Modal de confirmation suppression -->
                 <Teleport to="body">
-                <dialog id="confirmModal" ref="confirmModal" class="modal">
-                    <div class="modal-box">
-                        <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
-                        <div class="py-3">
-                            <p>Confirmez vous la supression de l'étudiant:</p>
-                            <p>Cela entraînera la suppression de ses vœux et de son emplacement dans l'arbitrage.</p>
-                            <div class="w-full py-2">
-                                
-                                    <div class="bg-base-300 shadow-lg rounded-lg p-4 h-full flex flex-col"
-                                        :style="{ borderBottom: `4px solid ${confirmDeleteEtu.department ? confirmDeleteEtu.department.dept_color : '#aaaaaa'}` }">
-                                        <div class="flex-1">
-                                            <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ confirmDeleteEtu.acc_fullname }}</h5>
-                                            <h6 class="text-gray-600 mb-2 truncate">
-                                                {{ confirmDeleteEtu.acc_id }} 
-                                                <span v-if="confirmDeleteEtu.department" :style="{color: confirmDeleteEtu.department.dept_color}">({{ confirmDeleteEtu.department.dept_shortname }})</span>
-                                                <span v-else>(Aucun département)</span>
-                                            </h6>
-                                        </div>
-                                        <div class="mt-4">
-                                            <p class="text-sm text-gray-400">
-                                                <strong>Nombre de vœux:</strong> {{ confirmDeleteEtu.wishes ? confirmDeleteEtu.wishes.count : 0 }}<br>
-                                                <strong>Documents ajouté(s):</strong> {{ confirmDeleteEtu.documents?.count || 0 }}/{{ confirmDeleteEtu.documents?.countmax }}<br>
-                                                <strong>Dernière connexion:</strong> {{ formatDate(confirmDeleteEtu.acc_lastlogin) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                            </div>
-                        </div>
-                    <div class="modal-action">
-                        <button class="btn" @click="closeModal">Annuler</button>
-                        <button class="btn btn-success" @click="deleteEtu(confirmDeleteEtu.acc_id, confirmDeleteEtu.acc_fullname, confirmDeleteEtu.department?.dept_shortname || 'Aucun département')">Confirmer</button>
-                    </div>
-                    </div>
-                </dialog>
-                </Teleport>
+  <dialog id="confirmModal" ref="confirmModal" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeleteEtu">
+      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera les vœux et l’emplacement de l’étudiant dans l’arbitrage.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <p class="mb-4">Confirmez-vous la suppression de l’étudiant suivant :</p>
+
+      <div class="bg-base-300 shadow-lg rounded-lg p-4 flex flex-col"
+           :style="{ borderBottom: `4px solid ${confirmDeleteEtu.department ? confirmDeleteEtu.department.dept_color : '#aaaaaa'}` }">
+        <div class="flex-1">
+          <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ confirmDeleteEtu.acc_fullname }}</h5>
+          <h6 class="text-gray-600 mb-2 truncate">
+            {{ confirmDeleteEtu.acc_id }} 
+            <span v-if="confirmDeleteEtu.department" :style="{color: confirmDeleteEtu.department.dept_color}">
+              ({{ confirmDeleteEtu.department.dept_shortname }})
+            </span>
+            <span v-else>(Aucun département)</span>
+          </h6>
+        </div>
+        <div class="mt-4 text-sm text-gray-500">
+          <p><strong>Nombre de vœux :</strong> {{ confirmDeleteEtu.wishes?.count || 0 }}</p>
+          <p><strong>Documents ajouté(s) :</strong> {{ confirmDeleteEtu.documents?.count || 0 }}/{{ confirmDeleteEtu.documents?.countmax }}</p>
+          <p><strong>Dernière connexion :</strong> {{ formatDate(confirmDeleteEtu.acc_lastlogin) }}</p>
+        </div>
+      </div>
+
+      <div class="modal-action mt-6">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-error"
+                @click="deleteEtu(confirmDeleteEtu.acc_id, confirmDeleteEtu.acc_fullname, confirmDeleteEtu.department?.dept_shortname || 'Aucun département')">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
             </div>
         </div>
         <div v-else>

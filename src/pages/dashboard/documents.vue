@@ -61,20 +61,33 @@
         </div>
         <!-- Modal de confirmation suppression -->
         <Teleport to="body">
-        <dialog id="confirmModal" ref="confirmModal" class="modal">
-            <div class="modal-box">
-                <h3 class="text-lg font-bold">Confirmer la suppression ?</h3>
-                <div class="py-3">
-                    <p>Confirmez vous la suppression du fichier: <strong>{{ confirmDeleteDocument.title }}</strong></p>
-                    <span v-if="confirmDeleteDocument.dept != null" :style="{backgroundColor: confirmDeleteDocument.dept.dept_color ? confirmDeleteDocument.dept.dept_color : '#aaaaaa'}" class="badge">{{ confirmDeleteDocument.dept.dept_shortname }}</span>
-                </div>
-                <div class="modal-action">
-                    <button class="btn" @click="closeModal">Annuler</button>
-                    <button class="btn btn-success" @click="deleteFile(confirmDeleteDocument.title, confirmDeleteDocument.type, confirmDeleteDocument.dept ? confirmDeleteDocument.dept.dept_id : null)">Confirmer</button>
-                </div>
-            </div>
-        </dialog>
-        </Teleport>
+  <dialog id="confirmModal" ref="confirmModal" class="modal">
+    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeleteDocument">
+      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera définitivement le fichier sélectionné.</p>
+      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+      <p>Confirmez-vous la suppression du fichier : <strong>{{ confirmDeleteDocument.title }}</strong> ?</p>
+
+      <div class="mt-4">
+        <span v-if="confirmDeleteDocument.dept" 
+              class="badge text-sm font-medium"
+              :style="{ backgroundColor: confirmDeleteDocument.dept.dept_color || '#aaaaaa' }">
+          {{ confirmDeleteDocument.dept.dept_shortname }}
+        </span>
+      </div>
+
+      <div class="modal-action mt-6">
+        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+        <button class="btn btn-error"
+                @click="deleteFile(confirmDeleteDocument.title, confirmDeleteDocument.type, confirmDeleteDocument.dept?.dept_id || null)">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </dialog>
+</Teleport>
+
     </div>
     <div v-else>
         <LoadingComp></LoadingComp>
