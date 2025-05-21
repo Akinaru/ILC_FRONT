@@ -48,7 +48,6 @@
   
   <script setup>
   import { useAccountStore } from '../stores/accountStore';
-  import { storeToRefs } from 'pinia'
   
   const routesRi = [
       {routeName: 'HomeRI', name: '🏠 Accueil'},
@@ -73,5 +72,5 @@
   ]
   
   const accountStore = useAccountStore();
-  const { access } = storeToRefs(accountStore)
+  const access = accountStore.getAccessLevel();
   </script>

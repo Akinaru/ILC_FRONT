@@ -174,7 +174,7 @@ import { request } from '../../composables/httpRequest';
 
 const router = useRouter();
 const accountStore = useAccountStore();
-const { logged, acc_validateacc } = storeToRefs(accountStore);
+const { logged } = storeToRefs(accountStore);
 const theme = ref(localStorage.getItem('theme') || 'light');
 const currentUrl = ref('');
 const account = ref([]);
