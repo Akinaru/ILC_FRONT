@@ -384,7 +384,7 @@
 
                   <!-- Bouton supprimer -->
                   <div class="mt-4 flex justify-end">
-                    <button class="btn btn-sm btn-outline btn-error" @click="supprimerTemoignage()">
+                    <button class="btn btn-sm btn-outline btn-error" @click="openConfirmDeleteTemoignageModal()">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -589,23 +589,43 @@
 
     <!-- Modal de confirmation suppression de compte -->
     <Teleport to="body">
-  <dialog id="confirmModalAccount" ref="confirmModalAccount" class="modal">
-    <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
-      <h3 class="text-xl font-bold">Suppression du compte</h3>
-      <p class="text-sm text-base-content/70 mt-1">Les données liées seront supprimées de façon définitive.</p>
-      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+      <dialog id="confirmModalAccount" ref="confirmModalAccount" class="modal">
+        <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+          <h3 class="text-xl font-bold">Suppression du compte</h3>
+          <p class="text-sm text-base-content/70 mt-1">Les données liées seront supprimées de façon définitive.</p>
+          <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-      <div class="py-3">
-        <p>Confirmez-vous la suppression du compte ?</p>
-      </div>
+          <div class="py-3">
+            <p>Confirmez-vous la suppression du compte ?</p>
+          </div>
 
-      <div class="modal-action">
-        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-        <button class="btn btn-error" @click="deleteAccount">Supprimer</button>
-      </div>
-    </div>
-  </dialog>
-</Teleport>
+          <div class="modal-action">
+            <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+            <button class="btn btn-error" @click="deleteAccount">Supprimer</button>
+          </div>
+        </div>
+      </dialog>
+    </Teleport>
+
+    <!-- Modal de confirmation suppression de temoignage -->
+    <Teleport to="body">
+      <dialog id="confirmModalTemoignage" ref="confirmModalTemoignage" class="modal">
+        <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+          <h3 class="text-xl font-bold">Suppression du témoignage</h3>
+          <p class="text-sm text-base-content/70 mt-1">Cette action est irréversible et entraînera la suppression définitive du témoignage.</p>
+          <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+          <div class="py-3">
+            <p>Souhaitez-vous vraiment supprimer le témoignage ?</p>
+          </div>
+
+          <div class="modal-action">
+            <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+            <button class="btn btn-error" @click="supprimerTemoignage">Supprimer</button>
+          </div>
+        </div>
+      </dialog>
+    </Teleport>
 
   </template>
 
@@ -722,6 +742,11 @@
     modal.showModal();
   }
 
+  function openConfirmDeleteTemoignageModal() {
+    const modal = document.getElementById("confirmModalTemoignage");
+    modal.showModal();
+  }
+
     // Fermer le modal de confirmation de suppression
     function closeModal() {
         const modal = document.getElementById('confirmModalDoc');
@@ -730,6 +755,8 @@
         modal2.close();
         const modal3 = document.getElementById("confirmModalAccount");
         modal3.close();
+        const modal4 = document.getElementById("confirmModalTemoignage");
+        modal4.close();
     }
 
     async function deleteAccount() {
@@ -764,6 +791,7 @@
     }
 
     async function supprimerTemoignage() {
+      closeModal();
       if (!account.value.acc_temoignage) {
         addAlert("error", {
           data: {

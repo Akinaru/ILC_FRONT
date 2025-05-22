@@ -58,7 +58,7 @@
                 </div>
                 <!-- Bouton suppression -->
                 <button class="btn btn-square btn-ghost"
-                  @click="supprimerTemoignage(account.acc_id)">
+                  @click="openConfirmDeleteTemoignageModal(account.acc_id)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" 
@@ -113,6 +113,26 @@
           <div v-if="filteredAccounts.length === 0" class="text-center mt-10">
             <p class="text-lg opacity-70">Aucun témoignage n'a encore été publié.</p>
           </div>
+
+          <!-- Modal de confirmation suppression de temoignage -->
+          <Teleport to="body">
+            <dialog id="confirmModalTemoignage" ref="confirmModalTemoignage" class="modal">
+              <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+                <h3 class="text-xl font-bold">Suppression du témoignage</h3>
+                <p class="text-sm text-base-content/70 mt-1">Cette action est irréversible et entraînera la suppression définitive du témoignage.</p>
+                <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+                <div class="py-3">
+                  <p>Souhaitez-vous vraiment supprimer le témoignage ?</p>
+                </div>
+
+                <div class="modal-action">
+                  <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                  <button class="btn btn-error" @click="supprimerTemoignage()">Supprimer</button>
+                </div>
+              </div>
+            </dialog>
+          </Teleport>
         </div>
       </div>
       <LoadingComp v-else />
@@ -129,6 +149,8 @@ import LoadingComp from '../../components/utils/LoadingComp.vue';
 const isLoaded = ref(false);
 const accounts = ref([]);
 const response = ref([]);
+
+const supprimerTemoignageRef = ref(null);
 
   // Année académique actuelle (par défaut)
   const currentYear = new Date().getFullYear();
@@ -164,8 +186,9 @@ const filteredAccounts = computed(() => {
 });
 
 
-async function supprimerTemoignage(acc_id) {
-
+async function supprimerTemoignage() {
+    closeModal();
+    const acc_id = supprimerTemoignageRef.value;
       const requestData = {
         acc_id: acc_id,
       };
@@ -177,6 +200,19 @@ async function supprimerTemoignage(acc_id) {
         requestData
       );
       fetchAccounts();
+    }
+
+    function openConfirmDeleteTemoignageModal(acc_id) {
+      supprimerTemoignageRef.value = acc_id;
+      const modal = document.getElementById("confirmModalTemoignage");
+      modal.showModal();
+    }
+
+
+    // Fermer le modal de confirmation de suppression
+    function closeModal() {
+        const modal = document.getElementById("confirmModalTemoignage");
+        modal.close();
     }
 
 
