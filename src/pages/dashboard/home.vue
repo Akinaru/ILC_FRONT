@@ -287,8 +287,8 @@
               </label>
               <input
                 type="text"
-                :value="account.acc_periodemobilite === 1 ? 'Mobilité d\'automne' : 
-                        account.acc_periodemobilite === 2 ? 'Mobilité de printemps' : 'Aucune'"
+                :value="account.acc_periodemobilite === 1 ? '🍂 Mobilité d\'automne' : 
+                        account.acc_periodemobilite === 2 ? '🌱 Mobilité de printemps' : 'Aucune'"
                 class="input input-bordered bg-base-200"
                 disabled
               />

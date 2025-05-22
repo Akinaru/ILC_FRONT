@@ -26,7 +26,7 @@
             
             <!-- Menu utilisateur (visible si connecté) -->
             <div v-else class="relative">
-              <div class="dropdown dropdown-end">
+              <div class="dropdown dropdown-end" ref="dropdownRef">
                 <label tabindex="0" class="btn btn-ghost btn-sm px-2 sm:px-3 rounded-full border border-base-300 hover:bg-base-200 cursor-pointer">
                   <div class="flex items-center gap-1 sm:gap-2">
                     <!-- Badge de rôle -->
@@ -89,6 +89,7 @@
                     <div v-if="(accountStore.isAdmin() || accountStore.isChefDept()) && accountStore.account?.metrics?.students" class="text-xs text-base-content/70">Nombre d'étudiants: <span class="badge badge-sm">{{ accountStore.account.metrics.students }}</span></div>
                     <div v-if="accountStore.isAdmin() && accountStore.account?.metrics?.agreements" class="text-xs text-base-content/70">Nombre d'accords: <span class="badge badge-sm">{{ accountStore.account.metrics.agreements }}</span></div>
                     <div v-if="accountStore.isAdmin() && accountStore.account?.metrics?.articles" class="text-xs text-base-content/70">Nombre d'articles: <span class="badge badge-sm">{{ accountStore.account.metrics.articles }}</span></div>
+                    <div v-if="accountStore.isAdmin() && accountStore.account?.metrics?.evenements" class="text-xs text-base-content/70">Nombre d'événements: <span class="badge badge-sm">{{ accountStore.account.metrics.evenements }}</span></div>
                   </div>
 
                   <div class="divider my-1"></div>
@@ -188,6 +189,13 @@ const theme = ref(localStorage.getItem('theme') || 'light');
 const currentUrl = ref('');
 const account = ref([]);
 const response = ref([]);
+const dropdownRef = ref(null)
+
+function closeDropdown() {
+  // Ferme la dropdown manuellement en retirant le focus
+  const active = document.activeElement
+  if (active) active.blur()
+}
 
 // Propriété computed pour vérifier l'état de connexion
 const isUserLoggedIn = computed(() => logged.value);
@@ -260,6 +268,7 @@ function formatDate(dateString) {
 }
 
 function goToPage(route) {
+  closeDropdown();
   router.push({ name: route });
   closeMenu();
 }
