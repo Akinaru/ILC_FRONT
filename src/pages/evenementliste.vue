@@ -47,7 +47,9 @@
                             <div v-for="(them, index) in thematiques" :key="index" class="flex items-center justify-center py-1 min-w-fit">
                                 <input :id="'filt_them_'+index" type="checkbox" class="checkbox" :value="them.evthm_id" v-model="selectedThematique">
                                 <label :for="'filt_them_'+index" class="select-none w-full mx-2">
-                                    <span class="badge badge-warning min-w-fit md:badge-md badge-xs md:text-md text-xxs">{{ them.evthm_name }}</span>
+                                    <span :class="`badge min-w-fit md:badge-md badge-xs md:text-md text-xxs badge-${them.evthm_color || 'neutral'}`">
+                                        {{ them.evthm_name }}
+                                    </span>
                                 </label>
                             </div>
                         </div>

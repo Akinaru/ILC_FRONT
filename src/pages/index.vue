@@ -749,9 +749,9 @@
                       </div>
                       <!-- Badge sur une ligne séparée -->
                       <div>
-                        <span class="badge badge-md badge-warning">{{
-                          event.theme.evthm_name
-                        }}</span>
+                        <span :class="`badge badge-md badge-${event.theme.evthm_color || 'neutral'}`">
+                          {{ event.theme.evthm_name }}
+                        </span>
                       </div>
                     </div>
 

@@ -14,7 +14,9 @@
       <div v-if="event && event.evt_id" class="bg-white rounded-lg shadow-md p-6 md:p-8">
         <!-- En-tête avec badge de thème -->
         <div class="flex justify-between items-start mb-4">
-          <span class="badge badge-warning text-xs font-semibold px-3 py-1">{{ event.theme.evthm_name }}</span>
+          <span :class="`badge text-xs font-semibold px-3 py-1 badge-${event.theme.evthm_color || 'neutral'}`">
+          {{ event.theme.evthm_name }}
+        </span>
           <p class="text-gray-600">{{ formatDate(event.evt_datetime) }}</p>
         </div>
         

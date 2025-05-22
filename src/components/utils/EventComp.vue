@@ -6,7 +6,9 @@
         <p class="font-bold md:text-xl text-xxxs flex items-center justify-center md:p-5 p-2 ">{{ formatDate(event.evt_datetime) }}</p>
         <div class="flex flex-col w-5/6 items-start justify-center md:py-5 p-2">
             <div class="flex md:items-center items-start justify-start w-full md:flex-row flex-col">
-                <span class="badge badge-warning min-w-fit md:badge-md badge-xs md:text-md text-xxxs">{{ event.theme.evthm_name }}</span>
+                <span :class="`badge min-w-fit md:badge-md badge-xs md:text-md text-xxxs badge-${event.theme.evthm_color || 'neutral'}`">
+                {{ event.theme.evthm_name }}
+                </span>
                 <p class="font-bold md:mx-3 md:text-base text-xxs">{{ event.evt_name }}</p>
             </div>
             <p class="truncate overflow-hidden w-full whitespace-nowrap md:text-md text-xxs">{{ event.evt_description }}</p>
