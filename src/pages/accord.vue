@@ -287,16 +287,10 @@ async function fetchAll() {
       "GET",
       false,
       favoris,
-      config.apiUrl + "api/favoris/getbylogin/" + accountStore.account.acc_id
+      config.apiUrl + "api/favoris/me"
     );
-    await request(
-      "GET",
-      false,
-      account,
-      config.apiUrl + "api/account/getbylogin/" + accountStore.account.acc_id
-    );
-    requestData.dept_id = account.value.department
-      ? account.value.department.dept_id
+    requestData.dept_id = accountStore.department
+      ? accountStore.department.dept_id
       : null;
   }
 
@@ -331,7 +325,6 @@ function isFavorited(agree_id) {
 async function toggleFavoris(agree_id) {
   if (!isFavorited(agree_id)) {
     const requestData = {
-      acc_id: accountStore.account.acc_id,
       agree_id: agree_id,
     };
     await request(
@@ -353,10 +346,7 @@ async function toggleFavoris(agree_id) {
       true,
       response,
       config.apiUrl +
-        "api/favoris/delete/" +
-        accountStore.account.acc_id +
-        "/" +
-        agree_id
+        "api/favoris/delete/" + agree_id
     );
     favoris.value.favoris = favoris.value.favoris.filter(
       (favori) =>

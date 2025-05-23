@@ -324,7 +324,7 @@
 
                       <div
                         v-if="
-                          accountStore.isLogged() && accountStore.isStudent() && accountStore.getAccountValidate() && !accountStore.dateLimitePasse()
+                          accountStore.isLogged() && accountStore.isStudent() && accountStore.getAccountValidate() && !accountStore.dateLimitePasse
                         "
                         class="flex-shrink-0 pr-3 pl-2 py-2 md:py-0"
                       >
@@ -1006,8 +1006,7 @@ async function fetchAll() {
   await request("GET", false, events, config.apiUrl + "api/event");
   await request("GET", false, eventspf, config.apiUrl + "api/event/pfonly");
   if (accountStore.isLogged()) {
-    await request("GET", false, favoris, config.apiUrl + "api/favoris/getbylogin/" + accountStore.account.acc_id
-    );
+    await request("GET", false, favoris, config.apiUrl + "api/favoris/me");
   }
   isLoaded.value = true;
 }
@@ -1111,7 +1110,6 @@ function isFavorited(agree_id) {
 async function toggleFavoris(agree_id) {
   if (!isFavorited(agree_id)) {
     const requestData = {
-      acc_id: accountStore.account.acc_id,
       agree_id: agree_id,
     };
     await request(
@@ -1133,10 +1131,7 @@ async function toggleFavoris(agree_id) {
       true,
       response,
       config.apiUrl +
-        "api/favoris/delete/" +
-        accountStore.account.acc_id +
-        "/" +
-        agree_id
+        "api/favoris/delete/" + agree_id
     );
     favoris.value.favoris = favoris.value.favoris.filter(
       (favori) =>

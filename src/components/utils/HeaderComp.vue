@@ -73,7 +73,7 @@
                   <div  class="px-4 py-2 text-sm">
 
                     <div v-if="accountStore.isStudent() && accountStore.account?.acc_validateacc" class="text-xs text-base-content/70">Profil complété: <span class="badge badge-sm">{{ accountStore.account.acc_validateacc ? '✅' : '❌' }}</span></div>
-                    <div v-if="accountStore.isStudent()" class="text-xs text-base-content/70">
+                    <div v-if="accountStore.isStudent() && accountStore.account?.datelimite" class="text-xs text-base-content/70">
                       Date limite :
                       <span 
                         class="badge badge-sm" 
