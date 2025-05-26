@@ -32,21 +32,21 @@
                     <!-- Badge de rôle -->
                     <div class="px-1.5 py-0.5 text-xs rounded-md transition-all" 
                       :style="{ 
-                        backgroundColor: accountStore?.account?.role.color || '#aaaaaa',
-                        color: getOptimalTextColor(accountStore?.account?.role.color || '#aaaaaa')
+                        backgroundColor: accountStore?.account?.role?.color || '#aaaaaa',
+                        color: getOptimalTextColor(accountStore?.account?.role?.color || '#aaaaaa')
                       }">
-                      {{ accountStore?.account?.role.role || 'Étudiant' }}
+                      {{ accountStore?.account?.role?.role || 'Étudiant' }}
                     </div>
                     
                     <!-- Nom d'utilisateur avec traitement différent selon taille d'écran -->
                     <span class="hidden sm:inline font-medium text-sm">
-                      {{ accountStore.account.acc_fullname != null ? accountStore.account.acc_fullname : 'Compte' }}
+                      {{ accountStore?.account?.acc_fullname != null ? accountStore.account.acc_fullname : 'Compte' }}
                     </span>
                     
                     <!-- Avatar/Initiales pour mobile -->
                     <div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary sm:hidden">
                       <span class="text-xs font-bold">
-                        {{ accountStore.account.acc_fullname ? accountStore.account.acc_fullname.charAt(0) : 'U' }}
+                        {{ accountStore.account?.acc_fullname ? accountStore.account.acc_fullname.charAt(0) : 'U' }}
                       </span>
                     </div>
                     

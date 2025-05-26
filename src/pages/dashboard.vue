@@ -61,8 +61,8 @@
       {routeName: 'EvenementDash', name: '📆 Evenements'},
       {routeName: 'HistoriqueDash', name: '🕵️‍♀️ Historique'},
       {routeName: 'EtudiantsDash', name: '👩‍🎓 Etudiants'},
-      {routeName: 'DocumentsDash', name: '📜 Documents'},
-      {routeName: 'TemoignageDash', name: '📜 Témoignages'},
+      {routeName: 'DocumentsDash', name: '📂 Documents' },
+      {routeName: 'TemoignageDash', name: '📝 Témoignages' },
       {routeName: 'Arbitrage', name: '🖥️ Arbitrage'},
       {routeName: 'AnciensDash', name: '👴 Anciens'},
   ]
