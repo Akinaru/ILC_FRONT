@@ -3,7 +3,7 @@
         <div class="text-sm breadcrumbs font-bold">
             <ul>
                 <li><RouterLink :to="{name: 'Dashboard'}">Dashboard</RouterLink></li> 
-                <li><RouterLink :to="{name: 'EtudiantsDash'}">Étudiants</RouterLink></li> 
+                <li class="text-primary">Étudiants</li>
             </ul>
         </div>
         <div v-if="isLoaded" class="flex">
@@ -578,6 +578,31 @@
                               </div>
 
                               <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Validation choix de cours: {{ etu.acc_validechoixcours ? '✅' : '❌' }}</span>
+                              </div>
+
+                              <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Arbitré: {{ etu.acc_arbitragefait ? '✅' : '❌' }}</span>
+                              </div>
+
+                                     
+                              <div class="flex items-center gap-2" :class="etu.acc_amenagement ? 'text-success' : 'text-base-content'">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                <span>Aménagement aux exams: {{ etu.acc_amenagement ? '✅' : '❌' }}</span>
+                              </div>
+                              
+                     
+
+
+                              <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
@@ -602,7 +627,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                <span>Période de mobilité: {{
+                                <span>Période: {{
                                     etu.acc_periodemobilite === 1 ? 'Mobilité d\'automne 🍂' : 
                                     etu.acc_periodemobilite === 2 ? 'Mobilité de printemps 🌱' : 
                                     'Aucune' 
@@ -615,21 +640,7 @@
                                 </svg>
                                 <span class="truncate">Connexion: {{ formatDate(etu.acc_lastlogin) }}</span>
                               </div>
-                              
-                              <div class="flex items-center gap-2" :class="etu.acc_amenagement ? 'text-success' : 'text-base-content'">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                                <span>Aménagement aux exams: {{ etu.acc_amenagement ? '✅' : '❌' }}</span>
-                              </div>
-                              
-                              <div class="flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Validation choix de cours: {{ etu.acc_validechoixcours ? '✅' : '❌' }}</span>
-                              </div>
-
+                       
                               
                             </div>
                             
@@ -677,43 +688,43 @@
 
                 <!-- Modal de confirmation suppression -->
                 <Teleport to="body">
-  <dialog id="confirmModal" ref="confirmModal" class="modal">
-    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeleteEtu">
-      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
-      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera les vœux et l’emplacement de l’étudiant dans l’arbitrage.</p>
-      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+                  <dialog id="confirmModal" ref="confirmModal" class="modal">
+                    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeleteEtu">
+                      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+                      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera les vœux et l’emplacement de l’étudiant dans l’arbitrage.</p>
+                      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-      <p class="mb-4">Confirmez-vous la suppression de l’étudiant suivant :</p>
+                      <p class="mb-4">Confirmez-vous la suppression de l’étudiant suivant :</p>
 
-      <div class="bg-base-300 shadow-lg rounded-lg p-4 flex flex-col"
-           :style="{ borderBottom: `4px solid ${confirmDeleteEtu.department ? confirmDeleteEtu.department.dept_color : '#aaaaaa'}` }">
-        <div class="flex-1">
-          <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ confirmDeleteEtu.acc_fullname }}</h5>
-          <h6 class="text-gray-600 mb-2 truncate">
-            {{ confirmDeleteEtu.acc_id }} 
-            <span v-if="confirmDeleteEtu.department" :style="{color: confirmDeleteEtu.department.dept_color}">
-              ({{ confirmDeleteEtu.department.dept_shortname }})
-            </span>
-            <span v-else>(Aucun département)</span>
-          </h6>
-        </div>
-        <div class="mt-4 text-sm text-gray-500">
-          <p><strong>Nombre de vœux :</strong> {{ confirmDeleteEtu.wishes?.count || 0 }}</p>
-          <p><strong>Documents ajouté(s) :</strong> {{ confirmDeleteEtu.documents?.count || 0 }}/{{ confirmDeleteEtu.documents?.countmax }}</p>
-          <p><strong>Dernière connexion :</strong> {{ formatDate(confirmDeleteEtu.acc_lastlogin) }}</p>
-        </div>
-      </div>
+                      <div class="bg-base-300 shadow-lg rounded-lg p-4 flex flex-col"
+                          :style="{ borderBottom: `4px solid ${confirmDeleteEtu.department ? confirmDeleteEtu.department.dept_color : '#aaaaaa'}` }">
+                        <div class="flex-1">
+                          <h5 class="text-xl font-bold mb-2 truncate min-w-72">{{ confirmDeleteEtu.acc_fullname }}</h5>
+                          <h6 class="text-gray-600 mb-2 truncate">
+                            {{ confirmDeleteEtu.acc_id }} 
+                            <span v-if="confirmDeleteEtu.department" :style="{color: confirmDeleteEtu.department.dept_color}">
+                              ({{ confirmDeleteEtu.department.dept_shortname }})
+                            </span>
+                            <span v-else>(Aucun département)</span>
+                          </h6>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-500">
+                          <p><strong>Nombre de vœux :</strong> {{ confirmDeleteEtu.wishes?.count || 0 }}</p>
+                          <p><strong>Documents ajouté(s) :</strong> {{ confirmDeleteEtu.documents?.count || 0 }}/{{ confirmDeleteEtu.documents?.countmax }}</p>
+                          <p><strong>Dernière connexion :</strong> {{ formatDate(confirmDeleteEtu.acc_lastlogin) }}</p>
+                        </div>
+                      </div>
 
-      <div class="modal-action mt-6">
-        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-        <button class="btn btn-error"
-                @click="deleteEtu(confirmDeleteEtu.acc_id, confirmDeleteEtu.acc_fullname, confirmDeleteEtu.department?.dept_shortname || 'Aucun département')">
-          Supprimer
-        </button>
-      </div>
-    </div>
-  </dialog>
-</Teleport>
+                      <div class="modal-action mt-6">
+                        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                        <button class="btn btn-error"
+                                @click="deleteEtu(confirmDeleteEtu.acc_id, confirmDeleteEtu.acc_fullname, confirmDeleteEtu.department?.dept_shortname || 'Aucun département')">
+                          Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  </dialog>
+                </Teleport>
 
             </div>
         </div>
@@ -831,9 +842,9 @@ function extractDestinations() {
     async function fetch() {
         await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.account.acc_id);
         if (account.value.access != null && account.value.access.access.acs_accounttype == 1) {
-            await request('GET', false, etudiants, config.apiUrl + 'api/account');
+            await request('GET', false, etudiants, config.apiUrl + 'api/account/actuel');
         } else if (account.value.access != null && account.value.department != null) {
-            await request('GET', false, etudiants, config.apiUrl + 'api/account/getbydept/' + account.value.department.dept_id);
+            await request('GET', false, etudiants, config.apiUrl + 'api/account/actuel/getbydept/' + account.value.department.dept_id);
         }
         await request('GET', false, components, config.apiUrl + 'api/component');
 

@@ -887,7 +887,7 @@
               </div>
 
               <div class="py-6 flex flex-col items-center justify-center" v-else>
-                <span class="loading loading-spinner loading-lg text-error mb-2"></span>
+                <span class="loading loading-spinner loading-lg text-success mb-2"></span>
                 <p>Archivage en cours...</p>
               </div>
 
