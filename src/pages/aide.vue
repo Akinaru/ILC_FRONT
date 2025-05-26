@@ -17,7 +17,7 @@
             </p>
             <ol class="list-decimal list-inside mt-2 space-y-1 text-sm">
               <li>Ajoutez des destinations en favoris (depuis la page d’accueil ou la fiche d’une destination).</li>
-              <li>Rendez-vous sur <RouterLink to="{ name: 'Dashboard' }" class="link text-primary">votre profil</RouterLink> et déplacez vos favoris dans les cases dédiées aux vœux.</li>
+              <li>Rendez-vous sur <RouterLink :to="{ name: 'Dashboard' }" class="link text-primary">votre profil</RouterLink> et déplacez vos favoris dans les cases dédiées aux vœux.</li>
             </ol>
           </div>
         </div>
@@ -59,7 +59,7 @@
               Comment indiquer mes choix de mobilité ?
             </div>
             <div class="collapse-content">
-              <p>Ajoutez d’abord des destinations en favoris, puis glissez-les dans vos vœux depuis la page <RouterLink to="{ name: 'Dashboard' }" class="link text-primary">Mon profil</RouterLink>.</p>
+              <p>Ajoutez d’abord des destinations en favoris, puis glissez-les dans vos vœux depuis la page <RouterLink :to="{ name: 'Dashboard' }" class="link text-primary">Mon profil</RouterLink>.</p>
             </div>
           </div>
   
