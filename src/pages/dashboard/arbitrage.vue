@@ -744,111 +744,107 @@
               :key="'accord-' + accordIndex"
               class="bg-base-300 w-11/12 mb-4 p-4 rounded-lg"
             >
-              <div class="flex items-center justify-center mb-2">
-                <span class="relative inline-block mr-2">
+              <!-- Informations sur l'accord -->
+              <div class="p-2 my-2 rounded w-full">
+                <div class="flex items-center">
                   <!-- Drapeau -->
-                  <span
-                    class="fi md:text-3xl text-xl transition-all duration-200 ease-in-out"
-                    :class="
-                      'fi-' + arbitrage.agreement?.partnercountry?.parco_code
-                    "
-                  ></span>
-
-                  <!-- Point d'interrogation si pas de drapeau -->
-                  <span
-                    v-if="!arbitrage.agreement?.partnercountry?.parco_code"
-                    class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none"
-                  >
-                    ?
+                  <span class="relative inline-block mr-3 shrink-0">
+                    <span
+                      class="fi md:text-2xl text-xl transition-all duration-200 ease-in-out"
+                      :class="'fi-' + (arbitrage.agreement?.partnercountry?.parco_code)"
+                    ></span>
+                    <span
+                      v-if="!arbitrage.agreement?.partnercountry?.parco_code"
+                      class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none"
+                    >
+                      ?
+                    </span>
                   </span>
-                </span>
 
-                <p class="font-bold text-lg">
-                  {{
-                    arbitrage.agreement.partnercountry?.parco_name ||
-                    "Pays indisponible"
-                  }}
-                </p>
+                  <!-- Infos -->
+                  <div class="flex flex-col flex-1 overflow-hidden">
+                    <span class="font-medium truncate">
+                      {{ arbitrage.agreement.university?.univ_name || 'Université indisponible' }}
+                    </span>
+                    <span class="text-gray-500 truncate">
+                      {{ arbitrage.agreement.university?.univ_city || 'Ville indisponible' }} -
+                      {{ arbitrage.agreement.partnercountry?.parco_name || 'Pays indisponible' }}
+                      <span class="text-xs">
+                        ({{ arbitrage.agreement.isced?.isc_code || 'Code ISCED ?' }})
+                      </span>
+                    </span>
+                  </div>
+                </div>
               </div>
-              <p class="text-center mb-3">
-                {{
-                  arbitrage.agreement.university?.univ_name ||
-                  "Université indisponible"
-                }}
-                -
-                {{
-                  arbitrage.agreement.isced?.isc_code || "Code ISCED indisponible"
-                }}
-                {{
-                  arbitrage.agreement.isced?.isc_name || "Nom ISCED indisponible"
-                }}
-              </p>
 
               <div class="w-full flex justify-center">
                 <div class="flex flex-wrap gap-4 justify-center w-full">
-                  <!-- Rendu des cases -->
+                <!-- Rendu des cases -->
+                <div
+                  v-for="(place, placeIndex) in getNumberOfPlace(arbitrage.agreement.agree_id)"
+                  :key="'place-' + placeIndex"
+                  :id="'drop_' + arbitrage.agreement.agree_id + '_' + placeIndex"
+                  class="dropZones bg-base-100 shadow-md rounded-lg border-l-4 relative h-20 w-72 flex items-center justify-between px-4 overflow-hidden transition-all"
+                  :style="{
+                    borderColor: arbitrage.accounts[placeIndex]?.account?.department?.dept_color || '#cccccc',
+                    opacity: arbitrage.accounts[placeIndex]?.account?.acc_arbitragefait ? 0.5 : 1
+                  }"
+                >
+                  <!-- Étudiant placé -->
                   <div
-                    :id="
-                      'drop_' + arbitrage.agreement.agree_id + '_' + placeIndex
-                    "
-                    v-for="(place, placeIndex) in getNumberOfPlace(
-                      arbitrage.agreement.agree_id
-                    )"
-                    :key="'place-' + placeIndex"
-                    class="dropZones bg-base-200 m-1 h-20 w-72 relative flex items-center justify-center"
+                    v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account"
+                    :id="'etu_drag_' + arbitrage.accounts[placeIndex].account.acc_id"
+                    :draggable="!arbitrage.accounts[placeIndex].account.acc_arbitragefait"
+                    class="flex flex-col justify-center w-full h-full"
+                    :class="{
+                      'cursor-move': !arbitrage.accounts[placeIndex].account.acc_arbitragefait
+                    }"
                   >
-                    <div
-                      v-if="
-                        arbitrage.accounts[placeIndex] &&
-                        arbitrage.accounts[placeIndex].account
-                      "
-                      draggable="true"
-                      :id="
-                        'etu_drag_' +
-                        arbitrage.accounts[placeIndex].account.acc_id
-                      "
-                      class="h-full w-full flex items-center justify-center elementDrag cursor-move hover:opacity-60"
-                      :style="{
-                        borderBottom: `4px solid ${
-                          arbitrage.accounts[placeIndex]?.account?.department
-                            ?.dept_color || '#aaaaaa'
-                        }`,
-                      }"
-                    >
-                      <p>
+                    <div class="flex justify-between items-center w-full">
+                      <p class="font-semibold truncate">
                         {{ arbitrage.accounts[placeIndex].account.acc_fullname }}
                       </p>
-                      <button
-                        @click="
-                          removeEtuFromPlace(
-                            arbitrage.agreement.agree_id,
-                            placeIndex
-                          )
-                        "
-                        class="hover:cursor-pointer hover:opacity-60 absolute top-0 right-0 p-2"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="stroke-current shrink-0 h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"
-                          ></path>
-                        </svg>
-                      </button>
+                      <span class="text-xl">
+                        {{
+                          arbitrage.accounts[placeIndex].account.acc_periodemobilite === 1
+                            ? '🍂'
+                            : arbitrage.accounts[placeIndex].account.acc_periodemobilite === 2
+                            ? '🌱'
+                            : ''
+                        }}
+                      </span>
                     </div>
-                    <p v-else class="">Aucun étudiant</p>
+
+                    <!-- Badge ancien arbitrage -->
+                    <div
+                      v-if="arbitrage.accounts[placeIndex].account.acc_arbitragefait"
+                      class="text-xs text-info mt-1"
+                    >
+                      <span class="badge badge-outline badge-sm">Déjà arbitré</span>
+                    </div>
                   </div>
+
+                  <!-- Vide -->
+                  <p v-else class="text-sm italic text-gray-400">Aucun étudiant</p>
+
+                  <!-- Bouton de suppression (seulement si non arbitré) -->
+                  <button
+                    v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account && !arbitrage.accounts[placeIndex].account.acc_arbitragefait"
+                    @click="removeEtuFromPlace(arbitrage.agreement.agree_id, placeIndex)"
+                    class="absolute top-1 right-1 btn btn-xs btn-circle btn-ghost text-error hover:bg-error hover:text-white"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                  <!-- Bouton ajouter case -->
                   <div
-                    class="w-72 h-20 m-1 flex items-center justify-center border-8 border-base-200 bg-base-100 hover:opacity-60 cursor-pointer"
+                    class="w-72 h-20 flex items-center justify-center rounded-lg border-2 border-dashed border-base-300 bg-base-100 hover:bg-base-200 cursor-pointer transition-all"
                     @click="addPlace(arbitrage.agreement.agree_id)"
                   >
-                    <p class="text-lg font-bold">+</p>
+                    <span class="text-2xl font-bold text-base-content">+</span>
                   </div>
                 </div>
               </div>
@@ -857,137 +853,175 @@
         </div>
       </div>
 
-      <!-- Bouton d'archivage -->
-      <div class="fixed bottom-0 right-0 p-4">
+      <!-- Boutons d'action -->
+      <div class="fixed bottom-0 right-0 p-4 flex gap-4">
         <button
-          class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70"
+          class="btn btn-neutral min-w-44 hover:scale-105 transition-all"
+          @click="openConfirmModalValidation"
+        >
+          Valider l'arbitrage
+        </button>
+        <button
+          class="btn btn-primary min-w-44 hover:scale-105 transition-all"
           @click="openConfirmModal"
         >
           Archiver l'arbitrage
         </button>
       </div>
 
-      <!-- Modal confirmation d'archivage -->
-      <Teleport to="body">
-  <dialog id="archivageModal" ref="archivageModal" class="modal">
-    <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
-      <h3 class="text-xl font-bold">Archiver l'arbitrage</h3>
-      <p class="text-sm text-base-content/70 mt-2">Cette action est définitive et ne pourra pas être annulée.</p>
-      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+        <!-- Modal confirmation d'archivage -->
+        <Teleport to="body">
+          <dialog id="archivageModal" ref="archivageModal" class="modal">
+            <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+              <h3 class="text-xl font-bold">Archiver l'arbitrage</h3>
+              <p class="text-sm text-base-content/70 mt-2">
+              Cette action va archiver tous les étudiants actuellement placés dans l’arbitrage et videra entièrement toutes les places des accords.
+              <br />
+              Les étudiants non encore validés auront leur destination automatiquement validée avant d’être archivés.
+              <span class="font-semibold text-error block mt-2">Cette action est définitive et ne pourra pas être annulée.</span>
+            </p>
+              <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-      <div class="py-3" v-if="!archivageEnCours">
-        <p>Souhaitez-vous vraiment archiver l’arbitrage ?</p>
-      </div>
+              <div class="py-3" v-if="!archivageEnCours">
+                <p>Souhaitez-vous vraiment archiver définitivement cet arbitrage ?</p>
+              </div>
 
-      <div class="py-6 flex flex-col items-center justify-center" v-else>
-        <span class="loading loading-spinner loading-lg text-success mb-2"></span>
-        <p>Archivage en cours...</p>
-      </div>
+              <div class="py-6 flex flex-col items-center justify-center" v-else>
+                <span class="loading loading-spinner loading-lg text-error mb-2"></span>
+                <p>Archivage en cours...</p>
+              </div>
 
-      <div class="modal-action mt-4" v-if="!archivageEnCours">
-        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-        <button class="btn btn-primary" @click="confirmArchivage">Archiver</button>
-      </div>
-    </div>
-  </dialog>
-</Teleport>
-
-
-      <!-- Modal Informations étudiant -->
-      <Teleport to="body">
-  <dialog id="infoEtu" ref="infoEtu" class="modal">
-    <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
-      <form method="dialog">
-        <label for="modal_info_etu" @click="closeModal" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-      </form>
-
-      <!-- Identité -->
-      <div class="flex items-center mb-4">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3"
-             :style="{ backgroundColor: infoetudiant.department ? infoetudiant.department.dept_color : '#aaaaaa' }">
-          {{ infoetudiant.acc_fullname?.charAt(0).toUpperCase() || 'N' }}
-        </div>
-        <div>
-          <h3 class="text-xl font-bold">{{ infoetudiant.acc_fullname || "Inconnu" }}</h3>
-          <p class="text-sm text-base-content/70">ID: {{ infoetudiant.acc_id || "Inconnu" }}</p>
-        </div>
-      </div>
-
-      <!-- Grilles -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Infos principales -->
-        <div class="bg-base-200 p-3 rounded-md">
-          <h4 class="font-bold text-md mb-2">Informations</h4>
-          <div class="space-y-1">
-            <div class="flex justify-between"><span>Nombre de vœux:</span><span>{{ infoetudiant.wishes?.count || 0 }}</span></div>
-            <div class="flex justify-between"><span>Documents ajoutés:</span><span>{{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}</span></div>
-            <div class="flex justify-between"><span>Dernière connexion:</span><span>{{ formatDate(infoetudiant.acc_lastlogin) }}</span></div>
-            <div class="flex justify-between"><span>Aménagement aux examens:</span><span>{{ infoetudiant.acc_amenagement ? "Oui" : "Non" }}</span></div>
-          </div>
-        </div>
-
-        <!-- Coordonnées -->
-        <div class="bg-base-200 p-3 rounded-md">
-          <h4 class="font-bold text-md mb-2">Coordonnées</h4>
-          <div class="space-y-1">
-            <div class="flex justify-between"><span>Email:</span><span class="truncate">{{ infoetudiant.acc_mail || "Aucun" }}</span></div>
-            <div class="flex justify-between"><span>Numéro étudiant:</span><span>{{ infoetudiant.acc_studentnum || "Aucun" }}</span></div>
-            <div class="flex justify-between"><span>Année de mobilité:</span><span>{{ infoetudiant.acc_anneemobilite || "Aucune" }}</span></div>
-            <div class="flex justify-between"><span>Score TOEIC:</span><span>{{ infoetudiant.acc_toeic || "Aucun" }}</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Académique -->
-      <div class="bg-base-200 p-3 rounded-md mt-3">
-        <h4 class="font-bold text-md mb-2">Information académique</h4>
-        <div class="space-y-1">
-          <div class="flex justify-between"><span>Département:</span><span>{{ infoetudiant.department?.dept_name || "Aucun" }}</span></div>
-          <div class="flex justify-between"><span>Parcours:</span><span>{{ infoetudiant.acc_parcours || "Aucun" }}</span></div>
-        </div>
-      </div>
-
-      <!-- Voeux -->
-      <div class="bg-base-200 p-3 rounded-md mt-3">
-        <h4 class="font-bold text-md mb-2">Vœux</h4>
-        <p v-if="infoetudiant.wishes?.count == 0" class="text-center text-base-content/70 italic">
-          Aucun vœu enregistré
-        </p>
-        <div v-for="(accord, index) in getFilteredAgreements(infoetudiant)" :key="index"
-             class="flex justify-between p-2 hover:bg-base-100 rounded">
-          <div class="min-w-fit">
-            <span class="badge badge-sm badge-primary">Vœu {{ accord.place }}</span>
-          </div>
-          <div class="flex w-full items-center justify-start ml-2">
-            <span class="relative inline-block mr-1">
-              <span class="fi" :class="'fi-' + accord.agreement?.partnercountry?.parco_code"></span>
-              <span v-if="!accord.agreement?.partnercountry?.parco_code"
-                    class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">?</span>
-            </span>
-            <div class="text-sm flex justify-center items-center gap-3">
-              <span class="font-medium">{{ accord.agreement.university?.univ_name || "Université indisponible" }}</span>
-              <span class="text-xs text-base-content/70">{{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}</span>
+              <div class="modal-action mt-4" v-if="!archivageEnCours">
+                <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                <button class="btn btn-primary" @click="confirmArchivage">Archiver</button>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </dialog>
+        </Teleport>
 
-      <!-- Lien profil -->
-      <div class="mt-4" v-if="infoetudiant && infoetudiant.acc_id">
-        <a :href="$router.resolve({ name: 'Profile', params: { acc_id: infoetudiant.acc_id }}).href" target="_blank">
-          <button class="btn btn-primary w-full">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                 stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975M15 9.75a3 3 0 11-6 0 3 3 0 016 0zM12 21a8.966 8.966 0 01-5.982-2.275" />
-            </svg>
-            Voir le profil complet
-          </button>
-        </a>
-      </div>
-    </div>
-  </dialog>
-</Teleport>
+        <!-- Modal confirmation de validation -->
+        <Teleport to="body">
+          <dialog id="validerModal" ref="validerModal" class="modal">
+            <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+              <h3 class="text-xl font-bold">Valider l'arbitrage</h3>
+              <p class="text-sm text-base-content/70 mt-2">
+                Les étudiants actuellement affectés seront enregistrés comme validés pour cette période de mobilité.
+                Ils resteront visibles avec une opacité. <span class="font-semibold text-error block mt-2">Cette action est définitive et ne pourra pas être annulée.</span>
+              </p>
+              <div class="w-full h-px bg-gradient-to-r from-success/30 via-success/20 to-transparent my-4"></div>
+
+              <div class="py-3" v-if="!archivageEnCours">
+                <p>Souhaitez-vous vraiment valider cet arbitrage ?</p>
+              </div>
+
+              <div class="py-6 flex flex-col items-center justify-center" v-else>
+                <span class="loading loading-spinner loading-lg text-success mb-2"></span>
+                <p>Validation en cours...</p>
+              </div>
+
+              <div class="modal-action mt-4" v-if="!archivageEnCours">
+                <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                <button class="btn btn-primary" @click="confirmValidation">Valider</button>
+              </div>
+            </div>
+          </dialog>
+        </Teleport>
+
+        <!-- Modal Informations étudiant -->
+        <Teleport to="body">
+          <dialog id="infoEtu" ref="infoEtu" class="modal">
+            <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+              <form method="dialog">
+                <label for="modal_info_etu" @click="closeModal" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+              </form>
+
+              <!-- Identité -->
+              <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3"
+                    :style="{ backgroundColor: infoetudiant.department ? infoetudiant.department.dept_color : '#aaaaaa' }">
+                  {{ infoetudiant.acc_fullname?.charAt(0).toUpperCase() || 'N' }}
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold">{{ infoetudiant.acc_fullname || "Inconnu" }}</h3>
+                  <p class="text-sm text-base-content/70">ID: {{ infoetudiant.acc_id || "Inconnu" }}</p>
+                </div>
+              </div>
+
+              <!-- Grilles -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Infos principales -->
+                <div class="bg-base-200 p-3 rounded-md">
+                  <h4 class="font-bold text-md mb-2">Informations</h4>
+                  <div class="space-y-1">
+                    <div class="flex justify-between"><span>Nombre de vœux:</span><span>{{ infoetudiant.wishes?.count || 0 }}</span></div>
+                    <div class="flex justify-between"><span>Documents ajoutés:</span><span>{{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}</span></div>
+                    <div class="flex justify-between"><span>Dernière connexion:</span><span>{{ formatDate(infoetudiant.acc_lastlogin) }}</span></div>
+                    <div class="flex justify-between"><span>Aménagement aux examens:</span><span>{{ infoetudiant.acc_amenagement ? "Oui" : "Non" }}</span></div>
+                  </div>
+                </div>
+
+                <!-- Coordonnées -->
+                <div class="bg-base-200 p-3 rounded-md">
+                  <h4 class="font-bold text-md mb-2">Coordonnées</h4>
+                  <div class="space-y-1">
+                    <div class="flex justify-between"><span>Email:</span><span class="truncate">{{ infoetudiant.acc_mail || "Aucun" }}</span></div>
+                    <div class="flex justify-between"><span>Numéro étudiant:</span><span>{{ infoetudiant.acc_studentnum || "Aucun" }}</span></div>
+                    <div class="flex justify-between"><span>Année de mobilité:</span><span>{{ infoetudiant.acc_anneemobilite || "Aucune" }}</span></div>
+                    <div class="flex justify-between"><span>Score TOEIC:</span><span>{{ infoetudiant.acc_toeic || "Aucun" }}</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Académique -->
+              <div class="bg-base-200 p-3 rounded-md mt-3">
+                <h4 class="font-bold text-md mb-2">Information académique</h4>
+                <div class="space-y-1">
+                  <div class="flex justify-between"><span>Département:</span><span>{{ infoetudiant.department?.dept_name || "Aucun" }}</span></div>
+                  <div class="flex justify-between"><span>Parcours:</span><span>{{ infoetudiant.acc_parcours || "Aucun" }}</span></div>
+                </div>
+              </div>
+
+              <!-- Voeux -->
+              <div class="bg-base-200 p-3 rounded-md mt-3">
+                <h4 class="font-bold text-md mb-2">Vœux</h4>
+                <p v-if="infoetudiant.wishes?.count == 0" class="text-center text-base-content/70 italic">
+                  Aucun vœu enregistré
+                </p>
+                <div v-for="(accord, index) in getFilteredAgreements(infoetudiant)" :key="index"
+                    class="flex justify-between p-2 hover:bg-base-100 rounded">
+                  <div class="min-w-fit">
+                    <span class="badge badge-sm badge-primary">Vœu {{ accord.place }}</span>
+                  </div>
+                  <div class="flex w-full items-center justify-start ml-2">
+                    <span class="relative inline-block mr-1">
+                      <span class="fi" :class="'fi-' + accord.agreement?.partnercountry?.parco_code"></span>
+                      <span v-if="!accord.agreement?.partnercountry?.parco_code"
+                            class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">?</span>
+                    </span>
+                    <div class="text-sm flex justify-center items-center gap-3">
+                      <span class="font-medium">{{ accord.agreement.university?.univ_name || "Université indisponible" }}</span>
+                      <span class="text-xs text-base-content/70">{{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lien profil -->
+              <div class="mt-4" v-if="infoetudiant && infoetudiant.acc_id">
+                <a :href="$router.resolve({ name: 'Profile', params: { acc_id: infoetudiant.acc_id }}).href" target="_blank">
+                  <button class="btn btn-primary w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975M15 9.75a3 3 0 11-6 0 3 3 0 016 0zM12 21a8.966 8.966 0 01-5.982-2.275" />
+                    </svg>
+                    Voir le profil complet
+                  </button>
+                </a>
+              </div>
+            </div>
+          </dialog>
+        </Teleport>
 
     </div>
   </div>
@@ -1114,10 +1148,17 @@ function closeModal() {
   modal.close();
   const modal2 = document.getElementById("infoEtu");
   modal2.close();
+  const modal3 = document.getElementById("validerModal");
+  modal3.close();
 }
 
 function openConfirmModal() {
   const modal = document.getElementById("archivageModal");
+  modal.showModal();
+}
+
+function openConfirmModalValidation() {
+  const modal = document.getElementById("validerModal");
   modal.showModal();
 }
 
@@ -1134,6 +1175,20 @@ async function confirmArchivage() {
     true,
     response,
     config.apiUrl + "api/arbitrage/archiver"
+  );
+  if (response.value.status == 200) fetch();
+  archivageEnCours.value = false;
+  closeModal();
+
+}
+
+async function confirmValidation() {
+  archivageEnCours.value = true;
+  await request(
+    "POST",
+    true,
+    response,
+    config.apiUrl + "api/arbitrage/valider"
   );
   if (response.value.status == 200) fetch();
   archivageEnCours.value = false;
@@ -1233,7 +1288,7 @@ async function saveArbitrage() {
 
   await request(
     "POST",
-    true,
+    false,
     response,
     config.apiUrl + "api/arbitrage",
     extractedData
@@ -1699,6 +1754,9 @@ async function refreshDrop() {
             const existingStudent =
               localArbitrage.value[agree_id].accounts[pos];
             if (existingStudent && existingStudent.account != null) {
+              if(existingStudent.account.acc_arbitragefait == true){
+                return;
+              }
               // Échanger les étudiants si celui en cours de drag n'est pas déjà dans la dropzone
               const currentEtuId = existingStudent.account.acc_id;
               if (currentEtuId !== etu.acc_id) {

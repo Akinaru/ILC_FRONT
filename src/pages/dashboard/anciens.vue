@@ -200,9 +200,9 @@
   const groupedAccounts = computed(() => {
     if (!accounts.value || !accounts.value.accounts) return [];
     
-    // Filtrer les comptes qui ont acc_arbitragefait
+    // Filtrer les comptes qui ont acc_ancienetu
     const arbitragedAccounts = accounts.value.accounts.filter(account => 
-      account.acc_arbitragefait === true || account.acc_arbitragefait === 1
+      account.acc_ancienetu === true || account.acc_ancienetu === 1
     );
     
     // Regrouper par destination
