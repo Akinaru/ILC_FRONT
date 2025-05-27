@@ -160,7 +160,11 @@ import { ref, onMounted, computed } from "vue";
 import { request } from "../../composables/httpRequest";
 import config from "../../config";
 import LoadingComp from "../../components/utils/LoadingComp.vue";
+import { useAccountStore } from "../../stores/accountStore";
+import { addAction } from "../../composables/actionType";
 
+
+const accountStore = useAccountStore();
 const accounts = ref([]);
 const isLoaded = ref(false);
 const response = ref([]);
@@ -257,6 +261,7 @@ async function desarchiverEtudiant(acc_id) {
   const requestData = { acc_id };
   await request("POST", true, response, config.apiUrl + "api/arbitrage/desarchiver", requestData);
   if (response.value.status === 200) fetchAccounts();
+  addAction(accountStore.account.acc_id, 'arbitrage', response, 'Désarchivage de l\'étudiant '+ acc_id +'.');
 }
 
 onMounted(() => {

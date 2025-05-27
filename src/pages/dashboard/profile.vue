@@ -811,6 +811,7 @@
         config.apiUrl + "api/account/temoignage",
         requestData
       );
+      addAction(accountStore.account.acc_id, 'other', response, 'Suppression du témoignage de '+ account.value.acc_id +'.');
       fetchAll();
     }
 

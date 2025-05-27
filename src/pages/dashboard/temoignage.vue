@@ -145,7 +145,10 @@ import { ref, onMounted, computed } from 'vue';
 import config from '../../config';
 import { request } from '../../composables/httpRequest';
 import LoadingComp from '../../components/utils/LoadingComp.vue';
+import { addAction } from '../../composables/actionType';
+import { useAccountStore } from '../../stores/accountStore';
 
+const accountStore = useAccountStore();
 const isLoaded = ref(false);
 const accounts = ref([]);
 const response = ref([]);
@@ -199,6 +202,7 @@ async function supprimerTemoignage() {
         config.apiUrl + "api/account/temoignage",
         requestData
       );
+      addAction(accountStore.account.acc_id, 'other', response, 'Suppression du témoignage de '+ acc_id +'.');
       fetchAccounts();
     }
 

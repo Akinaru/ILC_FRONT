@@ -1177,6 +1177,7 @@ async function confirmArchivage() {
     config.apiUrl + "api/arbitrage/archiver"
   );
   if (response.value.status == 200) fetch();
+  addAction(accountStore.account.acc_id, 'arbitrage', response, 'Archivage de l\'arbitrage.');  
   archivageEnCours.value = false;
   closeModal();
 
@@ -1191,6 +1192,7 @@ async function confirmValidation() {
     config.apiUrl + "api/arbitrage/valider"
   );
   if (response.value.status == 200) fetch();
+  addAction(accountStore.account.acc_id, 'arbitrage', response, 'Validation de l\'arbitrage.');  
   archivageEnCours.value = false;
   closeModal();
 
