@@ -18,105 +18,181 @@
       </div>
 
       
-      <!-- Formulaire -->
-      <form @submit.prevent="confirmCompl" class="m-5 md:w-4/6 w-full flex items-center justify-center flex-col mt-10">
-              <p>Formulaire</p>
+<!-- Formulaire -->
+<form @submit.prevent="confirmCompl" class="m-5 md:w-4/6 w-full flex items-center justify-center flex-col mt-10">
+  <p>Formulaire</p>
 
-              <!-- Numéro étudiant -->
-              <label class="form-control w-full max-w-lg">
-                  <div class="label">
-                      <span class="label-text">Numéro étudiant (INE)</span>
-                  </div>
-                  <input type="text" placeholder="XXXXXXXX" class="input input-bordered w-full max-w-lg" v-model="complDossier.ine"/>
-              </label>
+  <!-- Numéro étudiant -->
+  <label class="form-control w-full max-w-lg" for="ine">
+    <div class="label">
+      <span class="label-text">Numéro étudiant (INE)</span>
+    </div>
+    <input
+      id="ine"
+      name="ine"
+      type="text"
+      placeholder="XXXXXXXX"
+      class="input input-bordered w-full max-w-lg"
+      v-model="complDossier.ine"
+      required
+    />
+  </label>
 
-              <!-- Email -->
-              <label class="form-control w-full max-w-lg">
-                  <div class="label">
-                      <span class="label-text">Email</span>
-                  </div>
-                  <input type="text" placeholder="ex: maxime.gallotta@etu.univ-smb.fr" class="input input-bordered w-full max-w-lg" v-model="complDossier.email"/>
-              </label>
+  <!-- Email -->
+  <label class="form-control w-full max-w-lg" for="email">
+    <div class="label">
+      <span class="label-text">Email</span>
+    </div>
+    <input
+      id="email"
+      name="email"
+      type="email"
+      placeholder="ex: maxime.gallotta@etu.univ-smb.fr"
+      class="input input-bordered w-full max-w-lg"
+      v-model="complDossier.email"
+      required
+    />
+  </label>
 
-              <!-- Département -->
-              <label class="form-control w-full max-w-lg">
-                  <div class="label">
-                      <span class="label-text">Département</span>
-                  </div>
-                  <select class="select select-bordered" v-model="complDossier.department">
-                      <option disabled selected value="">Séléctionnez un département</option>
-                      <template v-for="(compo, index) in components.components" :key="index">
-                          <optgroup :label="compo.comp_name">
-                              <option v-for="(dept, index) in compo.departments" :key="index" :value="dept.dept_id" :style="{ color: dept.dept_color }">({{ dept.dept_shortname }}) {{ dept.dept_name }} </option>
-                          </optgroup>
-                      </template>
-                  </select>
-              </label>
+  <!-- Département -->
+  <label class="form-control w-full max-w-lg" for="department">
+    <div class="label">
+      <span class="label-text">Département</span>
+    </div>
+    <select
+      id="department"
+      name="department"
+      class="select select-bordered"
+      v-model="complDossier.department"
+      required
+    >
+      <option disabled selected value="">Séléctionnez un département</option>
+      <template v-for="(compo, index) in components.components" :key="index">
+        <optgroup :label="compo.comp_name">
+          <option
+            v-for="(dept, index) in compo.departments"
+            :key="index"
+            :value="dept.dept_id"
+            :style="{ color: dept.dept_color }"
+          >
+            ({{ dept.dept_shortname }}) {{ dept.dept_name }}
+          </option>
+        </optgroup>
+      </template>
+    </select>
+  </label>
 
-              <!-- Parcours -->
-              <label class="form-control w-full max-w-lg">
-                  <div class="label">
-                      <span class="label-text">Parcours</span>
-                  </div>
-                  <input type="text" placeholder="(Parcours lors de la mobilité)" class="input input-bordered w-full max-w-lg" v-model="complDossier.parcours"/>
-              </label>
+  <!-- Parcours -->
+  <label class="form-control w-full max-w-lg" for="parcours">
+    <div class="label">
+      <span class="label-text">Parcours</span>
+    </div>
+    <input
+      id="parcours"
+      name="parcours"
+      type="text"
+      placeholder="(Parcours lors de la mobilité)"
+      class="input input-bordered w-full max-w-lg"
+      v-model="complDossier.parcours"
+    />
+  </label>
 
-              <!-- Années mobilité -->
-              <label class="form-control w-full max-w-lg">
-                  <div class="label">
-                      <span class="label-text">Années de mobilité</span>
-                  </div>
-                  <select class="select select-bordered" v-model="complDossier.anneesmobilite">
-                      <option disabled selected value="">Séléctionnez une paire d'années</option>
-                              <option v-for="(annee, index) in anneesmobilite" :key="index" :value="annee">{{ annee }}</option>
-                  </select>
-              </label>
+  <!-- Années mobilité -->
+  <label class="form-control w-full max-w-lg" for="anneesmobilite">
+    <div class="label">
+      <span class="label-text">Années de mobilité</span>
+    </div>
+    <select
+      id="anneesmobilite"
+      name="anneesmobilite"
+      class="select select-bordered"
+      v-model="complDossier.anneesmobilite"
+      required
+    >
+      <option disabled selected value="">Séléctionnez une paire d'années</option>
+      <option v-for="(annee, index) in anneesmobilite" :key="index" :value="annee">{{ annee }}</option>
+    </select>
+  </label>
 
-              <!-- Periode de mobilité -->
-              <label class="form-control w-full max-w-lg">
-                  <div class="label">
-                      <span class="label-text">Periode de mobilité</span>
-                  </div>
-                  <select class="select select-bordered" v-model="complDossier.periodemobilite">
-                      <option disabled selected value="">Séléctionnez une periode de mobilité</option>
-                              <option value="1">🍂 Mobilité d'automne</option>
-                              <option value="2">🌱 Mobilité de printemps</option>
-                  </select>
-              </label>
+  <!-- Periode de mobilité -->
+  <label class="form-control w-full max-w-lg" for="periodemobilite">
+    <div class="label">
+      <span class="label-text">Periode de mobilité</span>
+    </div>
+    <select
+      id="periodemobilite"
+      name="periodemobilite"
+      class="select select-bordered"
+      v-model="complDossier.periodemobilite"
+      required
+    >
+      <option disabled selected value="">Séléctionnez une periode de mobilité</option>
+      <option value="1">🍂 Mobilité d'automne</option>
+      <option value="2">🌱 Mobilité de printemps</option>
+    </select>
+  </label>
 
-              <!-- Aménagement -->
-              <div class="form-control w-full max-w-lg">
-                  <label class="label cursor-pointer">
-                      <span class="label-text">Avez-vous des aménagements aux examens ?</span> 
-                      <input type="checkbox" class="checkbox" v-model="complDossier.amenagement"/>
-                  </label>
-              </div>
-              <label class="form-control w-full max-w-lg" v-if="complDossier.amenagement">
-                  <div class="label">
-                      <span class="label-text">Description (facultatif)</span>
-                  </div>
-                  <input type="text" placeholder="Description de l'aménagement" class="input input-bordered w-full max-w-lg" v-model="complDossier.amenagementdesc"/>
-              </label>
+  <!-- Aménagement -->
+  <div class="form-control w-full max-w-lg">
+    <label class="label cursor-pointer" for="amenagement">
+      <span class="label-text">Avez-vous des aménagements aux examens ?</span>
+      <input
+        id="amenagement"
+        name="amenagement"
+        type="checkbox"
+        class="checkbox"
+        v-model="complDossier.amenagement"
+      />
+    </label>
+  </div>
 
-              <!-- Consentement image -->
-              <div class="form-control  w-full max-w-lg">
-                  <label class="label cursor-pointer">
-                      <span class="label-text">Consentez-vous à l'utilisation de votre image selon notre politique de confidentialité et de protection des données ?</span> 
-                      <input type="checkbox" class="checkbox" v-model="complDossier.consent"/>
-                  </label>
-              </div>
+  <label class="form-control w-full max-w-lg" v-if="complDossier.amenagement" for="amenagementdesc">
+    <div class="label">
+      <span class="label-text">Description (facultatif)</span>
+    </div>
+    <input
+      id="amenagementdesc"
+      name="amenagementdesc"
+      type="text"
+      placeholder="Description de l'aménagement"
+      class="input input-bordered w-full max-w-lg"
+      v-model="complDossier.amenagementdesc"
+    />
+  </label>
 
-              <!-- Annuaire des anciens -->
-              <div class="form-control max-w-lg">
-                  <label class="label cursor-pointer">
-                      <span class="label-text">Acceptez-vous d’apparaître dans l’annuaire des anciens étudiants conformément à notre politique de confidentialité ?</span> 
-                      <input type="checkbox" class="checkbox" v-model="complDossier.consentancien"/>
-                  </label>
-              </div>
-              <div class="flex items-center justify-center mt-10">
-                  <button class="btn btn-primary" type="button" @click="openConfirmModal">Valider</button>
-              </div>
-          </form>
+  <!-- Consentement image -->
+  <div class="form-control w-full max-w-lg">
+    <label class="label cursor-pointer" for="consent">
+      <span class="label-text">Consentez-vous à l'utilisation de votre image selon notre politique de confidentialité et de protection des données ?</span>
+      <input
+        id="consent"
+        name="consent"
+        type="checkbox"
+        class="checkbox"
+        v-model="complDossier.consent"
+        required
+      />
+    </label>
+  </div>
+
+  <!-- Annuaire des anciens -->
+  <div class="form-control max-w-lg">
+    <label class="label cursor-pointer" for="consentancien">
+      <span class="label-text">Acceptez-vous d’apparaître dans l’annuaire des anciens étudiants conformément à notre politique de confidentialité ?</span>
+      <input
+        id="consentancien"
+        name="consentancien"
+        type="checkbox"
+        class="checkbox"
+        v-model="complDossier.consentancien"
+      />
+    </label>
+  </div>
+
+  <div class="flex items-center justify-center mt-10">
+    <button class="btn btn-primary" type="button" @click="openConfirmModal">Valider</button>
+  </div>
+</form>
   
       <!-- Modal de confirmation -->
       <Teleport to="body">
@@ -221,6 +297,10 @@
       return
     } else if (!complDossier.value.email || complDossier.value.email === '') {
       addAlert('error', { data: { error: 'Veuillez renseigner votre email.' } })
+      closeModal()
+      return
+    } else if (!/^[\w.-]+@[\w.-]+\.\w{2,}$/.test(complDossier.value.email)) {
+      addAlert('error', { data: { error: 'Le format de l’email est invalide.' } })
       closeModal()
       return
     } else if (!complDossier.value.department || complDossier.value.department === '') {
