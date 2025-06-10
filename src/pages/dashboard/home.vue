@@ -1870,6 +1870,14 @@ async function confirmModifEtu() {
       },
     });
     return;
+  } if (!/^[\w.-]+@[\w.-]+\.\w{2,}$/.test(currentUnivEtu.value.acc_mail)) {
+    addAlert("error", {
+      data: {
+        error: "Le format de l’email est invalide.",
+        message: "Modification du dossier annulée.",
+      },
+    });
+    return
   }
 
   const requestData = {

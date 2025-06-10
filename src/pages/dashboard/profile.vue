@@ -638,6 +638,7 @@
     import LoadingComp from '../../components/utils/LoadingComp.vue';
     import { addAction } from '../../composables/actionType';
     import { useRouter } from "vue-router";
+    import { addAlert } from "../../composables/addAlert";
 
     const router = useRouter();
     const accountStore = useAccountStore();
@@ -842,6 +843,15 @@
     }
 
     async function confirmModifCompte(){
+        if (!/^[\w.-]+@[\w.-]+\.\w{2,}$/.test(modifCompte.value.acc_mail)) {
+          addAlert("error", {
+            data: {
+              error: "Le format de l’email est invalide.",
+              message: "Modification du compte annulée.",
+            },
+          });
+          return
+        }
         const requestData = {
             acc_id: account.value.acc_id,
             acc_studentnum: modifCompte.value.acc_studentnum != null ? modifCompte.value.acc_studentnum : 0,
