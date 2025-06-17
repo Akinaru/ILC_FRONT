@@ -469,6 +469,9 @@
                 </div>
               </div>
             </div>
+
+            <button  @click="fetchFilteredStudents">test</button>
+
             <!-- Liste des étudiants -->
             <div v-if="account && account.acc_id && etudiants && etudiants.accounts" class="w-full px-2">
               <!-- En-tête de la liste des étudiants -->
@@ -745,6 +748,7 @@ import { addAction } from '../../composables/actionType';
 
 const accountStore = useAccountStore();
 const etudiants = ref([]);
+const etudiantsFiltered = ref([]);
 const account = ref([]);
 const components = ref([]);
 const isLoaded = ref(false);
@@ -768,84 +772,126 @@ const isOpen = ref({
     destination: true,
 });
 
+const currentPage = ref(1);
+const perPage = ref(20);
+
+  async function fetchFilteredStudents(){
+      const params = new URLSearchParams();
+
+    if (selectedDepartment.value.length > 0) {
+      selectedDepartment.value.forEach(dep => params.append('departments[]', dep));
+    }
+
+    if (selectedVoeux.value.length > 0) {
+      params.append('voeux', selectedVoeux.value[0]); // "Aucun" ou "AuMoinsUn"
+    }
+
+    if (searchQuery.value) {
+      params.append('search', searchQuery.value);
+    }
+
+    if (selectedAnneeMobilite.value.length > 0) {
+      selectedAnneeMobilite.value.forEach(year => params.append('annees[]', year));
+    }
+
+    if (selectedPeriodeMobilite.value.length > 0) {
+      selectedPeriodeMobilite.value.forEach(periode => params.append('periodes[]', periode));
+    }
+
+    if (selectedDocument.value.length > 0) {
+      selectedDocument.value.forEach(doc => params.append('documents[]', doc));
+    }
+
+    if (selectedDestination.value.length > 0) {
+      selectedDestination.value.forEach(dest => params.append('destinations[]', dest));
+    }
+
+    params.append('page', currentPage.value.toString());
+    params.append('perPage', perPage.value.toString());
+
+    await request('GET', false, etudiants, `${config.apiUrl}api/account/studentsFiltered?${params.toString()}`);
+  }
+
     function toggleCollapse(section) {
         isOpen.value[section] = !isOpen.value[section];
     }
 
     const filteredEtudiants = computed(() => {
-      return etudiants.value.accounts
-        .filter(etu => {
-            const matchesDepartments = selectedDepartment.value.length === 0 || 
-                (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
-                (selectedDepartment.value.includes('Aucun') && !etu.department);
+      // return etudiants.value.accounts
+      //   .filter(etu => {
+      //       const matchesDepartments = selectedDepartment.value.length === 0 || 
+      //           (etu.department && selectedDepartment.value.includes(etu.department.dept_shortname)) ||
+      //           (selectedDepartment.value.includes('Aucun') && !etu.department);
             
-            const hasAccess = etu.access.count === 0;
+      //       const hasAccess = etu.access.count === 0;
 
-            const matchesVoeux = selectedVoeux.value.length === 0 || 
-                (selectedVoeux.value.includes('Aucun') && etu.wishes.count === 0) ||
-                (selectedVoeux.value.includes('AuMoinsUn') && etu.wishes.count > 0);
+      //       const matchesVoeux = selectedVoeux.value.length === 0 || 
+      //           (selectedVoeux.value.includes('Aucun') && etu.wishes.count === 0) ||
+      //           (selectedVoeux.value.includes('AuMoinsUn') && etu.wishes.count > 0);
 
-            const matchesSearchQuery = !searchQuery.value || 
-                [etu.acc_fullname, etu.acc_id.toString()].some(field => 
-                field.toLowerCase().includes(searchQuery.value.toLowerCase())
-            );
+      //       const matchesSearchQuery = !searchQuery.value || 
+      //           [etu.acc_fullname, etu.acc_id.toString()].some(field => 
+      //           field.toLowerCase().includes(searchQuery.value.toLowerCase())
+      //       );
 
-            const matchesAnneeMobilite = selectedAnneeMobilite.value.length === 0 || 
-                selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
+      //       const matchesAnneeMobilite = selectedAnneeMobilite.value.length === 0 || 
+      //           selectedAnneeMobilite.value.includes(etu.acc_anneemobilite);
 
-            const documentCount = etu.documents.count || 0;
-            const matchesDocuments = selectedDocument.value.length === 0 || 
-                selectedDocument.value.includes(documentCount.toString()) ||
-                (selectedDocument.value.includes('ChoixCoursValide') && etu.acc_validechoixcours == true);
+      //       const documentCount = etu.documents.count || 0;
+      //       const matchesDocuments = selectedDocument.value.length === 0 || 
+      //           selectedDocument.value.includes(documentCount.toString()) ||
+      //           (selectedDocument.value.includes('ChoixCoursValide') && etu.acc_validechoixcours == true);
 
-            const matchesDestination = selectedDestination.value.length === 0 || 
-                (selectedDestination.value.includes('null') && !etu.arbitrage) ||
-                (etu.arbitrage?.agree_id && selectedDestination.value.includes(etu.arbitrage.agree_id));
+      //       const matchesDestination = selectedDestination.value.length === 0 || 
+      //           (selectedDestination.value.includes('null') && !etu.arbitrage) ||
+      //           (etu.arbitrage?.agree_id && selectedDestination.value.includes(etu.arbitrage.agree_id));
 
-                      const matchesPeriodeMobilite = selectedPeriodeMobilite.value.length === 0 ||
-        selectedPeriodeMobilite.value.includes(etu.acc_periodemobilite);
+      //                 const matchesPeriodeMobilite = selectedPeriodeMobilite.value.length === 0 ||
+      //   selectedPeriodeMobilite.value.includes(etu.acc_periodemobilite);
 
-            return matchesDepartments && hasAccess && matchesVoeux && 
-                   matchesSearchQuery && matchesDocuments && 
-                   matchesAnneeMobilite && matchesDestination && matchesPeriodeMobilite;
-        })
-        .sort((a, b) => {
-            return a.acc_fullname.localeCompare(b.acc_fullname);
+      //       return matchesDepartments && hasAccess && matchesVoeux && 
+      //              matchesSearchQuery && matchesDocuments && 
+      //              matchesAnneeMobilite && matchesDestination && matchesPeriodeMobilite;
+      //   })
+      //   .sort((a, b) => {
+      //       return a.acc_fullname.localeCompare(b.acc_fullname);
+      //   });
+      return etudiants.value.accounts;
+    });
+
+    // Fonction pour extraire les destinations uniques des arbitrages
+    function extractDestinations() {
+        if (!etudiants.value.accounts) return;
+        
+        const destinationsMap = new Map();
+        
+        etudiants.value.accounts.forEach(account => {
+            if (account.arbitrage?.agree_id) {
+                destinationsMap.set(account.arbitrage.agree_id, account.arbitrage);
+            }
         });
-    });
-
-// Fonction pour extraire les destinations uniques des arbitrages
-function extractDestinations() {
-    if (!etudiants.value.accounts) return;
-    
-    const destinationsMap = new Map();
-    
-    etudiants.value.accounts.forEach(account => {
-        if (account.arbitrage?.agree_id) {
-            destinationsMap.set(account.arbitrage.agree_id, account.arbitrage);
-        }
-    });
-    
-    destinations.value = Array.from(destinationsMap.values()).sort((a, b) => {
-        // Compare les noms de pays d'abord
-        const countryCompare = a.partnercountry?.parco_name?.localeCompare(b.partnercountry?.parco_name) || 0;
         
-        // Si les pays sont identiques, compare les noms d'universités
-        if (countryCompare === 0) {
-            return a.university?.univ_name?.localeCompare(b.university?.univ_name) || 0;
-        }
-        
-        return countryCompare;
-    });
-}
+        destinations.value = Array.from(destinationsMap.values()).sort((a, b) => {
+            // Compare les noms de pays d'abord
+            const countryCompare = a.partnercountry?.parco_name?.localeCompare(b.partnercountry?.parco_name) || 0;
+            
+            // Si les pays sont identiques, compare les noms d'universités
+            if (countryCompare === 0) {
+                return a.university?.univ_name?.localeCompare(b.university?.univ_name) || 0;
+            }
+            
+            return countryCompare;
+        });
+    }
 
     async function fetch() {
         await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.account.acc_id);
-        if (account.value.access != null && account.value.access.access.acs_accounttype == 1) {
-            await request('GET', false, etudiants, config.apiUrl + 'api/account/actuel');
-        } else if (account.value.access != null && account.value.department != null) {
-            await request('GET', false, etudiants, config.apiUrl + 'api/account/actuel/getbydept/' + account.value.department.dept_id);
-        }
+        fetchFilteredStudents();
+        // if (account.value.access != null && account.value.access.access.acs_accounttype == 1) {
+        //     await request('GET', false, etudiants, config.apiUrl + 'api/account/actuel');
+        // } else if (account.value.access != null && account.value.department != null) {
+        //     await request('GET', false, etudiants, config.apiUrl + 'api/account/actuel/getbydept/' + account.value.department.dept_id);
+        // }
         await request('GET', false, components, config.apiUrl + 'api/component');
 
         const currentYear = new Date().getFullYear();
