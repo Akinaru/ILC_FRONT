@@ -18,6 +18,15 @@
             >
               <span>{{ route.name }}</span>
             </RouterLink>
+            <a target="_blank" href="http://51.83.36.122/ilcconnect/"
+              class="bg-base-300 hover:bg-base-100
+                px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-sm select-none"
+            >
+              <div style="align-items: center; display: flex;">
+                <img :src="config.apiUrl + 'images/LOGOS/Icon_ILC_Connect_no_background.png'" alt="ILC Connect" class="h-4" style="padding-right: 2px;">
+                <span>Connect</span>
+              </div>
+            </a>
           </div>
         </div>
   
@@ -48,6 +57,7 @@
   
   <script setup>
   import { useAccountStore } from '../stores/accountStore';
+  import config from '../config';
   
   const routesRi = [
       {routeName: 'HomeRI', name: '🏠 Accueil'},

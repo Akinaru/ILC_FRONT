@@ -67,6 +67,7 @@
                   <div class="px-4 py-2 bg-base-200/50 rounded-lg mb-2 text-sm">
                     <div class="font-semibold">{{ accountStore.account.acc_fullname || 'Utilisateur' }}</div>
                     <div class="text-xs text-base-content/70">Login: {{ accountStore.account.acc_id }}</div>
+                    <div class="text-xs text-base-content/70">MDP ILC Connect: {{ accountStore.account.acc_tokenapplimsg }}</div>
                   </div>
 
 
@@ -135,6 +136,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
                       </svg>
                       <span>Arbitrage</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a target="_blank" href="http://51.83.36.122/ilcconnect/" class="flex items-center gap-2 px-4 py-2 hover:bg-base-200 rounded-lg">
+                      <img :src="config.apiUrl + 'images/LOGOS/Icon_ILC_Connect_no_background.png'" alt="ILC Connect" class="h-4">
+                      <span>Connect</span>
                     </a>
                   </li>
                   
