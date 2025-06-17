@@ -470,8 +470,6 @@
               </div>
             </div>
 
-            <button  @click="fetchFilteredStudents">test</button>
-
             <!-- Liste des étudiants -->
             <div v-if="account && account.acc_id && etudiants && etudiants.accounts" class="w-full px-2">
               <!-- En-tête de la liste des étudiants -->
@@ -526,20 +524,23 @@
                   </div>
                 </div>
                 
-                <!-- Barre de recherche -->
-                <div class="form-control w-full">
-                  <label class="input input-bordered flex items-center gap-2">
-                    <input 
-                      type="text" 
-                      class="grow focus:outline-none" 
-                      placeholder="Recherche par nom et prénom..." 
-                      v-model="searchQuery" 
-                    />
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
-                      <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
-                    </svg>
-                  </label>
-                </div>
+              <!-- Barre de recherche avec bouton texte à droite -->
+              <form @submit.prevent="fetchFilteredStudents" class="form-control w-full flex flex-row">
+                <label class="input input-bordered flex items-center gap-2 w-full">
+                  <input 
+                    type="text" 
+                    class="grow focus:outline-none" 
+                    placeholder="Recherche par nom et prénom..." 
+                    v-model="searchQuery"
+                    @keyup.enter.prevent="fetchFilteredStudents"
+                  />
+                </label>
+                <button type="submit" class="btn btn-primary ml-2 px-4">
+                    Rechercher
+                </button>
+              </form>
+
+
               </div>
                 <!-- Liste des etudiants -->
                 <div v-if="filteredEtudiants && filteredEtudiants.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -584,7 +585,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Validation choix de cours: {{ etu.acc_validechoixcours ? '✅' : '❌' }}</span>
+                                <span>Choix des cours validé: {{ etu.acc_validechoixcours ? '✅' : '❌' }}</span>
                               </div>
 
                               <div class="flex items-center gap-2">
@@ -595,7 +596,7 @@
                               </div>
 
                                      
-                              <div class="flex items-center gap-2" :class="etu.acc_amenagement ? 'text-success' : 'text-base-content'">
+                              <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
@@ -649,20 +650,20 @@
                             
                             <!-- Destination (hauteur fixe) -->
                             <div class="card bg-base-200 h-20 transition-all flex flex-col justify-center overflow-hidden mt-auto">
-                              <div v-if="etu.arbitrage" class="flex gap-2 items-center p-3 h-full">
+                              <div v-if="etu.destination" class="flex gap-2 items-center p-3 h-full">
                                 <!-- Drapeau sans shadow et taille normale -->
                                 <div class="relative overflow-hidden rounded">
-                                  <span v-if="etu.arbitrage.partnercountry?.parco_code" class="fi" 
-                                        :class="'fi-' + (etu.arbitrage.partnercountry?.parco_code)"></span>
+                                  <span v-if="etu.destination.partnercountry?.parco_code" class="fi" 
+                                        :class="'fi-' + (etu.destination.partnercountry?.parco_code)"></span>
                                   <span v-else class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white">?</span>
                                 </div>
                                 
                                 <div class="flex-1 min-w-0">
-                                  <p class="font-medium truncate">{{ etu.arbitrage.university?.univ_name || 'Université indisponible' }}</p>
+                                  <p class="font-medium truncate">{{ etu.destination.university?.univ_name || 'Université indisponible' }}</p>
                                   <p class="text-xs opacity-70 truncate">
-                                    {{ etu.arbitrage.university?.univ_city || 'Ville indisponible' }} - 
-                                    {{ etu.arbitrage.partnercountry?.parco_name || 'Pays indisponible' }}
-                                    <span class="badge badge-xs badge-outline ml-1">{{ etu.arbitrage.isced?.isc_code || '?' }}</span>
+                                    {{ etu.destination.university?.univ_city || 'Ville indisponible' }} - 
+                                    {{ etu.destination.partnercountry?.parco_name || 'Pays indisponible' }}
+                                    <span class="badge badge-xs badge-outline ml-1">{{ etu.destination.isced?.isc_code || '?' }}</span>
                                   </p>
                                 </div>
                               </div>
@@ -977,4 +978,18 @@ onMounted(() => {
     function deselectAllDestination() {
         selectedDestination.value = [];
     }
+
+    watch(
+      [
+        selectedDepartment,
+        selectedVoeux,
+        selectedDocument,
+        selectedAnneeMobilite,
+        selectedPeriodeMobilite,
+        selectedDestination
+      ],
+      fetchFilteredStudents,
+      { deep: true }
+    )
+
 </script>
