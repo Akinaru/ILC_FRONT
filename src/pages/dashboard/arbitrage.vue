@@ -967,6 +967,11 @@
                     <div class="flex justify-between"><span>Email:</span><span class="truncate">{{ infoetudiant.acc_mail || "Aucun" }}</span></div>
                     <div class="flex justify-between"><span>Numéro étudiant:</span><span>{{ infoetudiant.acc_studentnum || "Aucun" }}</span></div>
                     <div class="flex justify-between"><span>Année de mobilité:</span><span>{{ infoetudiant.acc_anneemobilite || "Aucune" }}</span></div>
+                    <div class="flex justify-between"><span>Début de période de mobilité:</span><span>{{ 
+                        infoetudiant.acc_periodemobilite === 1 ? 'Automne 🍂 (S4 ou S6)' : 
+                        infoetudiant.acc_periodemobilite === 2 ? 'Printemps 🌱 (S5)' : 
+                        'Aucune' }}</span>
+                      </div>
                     <div class="flex justify-between"><span>Score TOEIC:</span><span>{{ infoetudiant.acc_toeic || "Aucun" }}</span></div>
                   </div>
                 </div>

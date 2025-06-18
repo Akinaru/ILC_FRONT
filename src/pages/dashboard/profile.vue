@@ -526,11 +526,11 @@
         </label>
 
         <label class="form-control w-full">
-          <div class="label"><span class="label-text font-medium">Période de mobilité</span></div>
+          <div class="label"><span class="label-text font-medium">Début de période de mobilité</span></div>
           <select class="select select-bordered w-full" v-model="modifCompte.acc_periodemobilite">
             <option disabled value="">Sélectionnez une période</option>
-            <option value="1">🍂 Mobilité d'automne</option>
-            <option value="2">🌱 Mobilité de printemps</option>
+            <option value="1">🍂 Mobilité d'automne (semestre 4 ou 6)</option>
+            <option value="2">🌱 Mobilité de printemps (semestre 5)</option>
           </select>
         </label>
 
