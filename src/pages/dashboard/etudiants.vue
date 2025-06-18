@@ -648,33 +648,38 @@
                               
                             </div>
                             
-                            <!-- Destination (hauteur fixe) -->
-                            <div class="card bg-base-200 h-20 transition-all flex flex-col justify-center overflow-hidden mt-auto">
-                              <div v-if="etu.destination" class="flex gap-2 items-center p-3 h-full">
-                                <!-- Drapeau sans shadow et taille normale -->
-                                <div class="relative overflow-hidden rounded">
-                                  <span v-if="etu.destination.partnercountry?.parco_code" class="fi" 
-                                        :class="'fi-' + (etu.destination.partnercountry?.parco_code)"></span>
-                                  <span v-else class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white">?</span>
-                                </div>
-                                
-                                <div class="flex-1 min-w-0">
-                                  <p class="font-medium truncate">{{ etu.destination.university?.univ_name || 'Université indisponible' }}</p>
-                                  <p class="text-xs opacity-70 truncate">
-                                    {{ etu.destination.university?.univ_city || 'Ville indisponible' }} - 
-                                    {{ etu.destination.partnercountry?.parco_name || 'Pays indisponible' }}
-                                    <span class="badge badge-xs badge-outline ml-1">{{ etu.destination.isced?.isc_code || '?' }}</span>
-                                  </p>
-                                </div>
+                          <!-- Destination (hauteur fixe) -->
+                          <div class="card bg-base-200 h-20 transition-all flex flex-col justify-center overflow-hidden mt-auto">
+                            <div v-if="etu.destination || etu.arbitrage" class="flex gap-2 items-center p-3 h-full">
+                              <div v-if="(etu.destination || etu.arbitrage).partnercountry?.parco_code" class="relative overflow-hidden rounded">
+                                <span class="fi" :class="'fi-' + (etu.destination || etu.arbitrage).partnercountry.parco_code"></span>
                               </div>
-                              
-                              <div v-else class="flex items-center justify-center p-3 h-full text-sm italic opacity-70">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                                </svg>
-                                Pas de destination
+                              <div v-else class="relative overflow-hidden rounded">
+                                <span class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white">?</span>
+                              </div>
+
+                              <div class="flex-1 min-w-0">
+                                <p class="font-medium truncate">
+                                  {{ (etu.destination || etu.arbitrage).university?.univ_name || 'Université indisponible' }}
+                                </p>
+                                <p class="text-xs opacity-70 truncate">
+                                  {{ (etu.destination || etu.arbitrage).university?.univ_city || 'Ville indisponible' }} -
+                                  {{ (etu.destination || etu.arbitrage).partnercountry?.parco_name || 'Pays indisponible' }}
+                                  <span class="badge badge-xs badge-outline ml-1">
+                                    {{ (etu.destination || etu.arbitrage).isced?.isc_code || '?' }}
+                                  </span>
+                                </p>
                               </div>
                             </div>
+
+                            <div v-else class="flex items-center justify-center p-3 h-full text-sm italic opacity-70">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                              </svg>
+                              Pas de destination
+                            </div>
+                          </div>
                           </div>
                         </RouterLink>
                       </div>
@@ -758,6 +763,7 @@ const confirmDeleteEtu = ref([])
 const response = ref([])
 const anneesmobilite = ref([])
 const destinations = ref([]);
+const departementFilter = ref("");
 
 const selectedDepartment = ref([]);
 const selectedVoeux = ref([]);
@@ -779,7 +785,10 @@ const perPage = ref(20);
   async function fetchFilteredStudents(){
       const params = new URLSearchParams();
 
-    if (selectedDepartment.value.length > 0) {
+    // Si l'utilisateur est chef de département, le filtre est forcé
+    if (account.value.access?.access?.acs_accounttype === 2 && account.value.department?.dept_shortname) {
+      params.append('departments[]', account.value.department.dept_shortname);
+    } else if (selectedDepartment.value.length > 0) {
       selectedDepartment.value.forEach(dep => params.append('departments[]', dep));
     }
 
@@ -861,33 +870,47 @@ const perPage = ref(20);
     });
 
     // Fonction pour extraire les destinations uniques des arbitrages
-    function extractDestinations() {
-        if (!etudiants.value.accounts) return;
-        
-        const destinationsMap = new Map();
-        
-        etudiants.value.accounts.forEach(account => {
-            if (account.arbitrage?.agree_id) {
-                destinationsMap.set(account.arbitrage.agree_id, account.arbitrage);
-            }
-        });
-        
-        destinations.value = Array.from(destinationsMap.values()).sort((a, b) => {
-            // Compare les noms de pays d'abord
-            const countryCompare = a.partnercountry?.parco_name?.localeCompare(b.partnercountry?.parco_name) || 0;
-            
-            // Si les pays sont identiques, compare les noms d'universités
-            if (countryCompare === 0) {
-                return a.university?.univ_name?.localeCompare(b.university?.univ_name) || 0;
-            }
-            
-            return countryCompare;
-        });
+function extractDestinations() {
+  if (!etudiants.value.accounts) {
+    return;
+  }
+
+  const destinationsMap = new Map();
+
+  etudiants.value.accounts.forEach((account, index) => {
+
+    const accords = [account.destination, account.arbitrage];
+
+    accords.forEach((accord, i) => {
+      if (!accord) {
+        return;
+      }
+
+
+      if (accord.agree_id && !destinationsMap.has(accord.agree_id)) {
+        destinationsMap.set(accord.agree_id, accord);
+      } else if (accord.agree_id) {
+      }
+    });
+  });
+
+  destinations.value = Array.from(destinationsMap.values()).sort((a, b) => {
+    const countryCompare = a.partnercountry?.parco_name?.localeCompare(b.partnercountry?.parco_name) || 0;
+
+    if (countryCompare === 0) {
+      return a.university?.univ_name?.localeCompare(b.university?.univ_name) || 0;
     }
+
+    return countryCompare;
+  });
+}
 
     async function fetch() {
         await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.account.acc_id);
-        fetchFilteredStudents();
+        if (account.value.access != null && account.value.department != null) {
+          departementFilter.value = account.value.department.dept_shortname;
+        }
+        await fetchFilteredStudents();
         // if (account.value.access != null && account.value.access.access.acs_accounttype == 1) {
         //     await request('GET', false, etudiants, config.apiUrl + 'api/account/actuel');
         // } else if (account.value.access != null && account.value.department != null) {
@@ -903,6 +926,7 @@ const perPage = ref(20);
         }
 
         extractDestinations();
+        
         isLoaded.value = true;
     }
 
