@@ -358,7 +358,17 @@
                   >
                     {{ etu.department ? etu.department.dept_shortname : 'N/A' }}
                   </div>
-                  <h3 class="font-medium text-base select-none">{{ etu.acc_fullname }}</h3>
+
+                  <h3 class="font-medium text-base select-none">
+                    {{
+                    etu.acc_periodemobilite === 1
+                      ? '🍂 '
+                      : etu.acc_periodemobilite === 2
+                      ? '🌱 '
+                      : ''
+                    }}
+                    {{ etu.acc_fullname }}
+                  </h3>
                 </div>
 
                 <button 
@@ -602,10 +612,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
                   </svg>
                   <span class="font-medium select-none">Universités</span>
-<span class="badge badge-sm select-none">
-  {{ selectedUniversity.length }}/{{ availableUniversities.length }}
-</span>
-</div>
+                  <span class="badge badge-sm select-none">
+                    {{ selectedUniversity.length }}/{{ availableUniversities.length }}
+                  </span>
+                </div>
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
                   fill="none" 
@@ -634,32 +644,32 @@
                     class="flex items-center"
                   >
                   <label
-  :for="'filt_univ_' + index"
-  class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-  :class="{ 'opacity-50 pointer-events-none': disabledUniversities.has(univ.univ_id) }"
->
-  <input
-    :id="'filt_univ_' + index"
-    type="checkbox"
-    class="checkbox checkbox-sm mr-2"
-    :value="univ.univ_id"
-    v-model="selectedUniversity"
-    :disabled="disabledUniversities.has(univ.univ_id)"
-  />
-  <span class="relative inline-block mr-2">
-    <span class="fi" :class="'fi-' + univ.partnercountry?.parco_code"></span>
-    <span
-      v-if="!univ.partnercountry?.parco_code"
-      class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none"
-    >
-      ?
-    </span>
-  </span>
-  <span class="text-sm select-none">
-    {{ univ.univ_name || "Université indisponible" }}
-    <span class="text-gray-500">({{ univ.univ_city }})</span>
-  </span>
-</label>
+                    :for="'filt_univ_' + index"
+                    class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                    :class="{ 'opacity-50 pointer-events-none': disabledUniversities.has(univ.univ_id) }"
+                  >
+                    <input
+                      :id="'filt_univ_' + index"
+                      type="checkbox"
+                      class="checkbox checkbox-sm mr-2"
+                      :value="univ.univ_id"
+                      v-model="selectedUniversity"
+                      :disabled="disabledUniversities.has(univ.univ_id)"
+                    />
+                    <span class="relative inline-block mr-2">
+                      <span class="fi" :class="'fi-' + univ.partnercountry?.parco_code"></span>
+                      <span
+                        v-if="!univ.partnercountry?.parco_code"
+                        class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none"
+                      >
+                        ?
+                      </span>
+                    </span>
+                    <span class="text-sm select-none">
+                      {{ univ.univ_name || "Université indisponible" }}
+                      <span class="text-gray-500">({{ univ.univ_city }})</span>
+                    </span>
+                  </label>
                   </div>
                 </div>
               </div>
@@ -800,19 +810,25 @@
                       'cursor-move': !arbitrage.accounts[placeIndex].account.acc_arbitragefait
                     }"
                   >
-                    <div class="flex justify-between items-center w-full">
+                    <div class="flex justify-between items-start w-full flex-col">
                       <p class="font-semibold truncate">
                         {{ arbitrage.accounts[placeIndex].account.acc_fullname }}
                       </p>
-                      <span class="text-xl">
-                        {{
-                          arbitrage.accounts[placeIndex].account.acc_periodemobilite === 1
-                            ? '🍂'
-                            : arbitrage.accounts[placeIndex].account.acc_periodemobilite === 2
-                            ? '🌱'
-                            : ''
-                        }}
-                      </span>
+                      <div class="flex items-center gap-1">
+                        <span v-if="arbitrage.accounts[placeIndex].account.department" class="badge" :style="{backgroundColor: arbitrage.accounts[placeIndex].account.department.dept_color, color: '#fff'}">
+                                    {{ arbitrage.accounts[placeIndex].account.department.dept_shortname }}
+                                  </span>
+                        <span class="text-sm">
+                          {{
+                            arbitrage.accounts[placeIndex].account.acc_periodemobilite === 1
+                              ? '🍂 (S4 ou S6)'
+                              : arbitrage.accounts[placeIndex].account.acc_periodemobilite === 2
+                              ? '🌱 (S5)'
+                              : ''
+                          }}
+                        </span>
+                      </div>
+
                     </div>
 
                     <!-- Badge ancien arbitrage -->
