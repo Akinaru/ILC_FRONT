@@ -99,9 +99,12 @@
 
   <!-- Années mobilité -->
   <label class="form-control w-full max-w-lg" for="anneesmobilite">
-    <div class="label">
-      <span class="label-text">Années de mobilité</span>
-    </div>
+<div class="label flex flex-col items-start sm:flex-row sm:items-center gap-1 text-left">
+  <span class="label-text">Années de mobilité</span>
+  <span class="label-text text-xs">L'année universitaire de votre semestre à l'étranger.</span>
+</div>
+
+
     <select
       id="anneesmobilite"
       name="anneesmobilite"
@@ -117,7 +120,7 @@
   <!-- Periode de mobilité -->
   <label class="form-control w-full max-w-lg" for="periodemobilite">
     <div class="label">
-      <span class="label-text">Periode de mobilité</span>
+      <span class="label-text">Début de la periode de mobilité</span>
     </div>
     <select
       id="periodemobilite"
@@ -126,9 +129,9 @@
       v-model="complDossier.periodemobilite"
       required
     >
-      <option disabled selected value="">Séléctionnez une periode de mobilité</option>
-      <option value="1">🍂 Mobilité d'automne</option>
-      <option value="2">🌱 Mobilité de printemps</option>
+      <option disabled selected value="">Séléctionnez le début de votre periode de mobilité</option>
+      <option value="1">🍂 Mobilité d'automne (semestre 4 ou 6)</option>
+      <option value="2">🌱 Mobilité de printemps (semestre 5)</option>
     </select>
   </label>
 
@@ -218,7 +221,19 @@
                 <h4 class="font-semibold text-md mb-2">Mobilité</h4>
                 <div class="flex flex-col gap-1 text-sm">
                   <div class="flex justify-between"><span>Années :</span><strong>{{ complDossier.anneesmobilite || 'Aucune' }}</strong></div>
-                  <div class="flex justify-between"><span>Période :</span><strong>{{ complDossier.periodemobilite || 'Aucune' }}</strong></div>
+                  <div class="flex justify-between">
+                    <span>Début de période :</span>
+                    <strong>
+                      {{
+                        complDossier.periodemobilite === '1'
+                          ? "🍂 Mobilité d'automne (semestre 4 ou 6)"
+                          : complDossier.periodemobilite === '2'
+                          ? "🌱 Mobilité de printemps (semestre 5)"
+                          : "Aucune"
+                      }}
+                    </strong>
+                  </div>
+
                 </div>
               </div>
 
@@ -312,7 +327,7 @@
       closeModal()
       return
     } else if (!complDossier.value.periodemobilite || complDossier.value.periodemobilite === '') {
-      addAlert('error', { data: { error: 'Veuillez renseigner votre periode de mobilité.' } })
+      addAlert('error', { data: { error: 'Veuillez renseigner votre début de periode de mobilité.' } })
       closeModal()
       return
     } else if (!complDossier.value.consent) {

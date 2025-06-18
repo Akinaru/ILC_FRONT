@@ -36,50 +36,50 @@
           <!-- Left column - Destination and wishes -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Final Destination -->
-<div class="card bg-base-100 shadow-md">
-  <div class="card-body">
-<h2 class="card-title flex justify-between">
-  {{ account.destination ? 'Destination finale' : 'Destination définie lors de l\'arbitrage' }}
-  <template v-if="!account.destination">
-    <label for="my_modal_dest" class="btn btn-sm btn-ghost" @click="resetModif">
-      Modifier
-    </label>
-  </template>
-</h2>
+            <div class="card bg-base-100 shadow-md">
+              <div class="card-body">
+            <h2 class="card-title flex justify-between">
+              {{ account.destination ? 'Destination finale' : 'Destination définie lors de l\'arbitrage' }}
+              <template v-if="!account.destination">
+                <label for="my_modal_dest" class="btn btn-sm btn-ghost" @click="resetModif">
+                  Modifier
+                </label>
+              </template>
+            </h2>
 
-    <div v-if="destination.agreement || account.destination" class="mt-2">
-      <RouterLink :to="{ name: 'Accord', params: { agree_id: (destination.agreement || account.destination).agree_id } }" class="group hover:opacity-90">
-        <div :class="[
-          'bg-base-200 rounded-lg p-4 flex items-center gap-4 transition-all border-l-4',
-          destination.status ? 'border-warning' : 'border-success'
-        ]">
-          <span class="relative inline-block tooltip" :data-tip="(destination.agreement || account.destination)?.partnercountry?.parco_name || 'Introuvable'">
-            <span class="fi text-3xl" :class="'fi-' + ((destination.agreement || account.destination)?.partnercountry?.parco_code || '')"></span>
-            <span v-if="!(destination.agreement || account.destination)?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full select-none">?</span>
-          </span>
+                <div v-if="destination.agreement || account.destination" class="mt-2">
+                  <RouterLink :to="{ name: 'Accord', params: { agree_id: (destination.agreement || account.destination).agree_id } }" class="group hover:opacity-90">
+                    <div :class="[
+                      'bg-base-200 rounded-lg p-4 flex items-center gap-4 transition-all border-l-4',
+                      destination.status ? 'border-warning' : 'border-success'
+                    ]">
+                      <span class="relative inline-block tooltip" :data-tip="(destination.agreement || account.destination)?.partnercountry?.parco_name || 'Introuvable'">
+                        <span class="fi text-3xl" :class="'fi-' + ((destination.agreement || account.destination)?.partnercountry?.parco_code || '')"></span>
+                        <span v-if="!(destination.agreement || account.destination)?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full select-none">?</span>
+                      </span>
 
-          <div class="flex-1">
-            <div class="font-bold">{{ (destination.agreement || account.destination)?.university?.univ_name || 'Université indisponible' }}</div>
-            <div class="text-sm opacity-75">
-              {{ (destination.agreement || account.destination)?.university?.univ_city || 'Ville indisponible' }},
-              {{ (destination.agreement || account.destination)?.partnercountry?.parco_name || 'Pays indisponible' }}
+                      <div class="flex-1">
+                        <div class="font-bold">{{ (destination.agreement || account.destination)?.university?.univ_name || 'Université indisponible' }}</div>
+                        <div class="text-sm opacity-75">
+                          {{ (destination.agreement || account.destination)?.university?.univ_city || 'Ville indisponible' }},
+                          {{ (destination.agreement || account.destination)?.partnercountry?.parco_name || 'Pays indisponible' }}
+                        </div>
+                        <div class="text-xs mt-1 badge badge-sm">
+                          ISCED: {{ (destination.agreement || account.destination)?.isced?.isc_code || 'N/A' }}
+                        </div>
+                      </div>
+                    </div>
+                  </RouterLink>
+                </div>
+
+                <div v-else class="alert mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span>Aucune destination finale</span>
+                </div>
+              </div>
             </div>
-            <div class="text-xs mt-1 badge badge-sm">
-              ISCED: {{ (destination.agreement || account.destination)?.isced?.isc_code || 'N/A' }}
-            </div>
-          </div>
-        </div>
-      </RouterLink>
-    </div>
-
-    <div v-else class="alert mt-2">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-      </svg>
-      <span>Aucune destination finale</span>
-    </div>
-  </div>
-</div>
 
   
             <!-- Wishes List -->
@@ -243,46 +243,42 @@
               </div>
             </div>
 
-<!-- Suppression du compte -->
-<div class="card bg-base-100 shadow-md mb-10">
-  <div class="card-body">
-    <h2 class="card-title text-error">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-      </svg>
-      Suppression du compte
-    </h2>
+            <!-- Suppression du compte -->
+            <div class="card bg-base-100 shadow-md mb-10">
+              <div class="card-body">
+                <h2 class="card-title text-error">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Suppression du compte
+                </h2>
 
-    <div class="divider"></div>
+                <div class="divider"></div>
 
-    <div class="alert mb-4">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-      </svg>
-      <div>
-        <h3 class="font-bold">Attention !</h3>
-        <p class="text-sm">Cette action est <strong>définitive</strong> et entraînera la suppression de toutes vos données. Cette opération ne peut pas être annulée.</p>
-      </div>
-    </div>
+                <div class="alert mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div>
+                    <h3 class="font-bold">Attention !</h3>
+                    <p class="text-sm">Cette action est <strong>définitive</strong> et entraînera la suppression de toutes vos données. Cette opération ne peut pas être annulée.</p>
+                  </div>
+                </div>
 
-    <div class="flex justify-end">
-      <button @click="openConfirmDeleteModal" class="btn btn-outline btn-error">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
-        Supprimer mon compte
-      </button>
-    </div>
-  </div>
-</div>
-
-
-
-
-
+                <div class="flex justify-end">
+                  <button @click="openConfirmDeleteModal" class="btn btn-outline btn-error">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Supprimer mon compte
+                  </button>
+                </div>
+              </div>
+            </div>
+            
           </div>
   
           <!-- Right column - Information -->

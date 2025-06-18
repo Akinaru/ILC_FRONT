@@ -144,159 +144,67 @@
       v-if="account && account.acc_id"
       class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mx-auto mb-12"
     >
-      <!-- Informations personnelles -->
+      <!-- Informations -->
       <div class="card bg-base-100 shadow-lg">
         <div class="card-body">
-          <h2 class="card-title text-primary border-b pb-2 mb-4">
-            Vos informations
-          </h2>
-          <p class="text-sm mb-6">
-            Certaines de vos informations ne peuvent pas être modifiées.
-            Renseignez-vous auprès d'ILC si besoin.
-          </p>
 
-          <div class="space-y-4">
-            <!-- Fullname -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Identité</span>
-              </label>
-              <input
-                type="text"
-                :value="account.acc_fullname"
-                class="input input-bordered bg-base-200"
-                disabled
-              />
+          <div class="space-y-3" v-if="account && account.acc_id">
+            <h2 class="card-title text-primary border-b pb-2 mb-4">
+              Vos informations
+            </h2>
+            <p class="text-sm mb-6">
+              Certaines de vos informations ne peuvent pas être modifiées.
+              Renseignez-vous auprès d'ILC si besoin.
+            </p>
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Identité</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_fullname || 'Inconnu' }}</div>
             </div>
-
-            <!-- Email -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Email</span>
-              </label>
-              <input
-                type="text"
-                :value="account.acc_mail"
-                class="input input-bordered bg-base-200"
-                disabled
-              />
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Email</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_mail || 'Inconnu' }}</div>
             </div>
-
-            <!-- Numéro étudiant -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Numéro étudiant</span>
-              </label>
-              <input
-                type="text"
-                :value="account.acc_studentnum"
-                class="input input-bordered bg-base-200"
-                disabled
-              />
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Numéro étudiant</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_studentnum || 'Inconnu' }}</div>
             </div>
-
-            <!-- Choix Cours -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Choix cours</span>
-              </label>
-              <input
-                type="text"
-                :value="
-                  account.acc_validechoixcours
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Choix des cours</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_validechoixcours
                     ? 'Validé ✅'
-                    : 'Pas encore validé ❌'
-                "
-                class="input input-bordered bg-base-200"
-                :class="
-                  account.acc_validechoixcours ? 'text-success' : 'text-error'
-                "
-                disabled
-              />
+                    : 'Pas encore validé ❌' }}</div>
             </div>
-
-            <!-- Département -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Département</span>
-              </label>
-              <input
-                type="text"
-                :value="
-                  account.department
-                    ? account.department.dept_shortname
-                    : 'Aucun'
-                "
-                class="input input-bordered bg-base-200"
-                :style="{
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Département</div>
+              <div class="bg-base-200 p-2 rounded-md"
+                              :style="{
                   borderBottom:
                     '2px solid ' +
                     (account.department && account.department.dept_color
                       ? account.department.dept_color
                       : 'grey'),
-                }"
-                disabled
-              />
+                }">{{ account.department
+                    ? account.department.dept_shortname
+                    : 'Aucun' }}</div>
             </div>
-
-            <!-- Parcours -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium"
-                  >Parcours de BUT envisagé</span
-                >
-              </label>
-              <input
-                type="text"
-                :value="account.acc_parcours"
-                class="input input-bordered bg-base-200"
-                disabled
-              />
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Parcours de BUT</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_parcours || 'Inconnu' }}</div>
             </div>
-
-            <!-- Score toeic -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Score TOEIC</span>
-              </label>
-              <input
-                type="text"
-                :value="account.acc_toeic"
-                class="input input-bordered bg-base-200"
-                disabled
-              />
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Score TOEIC</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_toeic || 'Inconnu' }}</div>
             </div>
-
-            <!-- Années mobilite -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Année de mobilité</span>
-              </label>
-              <input
-                type="text"
-                :value="account.acc_anneemobilite"
-                class="input input-bordered bg-base-200"
-                disabled
-              />
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Année de mobilité</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_anneemobilite || 'Inconnu' }}</div>
             </div>
-
-            <!-- Periode de mobilite -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Periode de mobilité</span>
-              </label>
-              <input
-                type="text"
-                :value="account.acc_periodemobilite === 1 ? '🍂 Mobilité d\'automne' : 
-                        account.acc_periodemobilite === 2 ? '🌱 Mobilité de printemps' : 'Aucune'"
-                class="input input-bordered bg-base-200"
-                disabled
-              />
+            <div class="grid grid-cols-1 gap-2 items-start">
+              <div class="text-sm font-medium">Début de la période de mobilité</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_periodemobilite === 1 ? '🍂 Mobilité d\'automne (semestre 4 ou 6)' : 
+                        account.acc_periodemobilite === 2 ? '🌱 Mobilité de printemps (semestre 5)' : 'Aucune' }}</div>
             </div>
-
-          </div>
-
-          <label
+                      <label
             for="modal_modif"
             class="btn btn-primary w-full mt-6"
             @click="modifEtu(account)"
@@ -317,6 +225,7 @@
             </svg>
             Modifier
           </label>
+          </div>
         </div>
       </div>
 
