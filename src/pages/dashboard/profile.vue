@@ -36,50 +36,76 @@
           <!-- Left column - Destination and wishes -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Final Destination -->
-            <div class="card bg-base-100 shadow-md">
-              <div class="card-body">
-            <h2 class="card-title flex justify-between">
-              {{ account.destination ? 'Destination finale' : 'Destination définie lors de l\'arbitrage' }}
-              <template v-if="!account.destination">
-                <label for="my_modal_dest" class="btn btn-sm btn-ghost" @click="resetModif">
-                  Modifier
-                </label>
-              </template>
-            </h2>
+<div class="card bg-base-100 shadow-md">
+  <div class="card-body">
+    <h2 class="card-title flex justify-between">
+      {{ account.destination ? 'Destination finale' : 'Destination définie lors de l\'arbitrage' }}
+      <template v-if="!account.destination">
+        <label for="my_modal_dest" class="btn btn-sm btn-ghost" @click="resetModif">
+          Modifier
+        </label>
+      </template>
+    </h2>
 
-                <div v-if="destination.agreement || account.destination" class="mt-2">
-                  <RouterLink :to="{ name: 'Accord', params: { agree_id: (destination.agreement || account.destination).agree_id } }" class="group hover:opacity-90">
-                    <div :class="[
-                      'bg-base-200 rounded-lg p-4 flex items-center gap-4 transition-all border-l-4',
-                      destination.status ? 'border-warning' : 'border-success'
-                    ]">
-                      <span class="relative inline-block tooltip" :data-tip="(destination.agreement || account.destination)?.partnercountry?.parco_name || 'Introuvable'">
-                        <span class="fi text-3xl" :class="'fi-' + ((destination.agreement || account.destination)?.partnercountry?.parco_code || '')"></span>
-                        <span v-if="!(destination.agreement || account.destination)?.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full select-none">?</span>
-                      </span>
+    <div v-if="getFinalDestination(account)" class="mt-2">
+      <RouterLink
+        :to="{ name: 'Accord', params: { agree_id: getFinalDestination(account).agree_id } }"
+      >
+        <div
+          :class="[
+            'bg-base-200 rounded-lg p-4 flex items-center gap-4 transition-all border-l-4',
+            destination.status ? 'border-warning' : 'border-success'
+          ]"
+        >
+          <span
+            class="relative inline-block tooltip"
+            :data-tip="getFinalDestination(account)?.partnercountry?.parco_name || 'Introuvable'"
+          >
+            <span
+              class="fi text-3xl"
+              :class="'fi-' + (getFinalDestination(account)?.partnercountry?.parco_code || '')"
+            ></span>
+            <span
+              v-if="!getFinalDestination(account)?.partnercountry?.parco_code"
+              class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full select-none"
+              >?</span
+            >
+          </span>
 
-                      <div class="flex-1">
-                        <div class="font-bold">{{ (destination.agreement || account.destination)?.university?.univ_name || 'Université indisponible' }}</div>
-                        <div class="text-sm opacity-75">
-                          {{ (destination.agreement || account.destination)?.university?.univ_city || 'Ville indisponible' }},
-                          {{ (destination.agreement || account.destination)?.partnercountry?.parco_name || 'Pays indisponible' }}
-                        </div>
-                        <div class="text-xs mt-1 badge badge-sm">
-                          ISCED: {{ (destination.agreement || account.destination)?.isced?.isc_code || 'N/A' }}
-                        </div>
-                      </div>
-                    </div>
-                  </RouterLink>
-                </div>
-
-                <div v-else class="alert mt-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  <span>Aucune destination finale</span>
-                </div>
-              </div>
+          <div class="flex-1">
+            <div class="font-bold">
+              {{ getFinalDestination(account)?.university?.univ_name || 'Université indisponible' }}
             </div>
+            <div class="text-sm opacity-75">
+              {{ getFinalDestination(account)?.university?.univ_city || 'Ville indisponible' }},
+              {{ getFinalDestination(account)?.partnercountry?.parco_name || 'Pays indisponible' }}
+            </div>
+            <div class="text-xs mt-1 badge badge-sm">
+              ISCED: {{ getFinalDestination(account)?.isced?.isc_code || 'N/A' }}
+            </div>
+          </div>
+        </div>
+      </RouterLink>
+    </div>
+
+    <div v-else class="alert mt-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        class="stroke-current shrink-0 w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        ></path>
+      </svg>
+      <span>Aucune destination finale</span>
+    </div>
+  </div>
+</div>
 
   
             <!-- Wishes List -->
@@ -813,6 +839,19 @@
       addAction(accountStore.account.acc_id, 'other', response, 'Suppression du témoignage de '+ account.value.acc_id +'.');
       fetchAll();
     }
+
+
+    function getFinalDestination(etu) {
+    if (etu.acc_json_agreement) {
+      try {
+        return JSON.parse(etu.acc_json_agreement);
+      } catch (e) {
+        console.error("Erreur de parsing acc_json_agreement :", e);
+        return null;
+      }
+    }
+    return etu.arbitrage || null;
+  }
 
     async function openMyFileInNewTab(filePath) {
         // Diviser le chemin du fichier en segments pour obtenir le nom du fichier

@@ -386,6 +386,79 @@
                 </div>
               </div>
 
+              <!-- Section Autre -->
+              <div class="border-b border-base-300">
+                <div
+                  class="p-4 flex justify-between items-center hover:bg-base-200 cursor-pointer transition-colors duration-200"
+                  @click="toggleCollapse('autre')"
+                >
+                  <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                    <span class="font-medium select-none">Autre</span>
+                    <span v-if="selectedAutre.length" class="badge badge-sm select-none">{{ selectedAutre.length }}</span>
+                  </div>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke-width="1.5" 
+                    stroke="currentColor" 
+                    class="w-5 h-5 transition-transform duration-200"
+                    :class="isOpen.autre ? 'rotate-180' : ''"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </div>
+
+                <div class="p-4 pt-0 bg-base-100" v-show="isOpen.autre">
+                  <button
+                    class="btn btn-xs btn-ghost mb-3"
+                    @click="deselectAllAutre"
+                  >
+                    <span class="select-none">Tout désélectionner</span>
+                  </button>
+
+                  <div class="grid grid-cols-1 gap-2">
+
+                    <div class="flex items-center">
+                      <label
+                        :for="'filt_autre_archive'"
+                        class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                      >
+                        <input
+                          :id="'filt_autre_archive'"
+                          type="checkbox"
+                          class="checkbox checkbox-sm mr-2"
+                          :value="'archivetrue'"
+                          v-model="selectedAutre"
+                        />
+                        <span class="text-sm select-none">Archivé</span>
+                      </label>
+                    </div>
+
+                    <div class="flex items-center">
+                      <label
+                        :for="'filt_autre_pasarchive'"
+                        class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                      >
+                        <input
+                          :id="'filt_autre_pasarchive'"
+                          type="checkbox"
+                          class="checkbox checkbox-sm mr-2"
+                          :value="'archivefalse'"
+                          v-model="selectedAutre"
+                        />
+                        <span class="text-sm select-none">Pas archivé</span>
+                      </label>
+                    </div>
+
+               
+                  </div>
+                </div>
+              </div>
+
               <!-- Section Destination -->
               <div>
                 <div
@@ -546,11 +619,17 @@
                 <div v-if="filteredEtudiants && filteredEtudiants.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div v-for="(etu, index) in filteredEtudiants" :key="index" class="w-full">
                     <template v-if="etu.acc_id">
-                      <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden relative h-full"
-                        :style="{ borderLeft: `6px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }">
+                      <div
+                        class="card shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden relative h-full"
+                        :class="{
+                          'bg-base-100': !etu.acc_ancienetu,
+                          'bg-base-300 opacity-70 border-dashed': etu.acc_ancienetu
+                        }"
+                        :style="{ borderLeft: `6px solid ${etu.department ? etu.department.dept_color : '#aaaaaa'}` }"
+                      >
                         
                         <!-- Bouton de suppression - maintenant en dehors du RouterLink -->
-                        <button class="absolute top-2 right-2 btn btn-circle btn-sm btn-ghost hover:bg-error hover:text-white transition-colors z-10" 
+                        <button v-if="!etu.acc_ancienetu" class="absolute top-2 right-2 btn btn-circle btn-sm btn-ghost hover:bg-error hover:text-white transition-colors z-10" 
                               @click="openConfirmModal(etu)">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -562,7 +641,10 @@
                           <div class="card-body p-4 flex flex-col h-full cursor-pointer hover:bg-base-300 bg-base-200">
                             <!-- En-tête avec nom et ID -->
                             <div class="mb-3">
-                              <h2 class="card-title text-lg font-bold truncate">{{ etu.acc_fullname }}</h2>
+                              <h2 class="card-title text-lg font-bold truncate flex items-center gap-2">
+                                <span v-if="etu.acc_ancienetu" class="badge badge-warning text-xs">Archivé</span>
+                                {{ etu.acc_fullname }}
+                              </h2>
                               <div class="flex items-center gap-1 flex-wrap">
                                 <span class="badge badge-neutral text-sm">{{ etu.acc_id }}</span>
                                 <span v-if="etu.department" class="badge" :style="{backgroundColor: etu.department.dept_color, color: '#fff'}">
@@ -650,9 +732,9 @@
                             
                           <!-- Destination (hauteur fixe) -->
                           <div class="card bg-base-200 h-20 transition-all flex flex-col justify-center overflow-hidden mt-auto">
-                            <div v-if="etu.destination || etu.arbitrage" class="flex gap-2 items-center p-3 h-full">
-                              <div v-if="(etu.destination || etu.arbitrage).partnercountry?.parco_code" class="relative overflow-hidden rounded">
-                                <span class="fi" :class="'fi-' + (etu.destination || etu.arbitrage).partnercountry.parco_code"></span>
+                            <div v-if="getFinalAgreement(etu)" class="flex gap-2 items-center p-3 h-full">
+                              <div v-if="getFinalAgreement(etu).partnercountry?.parco_code" class="relative overflow-hidden rounded">
+                                <span class="fi" :class="'fi-' + getFinalAgreement(etu).partnercountry.parco_code"></span>
                               </div>
                               <div v-else class="relative overflow-hidden rounded">
                                 <span class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white">?</span>
@@ -660,13 +742,13 @@
 
                               <div class="flex-1 min-w-0">
                                 <p class="font-medium truncate">
-                                  {{ (etu.destination || etu.arbitrage).university?.univ_name || 'Université indisponible' }}
+                                  {{ getFinalAgreement(etu).university?.univ_name || 'Université indisponible' }}
                                 </p>
                                 <p class="text-xs opacity-70 truncate">
-                                  {{ (etu.destination || etu.arbitrage).university?.univ_city || 'Ville indisponible' }} -
-                                  {{ (etu.destination || etu.arbitrage).partnercountry?.parco_name || 'Pays indisponible' }}
+                                  {{ getFinalAgreement(etu).university?.univ_city || 'Ville indisponible' }} -
+                                  {{ getFinalAgreement(etu).partnercountry?.parco_name || 'Pays indisponible' }}
                                   <span class="badge badge-xs badge-outline ml-1">
-                                    {{ (etu.destination || etu.arbitrage).isced?.isc_code || '?' }}
+                                    {{ getFinalAgreement(etu).isced?.isc_code || '?' }}
                                   </span>
                                 </p>
                               </div>
@@ -771,12 +853,14 @@ const selectedDocument = ref([]);
 const selectedAnneeMobilite = ref([]);
 const selectedPeriodeMobilite = ref([]);
 const selectedDestination = ref([]);
+const selectedAutre = ref([]);
 const isOpen = ref({
     voeux: true,
     departments: true,
     document: true,
     anneemobilite: true,
     destination: true,
+    autre: true,
 });
 
 const currentPage = ref(1);
@@ -814,6 +898,10 @@ const perPage = ref(20);
 
     if (selectedDestination.value.length > 0) {
       selectedDestination.value.forEach(dest => params.append('destinations[]', dest));
+    }
+
+    if (selectedAutre.value.length > 0) {
+      selectedAutre.value.forEach(autre => params.append('autres[]', autre));
     }
 
     params.append('page', currentPage.value.toString());
@@ -905,6 +993,18 @@ function extractDestinations() {
   });
 }
 
+function getFinalAgreement(etu) {
+    if (etu.acc_json_agreement) {
+      try {
+        return JSON.parse(etu.acc_json_agreement);
+      } catch (e) {
+        console.error("Erreur de parsing acc_json_agreement :", e);
+        return null;
+      }
+    }
+    return etu.arbitrage || null;
+  }
+
     async function fetch() {
         await request('GET', false, account, config.apiUrl + 'api/account/getbylogin/' + accountStore.account.acc_id);
         if (account.value.access != null && account.value.department != null) {
@@ -985,6 +1085,7 @@ onMounted(() => {
         selectedAnneeMobilite.value = [];
         selectedDestination.value = [];
         selectedPeriodeMobilite.value = [];
+        selectedAutre.value = [];
     }
     function deselectAllDept() {
         selectedDepartment.value = [];
@@ -1003,6 +1104,10 @@ onMounted(() => {
         selectedDestination.value = [];
     }
 
+    function deselectAllAutre() {
+        selectedAutre.value = [];
+    }
+
     watch(
       [
         selectedDepartment,
@@ -1010,7 +1115,8 @@ onMounted(() => {
         selectedDocument,
         selectedAnneeMobilite,
         selectedPeriodeMobilite,
-        selectedDestination
+        selectedDestination,
+        selectedAutre
       ],
       fetchFilteredStudents,
       { deep: true }
