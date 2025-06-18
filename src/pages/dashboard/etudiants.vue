@@ -7,6 +7,7 @@
             </ul>
         </div>
         <div v-if="isLoaded" class="flex">
+
             <!-- Filtres -->
             <div class="bg-base-100 rounded-lg shadow-lg w-full overflow-hidden border border-base-300 max-w-80 min-w-72 h-fit min-h-screen">
               <!-- En-tête -->
@@ -615,8 +616,9 @@
 
 
               </div>
-                <!-- Liste des etudiants -->
-                <div v-if="filteredEtudiants && filteredEtudiants.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+              <!-- Liste des etudiants -->
+              <div v-if="filteredEtudiants && filteredEtudiants.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div v-for="(etu, index) in filteredEtudiants" :key="index" class="w-full">
                     <template v-if="etu.acc_id">
                       <div
@@ -767,15 +769,29 @@
                       </div>
                     </template>
                   </div>
-                </div>
-                <div v-else class="w-full flex flex-col items-center justify-center text-center py-10 text-base-content/70">
+              </div>
+              <div v-else class="w-full flex flex-col items-center justify-center text-center py-10 text-base-content/70">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M9.75 9.75L14.25 14.25M14.25 9.75L9.75 14.25M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
                   </svg>
                   <p class="text-lg font-semibold">Aucun résultat trouvé</p>
                   <p class="text-sm opacity-70">Aucun étudiant ne correspond à vos filtres.</p>
-                </div>
+              </div>
+
+              <!-- Pagination -->
+              <div v-if="filteredEtudiants && filteredEtudiants.length > 0" class="flex justify-center gap-2 my-4 pt-4">
+                <button class="btn" :disabled="currentPage === 1" @click="currentPage--">Précédent</button>
+                <template v-for="page in pagesToShow" :key="page">
+                  <template v-if="page === '...'">
+                    <span class="flex items-center px-4">...</span>
+                  </template>
+                  <button v-else class="btn" :class="{ 'btn-active': page === currentPage }" @click="currentPage = page">
+                    {{ page }}
+                  </button>
+                </template>
+                <button class="btn" :disabled="currentPage === totalPages" @click="currentPage++">Suivant</button>
+              </div>
 
                 <!-- Modal de confirmation suppression -->
                 <Teleport to="body">
@@ -818,6 +834,7 @@
                 </Teleport>
 
             </div>
+
         </div>
         <div v-else>
             <LoadingComp></LoadingComp>
@@ -864,7 +881,8 @@ const isOpen = ref({
 });
 
 const currentPage = ref(1);
-const perPage = ref(20);
+const perPage = ref(18);
+const lastPage = ref(1);
 
   async function fetchFilteredStudents(){
       const params = new URLSearchParams();
@@ -908,7 +926,11 @@ const perPage = ref(20);
     params.append('perPage', perPage.value.toString());
 
     await request('GET', false, etudiants, `${config.apiUrl}api/account/studentsFiltered?${params.toString()}`);
+    lastPage.value = etudiants.value.last_page;
+    currentPage.value = etudiants.value.current_page;
   }
+
+  watch(currentPage, () => fetchFilteredStudents());
 
     function toggleCollapse(section) {
         isOpen.value[section] = !isOpen.value[section];
@@ -993,7 +1015,7 @@ function extractDestinations() {
   });
 }
 
-function getFinalAgreement(etu) {
+  function getFinalAgreement(etu) {
     if (etu.acc_json_agreement) {
       try {
         return JSON.parse(etu.acc_json_agreement);
@@ -1073,6 +1095,30 @@ const exportUrl = computed(() => {
 });
 
     // Fonction pour charger les filtres depuis sessionStorage pour la page d'accueil
+
+  const pagesToShow = computed(() => {
+    const total = lastPage.value;
+    const current = currentPage.value;
+    const pages = [];
+  
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (current <= 4) {
+        pages.push(2, 3, 4, 5);
+        pages.push('...', total);
+      } else if (current >= total - 3) {
+        pages.push('...', total - 4, total - 3, total - 2, total - 1, total);
+      } else {
+        pages.push('...', current - 1, current, current + 1, '...', total);
+      }
+    }
+  
+    return pages;
+  });
+  
+  const totalPages = computed(() => lastPage.value);
 
 onMounted(() => {
     fetch();
