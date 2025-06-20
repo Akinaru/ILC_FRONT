@@ -178,19 +178,6 @@
     </label>
   </div>
 
-  <!-- Annuaire des anciens -->
-  <div class="form-control max-w-lg">
-    <label class="label cursor-pointer" for="consentancien">
-      <span class="label-text">Acceptez-vous d’apparaître dans l’annuaire des anciens étudiants conformément à notre politique de confidentialité ?</span>
-      <input
-        id="consentancien"
-        name="consentancien"
-        type="checkbox"
-        class="checkbox"
-        v-model="complDossier.consentancien"
-      />
-    </label>
-  </div>
 
   <div class="flex items-center justify-center mt-10">
     <button class="btn btn-primary" type="button" @click="openConfirmModal">Valider</button>
@@ -222,7 +209,7 @@
                 <div class="flex flex-col gap-1 text-sm">
                   <div class="flex justify-between"><span>Années :</span><strong>{{ complDossier.anneesmobilite || 'Aucune' }}</strong></div>
                   <div class="flex justify-between">
-                    <span>Début de période :</span>
+                    <span>Début de mobilité :</span>
                     <strong>
                       {{
                         complDossier.periodemobilite === '1'
@@ -262,7 +249,6 @@
                 <div class="flex flex-col gap-1 text-sm">
                   <div class="flex justify-between"><span>Aménagements :</span><strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></div>
                   <div class="flex justify-between"><span>Utilisation d’image :</span><strong>{{ complDossier.consent ? 'Oui' : 'Non' }}</strong></div>
-                  <div class="flex justify-between"><span>Liste anciens étudiants :</span><strong>{{ complDossier.consentancien ? 'Oui' : 'Non' }}</strong></div>
                 </div>
               </div>
             </div>
@@ -300,7 +286,6 @@
     periodemobilite: '',
     amenagement: false,
     consent: false,
-    consentancien: true,
     amenagementdesc: ''
   })
   
