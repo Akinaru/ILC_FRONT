@@ -363,31 +363,31 @@
                   </div>
                 </div>
 
-                <div class="flex items-center justify-center my-6">
-                  <button
-                    @click="showMore"
-                    v-if="canShowMore"
-                    class="btn btn-primary btn-outline gap-2"
-                  >
-                    Voir plus d'accords
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M17 8l4 4m0 0l-4 4m4-4H3"
-                      />
-                    </svg>
-                  </button>
-                </div>
               </div>
             </div>
+
+
+          <!-- Pagination -->
+          <div v-if="filteredAccords && filteredAccords.length > 0" class="flex justify-center gap-2 my-4 pt-4">
+            <button class="btn" :disabled="currentPage === 1 || isLoadingAccords" @click="currentPage--">Précédent</button>
+
+            <template v-for="page in pagesToShow" :key="page">
+              <template v-if="page === '...'">
+                <span class="flex items-center px-4 select-none">...</span>
+              </template>
+              <button
+                v-else
+                class="btn"
+                :class="{ 'btn-active': page === currentPage }"
+                :disabled="isLoadingAccords"
+                @click="currentPage = page"
+              >
+                {{ page }}
+              </button>
+            </template>
+
+            <button class="btn" :disabled="currentPage === totalPages || isLoadingAccords" @click="currentPage++">Suivant</button>
+          </div>
 
             <!-- S'il n'y a pas d'accords -->
             <div
@@ -948,10 +948,15 @@ const components = ref([]);
 const events = ref([]);
 const eventspf = ref([]);
 const favoris = ref([]);
+const isLoadingAccords = ref(false);
 
 const itemsToShow = ref(12);
 
 const isLoaded = ref(false);
+
+const currentPage = ref(1);
+const perPage = ref(18);
+const lastPage = ref(1);
 
 const selectedDepartment = ref([]);
 const selectedCountries = ref([]);
@@ -993,9 +998,57 @@ function toggleCollapse(section) {
   isOpen.value[section] = !isOpen.value[section];
 }
 
+  async function fetchFilteredAccords(){
+    isLoadingAccords.value = true;
+    const params = new URLSearchParams();
+
+    if (selectedDepartment.value.length > 0) {
+      selectedDepartment.value.forEach(dep => params.append('departments[]', dep));
+    }
+
+    if (selectedCountries.value.length > 0) {
+      selectedCountries.value.forEach(country => params.append('countries[]', country));
+    }
+
+    params.append('page', currentPage.value.toString());
+    params.append('perPage', perPage.value.toString());
+
+    await request('GET', false, accords, `${config.apiUrl}api/agreement/filtered?${params.toString()}`);
+    lastPage.value = accords.value.last_page;
+    currentPage.value = accords.value.current_page;
+    isLoadingAccords.value = false;
+  }
+
+watch(currentPage, () => fetchFilteredAccords());
+
+  const pagesToShow = computed(() => {
+    const total = lastPage.value;
+    const current = currentPage.value;
+    const pages = [];
+  
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (current <= 4) {
+        pages.push(2, 3, 4, 5);
+        pages.push('...', total);
+      } else if (current >= total - 3) {
+        pages.push('...', total - 4, total - 3, total - 2, total - 1, total);
+      } else {
+        pages.push('...', current - 1, current, current + 1, '...', total);
+      }
+    }
+  
+    return pages;
+  });
+  
+  const totalPages = computed(() => lastPage.value);
+
 async function fetchAll() {
   await request("GET", false, articles, config.apiUrl + "api/article");
-  await request("GET", false, accords, config.apiUrl + "api/agreement");
+  await fetchFilteredAccords();
+  //await request("GET", false, accords, config.apiUrl + "api/agreement");
   await request(
     "GET",
     false,
@@ -1166,4 +1219,13 @@ onMounted(() => {
   fetchAll();
   loadFilters();
 });
+
+watch(
+  [selectedDepartment, selectedCountries],
+  () => {
+    currentPage.value = 1;
+    fetchFilteredAccords();
+  },
+  { deep: true }
+);
 </script>

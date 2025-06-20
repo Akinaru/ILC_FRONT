@@ -122,7 +122,7 @@
         <button class="btn" :disabled="currentPage === 1" @click="currentPage--">Précédent</button>
         <template v-for="page in pagesToShow" :key="page">
           <template v-if="page === '...'">
-            <span class="flex items-center px-4">...</span>
+            <span class="flex items-center px-4 select-none">...</span>
           </template>
           <button v-else class="btn" :class="{ 'btn-active': page === currentPage }" @click="currentPage = page">
             {{ page }}
