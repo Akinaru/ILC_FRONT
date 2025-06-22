@@ -135,34 +135,6 @@
     </select>
   </label>
 
-  <!-- Aménagement -->
-  <div class="form-control w-full max-w-lg">
-    <label class="label cursor-pointer" for="amenagement">
-      <span class="label-text">Avez-vous des aménagements aux examens ?</span>
-      <input
-        id="amenagement"
-        name="amenagement"
-        type="checkbox"
-        class="checkbox"
-        v-model="complDossier.amenagement"
-      />
-    </label>
-  </div>
-
-  <label class="form-control w-full max-w-lg" v-if="complDossier.amenagement" for="amenagementdesc">
-    <div class="label">
-      <span class="label-text">Description (facultatif)</span>
-    </div>
-    <input
-      id="amenagementdesc"
-      name="amenagementdesc"
-      type="text"
-      placeholder="Description de l'aménagement"
-      class="input input-bordered w-full max-w-lg"
-      v-model="complDossier.amenagementdesc"
-    />
-  </label>
-
   <!-- Consentement image -->
   <div class="form-control w-full max-w-lg">
     <label class="label cursor-pointer" for="consent">
@@ -177,6 +149,8 @@
       />
     </label>
   </div>
+
+  <p class="text-xs italic">Vos données personnelles sont coservées uniquement pendant votre scolarité à l'IUT.</p>
 
 
   <div class="flex items-center justify-center mt-10">
@@ -247,7 +221,6 @@
               <div class="bg-base-200 p-3 rounded-md">
                 <h4 class="font-semibold text-md mb-2">Consentements & Aménagements</h4>
                 <div class="flex flex-col gap-1 text-sm">
-                  <div class="flex justify-between"><span>Aménagements :</span><strong>{{ complDossier.amenagement ? 'Oui' : 'Non' }}</strong></div>
                   <div class="flex justify-between"><span>Utilisation d’image :</span><strong>{{ complDossier.consent ? 'Oui' : 'Non' }}</strong></div>
                 </div>
               </div>
@@ -284,9 +257,7 @@
     email: '',
     anneesmobilite: '',
     periodemobilite: '',
-    amenagement: false,
     consent: false,
-    amenagementdesc: ''
   })
   
   
@@ -325,16 +296,11 @@
       acc_id: accountStore.account.acc_id,
       acc_studentnum: complDossier.value.ine,
       dept_id: complDossier.value.department,
-      acc_amenagement: complDossier.value.amenagement,
       acc_mail: complDossier.value.email,
       acc_anneemobilite: complDossier.value.anneesmobilite,
       acc_periodemobilite: complDossier.value.periodemobilite,
       acc_parcours: complDossier.value.parcours,
       acc_consent: complDossier.value.consent
-    }
-  
-    if (complDossier.value.amenagement) {
-      requestData.acc_amenagementdesc = complDossier.value.amenagementdesc
     }
   
     await request('PUT', false, response, config.apiUrl + 'api/account/compldossier', requestData)
@@ -386,7 +352,6 @@ function getDeptColor(deptId) {
   function resetInput() {
     complDossier.value.ine = ''
     complDossier.value.parcours = ''
-    complDossier.value.amenagement = false
     complDossier.value.consent = false
     complDossier.value.anneesmobilite = ''
     complDossier.value.periodemobilite = ''

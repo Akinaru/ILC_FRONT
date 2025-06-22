@@ -377,19 +377,6 @@
                     <div class="text-sm font-medium">Dernière connexion</div>
                     <div class="col-span-2 bg-base-200 p-2 rounded-md">{{ formatDate(account.acc_lastlogin) || 'Jamais' }}</div>
                   </div>
-
-                  <div class="grid grid-cols-3 gap-2 items-center">
-                    <div class="text-sm font-medium">Aménagement aux examens</div>
-                    <div class="col-span-2">
-                      <div v-if="account.acc_amenagement" class="bg-success bg-opacity-10 p-2 rounded-md flex items-center">
-                        <div class="badge badge-success mr-2">Oui</div>
-                        <span v-if="account.acc_amenagemendesc" class="text-sm">{{ account.acc_amenagemendesc }}</span>
-                      </div>
-                      <div v-else class="bg-base-200 p-2 rounded-md">
-                        <div class="badge badge-neutral">Non</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

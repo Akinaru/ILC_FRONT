@@ -972,7 +972,6 @@
                     <div class="flex justify-between"><span>Nombre de vœux:</span><span>{{ infoetudiant.wishes?.count || 0 }}</span></div>
                     <div class="flex justify-between"><span>Documents ajoutés:</span><span>{{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}</span></div>
                     <div class="flex justify-between"><span>Dernière connexion:</span><span>{{ formatDate(infoetudiant.acc_lastlogin) }}</span></div>
-                    <div class="flex justify-between"><span>Aménagement aux examens:</span><span>{{ infoetudiant.acc_amenagement ? "Oui" : "Non" }}</span></div>
                   </div>
                 </div>
 
