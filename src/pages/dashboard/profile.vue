@@ -36,78 +36,77 @@
           <!-- Left column - Destination and wishes -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Final Destination -->
-<div class="card bg-base-100 shadow-md">
-  <div class="card-body">
-    <h2 class="card-title flex justify-between">
-      {{ account.destination ? 'Destination finale' : 'Destination définie lors de l\'arbitrage' }}
-      <template v-if="!account.destination">
-        <label for="my_modal_dest" class="btn btn-sm btn-ghost" @click="resetModif">
-          Modifier
-        </label>
-      </template>
-    </h2>
+            <div class="card bg-base-100 shadow-md">
+              <div class="card-body">
+                <h2 class="card-title flex justify-between">
+                  {{ account.destination ? 'Destination finale' : 'Destination définie lors de l\'arbitrage' }}
+                  <template v-if="!account.destination">
+                    <label for="my_modal_dest" class="btn btn-sm btn-ghost" @click="resetModif">
+                      Modifier
+                    </label>
+                  </template>
+                </h2>
 
-    <div v-if="getFinalDestination(account)" class="mt-2">
-      <RouterLink
-        :to="{ name: 'Accord', params: { agree_id: getFinalDestination(account).agree_id } }"
-      >
-        <div
-          :class="[
-            'bg-base-200 rounded-lg p-4 flex items-center gap-4 transition-all border-l-4',
-            destination.status ? 'border-warning' : 'border-success'
-          ]"
-        >
-          <span
-            class="relative inline-block tooltip"
-            :data-tip="getFinalDestination(account)?.partnercountry?.parco_name || 'Introuvable'"
-          >
-            <span
-              class="fi text-3xl"
-              :class="'fi-' + (getFinalDestination(account)?.partnercountry?.parco_code || '')"
-            ></span>
-            <span
-              v-if="!getFinalDestination(account)?.partnercountry?.parco_code"
-              class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full select-none"
-              >?</span
-            >
-          </span>
+                <div v-if="getFinalDestination(account)" class="mt-2">
+                  <RouterLink
+                    :to="{ name: 'Accord', params: { agree_id: getFinalDestination(account).agree_id } }"
+                  >
+                    <div
+                      :class="[
+                        'bg-base-200 rounded-lg p-4 flex items-center gap-4 transition-all border-l-4',
+                        destination.status ? 'border-warning' : 'border-success'
+                      ]"
+                    >
+                      <span
+                        class="relative inline-block tooltip"
+                        :data-tip="getFinalDestination(account)?.partnercountry?.parco_name || 'Introuvable'"
+                      >
+                        <span
+                          class="fi text-3xl"
+                          :class="'fi-' + (getFinalDestination(account)?.partnercountry?.parco_code || '')"
+                        ></span>
+                        <span
+                          v-if="!getFinalDestination(account)?.partnercountry?.parco_code"
+                          class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white rounded-full select-none"
+                          >?</span
+                        >
+                      </span>
 
-          <div class="flex-1">
-            <div class="font-bold">
-              {{ getFinalDestination(account)?.university?.univ_name || 'Université indisponible' }}
+                      <div class="flex-1">
+                        <div class="font-bold">
+                          {{ getFinalDestination(account)?.university?.univ_name || 'Université indisponible' }}
+                        </div>
+                        <div class="text-sm opacity-75">
+                          {{ getFinalDestination(account)?.university?.univ_city || 'Ville indisponible' }},
+                          {{ getFinalDestination(account)?.partnercountry?.parco_name || 'Pays indisponible' }}
+                        </div>
+                        <div class="text-xs mt-1 badge badge-sm">
+                          {{ getFinalDestination(account)?.isced?.isc_code || 'N/A' }}
+                        </div>
+                      </div>
+                    </div>
+                  </RouterLink>
+                </div>
+
+                <div v-else class="alert mt-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    class="stroke-current shrink-0 w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  <span>Aucune destination finale</span>
+                </div>
+              </div>
             </div>
-            <div class="text-sm opacity-75">
-              {{ getFinalDestination(account)?.university?.univ_city || 'Ville indisponible' }},
-              {{ getFinalDestination(account)?.partnercountry?.parco_name || 'Pays indisponible' }}
-            </div>
-            <div class="text-xs mt-1 badge badge-sm">
-              ISCED: {{ getFinalDestination(account)?.isced?.isc_code || 'N/A' }}
-            </div>
-          </div>
-        </div>
-      </RouterLink>
-    </div>
 
-    <div v-else class="alert mt-2">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        class="stroke-current shrink-0 w-6 h-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        ></path>
-      </svg>
-      <span>Aucune destination finale</span>
-    </div>
-  </div>
-</div>
-
-  
             <!-- Wishes List -->
             <div class="card bg-base-100 shadow-md">
               <div class="card-body">
@@ -157,6 +156,53 @@
                 </div>
               </div>
             </div>
+
+<!-- Favoris List -->
+<div class="card bg-base-100 shadow-md">
+  <div class="card-body">
+    <h2 class="card-title">Liste des favoris</h2>
+
+    <div class="space-y-3 mt-4">
+      <div
+        v-for="favori in favoris.favoris"
+        :key="favori.agree_id"
+        class="bg-base-200 rounded-lg overflow-hidden"
+      >
+        <RouterLink
+          target="_blank"
+          :to="{ name: 'Accord', params: { agree_id: favori.agree_id }}"
+          class="p-4 block hover:bg-base-300 transition-colors"
+        >
+          <div class="flex items-center gap-3">
+            <span class="relative inline-block">
+              <span
+                class="fi text-2xl"
+                :class="'fi-' + (favori.partnercountry?.parco_code)"
+              ></span>
+              <span
+                v-if="!favori.partnercountry?.parco_code"
+                class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white rounded-full select-none"
+              >?</span>
+            </span>
+
+            <div class="flex-1">
+              <div class="font-bold">
+                {{ favori.university?.univ_name || 'Université indisponible' }}
+              </div>
+              <div class="text-sm opacity-75">
+                {{ favori.university?.univ_city || 'Ville indisponible' }},
+                {{ favori.partnercountry?.parco_name || 'Pays indisponible' }}
+              </div>
+              <div class="text-xs mt-1 badge badge-sm">
+                ISCED: {{ favori.isced?.isc_code || 'N/A' }}
+              </div>
+            </div>
+          </div>
+        </RouterLink>
+      </div>
+    </div>
+  </div>
+</div>
             
             <!-- Documents -->
             <div class="card bg-base-100 shadow-md">
@@ -660,6 +706,7 @@
     const department = ref([]);
     const components = ref([]);
     const wishes = ref([])
+    const favoris = ref([])
     const response = ref([])
     const destination = ref([])
     const labels = ref(['agree_one', 'agree_two', 'agree_three', 'agree_four', 'agree_five', 'agree_six']);
@@ -709,6 +756,7 @@
         await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
         resetModif();
         await request('GET', false, wishes, config.apiUrl+'api/wishagreement/getbylogin/'+acc_id);
+        await request('GET', false, favoris, config.apiUrl+'api/favoris/getbylogin/'+acc_id);
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
         await request('GET', false, components, config.apiUrl+'api/component');
         await request('GET', false, accords, config.apiUrl+'api/agreement');
