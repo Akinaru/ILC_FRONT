@@ -168,6 +168,15 @@
         :key="favori.agree_id"
         class="bg-base-200 rounded-lg overflow-hidden"
       >
+        <!-- Affichage du vœu s'il correspond -->
+        <div
+          v-if="getWishNumber(favori)"
+          class="bg-base-300 px-4 py-2 font-medium text-sm flex items-center gap-2"
+        >
+          <div class="badge badge-sm">🎯</div>
+          <span>Vœu n°{{ getWishNumber(favori) }}</span>
+        </div>
+
         <RouterLink
           target="_blank"
           :to="{ name: 'Accord', params: { agree_id: favori.agree_id }}"
@@ -736,6 +745,34 @@
     });
 
     const modifCompte = ref([])
+
+
+function getWishNumber(favori) {
+  if (!wishes?.value?.wishes) {
+    console.debug('Pas de wishes dispo');
+    return null;
+  }
+
+  const wishNumberMap = {
+    agree_one: 1,
+    agree_two: 2,
+    agree_three: 3,
+    agree_four: 4,
+    agree_five: 5,
+    agree_six: 6,
+  };
+
+  for (const [label, wish] of Object.entries(wishes.value.wishes)) {
+    if (wish?.agree_id === favori.agree_id) {
+      const number = wishNumberMap[label] || null;
+      console.debug(`[MATCH] Vœu n°${number} → agree_id = ${favori.agree_id}`);
+      return number;
+    }
+  }
+
+  console.debug(`[NO MATCH] favori agree_id = ${favori.agree_id}`);
+  return null;
+}
 
     // Renvoie la date formatée
     function formatDate(date) {
