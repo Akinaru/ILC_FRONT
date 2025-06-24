@@ -321,10 +321,9 @@
                           </span>
                         </div>
                       </RouterLink>
-
                       <div
                         v-if="
-                          accountStore.isLogged() && accountStore.isStudent() && accountStore.getAccountValidate() && !accountStore.dateLimitePasse
+                          accountStore.isLogged() && accountStore.isStudent() && accountStore.getAccountValidate() && !accountStore.dateLimitePasse() && !accountStore.account.acc_ancienetu
                         "
                         class="flex-shrink-0 pr-3 pl-2 py-2 md:py-0"
                       >

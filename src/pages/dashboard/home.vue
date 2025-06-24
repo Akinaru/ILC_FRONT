@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col" v-if="isLoaded && accountStore.account">
+
     <div class="flex items-center justify-center">
       <!-- Titre de section Bienvenue -->
       <div class="w-full max-w-6xl pb-6 pt-8">
@@ -38,6 +39,25 @@
     </div>
 
 
+    <div class="flex items-center justify-center">
+      <div class="w-full max-w-6xl pb-6 pt-8">
+        <div v-if="accountStore.account.acc_ancienetu" class="alert alert-primary shadow-lg mt-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
+              viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+          </svg>
+          <div>
+            <h3 class="font-bold">Compte archivé</h3>
+            <div class="text-sm">
+              Votre compte est marqué comme archivé. Il n'est plus possible de modifier les vœux ni les favoris.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <!-- Etapes -->
     <div class="w-full flex items-center justify-center flex-col py-4 md:py-10">
       <p class="py-4">Avancement des étapes actuelles:</p>
@@ -53,8 +73,11 @@
         >
           Arbitrage
         </li>
-        <li class="step" :class="{ 'step-primary': destination.agree_id }">
+        <li class="step" :class="{ 'step-primary': accountStore.account.acc_json_agreement || accountStore.account.acc_ancienetu }">
           Validation
+        </li>
+        <li class="step" :class="{ 'step-primary': accountStore.account.acc_ancienetu }">
+          Archivé
         </li>
       </ul>
     </div>
@@ -754,9 +777,10 @@
         </div>
       </div>
     </dialog>
+
     <!-- Modif voeux si temps pas écoulé -->
     <div
-      v-if="joursRestants(accountStore.account.datelimite) >= 0"
+      v-if="joursRestants(accountStore.account.datelimite) >= 0 || !accountStore.account.acc_json_agreement"
       class="px-5 xl:px-20 transition-all duration-100 ease-in-out"
     >
       <!-- Partie voeux -->
@@ -1460,7 +1484,8 @@
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
-                  <p class="font-medium">Vous ne pouvez plus modifier vos vœux car la date limite a été atteinte.</p>
+                  <p v-if="accountStore.account.acc_ancienetu" class="font-medium">Vous ne pouvez plus modifier votre compte a été archivé</p>
+                  <p v-else class="font-medium">Vous ne pouvez plus modifier vos vœux car la date limite a été atteinte.</p>
               </div>
               <p class="text-sm">Si votre destination finale correspond à un de vos vœux, alors la case sera entourée en jaune.</p>
           </div>

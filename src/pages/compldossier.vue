@@ -14,6 +14,7 @@
           <li class="step">Choix des vœux</li>
           <li class="step">Arbitrage</li>
           <li class="step">Validation</li>
+          <li class="step">Archivé</li>
         </ul>
       </div>
 
