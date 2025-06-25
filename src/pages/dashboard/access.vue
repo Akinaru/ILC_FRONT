@@ -257,7 +257,7 @@
                 </h3>
                 <div class="badge badge-primary">{{ filteredEtudiants.length }} étudiants</div>
               </div>
-              
+
               <!-- Barre de recherche -->
               <div class="form-control mb-4">
                 <div class="input-group">
@@ -265,7 +265,7 @@
                     v-model="searchQuery" class="input input-bordered w-full" />
                 </div>
               </div>
-              
+
               <!-- Tableau des étudiants -->
               <div class="bg-base-200 rounded-lg shadow-sm overflow-hidden">
                 <div class="overflow-x-auto" v-if="filteredEtudiants.length > 0">
@@ -280,8 +280,8 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(acc, index) in filteredEtudiants" :key="index" class="hover">
-                        <td class="px-4 py-3 font-medium">{{ index + 1 }}</td>
+                      <tr v-for="(acc, index) in paginatedEtudiants" :key="index" class="hover">
+                        <td class="px-4 py-3 font-medium">{{ index + 1 + (currentPage - 1) * pageSize }}</td>
                         <td class="px-4 py-3 font-mono text-sm">{{ acc.acc_id }}</td>
                         <td class="px-4 py-3" v-if="acc.account">{{ acc.account.acc_fullname }}</td>
                         <td class="px-4 py-3" v-else>
@@ -316,7 +316,8 @@
                     </tbody>
                   </table>
                 </div>
-                
+
+                <!-- Pagination -->
                 <div v-else class="p-8 text-center">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto opacity-30 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
@@ -324,7 +325,17 @@
                   <p>Aucun étudiant trouvé pour cette recherche.</p>
                 </div>
               </div>
+
+              <!-- Pagination Controls -->
+              <div class="flex justify-between mt-4">
+                <button @click="previousPage" :disabled="currentPage === 1" class="btn btn-sm btn-primary">Précédent</button>
+                <div class="flex gap-2 items-center">
+                  <span>Page {{ currentPage }} / {{ totalPages }}</span>
+                </div>
+                <button @click="nextPage" :disabled="currentPage === totalPages" class="btn btn-sm btn-primary">Suivant</button>
+              </div>
             </div>
+
             
             <!-- Formulaire d'ajout et importation -->
             <div class="space-y-6">
@@ -477,7 +488,7 @@
 
 <script setup>
 
-    import { ref, onMounted, nextTick, computed } from 'vue';
+    import { ref, onMounted, nextTick, computed, watch } from 'vue';
     import { request } from '../../composables/httpRequest.js'
     import config from '../../config'
     import { useAccountStore } from '../../stores/accountStore';
@@ -498,13 +509,46 @@ import { addAction } from '../../composables/actionType.js';
     const confirmDeleteAccess = ref([])
     const confirmDeleteAccepted = ref([])
 
+    const searchQuery = ref('');
+    const currentPage = ref(1);
+    const pageSize = ref(10); // Nombre d'étudiants par page
+
+
+
+
     const isLoaded = ref(false);
     
     const showForms = ref([]);
     const selectedDepartment = ref([]);
 
-    const searchQuery = ref('');
 
+        // Computed properties
+        const totalPages = computed(() => {
+      return Math.ceil(filteredEtudiants.value.length / pageSize.value);
+    });
+
+    const paginatedEtudiants = computed(() => {
+      const start = (currentPage.value - 1) * pageSize.value;
+      const end = start + pageSize.value;
+      return filteredEtudiants.value.slice(start, end);
+    });
+
+    // Méthodes de navigation
+    const previousPage = () => {
+      if (currentPage.value > 1) {
+        currentPage.value--;
+      }
+    };
+
+    const nextPage = () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value++;
+      }
+    };
+
+    watch(searchQuery, () => {
+      currentPage.value = 1; // Réinitialiser à la première page lors d'un changement dans la recherche
+    });
 
     function getInitials(fullname) {
         if (!fullname) {

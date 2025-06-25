@@ -206,31 +206,6 @@
                 </Teleport>
               </div>
             </div>
-
-            <!-- Ligne 2: Status Arbitrage étiré -->
-            <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-lg p-5 transition-all hover:shadow-md">
-              <h3 class="text-lg font-medium mb-3 flex items-center">
-                <span class="mr-2">⚖️</span> Statut de l'arbitrage
-              </h3>
-              <div class="flex flex-col items-center justify-center py-4">
-                <div class="text-center mb-4">
-                  <div class="text-3xl font-bold" :class="admin.adm_arbitragetemporaire ? 'text-warning' : 'text-success'">
-                    {{ admin.adm_arbitragetemporaire ? 'Temporaire' : 'Définitif' }}
-                  </div>
-                </div>
-
-                <div class="form-control w-full max-w-xs">
-                  <label class="label cursor-pointer justify-center gap-6">
-                    <span class="label-text text-lg font-medium opacity-75">Temporaire</span>
-                    <input type="checkbox"
-                          class="toggle toggle-lg toggle-primary"
-                          :checked="!admin.adm_arbitragetemporaire"
-                          @change="updateArbitrageStatus" />
-                    <span class="label-text text-lg font-medium opacity-75">Définitif</span>
-                  </label>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
