@@ -54,6 +54,7 @@ const routes = [
     { path: '/compldossier', name: 'ComplDossier', component: () => import('./pages/compldossier.vue'), beforeEnter: isAlreadyComplete, meta: { title: 'Votre dossier est incomplet!', requiresAuth: false } },
     { path: '/articles', name: 'Articles', component: () => import('./pages/articles.vue'), meta: { title: 'Liste des articles', requiresAuth: false } },
     { path: '/aide', name: 'Aide', component: () => import('./pages/aide.vue'), meta: { title: 'Aide', requiresAuth: false } },
+    { path: '/admin', name: 'Admin', component: () => import('./pages/admin.vue'), meta: { title: 'Admin', requiresAuth: false } },
     { path: '/article/:art_id', name: 'Article', component: () => import('./pages/article.vue'), meta: { title: route => `Article n° ${route.params.art_id}`, requiresAuth: false } },
     { path: '/accord/:agree_id', name: 'Accord', component: () => import('./pages/accord.vue'), meta: { title: route => `Accord n° ${route.params.agree_id}`, requiresAuth: false } },
     { path: '/evenement', name: 'Evenement', component: () => import('./pages/evenementliste.vue'), meta: { title: 'Liste des évènements', requiresAuth: false } },
