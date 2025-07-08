@@ -131,8 +131,8 @@
       required
     >
       <option disabled selected value="">Séléctionnez le début de votre periode de mobilité</option>
-      <option value="1">🍂 Mobilité d'automne (semestre 4 ou 6)</option>
-      <option value="2">🌱 Mobilité de printemps (semestre 5)</option>
+      <option value="1">🍂 Mobilité d'automne (semestre 5)</option>
+      <option value="2">🌱 Mobilité de printemps (semestre 4 ou 6)</option>
     </select>
   </label>
 
@@ -188,9 +188,9 @@
                     <strong>
                       {{
                         complDossier.periodemobilite === '1'
-                          ? "🍂 Mobilité d'automne (semestre 4 ou 6)"
+                          ? "🍂 Mobilité d'automne (semestre 5)"
                           : complDossier.periodemobilite === '2'
-                          ? "🌱 Mobilité de printemps (semestre 5)"
+                          ? "🌱 Mobilité de printemps (semestre 4 ou 6)"
                           : "Aucune"
                       }}
                     </strong>

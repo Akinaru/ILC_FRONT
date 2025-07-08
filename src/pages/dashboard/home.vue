@@ -224,8 +224,8 @@
             </div>
             <div class="grid grid-cols-1 gap-2 items-start">
               <div class="text-sm font-medium">Début de la période de mobilité</div>
-              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_periodemobilite === 1 ? '🍂 Mobilité d\'automne (semestre 4 ou 6)' : 
-                        account.acc_periodemobilite === 2 ? '🌱 Mobilité de printemps (semestre 5)' : 'Aucune' }}</div>
+              <div class="bg-base-200 p-2 rounded-md">{{ account.acc_periodemobilite === 1 ? '🍂 Mobilité d\'automne (semestre 5)' : 
+                        account.acc_periodemobilite === 2 ? '🌱 Mobilité de printemps (semestre 4 ou 6)' : 'Aucune' }}</div>
             </div>
                       <label
             for="modal_modif"
