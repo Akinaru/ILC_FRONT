@@ -953,7 +953,7 @@ const itemsToShow = ref(12);
 
 const isLoaded = ref(false);
 
-const currentPage = ref(1);
+const currentPage = ref();
 const perPage = ref(18);
 const lastPage = ref(1);
 
@@ -961,12 +961,9 @@ const selectedDepartment = ref([]);
 const selectedCountries = ref([]);
 // Fonction pour charger les filtres depuis sessionStorage pour la page d'accueil
 function loadFilters() {
-  const savedDepartments = sessionStorage.getItem(
-    "home_dashboard.selectedDepartment"
-  );
-  const savedCountries = sessionStorage.getItem(
-    "home_dashboard.selectedCountries"
-  );
+  const savedDepartments = sessionStorage.getItem("home_dashboard.selectedDepartment");
+  const savedCountries = sessionStorage.getItem("home_dashboard.selectedCountries");
+  const savedPage = sessionStorage.getItem("home_dashboard.currentPage");
 
   if (savedDepartments) {
     selectedDepartment.value = JSON.parse(savedDepartments);
@@ -974,18 +971,20 @@ function loadFilters() {
   if (savedCountries) {
     selectedCountries.value = JSON.parse(savedCountries);
   }
+
+  if (savedPage) {
+    const page = parseInt(savedPage);
+    currentPage.value = page >= 1 ? page : 1;
+  } else {
+    currentPage.value = 1;
+  }
 }
 
 // Fonction pour sauvegarder les filtres dans sessionStorage pour la page d'accueil
 function saveFilters() {
-  sessionStorage.setItem(
-    "home_dashboard.selectedDepartment",
-    JSON.stringify(selectedDepartment.value)
-  );
-  sessionStorage.setItem(
-    "home_dashboard.selectedCountries",
-    JSON.stringify(selectedCountries.value)
-  );
+  sessionStorage.setItem("home_dashboard.selectedDepartment", JSON.stringify(selectedDepartment.value));
+  sessionStorage.setItem("home_dashboard.selectedCountries", JSON.stringify(selectedCountries.value));
+  sessionStorage.setItem("home_dashboard.currentPage", JSON.stringify(currentPage.value));
 }
 
 const isOpen = ref({
@@ -997,26 +996,31 @@ function toggleCollapse(section) {
   isOpen.value[section] = !isOpen.value[section];
 }
 
-  async function fetchFilteredAccords(){
-    isLoadingAccords.value = true;
-    const params = new URLSearchParams();
+async function fetchFilteredAccords() {
+  isLoadingAccords.value = true;
+  const params = new URLSearchParams();
 
-    if (selectedDepartment.value.length > 0) {
-      selectedDepartment.value.forEach(dep => params.append('departments[]', dep));
-    }
-
-    if (selectedCountries.value.length > 0) {
-      selectedCountries.value.forEach(country => params.append('countries[]', country));
-    }
-
-    params.append('page', currentPage.value.toString());
-    params.append('perPage', perPage.value.toString());
-
-    await request('GET', false, accords, `${config.apiUrl}api/agreement/filtered?${params.toString()}`);
-    lastPage.value = accords.value.last_page;
-    currentPage.value = accords.value.current_page;
-    isLoadingAccords.value = false;
+  if (selectedDepartment.value.length > 0) {
+    selectedDepartment.value.forEach(dep => params.append('departments[]', dep));
   }
+  if (selectedCountries.value.length > 0) {
+    selectedCountries.value.forEach(country => params.append('countries[]', country));
+  }
+
+  params.append('page', currentPage.value.toString());
+  params.append('perPage', perPage.value.toString());
+
+  await request('GET', false, accords, `${config.apiUrl}api/agreement/filtered?${params.toString()}`);
+
+  lastPage.value = accords.value.last_page;
+
+  // 🟡 Vérifier si la page actuelle dépasse le total
+  if (currentPage.value > lastPage.value) {
+    currentPage.value = 1;
+  }
+
+  isLoadingAccords.value = false;
+}
 
 watch(currentPage, () => fetchFilteredAccords());
 
@@ -1213,18 +1217,20 @@ function deselectAllCountry() {
 // Surveiller les changements et sauvegarder les filtres
 watch(selectedDepartment, saveFilters);
 watch(selectedCountries, saveFilters);
+watch(currentPage, saveFilters);
 
 onMounted(() => {
-  fetchAll();
   loadFilters();
+  fetchAll();
 });
 
 watch(
   [selectedDepartment, selectedCountries],
   () => {
-    currentPage.value = 1;
     fetchFilteredAccords();
   },
   { deep: true }
 );
+
+
 </script>
