@@ -797,17 +797,17 @@ function getWishNumber(favori) {
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
         await request('GET', false, components, config.apiUrl+'api/component');
         await request('GET', false, accords, config.apiUrl+'api/agreement');
-        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/choix_cours')
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexist/etu/choix_cours_' + acc_id)
         if(response.value.status == 200){
             myfiles.value.choixCours.exist = true;
             myfiles.value.choixCours.path = response.value.path;
         }
-        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/contrat_peda')
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexist/etu/contrat_peda_' + acc_id)
         if(response.value.status == 200){
             myfiles.value.contratPeda.exist = true;
             myfiles.value.contratPeda.path = response.value.path;
         }
-        await request('GET', false, response, config.apiUrl+'api/documents/checkexistperso/etu/releve_note')
+        await request('GET', false, response, config.apiUrl+'api/documents/checkexist/etu/releve_note_' + acc_id)
         if(response.value.status == 200){
             myfiles.value.releveNote.exist = true;
             myfiles.value.releveNote.path = response.value.path;
