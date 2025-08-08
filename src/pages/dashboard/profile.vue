@@ -925,31 +925,54 @@ function getWishNumber(favori) {
     return etu.arbitrage || null;
   }
 
-    async function openMyFileInNewTab(filePath) {
-        // Diviser le chemin du fichier en segments pour obtenir le nom du fichier
-        const segments = filePath.split('/');
-        const fileName = segments[segments.length - 1]; // Dernier segment est le nom du fichier
+async function openMyFileInNewTab(filePath) {
+    const token = localStorage.getItem('token');
 
-        // Obtenir le dossier (suppressions des derniers segments pour obtenir le dossier parent)
-        const folder = segments[2]; // Supposons que "etu" est toujours à l'index 2
-        const username = fileName.split('_')[2].split('.')[0]; // Obtenir le login depuis le nom de fichier
+    // Segments
+    const segments = filePath.split('/');
+    const fileName = segments[segments.length - 1];
+    const folder = segments[2]; 
+    const username = fileName.split('_')[2]?.split('.')[0] || '';
 
-        // Construire l'URL complète pour accéder au fichier
-        const fileUrl = `${config.apiUrl}api/documents/getperso/etu/${folder}/${fileName}`;
+    // URL API protégée
+    const fileUrl = `${config.apiUrl}api/documents/getperso/etu/${folder}/${fileName}`;
 
-        // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
+    try {
+        const response = await fetch(fileUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+
         if (fileName.toLowerCase().endsWith('.pdf')) {
-            window.open(fileUrl, '_blank');
+            // Ouvre le blob PDF dans un nouvel onglet
+            window.open(blobUrl, '_blank');
         } else {
-            // Si ce n'est pas un PDF, forcer le téléchargement du fichier
+            // Téléchargement forcé
             const link = document.createElement('a');
-            link.href = fileUrl;
-            link.download = fileName;  // Propose le téléchargement avec le nom du fichier
+            link.href = blobUrl;
+            link.download = fileName;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
+
+        // Libérer le blob après un délai
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+
+    } catch (err) {
+        console.error('Impossible de récupérer le fichier :', err);
     }
+}
+
 
     async function confirmModifCompte(){
         if (!/^[\w.-]+@[\w.-]+\.\w{2,}$/.test(modifCompte.value.acc_mail)) {

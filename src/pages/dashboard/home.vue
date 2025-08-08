@@ -266,6 +266,7 @@
               <button
                 v-if="files.choixCours.exist"
                 @click="openFileInNewTab(files.choixCours.path)"
+                type="button"
                 class="btn btn-outline btn-success btn-block justify-start"
               >
                 <svg
@@ -303,7 +304,7 @@
                 </svg>
                 Télécharger le fichier
               </button>
-              <button v-else class="btn btn-disabled btn-block justify-start">
+              <button v-else type="button" class="btn btn-disabled btn-block justify-start">
                 <svg
                   width="20"
                   height="20"
@@ -353,6 +354,7 @@
 
               <button
                 v-if="files.choixCours.file != null"
+                type="button"
                 @click="
                   saveFile(
                     'choix_cours_' + accountStore.account.acc_id,
@@ -380,6 +382,7 @@
 
               <div v-if="myfiles.choixCours.exist" class="flex flex-col gap-2">
                 <button
+                type="button"
                   class="btn btn-outline btn-warning btn-block justify-start"
                   @click="openMyFileInNewTab(myfiles.choixCours.path)"
                 >
@@ -406,6 +409,7 @@
 
                 <button
                   class="btn btn-outline btn-error btn-block justify-start"
+                  type="button"
                   @click="openConfirmModal('choix_cours', 'choixCours')"
                 >
                   <svg
@@ -435,6 +439,7 @@
             <div class="space-y-2">
               <button
                 v-if="files.contratPeda.exist"
+                type="button"
                 @click="openFileInNewTab(files.contratPeda.path)"
                 class="btn btn-outline btn-success btn-block justify-start"
               >
@@ -473,7 +478,7 @@
                 </svg>
                 Télécharger le fichier
               </button>
-              <button v-else class="btn btn-disabled btn-block justify-start">
+              <button v-else type="button" class="btn btn-disabled btn-block justify-start">
                 <svg
                   width="20"
                   height="20"
@@ -523,6 +528,7 @@
 
               <button
                 v-if="files.contratPeda.file != null"
+                type="button"
                 @click="
                   saveFile(
                     'contrat_peda_' + accountStore.account.acc_id,
@@ -551,6 +557,7 @@
               <div v-if="myfiles.contratPeda.exist" class="flex flex-col gap-2">
                 <button
                   class="btn btn-outline btn-warning btn-block justify-start"
+                  type="button"
                   @click="openMyFileInNewTab(myfiles.contratPeda.path)"
                 >
                   <svg
@@ -576,6 +583,7 @@
 
                 <button
                   class="btn btn-outline btn-error btn-block justify-start"
+                  type="button"
                   @click="openConfirmModal('contrat_peda', 'contratPeda')"
                 >
                   <svg
@@ -614,6 +622,7 @@
 
               <button
                 v-if="files.releveNote.file != null"
+                type="button"
                 @click="
                   saveFile(
                     'releve_note_' + accountStore.account.acc_id,
@@ -642,6 +651,7 @@
               <div v-if="myfiles.releveNote.exist" class="flex flex-col gap-2">
                 <button
                   class="btn btn-outline btn-warning btn-block justify-start"
+                  type="button"
                   @click="openMyFileInNewTab(myfiles.releveNote.path)"
                 >
                   <svg
@@ -667,6 +677,7 @@
 
                 <button
                   class="btn btn-outline btn-error btn-block justify-start"
+                  type="button"
                   @click="openConfirmModal('releve_note', 'releveNote')"
                 >
                   <svg
@@ -1037,86 +1048,88 @@
               v-show="isOpen.favoris"
             >
               <!-- Liste des favoris -->
-              <div
-                v-if="localFavoris.length > 0"
-                v-for="(accord, index) in localFavoris"
-                :key="index"
-                :draggable="true"
-                :id="'accord_wish_' + accord.agree_id"
-                class="elementDrag select-none flex items-center w-full rounded-md bg-base-200 hover:bg-base-300 transition-all duration-200 ease-in-out hover:cursor-move hover:shadow-md"
-              >
-                <div class="h-18 w-full flex items-center p-2">
-                  <span class="relative flex-shrink-0 mr-2">
-                    <!-- Drapeau -->
-                    <span
-                      class="fi text-2xl"
-                      :class="'fi-' + (accord.partnercountry?.parco_code || '')"
-                    ></span>
+              <div v-if="localFavoris.length > 0">
+                <div v-for="(accord, index) in localFavoris"
+                  :key="index"
+                  :draggable="true"
+                  :id="'accord_wish_' + accord.agree_id"
+                  class="elementDrag select-none flex items-center w-full rounded-md bg-base-200 hover:bg-base-300 transition-all duration-200 ease-in-out hover:cursor-move hover:shadow-md"
+                >
 
-                    <!-- Point d'interrogation si pas de drapeau -->
-                    <span
-                      v-if="!accord.partnercountry?.parco_code"
-                      class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white select-none rounded-full"
-                    >
-                      ?
-                    </span>
-                  </span>
+                  <div class="h-18 w-full flex items-center p-2">
+                    <span class="relative flex-shrink-0 mr-2">
+                      <!-- Drapeau -->
+                      <span
+                        class="fi text-2xl"
+                        :class="'fi-' + (accord.partnercountry?.parco_code || '')"
+                      ></span>
 
-                  <div class="w-full flex flex-col">
-                    <span class="text-xs opacity-75">{{
-                      accord.partnercountry?.parco_name || "Pays indisponible"
-                    }}</span>
-                    <span class="font-bold text-xs"
-                      >{{
-                        accord.university?.univ_city || "Ville indisponible"
-                      }}
-                      -
-                      {{
-                        accord.university?.univ_name ||
-                        "Université indisponible"
-                      }}</span
-                    >
-                    <span class="badge badge-xs badge-neutral mt-1">{{
-                      accord.isced?.isc_code || "Code ISCED indisponible"
-                    }}</span>
-                  </div>
-
-                  <RouterLink
-                    target="_blank"
-                    :to="{
-                      name: 'Accord',
-                      params: { agree_id: accord.agree_id },
-                    }"
-                    class="tooltip tooltip-left"
-                    data-tip="Afficher l'accord"
-                  >
-                    <button class="btn btn-ghost btn-xs">
-                      <svg
-                        height="16px"
-                        width="16px"
-                        viewBox="0 0 512 512"
-                        xml:space="preserve"
-                        fill="currentColor"
+                      <!-- Point d'interrogation si pas de drapeau -->
+                      <span
+                        v-if="!accord.partnercountry?.parco_code"
+                        class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white select-none rounded-full"
                       >
-                        <g>
-                          <path
-                            class="st0"
-                            d="M96,0v416h416V0H96z M472,376H136V40h336V376z"
-                          />
-                          <polygon
-                            class="st0"
-                            points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"
-                          />
-                          <polygon
-                            class="st0"
-                            points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
-                                                    237.594,166.688 322.39,166.688 204.531,284.547 	"
-                          />
-                        </g>
-                      </svg>
-                    </button>
-                  </RouterLink>
+                        ?
+                      </span>
+                    </span>
+
+                    <div class="w-full flex flex-col">
+                      <span class="text-xs opacity-75">{{
+                        accord.partnercountry?.parco_name || "Pays indisponible"
+                      }}</span>
+                      <span class="font-bold text-xs"
+                        >{{
+                          accord.university?.univ_city || "Ville indisponible"
+                        }}
+                        -
+                        {{
+                          accord.university?.univ_name ||
+                          "Université indisponible"
+                        }}</span
+                      >
+                      <span class="badge badge-xs badge-neutral mt-1">{{
+                        accord.isced?.isc_code || "Code ISCED indisponible"
+                      }}</span>
+                    </div>
+
+                    <RouterLink
+                      target="_blank"
+                      :to="{
+                        name: 'Accord',
+                        params: { agree_id: accord.agree_id },
+                      }"
+                      class="tooltip tooltip-left"
+                      data-tip="Afficher l'accord"
+                    >
+                      <button class="btn btn-ghost btn-xs">
+                        <svg
+                          height="16px"
+                          width="16px"
+                          viewBox="0 0 512 512"
+                          xml:space="preserve"
+                          fill="currentColor"
+                        >
+                          <g>
+                            <path
+                              class="st0"
+                              d="M96,0v416h416V0H96z M472,376H136V40h336V376z"
+                            />
+                            <polygon
+                              class="st0"
+                              points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"
+                            />
+                            <polygon
+                              class="st0"
+                              points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                                      237.594,166.688 322.39,166.688 204.531,284.547 	"
+                            />
+                          </g>
+                        </svg>
+                      </button>
+                    </RouterLink>
+                  </div>
                 </div>
+
               </div>
 
               <div
@@ -1352,83 +1365,85 @@
 
             <div class="space-y-2 max-h-60 overflow-y-auto py-2">
               <!-- Liste des favoris -->
-              <div
-                @click="setAccordToVoeu(accord.agree_id)"
-                v-if="localFavoris.length > 0"
-                v-for="(accord, index) in localFavoris"
-                :key="index"
-                class="select-none flex items-center p-2 rounded-md bg-base-200 hover:bg-base-300 transition-all duration-200 ease-in-out cursor-pointer"
-              >
-                <span class="relative flex-shrink-0 mr-2">
-                  <!-- Drapeau -->
-                  <span
-                    class="fi text-2xl"
-                    :class="'fi-' + (accord.partnercountry?.parco_code || '')"
-                  ></span>
+              <div v-if="localFavoris.length > 0">
+                <div v-for="(accord, index) in localFavoris"
+                  @click="setAccordToVoeu(accord.agree_id)"
+                  :key="index"
+                  class="select-none flex items-center p-2 rounded-md bg-base-200 hover:bg-base-300 transition-all duration-200 ease-in-out cursor-pointer"
+                >
 
-                  <!-- Point d'interrogation si pas de drapeau -->
-                  <span
-                    v-if="!accord.partnercountry?.parco_code"
-                    class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white select-none rounded-full"
-                  >
-                    ?
+                  <span class="relative flex-shrink-0 mr-2">
+                    <!-- Drapeau -->
+                    <span
+                      class="fi text-2xl"
+                      :class="'fi-' + (accord.partnercountry?.parco_code || '')"
+                    ></span>
+
+                    <!-- Point d'interrogation si pas de drapeau -->
+                    <span
+                      v-if="!accord.partnercountry?.parco_code"
+                      class="absolute inset-0 flex items-center justify-center text-black text-xl font-bold bg-white select-none rounded-full"
+                    >
+                      ?
+                    </span>
                   </span>
-                </span>
 
-                <div class="w-full flex flex-col">
-                  <span class="text-xs opacity-75">{{
-                    accord.partnercountry?.parco_name || "Pays indisponible"
-                  }}</span>
-                  <span class="font-bold text-xs"
-                    >{{
-                      accord.university?.univ_city || "Ville indisponible"
-                    }}
-                    -
-                    {{
-                      accord.university?.univ_name || "Université indisponible"
-                    }}</span
+                  <div class="w-full flex flex-col">
+                    <span class="text-xs opacity-75">{{
+                      accord.partnercountry?.parco_name || "Pays indisponible"
+                    }}</span>
+                    <span class="font-bold text-xs"
+                      >{{
+                        accord.university?.univ_city || "Ville indisponible"
+                      }}
+                      -
+                      {{
+                        accord.university?.univ_name || "Université indisponible"
+                      }}</span
+                    >
+                    <span class="badge badge-xs badge-neutral mt-1">{{
+                      accord.isced?.isc_code || "Code ISCED indisponible"
+                    }}</span>
+                  </div>
+
+                  <RouterLink
+                    target="_blank"
+                    :to="{
+                      name: 'Accord',
+                      params: { agree_id: accord.agree_id },
+                    }"
+                    class="tooltip tooltip-left"
+                    data-tip="Afficher l'accord"
+                    @click.stop
                   >
-                  <span class="badge badge-xs badge-neutral mt-1">{{
-                    accord.isced?.isc_code || "Code ISCED indisponible"
-                  }}</span>
+                    <button class="btn btn-ghost btn-xs">
+                      <svg
+                        height="16px"
+                        width="16px"
+                        viewBox="0 0 512 512"
+                        xml:space="preserve"
+                        fill="currentColor"
+                      >
+                        <g>
+                          <path
+                            class="st0"
+                            d="M96,0v416h416V0H96z M472,376H136V40h336V376z"
+                          />
+                          <polygon
+                            class="st0"
+                            points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"
+                          />
+                          <polygon
+                            class="st0"
+                            points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
+                                                  237.594,166.688 322.39,166.688 204.531,284.547 	"
+                          />
+                        </g>
+                      </svg>
+                    </button>
+                  </RouterLink>
                 </div>
 
-                <RouterLink
-                  target="_blank"
-                  :to="{
-                    name: 'Accord',
-                    params: { agree_id: accord.agree_id },
-                  }"
-                  class="tooltip tooltip-left"
-                  data-tip="Afficher l'accord"
-                  @click.stop
-                >
-                  <button class="btn btn-ghost btn-xs">
-                    <svg
-                      height="16px"
-                      width="16px"
-                      viewBox="0 0 512 512"
-                      xml:space="preserve"
-                      fill="currentColor"
-                    >
-                      <g>
-                        <path
-                          class="st0"
-                          d="M96,0v416h416V0H96z M472,376H136V40h336V376z"
-                        />
-                        <polygon
-                          class="st0"
-                          points="40,472 40,296 40,136 40,96 0,96 0,512 416,512 416,472 376,472 	"
-                        />
-                        <polygon
-                          class="st0"
-                          points="232.812,312.829 350.671,194.969 350.671,279.766 390.671,279.766 390.671,126.688 237.594,126.688 
-                                                237.594,166.688 322.39,166.688 204.531,284.547 	"
-                        />
-                      </g>
-                    </svg>
-                  </button>
-                </RouterLink>
               </div>
 
               <!-- Aucun favoris -->
@@ -1946,7 +1961,7 @@ function dragStartHandler(e) {
   e.dataTransfer.setData("text/plain", e.target.id);
 }
 
-async function fetch() {
+async function fetchAll() {
   await request(
     "GET",
     false,
@@ -2134,7 +2149,7 @@ async function deleteFile(fileFolder, fileTitle, fileType) {
   if (response.value.status == 200) {
     myfiles.value[fileTitle].exist = false;
     myfiles.value[fileTitle].path = "";
-    fetch();
+    fetchAll();
   }
 }
 
@@ -2149,52 +2164,94 @@ const handleFileInputChange = (event, fileType) => {
 };
 
 // Ouvrir le fichier ou le télécharger
-function openFileInNewTab(filePath) {
+async function openFileInNewTab(filePath) {
+  const token = localStorage.getItem('token');
+
   // Diviser le chemin du fichier en segments et obtenir le dernier segment (nom du fichier)
   const segments = filePath.split("/");
   const fileName = segments[segments.length - 1];
 
   // Construire l'URL complète pour accéder au fichier
-  const fileUrl = config.apiUrl + `api/documents/get/admin/${fileName}`;
+  const fileUrl = `${config.apiUrl}api/documents/get/admin/${fileName}`;
 
-  // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
-  if (fileName.toLowerCase().endsWith(".pdf")) {
-    window.open(fileUrl, "_blank");
-  } else {
-    // Si ce n'est pas un PDF, forcer le téléchargement du fichier
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = fileName; // Propose le téléchargement avec le nom du fichier
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  try {
+    const res = await fetch(fileUrl, {
+      method: 'GET',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    }
+
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    if (fileName.toLowerCase().endsWith(".pdf")) {
+      window.open(blobUrl, "_blank");
+    } else {
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+  } catch (err) {
+    console.error('[openFileInNewTab] fetch error:', err);
   }
 }
 
 async function openMyFileInNewTab(filePath) {
-  // Diviser le chemin du fichier en segments pour obtenir le nom du fichier
-  const segments = filePath.split("/");
-  const fileName = segments[segments.length - 1]; // Dernier segment est le nom du fichier
+    
+    const token = localStorage.getItem('token');
 
-  // Obtenir le dossier (suppressions des derniers segments pour obtenir le dossier parent)
-  const folder = segments[2]; // Supposons que "etu" est toujours à l'index 2
-  const username = fileName.split("_")[2].split(".")[0]; // Obtenir le login depuis le nom de fichier
+    // Segments
+    const segments = filePath.split('/');
+    const fileName = segments[segments.length - 1];
+    const folder = segments[2]; 
+    const username = fileName.split('_')[2]?.split('.')[0] || '';
 
-  // Construire l'URL complète pour accéder au fichier
-  const fileUrl = `${config.apiUrl}api/documents/getperso/etu/${folder}/${fileName}`;
+    // URL API protégée
+    const fileUrl = `${config.apiUrl}api/documents/getperso/etu/${folder}/${fileName}`;
 
-  // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
-  if (fileName.toLowerCase().endsWith(".pdf")) {
-    window.open(fileUrl, "_blank");
-  } else {
-    // Si ce n'est pas un PDF, forcer le téléchargement du fichier
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = fileName; // Propose le téléchargement avec le nom du fichier
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
+    try {
+        const response = await fetch(fileUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        if (fileName.toLowerCase().endsWith('.pdf')) {
+            // Ouvre le blob PDF dans un nouvel onglet
+            window.open(blobUrl, '_blank');
+        } else {
+            // Téléchargement forcé
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Libérer le blob après un délai
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+
+    } catch (err) {
+        console.error('Impossible de récupérer le fichier :', err);
+    }
 }
 
 // Enregistrer un fichier
@@ -2226,7 +2283,7 @@ async function saveFile(title, folder, file) {
       input.value = "";
     });
   }
-  fetch();
+  fetchAll();
 }
 
 async function deleteAccount() {
@@ -2330,5 +2387,5 @@ async function saveWishes() {
   );
 }
 
-onMounted(fetch);
+onMounted(fetchAll);
 </script>
