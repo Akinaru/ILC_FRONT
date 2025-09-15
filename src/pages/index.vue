@@ -949,7 +949,7 @@ const eventspf = ref([]);
 const favoris = ref([]);
 const isLoadingAccords = ref(false);
 
-const itemsToShow = ref(12);
+const itemsToShow = ref(18);
 
 const isLoaded = ref(false);
 
