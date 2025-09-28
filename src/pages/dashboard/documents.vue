@@ -1,56 +1,48 @@
 <template>
     <div class="m-5" v-if="isLoaded">
-        <p class="font-bold text-lg mb-4">Documents</p>
-        <!-- Liste des documents -->
+        <p class="font-bold text-xl md:text-2xl mb-4">Documents</p>
         <div class="flex justify-center items-center flex-col">
 
-            <!-- Formulaire Autorisation Affichage -->
-            <div class="mb-6 w-3/4 flex items-center justify-center flex-col shadow-lg rounded-lg bg-base-300 p-1">
-                <p class="font-semibold text-md mb-2 text-start w-full p-3">Formulaire autorisation affichage dans les anciens étudiants</p>
-                <div class="flex w-full">
-                    <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'anciensEtudiants', null)" class="file-input file-input-bordered min-w-2xl w-full" />
-                    <button v-if="files.anciensEtudiants.file != null" class="btn btn-success mx-2 hover:scale-105 transition-all hover:opacity-70" @click="saveFile('auto_ancien_etu', 'documents/admin', files.anciensEtudiants.file)">Envoyer le fichier</button>
-                    <button v-if="files.anciensEtudiants.exist" class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70" @click="openFileInNewTab(files.anciensEtudiants.path)">Voir le fichier actuel</button>
-                    <button v-if="files.anciensEtudiants.exist" class="btn btn-error mx-2 min-w-32 hover:scale-105 transition-all hover:opacity-70" @click="openConfirmModal('auto_ancien_etu', 'anciensEtudiants', null)">Supprimer</button>
-                    <button v-else disabled class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70">Aucun fichier</button>
+            <div class="mb-6 w-full max-w-5xl mx-auto flex items-center justify-center flex-col shadow-lg rounded-lg bg-base-300 p-1">
+                <p class="font-semibold text-base md:text-lg mb-2 text-start w-full p-3">Formulaire autorisation affichage dans les anciens étudiants</p>
+                <div class="flex w-full flex-col md:flex-row items-stretch md:items-center gap-2">
+                    <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'anciensEtudiants', null)" class="file-input file-input-bordered w-full" />
+                    <button v-if="files.anciensEtudiants.file != null" class="btn btn-success md:mx-2 w-full md:w-auto hover:scale-105 transition-all hover:opacity-70" @click="saveFile('auto_ancien_etu', 'documents/admin', files.anciensEtudiants.file)">Envoyer le fichier</button>
+                    <button v-if="files.anciensEtudiants.exist" class="btn btn-primary md:mx-2 w-full md:w-auto md:min-w-44 hover:scale-105 transition-all hover:opacity-70" @click="openFileInNewTab(files.anciensEtudiants.path)">Voir le fichier actuel</button>
+                    <button v-if="files.anciensEtudiants.exist" class="btn btn-error md:mx-2 w-full md:w-auto md:min-w-32 hover:scale-105 transition-all hover:opacity-70" @click="openConfirmModal('auto_ancien_etu', 'anciensEtudiants', null)">Supprimer</button>
+                    <button v-else disabled class="btn btn-primary md:mx-2 w-full md:w-auto md:min-w-44 hover:scale-105 transition-all hover:opacity-70">Aucun fichier</button>
                 </div>
             </div>
 
-            <!-- Contrat pédagogique -->
-            <div class="mb-6 w-3/4 flex items-center justify-center flex-col shadow-lg rounded-lg bg-base-300 p-1">
-                <p class="font-semibold text-md mb-2 text-start w-full p-3">Contrat pédagogique</p>
-                <div class="flex w-full ">
-                    <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'contratPeda', null)" class="file-input file-input-bordered min-w-2xl w-full" />
-                    <button v-if="files.contratPeda.file != null" class="btn btn-success mx-2" @click="saveFile('contrat_peda', 'documents/admin', files.contratPeda.file)">Envoyer le fichier</button>
-                    <button v-if="files.contratPeda.exist" class="btn btn-primary mx-2 min-w-44" @click="openFileInNewTab(files.contratPeda.path)">Voir le fichier actuel</button>
-                    <button v-if="files.contratPeda.exist" class="btn btn-error mx-2 min-w-32" @click="openConfirmModal('contrat_peda', 'contratPeda', null)">Supprimer</button>
-                    <button v-else disabled class="btn btn-primary mx-2 min-w-44">Aucun fichier</button>
+            <div class="mb-6 w-full max-w-5xl mx-auto flex items-center justify-center flex-col shadow-lg rounded-lg bg-base-300 p-1">
+                <p class="font-semibold text-base md:text-lg mb-2 text-start w-full p-3">Contrat pédagogique</p>
+                <div class="flex w-full flex-col md:flex-row items-stretch md:items-center gap-2">
+                    <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'contratPeda', null)" class="file-input file-input-bordered w-full" />
+                    <button v-if="files.contratPeda.file != null" class="btn btn-success md:mx-2 w-full md:w-auto" @click="saveFile('contrat_peda', 'documents/admin', files.contratPeda.file)">Envoyer le fichier</button>
+                    <button v-if="files.contratPeda.exist" class="btn btn-primary md:mx-2 w-full md:w-auto md:min-w-44" @click="openFileInNewTab(files.contratPeda.path)">Voir le fichier actuel</button>
+                    <button v-if="files.contratPeda.exist" class="btn btn-error md:mx-2 w-full md:w-auto md:min-w-32" @click="openConfirmModal('contrat_peda', 'contratPeda', null)">Supprimer</button>
+                    <button v-else disabled class="btn btn-primary md:mx-2 w-full md:w-auto md:min-w-44">Aucun fichier</button>
                 </div>
             </div>
 
-            <!-- Tableau choix des cours -->
+            <div class="mb-6 w-full max-w-5xl mx-auto flex items-center justify-center flex-col">
+                <p class="font-semibold text-base md:text-lg mb-2 text-start w-full">Tableau excel des choix des cours</p>
+                <div v-for="(compo, index) in components.components" :key="index" class="w-full flex items-center justify-center flex-col mx-0 md:mx-10 my-3">
 
-            <div class="mb-6 w-3/4 flex items-center justify-center flex-col">
-                <p class="font-semibold text-md mb-2 text-start w-full">Tableau excel des choix des cours</p>
-                <div v-for="(compo, index) in components.components" :key="index" class="w-full flex items-center justify-center flex-col mx-10 my-3">
-
-                    <!-- Titre de la composante -->
-                     <div class="hover:opacity-60 cursor-pointer bg-base-300 p-3 w-full flex items-center justify-between" @click="toggleCollapse(`component-${index}`)">
-                         <p class="select-none font-semibold text-md text-start ">{{ compo.comp_name ? compo.comp_name : 'Nom introuvable' }}</p>
-                         <span :class="isOpen[`component-${index}`] ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
+                    <div class="hover:opacity-60 cursor-pointer bg-base-300 p-3 w-full flex items-center justify-between" @click="toggleCollapse(`component-${index}`)">
+                        <p class="select-none font-semibold text-base md:text-lg text-start">{{ compo.comp_name ? compo.comp_name : 'Nom introuvable' }}</p>
+                        <span :class="isOpen[`component-${index}`] ? 'rotate-180' : ''" class="transform transition-transform text-xl select-none">&#9662;</span>
                     </div>
 
-                    <!-- Affichage des form documents par départements -->
                     <div v-show="isOpen[`component-${index}`]" class="w-full bg-base-200 flex items-center justify-center flex-col">
-                        <div v-for="(dept, index) in compo.departments" :key="index" class="bg-base-300 shadow-lg rounded-lg my-3 p-1 w-4/5 flex items-start justify-center flex-col" :style="{borderBottom: `4px solid ${dept.dept_color ? dept.dept_color : '#aaaaaa'}`}">
-                            <p class="select-none p-3 w-full my-1 font-bold" :style="{ color: `${dept.dept_color ? dept.dept_color : '#aaaaaa'}` }">({{ dept.dept_shortname ? dept.dept_shortname : 'Nom Introuvable' }}) {{ dept.dept_name ? dept.dept_name : 'Nom Introuvable' }}</p>
-                            <div class="flex w-full">
-                                <!-- Utilisation du dept_id pour accéder au bon fichier choixCours -->
-                                <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'choixCours', dept.dept_id)" class="file-input file-input-bordered min-w-2xl w-full" />
-                                <button v-if="files.choixCours[dept.dept_id]?.file" class="btn btn-success mx-2 hover:scale-105 transition-all hover:opacity-70" @click="saveFile(`choix_cours_${dept.dept_id}`, 'documents/admin', files.choixCours[dept.dept_id].file, dept.dept_id)">Envoyer le fichier</button>
-                                <button v-if="files.choixCours[dept.dept_id]?.exist" class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70" @click="openFileInNewTab(files.choixCours[dept.dept_id].path)">Voir le fichier actuel</button>
-                                <button v-if="files.choixCours[dept.dept_id]?.exist" class="btn btn-error mx-2 min-w-32 hover:scale-105 transition-all hover:opacity-70" @click="openConfirmModal(`choix_cours_${dept.dept_id}`, 'choixCours', dept)">Supprimer</button>
-                                <button v-else disabled class="btn btn-primary mx-2 min-w-44 hover:scale-105 transition-all hover:opacity-70">Aucun fichier</button>
+                        <div v-for="(dept, index) in compo.departments" :key="index" class="bg-base-300 shadow-lg rounded-lg my-3 p-1 w-full max-w-4xl flex items-start justify-center flex-col" :style="{borderBottom: `4px solid ${dept.dept_color ? dept.dept_color : '#aaaaaa'}`}">
+                            <p class="select-none p-3 w-full my-1 font-bold text-base md:text-lg" :style="{ color: `${dept.dept_color ? dept.dept_color : '#aaaaaa'}` }">({{ dept.dept_shortname ? dept.dept_shortname : 'Nom Introuvable' }}) {{ dept.dept_name ? dept.dept_name : 'Nom Introuvable' }}</p>
+                            <div class="flex w-full flex-col md:flex-row items-stretch md:items-center gap-2">
+                                <input type="file" accept=".pdf, .xls, .xlsx" @change="handleFileInputChange($event, 'choixCours', dept.dept_id)" class="file-input file-input-bordered w-full" />
+                                <button v-if="files.choixCours[dept.dept_id]?.file" class="btn btn-success md:mx-2 w-full md:w-auto hover:scale-105 transition-all hover:opacity-70" @click="saveFile(`choix_cours_${dept.dept_id}`, 'documents/admin', files.choixCours[dept.dept_id].file, dept.dept_id)">Envoyer le fichier</button>
+                                <button v-if="files.choixCours[dept.dept_id]?.exist" class="btn btn-primary md:mx-2 w-full md:w-auto md:min-w-44 hover:scale-105 transition-all hover:opacity-70" @click="openFileInNewTab(files.choixCours[dept.dept_id].path)">Voir le fichier actuel</button>
+                                <button v-if="files.choixCours[dept.dept_id]?.exist" class="btn btn-error md:mx-2 w-full md:w-auto md:min-w-32 hover:scale-105 transition-all hover:opacity-70" @click="openConfirmModal(`choix_cours_${dept.dept.dept_id}`, 'choixCours', dept)">Supprimer</button>
+                                <button v-else disabled class="btn btn-primary md:mx-2 w-full md:w-auto md:min-w-44 hover:scale-105 transition-all hover:opacity-70">Aucun fichier</button>
                             </div>
                         </div>
                     </div>
@@ -59,40 +51,41 @@
             </div>
 
         </div>
-        <!-- Modal de confirmation suppression -->
+
         <Teleport to="body">
-  <dialog id="confirmModal" ref="confirmModal" class="modal">
-    <div class="modal-box rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeleteDocument">
-      <h3 class="text-xl font-bold">Confirmer la suppression</h3>
-      <p class="text-sm text-base-content/70 mt-2">Cette action supprimera définitivement le fichier sélectionné.</p>
-      <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+            <dialog id="confirmModal" ref="confirmModal" class="modal">
+                <div class="modal-box w-11/12 md:w-auto rounded-2xl border border-base-300 shadow-xl" v-if="confirmDeleteDocument">
+                    <h3 class="text-xl font-bold">Confirmer la suppression</h3>
+                    <p class="text-sm text-base-content/70 mt-2">Cette action supprimera définitivement le fichier sélectionné.</p>
+                    <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
 
-      <p>Confirmez-vous la suppression du fichier : <strong>{{ confirmDeleteDocument.title }}</strong> ?</p>
+                    <p>Confirmez-vous la suppression du fichier : <strong>{{ confirmDeleteDocument.title }}</strong> ?</p>
 
-      <div class="mt-4">
-        <span v-if="confirmDeleteDocument.dept" 
-              class="badge text-sm font-medium"
-              :style="{ backgroundColor: confirmDeleteDocument.dept.dept_color || '#aaaaaa' }">
-          {{ confirmDeleteDocument.dept.dept_shortname }}
-        </span>
-      </div>
+                    <div class="mt-4">
+                        <span v-if="confirmDeleteDocument.dept"
+                              class="badge text-sm font-medium"
+                              :style="{ backgroundColor: confirmDeleteDocument.dept.dept_color || '#aaaaaa' }">
+                          {{ confirmDeleteDocument.dept.dept_shortname }}
+                        </span>
+                    </div>
 
-      <div class="modal-action mt-6">
-        <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-        <button class="btn btn-error"
-                @click="deleteFile(confirmDeleteDocument.title, confirmDeleteDocument.type, confirmDeleteDocument.dept?.dept_id || null)">
-          Supprimer
-        </button>
-      </div>
-    </div>
-  </dialog>
-</Teleport>
+                    <div class="modal-action mt-6 flex flex-col-reverse md:flex-row gap-2">
+                        <button class="btn btn-ghost w-full md:w-auto" @click="closeModal">Annuler</button>
+                        <button class="btn btn-error w-full md:w-auto"
+                                @click="deleteFile(confirmDeleteDocument.title, confirmDeleteDocument.type, confirmDeleteDocument.dept?.dept_id || null)">
+                          Supprimer
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+        </Teleport>
 
     </div>
     <div v-else>
         <LoadingComp></LoadingComp>
     </div>
 </template>
+
 
 <script setup>
 
