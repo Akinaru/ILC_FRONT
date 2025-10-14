@@ -836,46 +836,92 @@
 </template>
 
 <script setup>
-import { request } from '../../composables/httpRequest';
-import { ref, onMounted, computed, watch } from 'vue';
-import config from '../../config';
-import { useAccountStore } from '../../stores/accountStore';
-import LoadingComp from '../../components/utils/LoadingComp.vue';
-import ExportComp from '../../components/impexp/ExportComp.vue';
-import { addAction } from '../../composables/actionType';
+  import { request } from '../../composables/httpRequest';
+  import { ref, onMounted, computed, watch } from 'vue';
+  import config from '../../config';
+  import { useAccountStore } from '../../stores/accountStore';
+  import LoadingComp from '../../components/utils/LoadingComp.vue';
+  import ExportComp from '../../components/impexp/ExportComp.vue';
+  import { addAction } from '../../composables/actionType';
 
-const accountStore = useAccountStore();
-const etudiants = ref([]);
-const etudiantsFiltered = ref([]);
-const account = ref([]);
-const components = ref([]);
-const isLoaded = ref(false);
-const searchQuery = ref('');
-const confirmDeleteEtu = ref([])
-const response = ref([])
-const anneesmobilite = ref([])
-const destinations = ref([]);
-const departementFilter = ref("");
+  const accountStore = useAccountStore();
+  const etudiants = ref([]);
+  const etudiantsFiltered = ref([]);
+  const account = ref([]);
+  const components = ref([]);
+  const isLoaded = ref(false);
+  const searchQuery = ref('');
+  const confirmDeleteEtu = ref([])
+  const response = ref([])
+  const anneesmobilite = ref([])
+  const destinations = ref([]);
+  const departementFilter = ref("");
 
-const selectedDepartment = ref([]);
-const selectedVoeux = ref([]);
-const selectedDocument = ref([]);
-const selectedAnneeMobilite = ref([]);
-const selectedPeriodeMobilite = ref([]);
-const selectedDestination = ref([]);
-const selectedAutre = ref([]);
-const isOpen = ref({
-    voeux: true,
-    departments: true,
-    document: true,
-    anneemobilite: true,
-    destination: true,
-    autre: true,
-});
+  const selectedDepartment = ref([]);
+  const selectedVoeux = ref([]);
+  const selectedDocument = ref([]);
+  const selectedAnneeMobilite = ref([]);
+  const selectedPeriodeMobilite = ref([]);
+  const selectedDestination = ref([]);
+  const selectedAutre = ref([]);
+  const isOpen = ref({
+      voeux: true,
+      departments: true,
+      document: true,
+      anneemobilite: true,
+      destination: true,
+      autre: true,
+  });
 
-const currentPage = ref(1);
-const perPage = ref(18);
-const lastPage = ref(1);
+  const currentPage = ref(1);
+  const perPage = ref(18);
+  const lastPage = ref(1);
+
+  const STORAGE_PREFIX = 'students_dashboard';
+  const STORAGE_KEYS = {
+    dept:    `${STORAGE_PREFIX}.selectedDepartment`,
+    voeux:   `${STORAGE_PREFIX}.selectedVoeux`,
+    doc:     `${STORAGE_PREFIX}.selectedDocument`,
+    annee:   `${STORAGE_PREFIX}.selectedAnneeMobilite`,
+    periode: `${STORAGE_PREFIX}.selectedPeriodeMobilite`,
+    dest:    `${STORAGE_PREFIX}.selectedDestination`,
+    autre:   `${STORAGE_PREFIX}.selectedAutre`,
+    search:  `${STORAGE_PREFIX}.searchQuery`,
+    page:    `${STORAGE_PREFIX}.currentPage`,
+  };
+
+  function loadFilters() {
+    const s = sessionStorage;
+    const parse = (k, fallback = []) => {
+      try { return s.getItem(k) ? JSON.parse(s.getItem(k)) : fallback; }
+      catch { return fallback; }
+    };
+
+    selectedDepartment.value       = parse(STORAGE_KEYS.dept, []);
+    selectedVoeux.value            = parse(STORAGE_KEYS.voeux, []);
+    selectedDocument.value         = parse(STORAGE_KEYS.doc, []);
+    selectedAnneeMobilite.value    = parse(STORAGE_KEYS.annee, []);
+    selectedPeriodeMobilite.value  = parse(STORAGE_KEYS.periode, []);
+    selectedDestination.value      = parse(STORAGE_KEYS.dest, []);
+    selectedAutre.value            = parse(STORAGE_KEYS.autre, []);
+    searchQuery.value              = sessionStorage.getItem(STORAGE_KEYS.search) ?? '';
+
+    const savedPage = sessionStorage.getItem(STORAGE_KEYS.page);
+    currentPage.value = savedPage ? Math.max(1, parseInt(savedPage, 10) || 1) : 1;
+  }
+
+  function saveFilters() {
+    const s = sessionStorage;
+    s.setItem(STORAGE_KEYS.dept,    JSON.stringify(selectedDepartment.value));
+    s.setItem(STORAGE_KEYS.voeux,   JSON.stringify(selectedVoeux.value));
+    s.setItem(STORAGE_KEYS.doc,     JSON.stringify(selectedDocument.value));
+    s.setItem(STORAGE_KEYS.annee,   JSON.stringify(selectedAnneeMobilite.value));
+    s.setItem(STORAGE_KEYS.periode, JSON.stringify(selectedPeriodeMobilite.value));
+    s.setItem(STORAGE_KEYS.dest,    JSON.stringify(selectedDestination.value));
+    s.setItem(STORAGE_KEYS.autre,   JSON.stringify(selectedAutre.value));
+    s.setItem(STORAGE_KEYS.search,  searchQuery.value || '');
+    s.setItem(STORAGE_KEYS.page,    String(currentPage.value));
+  }
 
   async function fetchFilteredStudents(){
       const params = new URLSearchParams();
@@ -921,6 +967,11 @@ const lastPage = ref(1);
     await request('GET', false, etudiants, `${config.apiUrl}api/account/studentsFiltered?${params.toString()}`);
     lastPage.value = etudiants.value.last_page;
     currentPage.value = etudiants.value.current_page;
+
+    // Si la page sauvegardée dépasse le total (ex: filtres plus restrictifs)
+    if (currentPage.value > lastPage.value) {
+      currentPage.value = 1;
+    }
   }
 
   watch(currentPage, () => fetchFilteredStudents());
@@ -929,6 +980,7 @@ const lastPage = ref(1);
         isOpen.value[section] = !isOpen.value[section];
     }
 
+    // Suppression de la partie filtre locale car c'est le back qui s'en occupe maintenant
     const filteredEtudiants = computed(() => {
       // return etudiants.value.accounts
       //   .filter(etu => {
@@ -1113,9 +1165,29 @@ const exportUrl = computed(() => {
   
   const totalPages = computed(() => lastPage.value);
 
-onMounted(() => {
+  onMounted(() => {
+    loadFilters();
     fetch();
-});
+  });
+
+  // Sauvegarde dès que les filtres changent
+  watch(
+    [
+      selectedDepartment,
+      selectedVoeux,
+      selectedDocument,
+      selectedAnneeMobilite,
+      selectedPeriodeMobilite,
+      selectedDestination,
+      selectedAutre
+    ],
+    () => { saveFilters(); },
+    { deep: true }
+  );
+
+  // Sauvegarde la recherche et la pagination
+  watch(searchQuery, () => { saveFilters(); });
+  watch(currentPage, () => { saveFilters(); });
 
     function deselectAll() {
         selectedDepartment.value = [];
