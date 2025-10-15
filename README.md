@@ -8,11 +8,13 @@ Plateforme utilisée par les étudiant·e·s (liste blanche) pour **déposer 1�
 ## 🧭 Vue d’ensemble
 
 - **Étudiants**
+
   - Auth via SSO établissement (LCAS) en prod/préprod ; **whitelist** par import Excel.
   - Gestion des **vœux (1→6, sans doublon)**, **favoris (illimités)**.
   - Consultation du **résultat d’affectation**.
 
 - **Admins / Chefs de département**
+
   - **Arbitrage** par glisser-déposer des étudiants vers les accords (capacités X).
   - Filtres par **département / ISCED / composante / période**.
   - **Historique** des actions (admins).
@@ -33,11 +35,11 @@ Base de données MySQL (tables principales : `t_e_account_acc`, `t_e_wishagreeme
 
 ## 🚦 Environnements & URLs
 
-| Environnement | Front (SPA)                                   | API (Laravel)                                      |
-|---|---|---|
-| **Production**    | https://ilc.iut-acy.univ-smb.fr/              | https://ilc.iut-acy.univ-smb.fr/BACK/               |
-| **Pré-production**| https://ilc.iut-acy.univ-smb.fr/preprod/      | https://ilc.iut-acy.univ-smb.fr/preprod/BACK/       |
-| **Dev (local)**   | http://localhost:5173/                        | http://localhost:8000/                               |
+| Environnement      | Front (SPA)                              | API (Laravel)                                 |
+| ------------------ | ---------------------------------------- | --------------------------------------------- |
+| **Production**     | https://ilc.iut-acy.univ-smb.fr/         | https://ilc.iut-acy.univ-smb.fr/BACK/         |
+| **Pré-production** | https://ilc.iut-acy.univ-smb.fr/preprod/ | https://ilc.iut-acy.univ-smb.fr/preprod/BACK/ |
+| **Dev (local)**    | http://localhost:5173/                   | http://localhost:8000/                        |
 
 > En prod/préprod, l’API est servie via le **sous-répertoire `BACK/`**.  
 > En local, le **front écoute sur `5173`** (Vite) et le **back sur `8000`** (`php artisan serve`).
@@ -49,18 +51,39 @@ Base de données MySQL (tables principales : `t_e_account_acc`, `t_e_wishagreeme
 ### 1) Front (Vuejs)
 
 Cloner puis installer :
+
 ```bash
 git clone https://github.com/Akinaru/ILC_FRONT.git
 cd ILC_FRONT
 npm install
 ```
 
+> Pensez à configurer les 3 .env `.env`, `.env.staging`, `.env.production`
+
 ### 2) Backend (Laravel)
 
 Cloner puis installer :
+
 ```bash
 git clone https://github.com/Akinaru/ILC_BACK.git
 cd ILC_BACK
 composer install
 cp .env.example .env
+```
+
+## 🛠️ Déploiement
+
+> Il est important de lire le package.json pour comprendre les différentes commandes à éxécuter en fonction de l'environnement ciblé.
+> Assurez vous que vos fichier .env ont bien été configurés au préalable pour permettre au site déployé de bénéficier de l'url de l'API ainsi que des autres paramètres.
+
+### Déployer sur la preprod (staging)
+
+```
+npm run build:staging
+```
+
+### Déployer sur la production
+
+```-
+npm run build
 ```

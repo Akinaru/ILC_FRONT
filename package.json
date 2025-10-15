@@ -1,11 +1,16 @@
 {
   "name": "ilc-front",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.5",
   "type": "module",
+  "description": "Site web de l'ILC de l'IUT d'Annecy qui permet de gérer les mobilités des étudiants.",
+  "url": "https://ilc.iut-acy.univ-smb.fr",
+  "author": "Maxime GALLOTTA",
+  "email": "maxime@gallotta.fr",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:staging": "vite build --mode staging",
     "preview": "vite preview"
   },
   "dependencies": {
