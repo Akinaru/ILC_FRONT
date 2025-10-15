@@ -5,7 +5,7 @@ import { addAlert } from './composables/addAlert';
 import { ref } from 'vue';
 import config from './config';
 import { request } from './composables/httpRequest';
-
+import appVersion from './composables/version';
 
 
 const requireAccess = (accessLevel) => (to, from, next) => {
@@ -283,8 +283,13 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // Mettez à jour le titre de la page
-    const title = typeof to.meta.title === 'function' ? to.meta.title(to) : to.meta.title;
-    document.title = `ILC - ${title || to.name}`;
+    const envTag = (() => {
+    const label = (appVersion.split('-').pop() || '').toUpperCase()
+    return label && label !== 'PRODUCTION' ? `(${label}) ` : ''
+    })()
+
+    const title = typeof to.meta.title === 'function' ? to.meta.title(to) : to.meta.title
+    document.title = `${envTag}ILC - ${title || to.name}`
     
     next();
 });
