@@ -87,3 +87,143 @@ npm run build:staging
 ```-
 npm run build
 ```
+
+---
+
+## 📦 Compléments
+
+> Cette section complète la documentation existante pour une reprise par un autre développeur, sans remplacer les parties ci-dessus.
+
+### 1) Structure globale à transmettre
+
+- Repo front : `ILC_FRONT` (Vue 3 + Vite + Pinia + Tailwind + PrimeVue).
+- Repo back : `ILC_BACK` (Laravel 10 + Sanctum + phpCAS + MySQL).
+- Le front consomme l’API Laravel via `VITE_API_URL`.
+- Le front est en `hash routing` (`createWebHashHistory`) et build avec `base: './'` (déploiement compatible sous-répertoire).
+
+### 2) Prérequis techniques
+
+- Front
+  - Node.js (recommandé LTS 18+ ou 20+)
+  - npm
+- Back
+  - PHP `^8.1` (composer.json)
+  - Composer
+  - MySQL
+  - Extensions PHP usuelles Laravel + `ldap` (utilisée par `ldap.php`)
+
+### 3) Configuration des environnements
+
+#### Front (`ILC_FRONT`)
+
+Fichiers fournis :
+- `.env.example` (local)
+- `.env.staging.example` (préprod)
+- `.env.production.example` (prod)
+
+Variables utilisées :
+- `VITE_API_URL`
+- `VITE_ALERT_TIME`
+
+Exemples :
+- Local : `VITE_API_URL=http://localhost:8000/`
+- Préprod : `VITE_API_URL=https://ilc.iut-acy.univ-smb.fr/preprod/BACK/`
+- Prod : `VITE_API_URL=https://ilc.iut-acy.univ-smb.fr/BACK/`
+
+#### Back (`ILC_BACK`)
+
+Fichiers fournis :
+- `.env.example`
+- `.env.staging.example`
+- `.env.production.example`
+
+Variables clés :
+- `APP_ENV`, `APP_URL`
+- `DB_*`
+- `ADMIN_PASSWORD` (connexion admin locale via `cas.php`)
+
+Important :
+- Le back utilise aussi le fichier racine `.version` pour exposer une version de type `<version>-<APP_ENV>`.
+
+### 4) Démarrage local complet
+
+#### Back
+
+```bash
+cd ILC_BACK
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan serve
+```
+
+API locale : `http://localhost:8000/`
+
+#### Front
+
+```bash
+cd ILC_FRONT
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Front local : `http://localhost:5173/`
+
+### 5) Base de données : point critique de reprise
+
+- Le code métier manipule des tables legacy (`t_e_*`, `t_j_*`) via les modèles Eloquent.
+- Les migrations présentes dans `database/migrations` ne couvrent que les tables Laravel de base (users, tokens, sessions, etc.), pas le schéma métier complet.
+- Pour une reprise fonctionnelle, transmettre aussi :
+  - un dump SQL du schéma métier
+  - un jeu de données minimum (ou dump anonymisé) pour dev/test
+  - la procédure d’import DB utilisée dans votre infra
+
+### 6) Authentification et accès
+
+- Prod/préprod :
+  - Auth CAS via `ILC_BACK/cas.php`
+  - Le front lance le flow CAS puis récupère le login et appelle `POST /api/login` pour obtenir un token Sanctum
+- Local/admin :
+  - Page front `/#/admin`
+  - Redirection vers `cas.php?admin=true`
+  - Login local admin actuellement codé en dur côté `cas.php` (username + vérification de `ADMIN_PASSWORD`)
+
+Rôles API :
+- `admin` (accès complet)
+- `chefdept`
+- étudiant / utilisateur standard
+
+Middleware principal :
+- `auth:sanctum`
+- `role:admin` / `role:chefdept`
+
+### 7) Endpoints/diagnostic utiles pour reprise
+
+- Voir les routes : `php artisan route:list`
+- Logs Laravel : `storage/logs/laravel.log`
+- Nettoyage cache config/routes/views :
+  - `php artisan optimize:clear`
+- Vérifier CORS : `config/cors.php` (actuellement `allowed_origins: ['*']`)
+
+### 8) Build et déploiement
+
+#### Front
+
+- Préprod : `npm run build:staging`
+- Prod : `npm run build`
+
+Le résultat est dans `ILC_FRONT/dist`.
+
+#### Back
+
+Étapes Laravel standard :
+- `composer install --no-dev --optimize-autoloader`
+- config du `.env` cible
+- `php artisan key:generate` (si nécessaire)
+- `php artisan optimize`
+
+### 9) Sécurité / dette technique à transmettre explicitement
+
+- `ILC_BACK/ldap.php` contient une connexion LDAP en clair (hôte + bind) : à externaliser dans `.env`.
+- `ILC_BACK/cas.php` contient des paramètres CAS et une logique admin locale spécifiques au contexte actuel.
