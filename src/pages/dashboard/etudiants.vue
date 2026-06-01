@@ -563,7 +563,7 @@
                       <span class="ml-1">:</span>
                     </h2>
                     <div class="badge badge-neutral mt-1">
-                      {{ filteredEtudiants.length }} résultat{{ filteredEtudiants.length > 1 ? 's' : '' }}
+                      {{ allFilteredStudents.length }} résultat{{ filteredEtudiants.length > 1 ? 's' : '' }}
                     </div>
                   </div>
                   
@@ -876,6 +876,7 @@
   const currentPage = ref(1);
   const perPage = ref(18);
   const lastPage = ref(1);
+  const allFilteredStudents = ref([]);
 
   const STORAGE_PREFIX = 'students_dashboard';
   const STORAGE_KEYS = {
@@ -967,6 +968,8 @@
     await request('GET', false, etudiants, `${config.apiUrl}api/account/studentsFiltered?${params.toString()}`);
     lastPage.value = etudiants.value.last_page;
     currentPage.value = etudiants.value.current_page;
+
+    allFilteredStudents.value = etudiants.value.all_acc;
 
     // Si la page sauvegardée dépasse le total (ex: filtres plus restrictifs)
     if (currentPage.value > lastPage.value) {
@@ -1086,7 +1089,7 @@ function extractDestinations() {
         await request('GET', false, components, config.apiUrl + 'api/component');
 
         const currentYear = new Date().getFullYear();
-        for (let i = 0; i < 4; i++) {
+        for (let i = -1; i < 4; i++) {
             const startYear = currentYear + i;
             const endYear = startYear + 1;
             anneesmobilite.value.push(`${startYear}-${endYear}`);
@@ -1134,7 +1137,9 @@ function extractDestinations() {
     }
 
 const exportUrl = computed(() => {
-    const ids = filteredEtudiants.value.map(etu => etu.acc_id);
+
+    //const ids = filteredEtudiants.value.map(etu => etu.acc_id);
+    const ids = allFilteredStudents.value.map(etu => etu.acc_id);
     const queryString = new URLSearchParams({ ids: JSON.stringify(ids) }).toString();
     return `${config.apiUrl}api/account/export?${queryString}`;
 });

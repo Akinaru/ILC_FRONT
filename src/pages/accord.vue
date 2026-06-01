@@ -129,6 +129,15 @@
               {{ accord.agreement.agree_description }}
             </div>
 
+            <!-- PIECES JOINTES -->
+
+            <p style="font-weight: bold; font-size: larger;">Pièces jointes :</p>
+            <br>
+            <p v-if="univDoc.count == 0 && agreeDoc.count == 0">Aucune pièce jointe</p>
+            <p v-for="(document, index) in univDoc.documents" @click="openDocumentArticleInNewTab(document)" style="cursor: pointer; text-decoration: underline; color: oklch(0.4912 0.3096 275.75); width: fit-content;">{{ document.doc_name }}</p>
+            <p v-for="(document, index) in agreeDoc.documents" @click="openDocumentArticleInNewTab(document)" style="cursor: pointer; text-decoration: underline; color: oklch(0.4912 0.3096 275.75); width: fit-content;">{{ document.doc_name }}</p>
+        
+
             <!-- Lien externe -->
             <a
               v-if="accord.agreement?.agree_lien"
@@ -273,22 +282,16 @@ const account = ref([]);
 const favoris = ref([]);
 const response = ref([]);
 
+const agreeDoc = ref([]);
+const univDoc = ref([]);
+
 async function fetchAll() {
   isLoaded.value = false;
-  await request(
-    "GET",
-    false,
-    accord,
-    config.apiUrl + "api/agreement/getbyid/" + route.params.agree_id
-  );
+  await request( "GET", false, accord, config.apiUrl + "api/agreement/getbyid/" + route.params.agree_id);
+
   const requestData = {};
   if (accountStore.isLogged()) {
-    await request(
-      "GET",
-      false,
-      favoris,
-      config.apiUrl + "api/favoris/me"
-    );
+    await request( "GET", false, favoris, config.apiUrl + "api/favoris/me");
     requestData.dept_id = accountStore.department
       ? accountStore.department.dept_id
       : null;
@@ -317,7 +320,14 @@ async function fetchAll() {
   }])`;
 
   isLoaded.value = true;
+
+  await request('GET', false, univDoc, config.apiUrl+'api/documents/university/' + accord.value.agreement.university.univ_id);
+  await request('GET', false, agreeDoc, config.apiUrl+'api/documents/agreement/' + accord.value.agreement.agree_id);
+
+  console.log(univDoc);
+  console.log(agreeDoc);
 }
+
 function isFavorited(agree_id) {
   return favoris.value.favoris.some((favori) => favori.agree_id === agree_id);
 }
@@ -385,4 +395,25 @@ const animationWidth = computed(() => {
   // Ajuste la largeur en fonction de la taille de l'écran, avec une largeur minimale et maximale
   return Math.min(Math.max(screenWidth.value * 0.6, 200), 500);
 });
+
+//Visualiser ou télécharger les documents de l'article
+  function openDocumentArticleInNewTab(doc) {
+  
+    // Construire l'URL complète pour accéder au fichier
+    const fileUrl = config.apiUrl + `api/documents/get/${doc.doc_id}`;
+    let fileName = doc.doc_name;
+
+    // Ouvrir le fichier dans un nouvel onglet si c'est un PDF
+    if (fileName.toLowerCase().endsWith('.pdf')) {
+      window.open(fileUrl, '_blank');
+    } else {
+      // Si ce n'est pas un PDF, forcer le téléchargement du fichier
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = fileName;  // Propose le téléchargement avec le nom du fichier
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
 </script>

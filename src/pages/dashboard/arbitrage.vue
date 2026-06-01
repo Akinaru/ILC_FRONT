@@ -794,10 +794,11 @@
                   v-for="(place, placeIndex) in getNumberOfPlace(arbitrage.agreement.agree_id)"
                   :key="'place-' + placeIndex"
                   :id="'drop_' + arbitrage.agreement.agree_id + '_' + placeIndex"
-                  class="dropZones bg-base-100 shadow-md rounded-lg border-l-4 relative h-20 w-72 flex items-center justify-between px-4 overflow-hidden transition-all"
+                  class="dropZones bg-base-100 shadow-md rounded-lg border-l-4 relative h-20 w-72 flex items-center justify-between px-4 overflow-hidden transition-all group"
                   :style="{
                     borderColor: arbitrage.accounts[placeIndex]?.account?.department?.dept_color || '#cccccc',
-                    opacity: arbitrage.accounts[placeIndex]?.account?.acc_arbitragefait ? 0.5 : 1
+                    opacity: arbitrage.accounts[placeIndex]?.account?.acc_arbitragefait ? 0.5 : 1,
+                    backgroundColor: getPlacePretee(arbitrage.agreement.agree_id, placeIndex) ? '#eeeeee' : '#ffffff'
                   }"
                 >
                   <!-- Étudiant placé -->
@@ -840,13 +841,39 @@
                     </div>
                   </div>
 
+                  <div v-else-if="getPlacePretee(arbitrage.agreement.agree_id, placeIndex)">
+                    <p>Prêt {{getPlacePretee(arbitrage.agreement.agree_id, placeIndex).component.comp_shortname}}</p>
+                  </div>
+
                   <!-- Vide -->
-                  <p v-else class="text-sm italic text-gray-400">Aucun étudiant</p>
+                  <div v-else>
+                    <p class="text-sm italic text-gray-400">Aucun étudiant</p>
+                    <div
+                      class="absolute inset-0 bg-base-300/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    >
+                      <label for="modal_pret" @click="createPret(arbitrage.agreement.agree_id,placeIndex)" class="btn btn-sm btn-ghost font-medium relative">
+                        Prêter place
+                        <span
+                          class="absolute inset-x-0 bottom-0 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+                        ></span>
+                      </label>
+                    </div>
+                  </div>
 
                   <!-- Bouton de suppression (seulement si non arbitré) -->
                   <button
                     v-if="arbitrage.accounts[placeIndex] && arbitrage.accounts[placeIndex].account && !arbitrage.accounts[placeIndex].account.acc_arbitragefait"
                     @click="removeEtuFromPlace(arbitrage.agreement.agree_id, placeIndex)"
+                    class="absolute top-1 right-1 btn btn-xs btn-circle btn-ghost text-error hover:bg-error hover:text-white"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <button
+                    v-if="getPlacePretee(arbitrage.agreement.agree_id, placeIndex)"
+                    @click="deletePret(getPlacePretee(arbitrage.agreement.agree_id, placeIndex))"
                     class="absolute top-1 right-1 btn btn-xs btn-circle btn-ghost text-error hover:bg-error hover:text-white"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -1048,6 +1075,49 @@
   <div v-else>
     <LoadingComp></LoadingComp>
   </div>
+
+  <!-- Modal de prêt de place -->
+  <Teleport to="body">
+    <input type="checkbox" id="modal_pret" class="modal-toggle" />
+    <div class="modal" role="dialog">
+      <div class="modal-box w-11/12 max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+        <h3 class="text-xl font-bold">Prêter une place</h3>
+        <p class="text-sm text-base-content/70 mt-1">Choisissez une composante à qui prêter la place.</p>
+        <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+        
+        <div class="border border-base-300 rounded-lg max-h-96 overflow-y-auto">
+        <div class="bg-base-200 p-2 sticky top-0 z-10">
+          <input type="text" placeholder="Rechercher une composante..." class="input input-sm w-full" />
+        </div>
+
+        <div class="p-2 space-y-2">
+          <div v-for="(component, index) in components.components" :key="index"
+               @click="setComposantePret(component.comp_id)"
+               :class="['bg-base-100 rounded-lg p-3 cursor-pointer hover:bg-base-200 transition-all', 
+                        newPret?.comp_id === component.comp_id ? 'border-l-4 border-primary' : 'opacity-75']">
+            <div class="flex items-center gap-3">
+              <div class="flex-1">
+                <div class="font-bold">{{ component.comp_name}}</div>
+                <div class="text-sm text-base-content/70">{{ component.comp_shortname }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <form @submit.prevent="confirmPret()" class="mt-6">
+        <div class="modal-action">
+          <label for="modal_pret" @click="cancelPret" class="btn btn-ghost">Annuler</label>
+          <button type="submit">
+            <label for="modal_pret" class="btn btn-primary">Prêter</label>
+          </button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </Teleport>
+
 </template>
 
 <script setup>
@@ -1091,6 +1161,9 @@ const localArbitrage = ref([]);
 
 const archivageEnCours = ref(false);
 
+const prets = ref([]);
+const newPret = ref([]);
+
 const voeuxNoms = [
   { val: 0, name: "Aucun voeux" },
   { val: 1, name: "1 voeu" },
@@ -1130,20 +1203,11 @@ async function fetch() {
   await request("GET", false, accords, config.apiUrl + "api/agreement");
   await request("GET", false, university, config.apiUrl + "api/university");
   await request("GET", false, components, config.apiUrl + "api/component");
-  await request(
-    "GET",
-    false,
-    partnercountry,
-    config.apiUrl + "api/partnercountry"
-  );
+  await request("GET", false, partnercountry, config.apiUrl + "api/partnercountry");
   await request("GET", false, isceds, config.apiUrl + "api/isced");
-  await request(
-    "GET",
-    false,
-    etudiants,
-    config.apiUrl + "api/account/students/actuel"
-  );
+  await request("GET", false, etudiants, config.apiUrl + "api/account/students/actuel");
   await request("GET", false, arbitrage, config.apiUrl + "api/arbitrage/actuel");
+  await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
   const currentYear = new Date().getFullYear();
 
   for (let i = 0; i < 4; i++) {
@@ -1946,6 +2010,59 @@ function deselectAllArbitrage() {
 function deselectAllUniversity() {
   selectedUniversity.value = [];
 }
+
+function createPret(agreeId, placeNum){
+  newPret.value.agree_id = agreeId;
+  newPret.value.pplace_pos = placeNum;
+  newPret.value.comp_id = null;
+}
+
+function setComposantePret(compId){
+  newPret.value.comp_id = compId;
+}
+
+function cancelPret(){
+  newPret.value.agree_id = null;
+  newPret.value.pplace_pos = null;
+  newPret.value.comp_id = null;
+}
+
+async function confirmPret(){
+  const requestData = {
+    comp_id: newPret.value.comp_id,
+    agree_id: newPret.value.agree_id,
+    pplace_pos: newPret.value.pplace_pos
+  }
+
+  let currentComp;
+
+  components.value.components.forEach((element) => {
+    if(element.comp_id === newPret.value.comp_id) currentComp = element.comp_shortname;
+  });
+
+  console.log(requestData);
+  await request('POST', true, response, config.apiUrl+'api/arbitrage/pret', requestData);
+  if (response.value.status === 200) {
+    addAction(accountStore.account.acc_id, "arbitrage", response, 'Session d\'une place de l\'accord '+ newPret.value.agree_id +' à '+ currentComp +'.');
+    await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
+  }
+}
+
+function getPlacePretee(agreeId, placeNum){
+  return prets.value.find((pret) => {
+      return pret.pplace_pos === placeNum && pret.agree_id === agreeId;
+    });
+}
+
+async function deletePret(pret){
+  await request('DELETE', true, response, config.apiUrl+'api/arbitrage/pret/'+pret.pplace_id);
+  if (response.value.status === 200) {
+    addAction(accountStore.account.acc_id, "arbitrage", response, 'Annulation prêt d\'une place de l\'accord '+ pret.agree_id +' à '+ pret.component.comp_shortname +'.');
+    await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
+    console.log(getPlacePretee(pret.agree_id, pret.pplace_pos));
+  }
+}
+
 onMounted(fetch);
 </script>
 

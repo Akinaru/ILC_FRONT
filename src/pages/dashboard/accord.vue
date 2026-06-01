@@ -501,11 +501,11 @@
 
                 <!-- Liste -->
                 <div>
-                    <div v-if="filteredAccords.length > 0" class="grid gap-6">
+                  <div v-if="filteredAccords.length > 0" class="grid gap-6">
                     <div
-                        v-for="(accord, indexAccord) in filteredAccords"
-                        :key="indexAccord"
-                        class="bg-base-100 shadow-md rounded-xl p-5 border border-base-300"
+                      v-for="(accord, indexAccord) in filteredAccords"
+                      :key="indexAccord"
+                      class="bg-base-100 shadow-md rounded-xl p-5 border border-base-300"
                     >
                       <!-- En-tête Accord -->
                       <div class="flex items-start gap-4 mb-3">
@@ -570,62 +570,73 @@
                       </div>
 
                       <!-- Départements -->
-                      <div class="mt-4">
-                        <p class="text-sm font-medium mb-1">Départements :</p>
-                        <div class="flex flex-wrap gap-2">
-                          <div
+                      <div class="mt-4 justify-between flex">
+                        <div>
+                          <p class="text-sm font-medium mb-1">Départements :</p>
+                          <div class="flex flex-wrap gap-2">
+                            <div
                               v-for="(dept, indexDept) in accord.departments"
                               :key="indexDept"
                               class="flex items-center gap-2 px-2 py-1 rounded select-none"
                               :class="{ 'opacity-50': dept.pivot?.deptagree_valide === 0 }"
                               :style="{ backgroundColor: dept.dept_color || '#ddd' }"
                               :data-tip="(dept.pivot?.deptagree_valide === 0 ? '(INVISIBLE) ' : '') + dept.dept_name"
-                          >
-                            <span class="font-bold text-xs">{{ dept.dept_shortname }}</span>
-                            <!-- Œil (visibilité) -->
-                            <button class="hover:opacity-60 hover:cursor-pointer flex items-center justify-center ml-2"
-                                    @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot?.deptagree_valide, dept.dept_shortname)">
-                              <svg v-if="dept.pivot?.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
-                                   version="1.1" viewBox="0 0 488.85 488.85">
-                                <g>
-                                  <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1
-               c62.5,83.1,147.2,134.2,240.6,134.2s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1
-               C422.525,149.825,337.825,98.725,244.425,98.725z
-               M251.125,347.025c-62,3.9-113.2-47.2-109.3-109.3
-               c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
-               C343.725,302.225,302.225,343.725,251.125,347.025z
-               M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8
-               c1.7-27.6,24.1-49.9,51.7-51.7c33.4-2.1,61,25.4,58.8,58.8
-               C297.925,275.625,275.525,297.925,248.025,299.625z"/>
-                                </g>
-                              </svg>
-                              <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" viewBox="0 0 488.85 488.85">
-                                <g>
-                                  <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1
-               c62.5,83.1,147.2,134.2,240.6,134.2s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1
-               C422.525,149.825,337.825,98.725,244.425,98.725z
-               M251.125,347.025c-62,3.9-113.2-47.2-109.3-109.3
-               c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
-               C343.725,302.225,302.225,343.725,251.125,347.025z
-               M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8
-               c1.7-27.6,24.1-49.9,51.7-51.7c33.4-2.1,61,25.4,58.8,58.8
-               C297.925,275.625,275.525,297.925,248.025,299.625z"/>
-                                  <line x1="100" y1="100" x2="400" y2="400" style="stroke:currentColor;stroke-width:40"/>
-                                </g>
-                              </svg>
-                            </button>
+                            >
+                              <span class="font-bold text-xs">{{ dept.dept_shortname }}</span>
+                              <!-- Œil (visibilité) -->
+                              <button class="hover:opacity-60 hover:cursor-pointer flex items-center justify-center ml-2"
+                                @click="changeVisibility(accord.agree_id, dept.dept_id, dept.pivot?.deptagree_valide, dept.dept_shortname)">
+                                <svg v-if="dept.pivot?.deptagree_valide === 1" class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px"
+                                  version="1.1" viewBox="0 0 488.85 488.85">
+                                  <g>
+                                    <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1
+                                      c62.5,83.1,147.2,134.2,240.6,134.2s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1
+                                      C422.525,149.825,337.825,98.725,244.425,98.725z
+                                      M251.125,347.025c-62,3.9-113.2-47.2-109.3-109.3
+                                      c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
+                                      C343.725,302.225,302.225,343.725,251.125,347.025z
+                                      M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8
+                                      c1.7-27.6,24.1-49.9,51.7-51.7c33.4-2.1,61,25.4,58.8,58.8
+                                      C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                  </g>
+                                </svg>
+                                <svg v-else class="stroke-current shrink-0 h-5 w-5" fill="currentColor" height="24px" width="24px" viewBox="0 0 488.85 488.85">
+                                  <g>
+                                    <path d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1
+                                      c62.5,83.1,147.2,134.2,240.6,134.2s178.1-51.1,240.6-134.1c5.1-6.8,5.1-16.3,0-23.1
+                                      C422.525,149.825,337.825,98.725,244.425,98.725z
+                                      M251.125,347.025c-62,3.9-113.2-47.2-109.3-109.3
+                                      c3.2-51.2,44.7-92.7,95.9-95.9c62-3.9,113.2,47.2,109.3,109.3
+                                      C343.725,302.225,302.225,343.725,251.125,347.025z
+                                      M248.025,299.625c-33.4,2.1-61-25.4-58.8-58.8
+                                      c1.7-27.6,24.1-49.9,51.7-51.7c33.4-2.1,61,25.4,58.8,58.8
+                                      C297.925,275.625,275.525,297.925,248.025,299.625z"/>
+                                    <line x1="100" y1="100" x2="400" y2="400" style="stroke:currentColor;stroke-width:40"/>
+                                  </g>
+                                </svg>
+                              </button>
 
-                            <!-- Supprimer le département -->
-                            <button class="hover:opacity-60 hover:cursor-pointer  flex items-center justify-center ml-1"
-                                    @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                              </svg>
-                            </button>
+                              <!-- Supprimer le département -->
+                              <button class="hover:opacity-60 hover:cursor-pointer  flex items-center justify-center ml-1"
+                                @click="removeDeptFromAgreement(accord.agree_id, dept.dept_id)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                              </button>
+                            </div>
+                            <span class="bg-base-200 text-sm px-3 py-1 rounded hover:cursor-pointer hover:opacity-70" @click="showForm(accord.agree_id)">
+                              ➕ Ajouter un département
+                            </span>
                           </div>
-                          <span class="bg-base-200 text-sm px-3 py-1 rounded hover:cursor-pointer hover:opacity-70" @click="showForm(accord.agree_id)">
-          ➕ Ajouter un département
-        </span>
+                        </div>
+                        <div class="self-end">
+                          <label @click="modifAccordDocuments(accord)" for="modal_doc" class="hover:opacity-60 hover:cursor-pointer bg-base-300 flex items-center justify-center p-3 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" 
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 3.76196C11.6821 3.76196 11.3643 3.70213 11.0659 3.58246C10.3824 3.30825 9.44765 3 8.7 3C7.74623 3 6.48805 3.50164 5.83514 3.79431C5.54597 3.92393 5.23384 3.99513 4.91731 4.01038C3.35289 4.0857 3 4.59602 3 6.39995V18.6C3 20.4039 3.35289 20.9142 4.91729 20.9896C5.23383 21.0048 5.54598 20.924 5.83516 20.7943C6.48807 20.5017 7.74624 20 8.7 20C9.44764 20 10.3823 20.3083 11.0659 20.5825C11.3642 20.7022 11.6821 20.762 12 20.762V3.76196Z"/> 
+                            <path d="M3 6.39995C3 4.59602 3.35289 4.0857 4.91731 4.01038C5.23384 3.99513 5.54597 3.92393 5.83515 3.79431C6.48805 3.50164 7.74623 3 8.7 3C9.44765 3 10.3824 3.30825 11.0659 3.58246C11.6626 3.8218 12.3374 3.8218 12.9341 3.58246C13.6176 3.30825 14.5523 3 15.3 3C16.2538 3 17.512 3.50164 18.1649 3.79431C18.454 3.92393 18.7662 3.99513 19.0827 4.01038C20.6471 4.0857 21 4.59602 21 6.39995V18.6C21 20.4039 20.6471 20.9142 19.0827 20.9896C18.7662 21.0048 18.454 20.924 18.1648 20.7943C17.5119 20.5017 16.2538 20 15.3 20C14.5524 20 13.6177 20.3083 12.9341 20.5825C12.3374 20.8218 11.6626 20.8218 11.0659 20.5825C10.3823 20.3083 9.44764 20 8.7 20C7.74624 20 6.48807 20.5017 5.83516 20.7943C5.54598 20.924 5.23383 21.0048 4.91729 20.9896C3.35289 20.9142 3 20.4039 3 18.6V6.39995Z" stroke="#323232" stroke-width="2"/>
+                          </svg>
+                          </label>
                         </div>
                       </div>
 
@@ -653,9 +664,9 @@
                     </div>
                   </div>
                 
-                    <div v-else>
-                        <p class="text-center py-20">Aucun accord trouvé.</p>
-                    </div>
+                  <div v-else>
+                    <p class="text-center py-20">Aucun accord trouvé.</p>
+                  </div>
                 </div>
 
                 <!-- MODAL CONFIRMATION SUPPRESSION TOUS LES ACCORDS -->
@@ -844,6 +855,83 @@
                   </dialog>
                 </Teleport>
 
+                <!-- MODAL GESTION DOCUMENTS ACCORD -->
+                <Teleport to="body">
+                  <input type="checkbox" id="modal_doc" class="modal-toggle" />
+                  <div class="modal" role="dialog">
+                    <div class="modal-box max-w-full w-150 rounded-2xl border border-base-300 shadow-xl">
+                      <h3 class="text-xl font-bold">Modification de l'accord n° {{ currentAccordModif.agree_id }}</h3>
+                      <p class="text-sm text-base-content/70 mt-2">Modifiez les documents liées à cet accord d’échange.</p>
+                      <div class="w-full h-px bg-gradient-to-r from-primary/30 via-primary/20 to-transparent my-4"></div>
+
+                      <!-- Documents de l'université -->
+                      <div class="bg-base-300 h-300 w-full select-none rounded-md">
+                        <h4 class="mb-2 font-bold">Documents de l'université</h4>
+                        <div class="flex items-center justify-center mb-2">
+                          <span class="tooltip mr-2" :data-tip="currentAccordModif?.partnercountry?.parco_name || 'Introuvable'">
+                            <span class="relative inline-block">
+                              <span class="fi text-5xl" :class="'fi-' + (currentAccordModif?.partnercountry?.parco_code || '')"></span>
+                              <template v-if="!currentAccordModif?.partnercountry?.parco_code">
+                                <span class="absolute inset-0 flex items-center justify-center text-black text-2xl font-bold bg-white">?</span>
+                              </template>
+                            </span>
+                          </span>
+                          <div class="flex flex-col w-full">
+                            <p><strong>{{ currentAccordModif?.university?.univ_name || 'Université indisponible' }}</strong> à {{ currentAccordModif?.university?.univ_city || 'Ville indisponible' }} ({{ currentAccordModif?.partnercountry?.parco_name || 'Pays indisponible' }})</p>
+                            <p>[{{ currentAccordModif?.isced?.isc_code || 'Code ISCED non disponible' }} - {{ currentAccordModif?.isced?.isc_name || 'Nom ISCED non disponible' }}] Composante: {{ currentAccordModif?.component?.comp_name || 'Indisponible' }}</p>
+                          </div>
+                        </div>
+                      
+                        <div class="flex items-center justify-center">
+                          <select v-model="modifiedArticleFiles" class="select select-bordered w-5/6 select-primary mb-2" id="file_select" multiple>
+                          <div v-for="(document, index) in currentAgreeUnivDoc.documents" class="flex justify-between">
+                            <p>{{ document.doc_name }}</p>
+                          </div> 
+                        </select>
+                        </div>
+                      </div>
+
+                      <!-- Formulaire -->
+                      <form @submit.prevent="addDocuments" class="space-y-4" enctype="multipart/form-data">
+                        <!--Formulaire rajouté pour ajout de documents-->
+                        <p class="font-semibold text-md mb-2 text-start w-full pt-3 pl-3">Importer de nouveaux fichiers</p>
+                        <div class="flex w-full">
+                            <input type="file" accept=".pdf, .xls, .xlsx, .pptx, .docx, .odt" @change="handleFileInputChangeDocument($event)" class="file-input file-input-bordered min-w-2xl w-full" id="file_add" multiple/>
+                        </div>
+
+                        <p class="text-md mb-2 text-start w-full pt-3 pl-3">Nouveaux documents importés / documents à écraser : </p>
+                        <div class="w-full mb-4 pl-3">
+                            <span v-for="file in recapNewDoc">{{ file }}, </span>
+                        </div>
+
+                        <p class="font-semibold text-md mb-2 text-start w-full pt-3 pl-3">Fichiers de l'accord : </p>
+                        <select v-model="modifiedArticleFiles" class="select select-bordered w-full select-primary h-200px" id="file_select" multiple>
+                          <div v-for="(document, index) in currentAgreeDoc.documents" class="flex justify-between">
+                            <p>{{ document.doc_name }}</p>
+                            
+                            <button
+                              @click="deleteDocument(document)" type="button"
+                              class="btn btn-xs btn-circle btn-ghost text-error hover:bg-error hover:text-white"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+
+                          </div> 
+                        </select>
+
+                        <div class="modal-action mt-6">
+                          <label for="modal_doc" class="btn btn-ghost" @click="resetModifDocuments">Retour</label>
+                          <button type="submit">
+                            <label for="" class="btn btn-primary">Modifier documents</label>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </Teleport>
+
             </div>
             
         </div>
@@ -852,68 +940,72 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, computed, nextTick, watch  } from 'vue';
-    import config from '../../config'
-    import { request } from '../../composables/httpRequest';
-    import { useAccountStore } from '../../stores/accountStore';
-    import { addAlert } from '../../composables/addAlert';
-    import LoadingComp from '../../components/utils/LoadingComp.vue';
-    import ImportAccordComp from '../../components/impexp/ImportAccordComp.vue';
-    import ExportComp from '../../components/impexp/ExportComp.vue';
-    import { addAction } from '../../composables/actionType';
-    const accountStore = useAccountStore();
-    const response = ref([]);
+  import { ref, onMounted, computed, nextTick, watch  } from 'vue';
+  import config from '../../config'
+  import { request } from '../../composables/httpRequest';
+  import { useAccountStore } from '../../stores/accountStore';
+  import { addAlert } from '../../composables/addAlert';
+  import LoadingComp from '../../components/utils/LoadingComp.vue';
+  import ImportAccordComp from '../../components/impexp/ImportAccordComp.vue';
+  import ExportComp from '../../components/impexp/ExportComp.vue';
+  import { addAction } from '../../composables/actionType';
+  const accountStore = useAccountStore();
+  const response = ref([]);
 
-    
-    const accords = ref([]);
-    const selectedDepartments = ref([]);
-    const selectedComponent = ref([]);
-    const selectedCountries = ref([]);
-    const selectedUnknowns = ref([]);
+  const accords = ref([]);
+  const selectedDepartments = ref([]);
+  const selectedComponent = ref([]);
+  const selectedCountries = ref([]);
+  const selectedUnknowns = ref([]);
 
-    const currentAccordModif = ref([]);
+  const currentAccordModif = ref([]);
 
-    const confirmDeleteAccord = ref([])
-    
-    const exportModal = ref([])
-    const importFinalAccord = ref([])
-    const isConfirmDisabled = ref({
-        time: 0,
-        bool: true,
-        countdown: null
-    });
+  const confirmDeleteAccord = ref([])
+  
+  const exportModal = ref([])
+  const importFinalAccord = ref([])
+  const isConfirmDisabled = ref({
+    time: 0,
+    bool: true,
+    countdown: null
+  });
 
-    const isLoaded = ref(false)
-    const isceds = ref([]);
-    const composantes = ref([]);
-    const universites = ref([]);
-    const departments = ref([]);
-    const partnercountry = ref([]);
-    const newAgreement = ref({ 
-        isced: '', //Si addNew = nouveau isced
-        compo: '', //Si addNew = nouveau composante
-        univ: '', //Si addNew = nouveau univiserte
-        typeaccord: '',
-        nbplace: 0,
-        lien: null,
-        description: null,
+  const isLoaded = ref(false)
+  const isceds = ref([]);
+  const composantes = ref([]);
+  const universites = ref([]);
+  const departments = ref([]);
+  const partnercountry = ref([]);
+  const newAgreement = ref({ 
+    isced: '', //Si addNew = nouveau isced
+    compo: '', //Si addNew = nouveau composante
+    univ: '', //Si addNew = nouveau univiserte
+    typeaccord: '',
+    nbplace: 0,
+    lien: null,
+    description: null,
 
-        newisced: {code: 0, name: ''},
-        newcompo: {name: '', shortname: ''},
-        newuniv: {
-            partnercountry: '', //Si addNew = nouveau pays partenaire
-            name: '', 
-            city: '', 
-            newpartnercountry: '',
-            newpartnercountrycode: ''
-        },
-    });
-    const isOpen = ref({
-        pays: false,
-        departments: false,
-        component: false,
-        unknown: false,
-    });
+    newisced: {code: 0, name: ''},
+    newcompo: {name: '', shortname: ''},
+    newuniv: {
+      partnercountry: '', //Si addNew = nouveau pays partenaire
+      name: '', 
+      city: '', 
+      newpartnercountry: '',
+      newpartnercountrycode: ''
+    },
+  });
+  const isOpen = ref({
+    pays: false,
+    departments: false,
+    component: false,
+    unknown: false,
+  });
+
+  const currentAgreeDoc = ref([]);
+  const currentAgreeUnivDoc = ref([]);
+  const recapNewDoc = ref([]);
+  const newfiles = ref([]);
 
     function toggleCollapse(section) {
         isOpen.value[section] = !isOpen.value[section];
@@ -1453,10 +1545,83 @@
     watch(selectedCountries, saveFilters);
     watch(selectedUnknowns, saveFilters);
 
-    onMounted(() => {
-        fetchAll();
-        loadFilters();
+  onMounted(() => {
+    fetchAll();
+    loadFilters();
+  });
 
-    });
+  function resetModifDocuments(){
+    const fileadd = document.querySelector("#file_add");
+    fileadd.value = null;
+    recapNewDoc.value = [];
+    newfiles.value = [];
+  }
+
+  async function modifAccordDocuments(accord){
+    currentAccordModif.value = accord;
+
+    await request('GET', false, currentAgreeUnivDoc, config.apiUrl+'api/documents/university/' + accord.university.univ_id);
+    await request('GET', false, currentAgreeDoc, config.apiUrl+'api/documents/agreement/' + accord.agree_id);
+  }
+
+  const handleFileInputChangeDocument = (event) => {
+    //Récupère les fichiers sélectionnées par l'utilisateur
+    const filesadded = event.target.files;
+    recapNewDoc.value = [];
+
+    //Stocke les fichiers (créé un objet à chaque fois)
+    if (filesadded.count != 0) {
+      for (var i = 0; i < event.target.files.length; ++i) {
+        const file = event.target.files.item(i)
+        recapNewDoc.value.push(file.name);
+
+        newfiles.value[i] = {
+          file: file,
+          name: file.name,
+        };
+      }
+    } else {
+      newfiles.value = [];
+    }
+  };
+
+  // Ajout de deocuments
+  async function addDocuments(){
+    if(newfiles.value != null){ //Permet d'enregistrer de nouveaux documents et de les associer à l'univ
+      for(const doc of newfiles.value) {
+        try{
+          const formDataNewDoc = new FormData();
+          formDataNewDoc.append('file', doc.file);
+          formDataNewDoc.append('title', doc.name);
+          formDataNewDoc.append('folder', '/admin/agreement/agree_' + currentAccordModif.value.agree_id);
+          formDataNewDoc.append('agree_id', currentAccordModif.value.agree_id);
+
+          await request('POST', true, response, config.apiUrl + 'api/documents/agreement', formDataNewDoc)
+          if(response.value.status != 200) return;
+        } catch (error){
+          console.log("Erreur ajout document: "+error);
+        }
+      };
+      addAction(accountStore.account.acc_id, 'agreement', response, 'Ajout de documents à l\'accord '+ currentAccordModif.value.agree_id +'.');
+      await request('GET', false, currentAgreeDoc, config.apiUrl+'api/documents/agreement/' + currentAccordModif.value.agree_id);
+      const fileadd = document.querySelector("#file_add");
+      fileadd.value = null;
+      recapNewDoc.value = [];
+    }
+  }
+
+  async function deleteDocument(document){
+    const requestData = { 
+      agree_id: currentAccordModif.value.agree_id,
+      doc_id: document.doc_id,
+    };
+
+    await request('DELETE', true, response, config.apiUrl+'api/documents/agreement', requestData);
+    if(response.value.status == 200){
+      await request('GET', false, currentAgreeDoc, config.apiUrl+'api/documents/agreement/' + currentAccordModif.value.agree_id);
+      addAction(accountStore.account.acc_id, 'agreement', response, 'Supression d\'un document à l\'accord '+ currentAccordModif.value.agree_id +'.');
+    }
+    
+  }
 
 </script>

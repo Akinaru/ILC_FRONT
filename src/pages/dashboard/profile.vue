@@ -45,6 +45,11 @@
                       Modifier
                     </label>
                   </template>
+                  <template v-else>
+                    <label for="my_modal_dest" class="btn btn-sm btn-ghost text-[#ff0000]" @click="resetModif">
+                      Changer destination finale
+                    </label>
+                  </template>
                 </h2>
 
                 <div v-if="getFinalDestination(account)" class="mt-2">
@@ -548,14 +553,26 @@
       </div>
 
       <!-- Actions -->
-      <form @submit.prevent="confirmModifDest" class="mt-6">
-        <div class="modal-action">
-          <label for="my_modal_dest" @click="resetModifDest" class="btn btn-ghost">Annuler</label>
-          <button type="submit">
-            <label for="my_modal_dest" class="btn btn-primary">Enregistrer</label>
-          </button>
-        </div>
-      </form>
+      <template v-if="!account.destination">
+        <form @submit.prevent="confirmModifDest" class="mt-6">
+          <div class="modal-action">
+            <label for="my_modal_dest" @click="resetModifDest" class="btn btn-ghost">Annuler</label>
+            <button type="submit">
+              <label for="my_modal_dest" class="btn btn-primary">Enregistrer</label>
+            </button>
+          </div>
+        </form>
+      </template>
+      <template v-else>
+        <form @submit.prevent="modifFinalDest" class="mt-6">
+          <div class="modal-action">
+            <label for="my_modal_dest" @click="resetModifDest" class="btn btn-ghost">Annuler</label>
+            <button type="submit">
+              <label for="my_modal_dest" class="btn btn-primary bg-red">Modifier destination</label>
+            </button>
+          </div>
+        </form>
+      </template>
     </div>
   </div>
 </Teleport>
@@ -573,6 +590,7 @@
       <form @submit.prevent="confirmModifCompte" class="space-y-4">
         <!-- Tous les champs -->
         <label class="form-control w-full" v-for="(label, key) in {
+          acc_fullname : 'Identité',
           acc_mail: 'Mail',
           acc_studentnum: 'Numéro étudiant',
           acc_parcours: 'Parcours',
@@ -986,6 +1004,7 @@ async function openMyFileInNewTab(filePath) {
         }
         const requestData = {
             acc_id: account.value.acc_id,
+            acc_fullname: modifCompte.value.acc_fullname != null ? modifCompte.value.acc_fullname : "N/A",
             acc_studentnum: modifCompte.value.acc_studentnum != null ? modifCompte.value.acc_studentnum : 0,
             dept_id: modifCompte.value.dept_id != 'no_dept' ? modifCompte.value.dept_id : null,
             acc_anneemobilite: modifCompte.value.acc_anneemobilite != null ? modifCompte.value.acc_anneemobilite : null,
@@ -1022,17 +1041,38 @@ async function openMyFileInNewTab(filePath) {
         console.log(requestData)
         await request('PUT', true, response, config.apiUrl+'api/arbitrage', requestData);
         if (response.value.status === 200) {
-            
-            // Rafraîchir les données après l'ajout
             addAction(accountStore.account.acc_id, 'admin', response, 'Modification de la destination de '+ account.value.acc_fullname +'.');
         }
         await request('GET', false, destination, config.apiUrl + 'api/arbitrage/getbyid/'+account.value.acc_id);
+
+        // Rafraîchi les données de l'étudiant et "recalcule" sa destination finale
+        await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
+        await nextTick();
+        resetModif();
+        resetModifDest();
+    }
+
+    async function modifFinalDest(){
+      const requestData = {
+            acc_id: account.value.acc_id,
+            agree_id: selectedNewDestination.value.agree_id
+        }
+        console.log(requestData)
+        await request('PUT', true, response, config.apiUrl+'api/account/changefinaldest', requestData);
+        if (response.value.status === 200) {
+            addAction(accountStore.account.acc_id, 'admin', response, 'Modification de la destination finale de '+ account.value.acc_fullname +' suite à son archivage.');
+        }
+
+        // Rafraîchi les données de l'étudiant et "recalcule" sa destination finale
+        await request('GET', false, account, config.apiUrl+'api/account/getbylogin/'+acc_id);
+        getFinalDestination(account);
         await nextTick();
         resetModif();
         resetModifDest();
     }
 
     function resetModif(){
+        modifCompte.value.acc_fullname = account.value.acc_fullname;
         modifCompte.value.acc_studentnum = account.value.acc_studentnum;
         modifCompte.value.acc_mail = account.value.acc_mail;
         modifCompte.value.acc_toeic = account.value.acc_toeic;

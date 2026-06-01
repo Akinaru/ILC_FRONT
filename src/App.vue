@@ -79,7 +79,7 @@ async function checkUserLogin() {
 
 html, body {
   overscroll-behavior-y: contain; /* Empêche le scroll au-delà des limites de la page */
-  overflow-x: hidden; /* Empêche le scroll horizontal */
+  /* overflow-x: hidden; /* Empêche le scroll horizontal */
 }
 
 #content {
