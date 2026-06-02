@@ -351,7 +351,6 @@
         </dialog>
       </Teleport>
 
-
       <!-- MODAL GESTION DOCUMENTS UNIVERSITE -->
       <Teleport to="body">
         <input type="checkbox" id="modal_doc" class="modal-toggle" />
@@ -400,7 +399,6 @@
           </div>
         </div>
       </Teleport>
-
     </div>
     <LoadingComp v-else></LoadingComp>
   </div>
@@ -439,41 +437,37 @@
   const recapNewDoc = ref([]);
   const newfiles = ref([]);
 
-    // Méthode pour filtrer et trier les universités
-    const filteredUniversities = computed(() => {
-        return universites.value
-            .filter(univ => 
-                selectedCountries.value.length === 0 || 
-                selectedCountries.value.includes(univ.partnercountry.parco_name) // Filtre sur les pays sélectionnés
-            )
-            .sort((a, b) => {
-            // Premier niveau : tri par pays
-            const countryA = a.partnercountry.parco_name || '';
-            const countryB = b.partnercountry.parco_name || '';
+  // Méthode pour filtrer et trier les universités
+  const filteredUniversities = computed(() => {
+    return universites.value.filter(univ => 
+      selectedCountries.value.length === 0 || 
+      selectedCountries.value.includes(univ.partnercountry.parco_name) // Filtre sur les pays sélectionnés
+    )
+    .sort((a, b) => {
+      // Premier niveau : tri par pays
+      const countryA = a.partnercountry.parco_name || '';
+      const countryB = b.partnercountry.parco_name || '';
 
-            if (countryA !== countryB) {
-                return countryA.localeCompare(countryB);
-            }
+      if (countryA !== countryB) {
+        return countryA.localeCompare(countryB);
+      }
 
-            // Deuxième niveau : tri par université
-            const univA = a.univ_name || '';
-            const univB = b.univ_name || '';
-            return univA.localeCompare(univB);
-            });
+      // Deuxième niveau : tri par université
+      const univA = a.univ_name || '';
+      const univB = b.univ_name || '';
+      return univA.localeCompare(univB);
     });
+  });
 
+  const isOpen = ref({
+    pays: false,
+  });
 
-    const isOpen = ref({
-        pays: false,
-    });
+  function toggleCollapse(section) {
+    isOpen.value[section] = !isOpen.value[section];
+  }
 
-    function toggleCollapse(section) {
-        isOpen.value[section] = !isOpen.value[section];
-    }
-
-
-    
-    // Modal modif univ
+  // Modal modif univ
   function modifUniv(univ){
     currentUnivModif.value.univ_id = univ.univ_id || null;
     currentUnivModif.value.univ_name = univ.univ_name || null;
@@ -481,119 +475,116 @@
     currentUnivModif.value.parco_id = univ.partnercountry.parco_id || null;
   }
 
-    // Confirm modification univ
-    async function confirmModifUniv(){
-        const requestData = { 
-            univ_id: currentUnivModif.value.univ_id,
-            univ_name: currentUnivModif.value.univ_name,
-            univ_city: currentUnivModif.value.univ_city,
-            parco_id: currentUnivModif.value.parco_id,
+  // Confirm modification univ
+  async function confirmModifUniv(){
+    const requestData = { 
+      univ_id: currentUnivModif.value.univ_id,
+      univ_name: currentUnivModif.value.univ_name,
+      univ_city: currentUnivModif.value.univ_city,
+      parco_id: currentUnivModif.value.parco_id,
+    };
+    await request('PUT', true, response, config.apiUrl+'api/university', requestData);
+    if(response.value.status == 200){
+      addAction(accountStore.account.acc_id, 'university', response, 'Modification de l\'université '+requestData.univ_name+' (' + requestData.univ_city + ').');
+    }
+    fetchAll();
+  }
 
-        };
-        await request('PUT', true, response, config.apiUrl+'api/university', requestData);
-        if(response.value.status == 200){
-            addAction(accountStore.account.acc_id, 'university', response, 'Modification de l\'université '+requestData.univ_name+' (' + requestData.univ_city + ').');
-        }
-        fetchAll();
+  // Retourne le nombre d'unv lié à l'accord
+  function countAgreementsByUniv(univ_id) {
+    return accords.value.agreements.filter(agreement => 
+      agreement.university && agreement.university.univ_id === univ_id
+    ).length;
+  }
+
+  // Ajouter une université
+  async function addUniv() {
+
+    if (newUniv.value.univ_name == '') {
+      addAlert('error', { data: { error: 'Vous devez choisir un nom d\'université.', message: 'Ajout de l\'université annulé.' } });
+      return;
+    }
+    if (newUniv.value.univ_city == '') {
+      addAlert('error', { data: { error: 'Vous devez choisir un nom de ville.', message: 'Ajout de l\'université annulé.' } });
+      return;
     }
 
-    // Retourne le nombre d'unv lié à l'accord
-    function countAgreementsByUniv(univ_id) {
-        return accords.value.agreements.filter(agreement => 
-            agreement.university && agreement.university.univ_id === univ_id
-        ).length;
+    const requestData = { 
+      univ_name: newUniv.value.univ_name,
+      univ_city: newUniv.value.univ_city,
+    };
+
+
+    if (newUniv.value.parco_id == 'selectACountry') {
+      addAlert('error', { data: { error: 'Vous devez choisir un pays.', message: 'Ajout de l\'université annulé.' } });
+      return;
     }
 
-    // Ajouter une université
-    async function addUniv() {
-
-        if (newUniv.value.univ_name == '') {
-            addAlert('error', { data: { error: 'Vous devez choisir un nom d\'université.', message: 'Ajout de l\'université annulé.' } });
-            return;
-        }
-        if (newUniv.value.univ_city == '') {
-            addAlert('error', { data: { error: 'Vous devez choisir un nom de ville.', message: 'Ajout de l\'université annulé.' } });
-            return;
-        }
-
-        const requestData = { 
-            univ_name: newUniv.value.univ_name,
-            univ_city: newUniv.value.univ_city,
-        };
-
-
-        if (newUniv.value.parco_id == 'selectACountry') {
-            addAlert('error', { data: { error: 'Vous devez choisir un pays.', message: 'Ajout de l\'université annulé.' } });
-            return;
-        }
-
-        if(newUniv.value.parco_id == 'addNew'){
-            requestData.parco_name = newUniv.value.newparco.parco_name;
-            requestData.parco_code = newUniv.value.newparco.parco_code;
-            requestData.parco_id = `addNew`;
-        }else{
-            requestData.parco_id = `${newUniv.value.parco_id}`;
-        }
-        // Effectuer la requête POST pour ajouter l'accord
-        await request("POST", true, response, config.apiUrl + 'api/university', requestData);
-
-        // Vérification de la réponse et ajout d'une action si nécessaire
-        if (response.value.status === 201) {
-            
-            // Rafraîchir les données après l'ajout
-            await fetchAll();
-            addAction(accountStore.account.acc_id, 'university', response, 'Ajout de l\'université ' + requestData.univ_name + ' (' + requestData.univ_city + ').');
-        }
-
+    if(newUniv.value.parco_id == 'addNew'){
+      requestData.parco_name = newUniv.value.newparco.parco_name;
+      requestData.parco_code = newUniv.value.newparco.parco_code;
+      requestData.parco_id = `addNew`;
+    }else{
+      requestData.parco_id = `${newUniv.value.parco_id}`;
     }
 
-    // Supprimer une université
-    async function deleteUniv(univ_id, univ_name, univ_city){
-        await request('DELETE', true, response, config.apiUrl+'api/university/deletebyid/'+univ_id);
-        if(response.value.status == 202){
-            addAction(accountStore.account.acc_id, 'university', response, 'Suppression de l\'université '+univ_name+' (' + univ_city + ').');
-        }
-        fetchAll();
-        closeModal();
+    // Effectuer la requête POST pour ajouter l'accord
+    await request("POST", true, response, config.apiUrl + 'api/university', requestData);
 
+    // Vérification de la réponse et ajout d'une action si nécessaire
+    if (response.value.status === 201) {
+      // Rafraîchir les données après l'ajout
+      await fetchAll();
+      addAction(accountStore.account.acc_id, 'university', response, 'Ajout de l\'université ' + requestData.univ_name + ' (' + requestData.univ_city + ').');
     }
+  }
 
-    // Liste des accords concerné par l'univ qu'on supprime
-    const filteredAgreements = computed(() => {
-        return accords.value.agreements.filter(agreement => 
-            agreement.university && agreement.university.univ_id === confirmDeleteUniv.value.univ_id
-        );
-    });
+  // Supprimer une université
+  async function deleteUniv(univ_id, univ_name, univ_city){
+    await request('DELETE', true, response, config.apiUrl+'api/university/deletebyid/'+univ_id);
+    if(response.value.status == 202){
+      addAction(accountStore.account.acc_id, 'university', response, 'Suppression de l\'université '+univ_name+' (' + univ_city + ').');
+    }
+    fetchAll();
+    closeModal();
+  }
+
+  // Liste des accords concerné par l'univ qu'on supprime
+  const filteredAgreements = computed(() => {
+    return accords.value.agreements.filter(agreement => 
+      agreement.university && agreement.university.univ_id === confirmDeleteUniv.value.univ_id
+    );
+  });
     
-    // Fonction pour trouver le pays
-    function getCountryCode(pays) {
-        const country = partnercountry.value.find(country => country.parco_name === pays);
-        return country ? country.parco_code : 'Code non disponible';
-    }
+  // Fonction pour trouver le pays
+  function getCountryCode(pays) {
+    const country = partnercountry.value.find(country => country.parco_name === pays);
+    return country ? country.parco_code : 'Code non disponible';
+  }
 
-    //ouvrir le modal de confirmation de suppression
-    function openConfirmModal(univ) {
-    
+  //ouvrir le modal de confirmation de suppression
+  function openConfirmModal(univ) {
     confirmDeleteUniv.value = univ;
     const modal = document.getElementById('confirmModal')
     modal.showModal()
-    }
-    //Fermer le modal de confirmation de suppression
-    function closeModal() {
+  }
+
+  //Fermer le modal de confirmation de suppression
+  function closeModal() {
     const modal = document.getElementById('confirmModal')
     modal.close()
-    }
+  }
 
-    function resetInput(){
-        newUniv.value.univ_name = '',
-        newUniv.value.univ_city = '',
-        newUniv.value.parco_id = '',
-        newUniv.value.newparco = {
-            parco_name: '',
-            parco_code: ''
-        }
-        newUniv.value.parco_id = document.querySelector('#partnercountry_select').options[0].value;
+  function resetInput(){
+    newUniv.value.univ_name = '',
+    newUniv.value.univ_city = '',
+    newUniv.value.parco_id = '',
+    newUniv.value.newparco = {
+      parco_name: '',
+      parco_code: ''
     }
+    newUniv.value.parco_id = document.querySelector('#partnercountry_select').options[0].value;
+  }
 
 
   async function fetchAll(){

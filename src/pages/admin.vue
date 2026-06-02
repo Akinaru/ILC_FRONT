@@ -31,42 +31,42 @@
 </template>
 
 <script setup>
-import { useAccountStore } from '../stores/accountStore';
-import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
-import config from '../config';
-import { useRouter } from 'vue-router';
-import { request } from '../composables/httpRequest';
+  import { useAccountStore } from '../stores/accountStore';
+  import { storeToRefs } from 'pinia';
+  import { computed } from 'vue';
+  import config from '../config';
+  import { useRouter } from 'vue-router';
+  import { request } from '../composables/httpRequest';
 
-const router = useRouter();
-const accountStore = useAccountStore();
-const { logged } = storeToRefs(accountStore);
+  const router = useRouter();
+  const accountStore = useAccountStore();
+  const { logged } = storeToRefs(accountStore);
 
-const isUserLoggedIn = computed(() => logged.value);
-const currentUrl = window.location.href;
+  const isUserLoggedIn = computed(() => logged.value);
+  const currentUrl = window.location.href;
 
-function getCurrentURL() {
-  return window.location.href;
-}
-
-async function logout() {
-  try {
-    // Appel API Laravel logout (si nécessaire)
-    await request('POST', false, null, config.apiUrl + 'api/logout');
-  } catch (e) {
-    console.warn('Échec logout Laravel', e);
+  function getCurrentURL() {
+    return window.location.href;
   }
 
-  // Nettoyage local
-  localStorage.removeItem('login');
-  localStorage.removeItem('auth');
-  localStorage.removeItem('token');
+  async function logout() {
+    try {
+      // Appel API Laravel logout (si nécessaire)
+      await request('POST', false, null, config.apiUrl + 'api/logout');
+    } catch (e) {
+      console.warn('Échec logout Laravel', e);
+    }
 
-  // Déconnexion côté phpCAS (et admin fake)
-  window.open(config.apiUrl + 'cas.php?logout=true&redirect=' + encodeURIComponent(getCurrentURL()), '_blank');
+    // Nettoyage local
+    localStorage.removeItem('login');
+    localStorage.removeItem('auth');
+    localStorage.removeItem('token');
 
-  // Redirection frontend
-  accountStore.logoutAccount();
-  router.push({ name: 'Accueil' });
-}
+    // Déconnexion côté phpCAS (et admin fake)
+    window.open(config.apiUrl + 'cas.php?logout=true&redirect=' + encodeURIComponent(getCurrentURL()), '_blank');
+
+    // Redirection frontend
+    accountStore.logoutAccount();
+    router.push({ name: 'Accueil' });
+  }
 </script>

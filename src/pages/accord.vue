@@ -63,24 +63,14 @@
             </div>
 
             <!-- Informations université -->
-            <h2
-              class="card-title text-2xl md:text-3xl font-bold text-primary mb-2"
-            >
-              {{
-                accord.agreement?.university?.univ_name ||
-                "Université indisponible"
-              }}
+            <h2 class="card-title text-2xl md:text-3xl font-bold text-primary mb-2">
+              {{accord.agreement?.university?.univ_name || "Université indisponible"}}
             </h2>
             <p class="text-2xl mb-6">
-              {{
-                accord.agreement?.university?.univ_city || "Ville indisponible"
-              }}
-              <span class="font-semibold"
-                >({{
-                  accord.agreement?.partnercountry?.parco_name ||
-                  "Pays indisponible"
-                }})</span
-              >
+              {{accord.agreement?.university?.univ_city || "Ville indisponible"}}
+              <span class="font-semibold">
+                ({{accord.agreement?.partnercountry?.parco_name || "Pays indisponible"}})
+              </span>
             </p>
 
             <!-- Départements -->
@@ -109,16 +99,10 @@
             </div>
 
             <!-- ISCED code -->
-            <p
-              class="badge badge-secondary badge-outline p-4 font-semibold mb-6"
-            >
-              {{
-                accord.agreement?.isced?.isc_code || "Code ISCED indisponible"
-              }}
+            <p class="badge badge-secondary badge-outline p-4 font-semibold mb-6">
+              {{accord.agreement?.isced?.isc_code || "Code ISCED indisponible"}}
               -
-              {{
-                accord.agreement?.isced?.isc_name || "Nom ISCED indisponible"
-              }}
+              {{accord.agreement?.isced?.isc_name || "Nom ISCED indisponible"}}
             </p>
 
             <!-- Description -->
@@ -130,14 +114,12 @@
             </div>
 
             <!-- PIECES JOINTES -->
-
             <p style="font-weight: bold; font-size: larger;">Pièces jointes :</p>
             <br>
             <p v-if="univDoc.count == 0 && agreeDoc.count == 0">Aucune pièce jointe</p>
             <p v-for="(document, index) in univDoc.documents" @click="openDocumentArticleInNewTab(document)" style="cursor: pointer; text-decoration: underline; color: oklch(0.4912 0.3096 275.75); width: fit-content;">{{ document.doc_name }}</p>
             <p v-for="(document, index) in agreeDoc.documents" @click="openDocumentArticleInNewTab(document)" style="cursor: pointer; text-decoration: underline; color: oklch(0.4912 0.3096 275.75); width: fit-content;">{{ document.doc_name }}</p>
         
-
             <!-- Lien externe -->
             <a
               v-if="accord.agreement?.agree_lien"
@@ -227,8 +209,6 @@
                   Voir plus
                 </span>
               </div>
-
-
             </div>
           </RouterLink>
         </div>
@@ -264,139 +244,129 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onBeforeUnmount, computed } from "vue";
-import { useRoute } from "vue-router";
-import { request } from "../composables/httpRequest";
-import config from "../config";
-import LoadingComp from "../components/utils/LoadingComp.vue";
-import { useAccountStore } from "../stores/accountStore";
-import { Vue3Lottie } from "vue3-lottie";
-import notfound from "../animations/notfound.json";
-const accountStore = useAccountStore();
+  import { ref, onMounted, watch, onBeforeUnmount, computed } from "vue";
+  import { useRoute } from "vue-router";
+  import { request } from "../composables/httpRequest";
+  import config from "../config";
+  import LoadingComp from "../components/utils/LoadingComp.vue";
+  import { useAccountStore } from "../stores/accountStore";
+  import { Vue3Lottie } from "vue3-lottie";
+  import notfound from "../animations/notfound.json";
+  const accountStore = useAccountStore();
 
-const route = useRoute();
-const accord = ref([]);
-const isLoaded = ref(false);
-const accords = ref([]);
-const account = ref([]);
-const favoris = ref([]);
-const response = ref([]);
+  const route = useRoute();
+  const accord = ref([]);
+  const isLoaded = ref(false);
+  const accords = ref([]);
+  const account = ref([]);
+  const favoris = ref([]);
+  const response = ref([]);
 
-const agreeDoc = ref([]);
-const univDoc = ref([]);
+  const agreeDoc = ref([]);
+  const univDoc = ref([]);
 
-async function fetchAll() {
-  isLoaded.value = false;
-  await request( "GET", false, accord, config.apiUrl + "api/agreement/getbyid/" + route.params.agree_id);
+  async function fetchAll() {
+    isLoaded.value = false;
+    await request( "GET", false, accord, config.apiUrl + "api/agreement/getbyid/" + route.params.agree_id);
 
-  const requestData = {};
-  if (accountStore.isLogged()) {
-    await request( "GET", false, favoris, config.apiUrl + "api/favoris/me");
-    requestData.dept_id = accountStore.department
-      ? accountStore.department.dept_id
-      : null;
-  }
-
-  let apiUrl = config.apiUrl + "api/agreement/random?";
-  if (requestData.dept_id) {
-    apiUrl += "dept_id=" + requestData.dept_id + "&";
-  }
-  if (requestData.dept_id) {
-    if (accord.value.agree_id) {
-      apiUrl += "agree_id=" + accord.value.agree_id + "&";
+    const requestData = {};
+    if (accountStore.isLogged()) {
+      await request( "GET", false, favoris, config.apiUrl + "api/favoris/me");
+      requestData.dept_id = accountStore.department
+        ? accountStore.department.dept_id
+        : null;
     }
-    if (accord.value.university && accord.value.university.univ_id) {
-      apiUrl += "univ_id=" + accord.value.university.univ_id;
+
+    let apiUrl = config.apiUrl + "api/agreement/random?";
+    if (requestData.dept_id) {
+      apiUrl += "dept_id=" + requestData.dept_id + "&";
     }
+    if (requestData.dept_id) {
+      if (accord.value.agree_id) {
+        apiUrl += "agree_id=" + accord.value.agree_id + "&";
+      }
+      if (accord.value.university && accord.value.university.univ_id) {
+        apiUrl += "univ_id=" + accord.value.university.univ_id;
+      }
+    }
+
+    await request("GET", true, accords, apiUrl);
+    document.title = `ILC - ${
+      accord.value.agreement?.university?.univ_name ?? "Université indisponible"
+    } (${
+      accord.value.agreement?.partnercountry?.parco_name ?? "Pays indisponible"
+    } [${accord.value.agreement?.isced?.isc_code ?? "??"} - ${
+      accord.value.agreement?.isced?.isc_name ?? "Isced indisponible"
+    }])`;
+
+    isLoaded.value = true;
+
+    await request('GET', false, univDoc, config.apiUrl+'api/documents/university/' + accord.value.agreement.university.univ_id);
+    await request('GET', false, agreeDoc, config.apiUrl+'api/documents/agreement/' + accord.value.agreement.agree_id);
+
+    console.log(univDoc);
+    console.log(agreeDoc);
   }
 
-  await request("GET", true, accords, apiUrl);
-  document.title = `ILC - ${
-    accord.value.agreement?.university?.univ_name ?? "Université indisponible"
-  } (${
-    accord.value.agreement?.partnercountry?.parco_name ?? "Pays indisponible"
-  } [${accord.value.agreement?.isced?.isc_code ?? "??"} - ${
-    accord.value.agreement?.isced?.isc_name ?? "Isced indisponible"
-  }])`;
+  function isFavorited(agree_id) {
+    return favoris.value.favoris.some((favori) => favori.agree_id === agree_id);
+  }
 
-  isLoaded.value = true;
-
-  await request('GET', false, univDoc, config.apiUrl+'api/documents/university/' + accord.value.agreement.university.univ_id);
-  await request('GET', false, agreeDoc, config.apiUrl+'api/documents/agreement/' + accord.value.agreement.agree_id);
-
-  console.log(univDoc);
-  console.log(agreeDoc);
-}
-
-function isFavorited(agree_id) {
-  return favoris.value.favoris.some((favori) => favori.agree_id === agree_id);
-}
-
-async function toggleFavoris(agree_id) {
-  if (!isFavorited(agree_id)) {
-    const requestData = {
-      agree_id: agree_id,
-    };
-    await request(
-      "post",
-      true,
-      response,
-      config.apiUrl + "api/favoris",
-      requestData
-    );
-    if (response.value.status == 201) {
-      favoris.value.favoris.push({
-        acc_id: accountStore.account.acc_id,
+  async function toggleFavoris(agree_id) {
+    if (!isFavorited(agree_id)) {
+      const requestData = {
         agree_id: agree_id,
-      });
-    }
-  } else {
-    await request(
-      "delete",
-      true,
-      response,
-      config.apiUrl +
-        "api/favoris/delete/" + agree_id
-    );
-    favoris.value.favoris = favoris.value.favoris.filter(
-      (favori) =>
+      };
+
+      await request("post", true, response, config.apiUrl + "api/favoris", requestData);
+      if (response.value.status == 201) {
+        favoris.value.favoris.push({
+          acc_id: accountStore.account.acc_id,
+          agree_id: agree_id,
+        });
+      }
+    } else {
+
+      await request("delete", true, response, config.apiUrl + "api/favoris/delete/" + agree_id);
+      favoris.value.favoris = favoris.value.favoris.filter((favori) =>
         !(favori.acc_id === accountStore.account.acc_id && favori.agree_id === agree_id)
-    );
+      );
+    }
   }
-}
-onMounted(fetchAll);
 
-watch(
-  () => route.params.agree_id,
-  () => {
-    fetchAll();
-  }
-);
+  onMounted(fetchAll);
 
-//Animations
+  watch(
+    () => route.params.agree_id,
+    () => {
+      fetchAll();
+    }
+  );
 
-const screenWidth = ref(window.innerWidth);
+  //Animations
 
-const updateDimensions = () => {
-  screenWidth.value = window.innerWidth;
-};
+  const screenWidth = ref(window.innerWidth);
 
-onMounted(() => {
-  window.addEventListener("resize", updateDimensions);
-  // Initial calculation
-  updateDimensions();
-});
+  const updateDimensions = () => {
+    screenWidth.value = window.innerWidth;
+  };
 
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", updateDimensions);
-});
+  onMounted(() => {
+    window.addEventListener("resize", updateDimensions);
+    // Initial calculation
+    updateDimensions();
+  });
 
-const animationWidth = computed(() => {
-  // Ajuste la largeur en fonction de la taille de l'écran, avec une largeur minimale et maximale
-  return Math.min(Math.max(screenWidth.value * 0.6, 200), 500);
-});
+  onBeforeUnmount(() => {
+    window.removeEventListener("resize", updateDimensions);
+  });
 
-//Visualiser ou télécharger les documents de l'article
+  const animationWidth = computed(() => {
+    // Ajuste la largeur en fonction de la taille de l'écran, avec une largeur minimale et maximale
+    return Math.min(Math.max(screenWidth.value * 0.6, 200), 500);
+  });
+
+  //Visualiser ou télécharger les documents de l'article
   function openDocumentArticleInNewTab(doc) {
   
     // Construire l'URL complète pour accéder au fichier

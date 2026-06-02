@@ -182,184 +182,183 @@
 </template>
 
 <script setup>
-import { useAccountStore } from '../../stores/accountStore';
-import { storeToRefs } from 'pinia';
-import config from '../../config';
-import { useRouter } from 'vue-router';
-import { onMounted, ref, nextTick, watch, computed } from 'vue';
-import { request } from '../../composables/httpRequest';
+  import { useAccountStore } from '../../stores/accountStore';
+  import { storeToRefs } from 'pinia';
+  import config from '../../config';
+  import { useRouter } from 'vue-router';
+  import { onMounted, ref, nextTick, watch, computed } from 'vue';
+  import { request } from '../../composables/httpRequest';
 
-const router = useRouter();
-const accountStore = useAccountStore();
-const { logged } = storeToRefs(accountStore);
-const theme = ref(localStorage.getItem('theme') || 'light');
-const currentUrl = ref('');
-const account = ref([]);
-const response = ref([]);
-const dropdownRef = ref(null)
+  const router = useRouter();
+  const accountStore = useAccountStore();
+  const { logged } = storeToRefs(accountStore);
+  const theme = ref(localStorage.getItem('theme') || 'light');
+  const currentUrl = ref('');
+  const account = ref([]);
+  const response = ref([]);
+  const dropdownRef = ref(null)
 
-function closeDropdown() {
-  // Ferme la dropdown manuellement en retirant le focus
-  const active = document.activeElement
-  if (active) active.blur()
-}
-
-// Propriété computed pour vérifier l'état de connexion
-const isUserLoggedIn = computed(() => logged.value);
-
-// Fonction pour obtenir l'URL courante pour la déconnexion
-function getCurrentURL() {
-  // Vérifier si window est défini (pour éviter les erreurs pendant le SSR)
-  if (typeof window !== 'undefined' && window.location) {
-    return encodeURIComponent(window.location.href);
+  function closeDropdown() {
+    // Ferme la dropdown manuellement en retirant le focus
+    const active = document.activeElement
+    if (active) active.blur()
   }
-  return '';
-}
 
-async function logout() {
-  // Appel API logout
-  await request('POST', false, response, config.apiUrl + 'api/logout');
-  
-  // Nettoyage localStorage
-  localStorage.removeItem('login');
-  localStorage.removeItem('auth');
-  localStorage.removeItem('token');
-  
-  // Utilisation du paramètre redirect pour la déconnexion
-  window.open(config.apiUrl + 'cas.php?logout=true&redirect=' + getCurrentURL(), '_blank');
-  router.push({ name: 'Accueil' });
-  accountStore.logoutAccount();
-}
+  // Propriété computed pour vérifier l'état de connexion
+  const isUserLoggedIn = computed(() => logged.value);
 
-// Reste des fonctions inchangées
-function closeMenu() {
-  const details = document.querySelector('details');
-  if (details) {
-    details.removeAttribute('open');
-  }
-}
-
-function profil() {
-  router.push({ name: 'Dashboard' });
-
-  closeMenu();
-}
-
-function getJoursRestants(date){
-  if(joursRestants(date) == 0){
-    return "aujourd'hui";
-  }
-  else if(joursRestants(date) == 1){
-    return 'demain';
-  }
-  else if(joursRestants(date) < 0){
-    return 'il y a '+(-joursRestants(date)) + ' jour' + (-joursRestants(date) > 1 ? 's' : '');
-  }
-  return ''+ joursRestants(date) +' jours restants';
-}
-
-function joursRestants(date) {
-  const dateLimite = new Date(date);
-  const currentDate = new Date();
-  const timeDifference = dateLimite - currentDate;
-  const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-  return daysRemaining;
-}
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-}
-
-function goToPage(route) {
-  closeDropdown();
-  router.push({ name: route });
-  closeMenu();
-}
-
-function getOptimalTextColor(backgroundColor) {
-  let r, g, b;
-  
-  // Gestion du format hexadécimal
-  if (backgroundColor.startsWith('#')) {
-    const hex = backgroundColor.slice(1);
-    if (hex.length === 3) {
-      r = parseInt(hex[0] + hex[0], 16);
-      g = parseInt(hex[1] + hex[1], 16);
-      b = parseInt(hex[2] + hex[2], 16);
-    } else if (hex.length === 6) {
-      r = parseInt(hex.slice(0, 2), 16);
-      g = parseInt(hex.slice(2, 4), 16);
-      b = parseInt(hex.slice(4, 6), 16);
-    } else {
-      // Valeur par défaut pour un format hexadécimal invalide
-      r = 128; g = 128; b = 128;
+  // Fonction pour obtenir l'URL courante pour la déconnexion
+  function getCurrentURL() {
+    // Vérifier si window est défini (pour éviter les erreurs pendant le SSR)
+    if (typeof window !== 'undefined' && window.location) {
+      return encodeURIComponent(window.location.href);
     }
-  } 
-  // Gestion du format RGB ou RGBA
-  else if (backgroundColor.startsWith('rgb')) {
-    const match = backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-    if (match) {
-      r = parseInt(match[1]);
-      g = parseInt(match[2]);
-      b = parseInt(match[3]);
-    } else {
-      // Valeur par défaut pour un format RGB invalide
-      r = 128; g = 128; b = 128;
-    }
-  } 
-  // Gestion des noms de couleurs CSS via un élément temporaire
-  else {
-    const tempElement = document.createElement('div');
-    tempElement.style.color = backgroundColor;
-    document.body.appendChild(tempElement);
-    const computedColor = window.getComputedStyle(tempElement).color;
-    document.body.removeChild(tempElement);
+    return '';
+  }
+
+  async function logout() {
+    // Appel API logout
+    await request('POST', false, response, config.apiUrl + 'api/logout');
     
-    const match = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-    if (match) {
-      r = parseInt(match[1]);
-      g = parseInt(match[2]);
-      b = parseInt(match[3]);
-    } else {
-      // Valeur par défaut si la couleur n'est pas reconnue
-      r = 128; g = 128; b = 128;
+    // Nettoyage localStorage
+    localStorage.removeItem('login');
+    localStorage.removeItem('auth');
+    localStorage.removeItem('token');
+    
+    // Utilisation du paramètre redirect pour la déconnexion
+    window.open(config.apiUrl + 'cas.php?logout=true&redirect=' + getCurrentURL(), '_blank');
+    router.push({ name: 'Accueil' });
+    accountStore.logoutAccount();
+  }
+
+  // Reste des fonctions inchangées
+  function closeMenu() {
+    const details = document.querySelector('details');
+    if (details) {
+      details.removeAttribute('open');
     }
   }
-  
-  // Calculer la luminance relative selon la formule du WCAG 2.0
-  // https://www.w3.org/TR/WCAG20-TECHS/G17.html
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  
-  // Utiliser du texte blanc sur fond foncé, du texte noir sur fond clair
-  return luminance > 0.5 ? '#000000' : '#ffffff';
-}
 
-function toggleTheme() {
-  theme.value = theme.value == 'light' ? 'dark' : 'light';
-  applyTheme(theme.value);
-  localStorage.setItem('theme', theme.value);
-}
+  function profil() {
+    router.push({ name: 'Dashboard' });
 
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-}
+    closeMenu();
+  }
 
-async function load() {
-  currentUrl.value = window.location.href;
+  function getJoursRestants(date){
+    if(joursRestants(date) == 0){
+      return "aujourd'hui";
+    }
+    else if(joursRestants(date) == 1){
+      return 'demain';
+    }
+    else if(joursRestants(date) < 0){
+      return 'il y a '+(-joursRestants(date)) + ' jour' + (-joursRestants(date) > 1 ? 's' : '');
+    }
+    return ''+ joursRestants(date) +' jours restants';
+  }
 
-  await nextTick();
+  function joursRestants(date) {
+    const dateLimite = new Date(date);
+    const currentDate = new Date();
+    const timeDifference = dateLimite - currentDate;
+    const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    return daysRemaining;
+  }
 
-  applyTheme(theme.value);
-}
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 
-watch(logged, async (newVal) => {
-  isUserLoggedIn.value = logged.value;
-});
+  function goToPage(route) {
+    closeDropdown();
+    router.push({ name: route });
+    closeMenu();
+  }
 
+  function getOptimalTextColor(backgroundColor) {
+    let r, g, b;
+    
+    // Gestion du format hexadécimal
+    if (backgroundColor.startsWith('#')) {
+      const hex = backgroundColor.slice(1);
+      if (hex.length === 3) {
+        r = parseInt(hex[0] + hex[0], 16);
+        g = parseInt(hex[1] + hex[1], 16);
+        b = parseInt(hex[2] + hex[2], 16);
+      } else if (hex.length === 6) {
+        r = parseInt(hex.slice(0, 2), 16);
+        g = parseInt(hex.slice(2, 4), 16);
+        b = parseInt(hex.slice(4, 6), 16);
+      } else {
+        // Valeur par défaut pour un format hexadécimal invalide
+        r = 128; g = 128; b = 128;
+      }
+    } 
+    // Gestion du format RGB ou RGBA
+    else if (backgroundColor.startsWith('rgb')) {
+      const match = backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+      if (match) {
+        r = parseInt(match[1]);
+        g = parseInt(match[2]);
+        b = parseInt(match[3]);
+      } else {
+        // Valeur par défaut pour un format RGB invalide
+        r = 128; g = 128; b = 128;
+      }
+    } 
+    // Gestion des noms de couleurs CSS via un élément temporaire
+    else {
+      const tempElement = document.createElement('div');
+      tempElement.style.color = backgroundColor;
+      document.body.appendChild(tempElement);
+      const computedColor = window.getComputedStyle(tempElement).color;
+      document.body.removeChild(tempElement);
+      
+      const match = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+      if (match) {
+        r = parseInt(match[1]);
+        g = parseInt(match[2]);
+        b = parseInt(match[3]);
+      } else {
+        // Valeur par défaut si la couleur n'est pas reconnue
+        r = 128; g = 128; b = 128;
+      }
+    }
+    
+    // Calculer la luminance relative selon la formule du WCAG 2.0
+    // https://www.w3.org/TR/WCAG20-TECHS/G17.html
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Utiliser du texte blanc sur fond foncé, du texte noir sur fond clair
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  }
 
-onMounted(load);
+  function toggleTheme() {
+    theme.value = theme.value == 'light' ? 'dark' : 'light';
+    applyTheme(theme.value);
+    localStorage.setItem('theme', theme.value);
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  async function load() {
+    currentUrl.value = window.location.href;
+
+    await nextTick();
+
+    applyTheme(theme.value);
+  }
+
+  watch(logged, async (newVal) => {
+    isUserLoggedIn.value = logged.value;
+  });
+
+  onMounted(load);
 </script>

@@ -52,41 +52,41 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useAlertStore } from '../../stores/alertStore';
-import config from '../../config';
+  import { onMounted } from 'vue';
+  import { useAlertStore } from '../../stores/alertStore';
+  import config from '../../config';
 
-const props = defineProps({
-  response: Object,
-});
+  const props = defineProps({
+    response: Object,
+  });
 
-const alertStore = useAlertStore();
+  const alertStore = useAlertStore();
 
-function dismissAlert() {
-  alertStore.removeAlert(props.response.id);
-}
+  function dismissAlert() {
+    alertStore.removeAlert(props.response.id);
+  }
 
-const duration = props.response.duration ?? config.alertTimeBeforeRemove;
+  const duration = props.response.duration ?? config.alertTimeBeforeRemove;
 
-function startTimer() {
-  if (props.response.duration === null) return;
-  setTimeout(dismissAlert, duration * 1000);
-}
+  function startTimer() {
+    if (props.response.duration === null) return;
+    setTimeout(dismissAlert, duration * 1000);
+  }
 
-onMounted(startTimer);
+  onMounted(startTimer);
 </script>
 
 <style scoped>
-.progress-bar {
-  animation: progressBar var(--alert-time) linear forwards;
-}
+  .progress-bar {
+    animation: progressBar var(--alert-time) linear forwards;
+  }
 
-@keyframes progressBar {
-  0% {
-    width: 100%;
+  @keyframes progressBar {
+    0% {
+      width: 100%;
+    }
+    100% {
+      width: 0%;
+    }
   }
-  100% {
-    width: 0%;
-  }
-}
 </style>

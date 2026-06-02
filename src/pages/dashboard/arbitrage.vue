@@ -361,7 +361,7 @@
 
                   <h3 class="font-medium text-base select-none">
                     {{
-                    etu.acc_periodemobilite === 1
+                      etu.acc_periodemobilite === 1
                       ? '🍂 '
                       : etu.acc_periodemobilite === 2
                       ? '🌱 '
@@ -550,9 +550,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                   </svg>
                   <span class="font-medium select-none">ISCED</span>
-<span class="badge badge-sm select-none">
-  {{ selectedIsced.length }}/{{ availableIsceds.length }}
-</span>
+                  <span class="badge badge-sm select-none">
+                    {{ selectedIsced.length }}/{{ availableIsceds.length }}
+                  </span>
                 </div>
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -581,21 +581,21 @@
                     :key="index"
                     class="flex items-center"
                   >
-                  <label
-  :for="'filt_isced_' + index"
-  class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
-  :class="{ 'opacity-50 pointer-events-none': disabledIsceds.has(isced.isc_id) }"
->
-  <input
-    :id="'filt_isced_' + index"
-    type="checkbox"
-    class="checkbox checkbox-sm mr-2"
-    :value="isced.isc_id"
-    v-model="selectedIsced"
-    :disabled="disabledIsceds.has(isced.isc_id)"
-  />
-  <span class="text-sm select-none">{{ isced.isc_code || "XX" }} - {{ isced.isc_name || "Sans code" }}</span>
-</label>
+                    <label
+                      :for="'filt_isced_' + index"
+                      class="flex items-center w-full p-2 rounded hover:bg-base-200 cursor-pointer transition-colors duration-150 select-none"
+                      :class="{ 'opacity-50 pointer-events-none': disabledIsceds.has(isced.isc_id) }"
+                    >
+                      <input
+                        :id="'filt_isced_' + index"
+                        type="checkbox"
+                        class="checkbox checkbox-sm mr-2"
+                        :value="isced.isc_id"
+                        v-model="selectedIsced"
+                        :disabled="disabledIsceds.has(isced.isc_id)"
+                      />
+                      <span class="text-sm select-none">{{ isced.isc_code || "XX" }} - {{ isced.isc_name || "Sans code" }}</span>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -817,15 +817,15 @@
                       </p>
                       <div class="flex items-center gap-1">
                         <span v-if="arbitrage.accounts[placeIndex].account.department" class="badge" :style="{backgroundColor: arbitrage.accounts[placeIndex].account.department.dept_color, color: '#fff'}">
-                                    {{ arbitrage.accounts[placeIndex].account.department.dept_shortname }}
-                                  </span>
+                          {{ arbitrage.accounts[placeIndex].account.department.dept_shortname }}
+                        </span>
                         <span class="text-sm">
                           {{
                             arbitrage.accounts[placeIndex].account.acc_periodemobilite === 1
-                              ? '🍂 (S4 ou S6)'
-                              : arbitrage.accounts[placeIndex].account.acc_periodemobilite === 2
-                              ? '🌱 (S5)'
-                              : ''
+                            ? '🍂 (S4 ou S6)'
+                            : arbitrage.accounts[placeIndex].account.acc_periodemobilite === 2
+                            ? '🌱 (S5)'
+                            : ''
                           }}
                         </span>
                       </div>
@@ -912,163 +912,163 @@
         </button>
       </div>
 
-        <!-- Modal confirmation d'archivage -->
-        <Teleport to="body">
-          <dialog id="archivageModal" ref="archivageModal" class="modal">
-            <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
-              <h3 class="text-xl font-bold">Archiver l'arbitrage</h3>
-              <p class="text-sm text-base-content/70 mt-2">
-              Cette action va archiver tous les étudiants actuellement placés dans l’arbitrage et videra entièrement toutes les places des accords.
-              <br />
-              Les étudiants non encore validés auront leur destination automatiquement validée avant d’être archivés.
-              <span class="font-semibold text-error block mt-2">Cette action est définitive et ne pourra pas être annulée.</span>
+      <!-- Modal confirmation d'archivage -->
+      <Teleport to="body">
+        <dialog id="archivageModal" ref="archivageModal" class="modal">
+          <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+            <h3 class="text-xl font-bold">Archiver l'arbitrage</h3>
+            <p class="text-sm text-base-content/70 mt-2">
+            Cette action va archiver tous les étudiants actuellement placés dans l’arbitrage et videra entièrement toutes les places des accords.
+            <br />
+            Les étudiants non encore validés auront leur destination automatiquement validée avant d’être archivés.
+            <span class="font-semibold text-error block mt-2">Cette action est définitive et ne pourra pas être annulée.</span>
+          </p>
+            <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+            <div class="py-3" v-if="!archivageEnCours">
+              <p>Souhaitez-vous vraiment archiver définitivement cet arbitrage ?</p>
+            </div>
+
+            <div class="py-6 flex flex-col items-center justify-center" v-else>
+              <span class="loading loading-spinner loading-lg text-success mb-2"></span>
+              <p>Archivage en cours...</p>
+            </div>
+
+            <div class="modal-action mt-4" v-if="!archivageEnCours">
+              <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+              <button class="btn btn-primary" @click="confirmArchivage">Archiver</button>
+            </div>
+          </div>
+        </dialog>
+      </Teleport>
+
+      <!-- Modal confirmation de validation -->
+      <Teleport to="body">
+        <dialog id="validerModal" ref="validerModal" class="modal">
+          <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+            <h3 class="text-xl font-bold">Valider l'arbitrage</h3>
+            <p class="text-sm text-base-content/70 mt-2">
+              Les étudiants actuellement affectés seront enregistrés comme validés pour cette période de mobilité.
+              Ils resteront visibles avec une opacité. <span class="font-semibold text-error block mt-2">Cette action est définitive et ne pourra pas être annulée.</span>
             </p>
-              <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+            <div class="w-full h-px bg-gradient-to-r from-success/30 via-success/20 to-transparent my-4"></div>
 
-              <div class="py-3" v-if="!archivageEnCours">
-                <p>Souhaitez-vous vraiment archiver définitivement cet arbitrage ?</p>
+            <div class="py-3" v-if="!archivageEnCours">
+              <p>Souhaitez-vous vraiment valider cet arbitrage ?</p>
+            </div>
+
+            <div class="py-6 flex flex-col items-center justify-center" v-else>
+              <span class="loading loading-spinner loading-lg text-success mb-2"></span>
+              <p>Validation en cours...</p>
+            </div>
+
+            <div class="modal-action mt-4" v-if="!archivageEnCours">
+              <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+              <button class="btn btn-primary" @click="confirmValidation">Valider</button>
+            </div>
+          </div>
+        </dialog>
+      </Teleport>
+
+      <!-- Modal Informations étudiant -->
+      <Teleport to="body">
+        <dialog id="infoEtu" ref="infoEtu" class="modal">
+          <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
+            <form method="dialog">
+              <label for="modal_info_etu" @click="closeModal" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+            </form>
+
+            <!-- Identité -->
+            <div class="flex items-center mb-4">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3"
+                :style="{ backgroundColor: infoetudiant.department ? infoetudiant.department.dept_color : '#aaaaaa' }">
+                {{ infoetudiant.acc_fullname?.charAt(0).toUpperCase() || 'N' }}
               </div>
-
-              <div class="py-6 flex flex-col items-center justify-center" v-else>
-                <span class="loading loading-spinner loading-lg text-success mb-2"></span>
-                <p>Archivage en cours...</p>
-              </div>
-
-              <div class="modal-action mt-4" v-if="!archivageEnCours">
-                <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-                <button class="btn btn-primary" @click="confirmArchivage">Archiver</button>
+              <div>
+                <h3 class="text-xl font-bold">{{ infoetudiant.acc_fullname || "Inconnu" }}</h3>
+                <p class="text-sm text-base-content/70">ID: {{ infoetudiant.acc_id || "Inconnu" }}</p>
               </div>
             </div>
-          </dialog>
-        </Teleport>
 
-        <!-- Modal confirmation de validation -->
-        <Teleport to="body">
-          <dialog id="validerModal" ref="validerModal" class="modal">
-            <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
-              <h3 class="text-xl font-bold">Valider l'arbitrage</h3>
-              <p class="text-sm text-base-content/70 mt-2">
-                Les étudiants actuellement affectés seront enregistrés comme validés pour cette période de mobilité.
-                Ils resteront visibles avec une opacité. <span class="font-semibold text-error block mt-2">Cette action est définitive et ne pourra pas être annulée.</span>
-              </p>
-              <div class="w-full h-px bg-gradient-to-r from-success/30 via-success/20 to-transparent my-4"></div>
-
-              <div class="py-3" v-if="!archivageEnCours">
-                <p>Souhaitez-vous vraiment valider cet arbitrage ?</p>
-              </div>
-
-              <div class="py-6 flex flex-col items-center justify-center" v-else>
-                <span class="loading loading-spinner loading-lg text-success mb-2"></span>
-                <p>Validation en cours...</p>
-              </div>
-
-              <div class="modal-action mt-4" v-if="!archivageEnCours">
-                <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-                <button class="btn btn-primary" @click="confirmValidation">Valider</button>
-              </div>
-            </div>
-          </dialog>
-        </Teleport>
-
-        <!-- Modal Informations étudiant -->
-        <Teleport to="body">
-          <dialog id="infoEtu" ref="infoEtu" class="modal">
-            <div class="modal-box max-w-3xl rounded-2xl border border-base-300 shadow-xl">
-              <form method="dialog">
-                <label for="modal_info_etu" @click="closeModal" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-              </form>
-
-              <!-- Identité -->
-              <div class="flex items-center mb-4">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3"
-                    :style="{ backgroundColor: infoetudiant.department ? infoetudiant.department.dept_color : '#aaaaaa' }">
-                  {{ infoetudiant.acc_fullname?.charAt(0).toUpperCase() || 'N' }}
-                </div>
-                <div>
-                  <h3 class="text-xl font-bold">{{ infoetudiant.acc_fullname || "Inconnu" }}</h3>
-                  <p class="text-sm text-base-content/70">ID: {{ infoetudiant.acc_id || "Inconnu" }}</p>
-                </div>
-              </div>
-
-              <!-- Grilles -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Infos principales -->
-                <div class="bg-base-200 p-3 rounded-md">
-                  <h4 class="font-bold text-md mb-2">Informations</h4>
-                  <div class="space-y-1">
-                    <div class="flex justify-between"><span>Nombre de vœux:</span><span>{{ infoetudiant.wishes?.count || 0 }}</span></div>
-                    <div class="flex justify-between"><span>Documents ajoutés:</span><span>{{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}</span></div>
-                    <div class="flex justify-between"><span>Dernière connexion:</span><span>{{ formatDate(infoetudiant.acc_lastlogin) }}</span></div>
-                  </div>
-                </div>
-
-                <!-- Coordonnées -->
-                <div class="bg-base-200 p-3 rounded-md">
-                  <h4 class="font-bold text-md mb-2">Coordonnées</h4>
-                  <div class="space-y-1">
-                    <div class="flex justify-between"><span>Email:</span><span class="truncate">{{ infoetudiant.acc_mail || "Aucun" }}</span></div>
-                    <div class="flex justify-between"><span>Numéro étudiant:</span><span>{{ infoetudiant.acc_studentnum || "Aucun" }}</span></div>
-                    <div class="flex justify-between"><span>Année de mobilité:</span><span>{{ infoetudiant.acc_anneemobilite || "Aucune" }}</span></div>
-                    <div class="flex justify-between"><span>Début de période de mobilité:</span><span>{{ 
-                        infoetudiant.acc_periodemobilite === 1 ? 'Automne 🍂 (S5)' : 
-                        infoetudiant.acc_periodemobilite === 2 ? 'Printemps 🌱 (S4 ou S5)' : 
-                        'Aucune' }}</span>
-                      </div>
-                    <div class="flex justify-between"><span>Score TOEIC:</span><span>{{ infoetudiant.acc_toeic || "Aucun" }}</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Académique -->
-              <div class="bg-base-200 p-3 rounded-md mt-3">
-                <h4 class="font-bold text-md mb-2">Information académique</h4>
+            <!-- Grilles -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Infos principales -->
+              <div class="bg-base-200 p-3 rounded-md">
+                <h4 class="font-bold text-md mb-2">Informations</h4>
                 <div class="space-y-1">
-                  <div class="flex justify-between"><span>Département:</span><span>{{ infoetudiant.department?.dept_name || "Aucun" }}</span></div>
-                  <div class="flex justify-between"><span>Parcours:</span><span>{{ infoetudiant.acc_parcours || "Aucun" }}</span></div>
+                  <div class="flex justify-between"><span>Nombre de vœux:</span><span>{{ infoetudiant.wishes?.count || 0 }}</span></div>
+                  <div class="flex justify-between"><span>Documents ajoutés:</span><span>{{ infoetudiant.documents?.count || 0 }}/{{ infoetudiant.documents?.countmax }}</span></div>
+                  <div class="flex justify-between"><span>Dernière connexion:</span><span>{{ formatDate(infoetudiant.acc_lastlogin) }}</span></div>
                 </div>
               </div>
 
-              <!-- Voeux -->
-              <div class="bg-base-200 p-3 rounded-md mt-3">
-                <h4 class="font-bold text-md mb-2">Vœux</h4>
-                <p v-if="infoetudiant.wishes?.count == 0" class="text-center text-base-content/70 italic">
-                  Aucun vœu enregistré
-                </p>
-                <div v-for="(accord, index) in getFilteredAgreements(infoetudiant)" :key="index"
-                    class="flex justify-between p-2 hover:bg-base-100 rounded">
-                  <div class="min-w-fit">
-                    <span class="badge badge-sm badge-primary">Vœu {{ accord.place }}</span>
+              <!-- Coordonnées -->
+              <div class="bg-base-200 p-3 rounded-md">
+                <h4 class="font-bold text-md mb-2">Coordonnées</h4>
+                <div class="space-y-1">
+                  <div class="flex justify-between"><span>Email:</span><span class="truncate">{{ infoetudiant.acc_mail || "Aucun" }}</span></div>
+                  <div class="flex justify-between"><span>Numéro étudiant:</span><span>{{ infoetudiant.acc_studentnum || "Aucun" }}</span></div>
+                  <div class="flex justify-between"><span>Année de mobilité:</span><span>{{ infoetudiant.acc_anneemobilite || "Aucune" }}</span></div>
+                  <div class="flex justify-between"><span>Début de période de mobilité:</span><span>{{ 
+                    infoetudiant.acc_periodemobilite === 1 ? 'Automne 🍂 (S5)' : 
+                    infoetudiant.acc_periodemobilite === 2 ? 'Printemps 🌱 (S4 ou S5)' : 
+                    'Aucune' }}</span>
                   </div>
-                  <div class="flex w-full items-center justify-start ml-2">
-                    <span class="relative inline-block mr-1">
-                      <span class="fi" :class="'fi-' + accord.agreement?.partnercountry?.parco_code"></span>
-                      <span v-if="!accord.agreement?.partnercountry?.parco_code"
-                            class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">?</span>
-                    </span>
-                    <div class="text-sm flex justify-center items-center gap-3">
-                      <span class="font-medium">{{ accord.agreement.university?.univ_name || "Université indisponible" }}</span>
-                      <span class="text-xs text-base-content/70">{{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}</span>
-                    </div>
-                  </div>
+                  <div class="flex justify-between"><span>Score TOEIC:</span><span>{{ infoetudiant.acc_toeic || "Aucun" }}</span></div>
                 </div>
-              </div>
-
-              <!-- Lien profil -->
-              <div class="mt-4" v-if="infoetudiant && infoetudiant.acc_id">
-                <a :href="$router.resolve({ name: 'Profile', params: { acc_id: infoetudiant.acc_id }}).href" target="_blank">
-                  <button class="btn btn-primary w-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975M15 9.75a3 3 0 11-6 0 3 3 0 016 0zM12 21a8.966 8.966 0 01-5.982-2.275" />
-                    </svg>
-                    Voir le profil complet
-                  </button>
-                </a>
               </div>
             </div>
-          </dialog>
-        </Teleport>
+
+            <!-- Académique -->
+            <div class="bg-base-200 p-3 rounded-md mt-3">
+              <h4 class="font-bold text-md mb-2">Information académique</h4>
+              <div class="space-y-1">
+                <div class="flex justify-between"><span>Département:</span><span>{{ infoetudiant.department?.dept_name || "Aucun" }}</span></div>
+                <div class="flex justify-between"><span>Parcours:</span><span>{{ infoetudiant.acc_parcours || "Aucun" }}</span></div>
+              </div>
+            </div>
+
+            <!-- Voeux -->
+            <div class="bg-base-200 p-3 rounded-md mt-3">
+              <h4 class="font-bold text-md mb-2">Vœux</h4>
+              <p v-if="infoetudiant.wishes?.count == 0" class="text-center text-base-content/70 italic">
+                Aucun vœu enregistré
+              </p>
+              <div v-for="(accord, index) in getFilteredAgreements(infoetudiant)" :key="index"
+                  class="flex justify-between p-2 hover:bg-base-100 rounded">
+                <div class="min-w-fit">
+                  <span class="badge badge-sm badge-primary">Vœu {{ accord.place }}</span>
+                </div>
+                <div class="flex w-full items-center justify-start ml-2">
+                  <span class="relative inline-block mr-1">
+                    <span class="fi" :class="'fi-' + accord.agreement?.partnercountry?.parco_code"></span>
+                    <span v-if="!accord.agreement?.partnercountry?.parco_code"
+                      class="absolute inset-0 flex items-center justify-center text-black text-xs font-bold bg-white select-none">?</span>
+                  </span>
+                  <div class="text-sm flex justify-center items-center gap-3">
+                    <span class="font-medium">{{ accord.agreement.university?.univ_name || "Université indisponible" }}</span>
+                    <span class="text-xs text-base-content/70">{{ accord.agreement.isced?.isc_code || "Code ISCED ?" }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lien profil -->
+            <div class="mt-4" v-if="infoetudiant && infoetudiant.acc_id">
+              <a :href="$router.resolve({ name: 'Profile', params: { acc_id: infoetudiant.acc_id }}).href" target="_blank">
+                <button class="btn btn-primary w-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                      stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975M15 9.75a3 3 0 11-6 0 3 3 0 016 0zM12 21a8.966 8.966 0 01-5.982-2.275" />
+                  </svg>
+                  Voir le profil complet
+                </button>
+              </a>
+            </div>
+          </div>
+        </dialog>
+      </Teleport>
 
     </div>
   </div>
@@ -1092,9 +1092,10 @@
 
         <div class="p-2 space-y-2">
           <div v-for="(component, index) in components.components" :key="index"
-               @click="setComposantePret(component.comp_id)"
-               :class="['bg-base-100 rounded-lg p-3 cursor-pointer hover:bg-base-200 transition-all', 
-                        newPret?.comp_id === component.comp_id ? 'border-l-4 border-primary' : 'opacity-75']">
+            @click="setComposantePret(component.comp_id)"
+            :class="['bg-base-100 rounded-lg p-3 cursor-pointer hover:bg-base-200 transition-all', 
+            newPret?.comp_id === component.comp_id ? 'border-l-4 border-primary' : 'opacity-75']"
+          >
             <div class="flex items-center gap-3">
               <div class="flex-1">
                 <div class="font-bold">{{ component.comp_name}}</div>
@@ -1121,949 +1122,940 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick, watch } from "vue";
-import { request } from "../../composables/httpRequest";
-import config from "../../config";
-import LoadingComp from "../../components/utils/LoadingComp.vue";
-import { useAccountStore } from "../../stores/accountStore";
-import { addAction } from "../../composables/actionType";
+  import { ref, onMounted, computed, nextTick, watch } from "vue";
+  import { request } from "../../composables/httpRequest";
+  import config from "../../config";
+  import LoadingComp from "../../components/utils/LoadingComp.vue";
+  import { useAccountStore } from "../../stores/accountStore";
+  import { addAction } from "../../composables/actionType";
 
-const response = ref([]);
-const accords = ref([]);
-const university = ref([]);
-const etudiants = ref([]);
-const isceds = ref([]);
-const components = ref([]);
-const partnercountry = ref([]);
-const isLoaded = ref(false);
-const searchQuery = ref("");
+  const response = ref([]);
+  const accords = ref([]);
+  const university = ref([]);
+  const etudiants = ref([]);
+  const isceds = ref([]);
+  const components = ref([]);
+  const partnercountry = ref([]);
+  const isLoaded = ref(false);
+  const searchQuery = ref("");
 
-const selectedDepartment = ref([]);
-const selectedIsced = ref([]);
-const selectedAccord = ref([]);
-const selectedUniversity = ref([]);
-const selectedAccordArbitrage = ref([]);
-const selectedArbitrage = ref([]);
-const selectedVoeux = ref([]);
-const selectedCountries = ref([]);
-const selectedAnneeMobilite = ref([]);
+  const selectedDepartment = ref([]);
+  const selectedIsced = ref([]);
+  const selectedAccord = ref([]);
+  const selectedUniversity = ref([]);
+  const selectedAccordArbitrage = ref([]);
+  const selectedArbitrage = ref([]);
+  const selectedVoeux = ref([]);
+  const selectedCountries = ref([]);
+  const selectedAnneeMobilite = ref([]);
 
-const accountStore = useAccountStore();
+  const accountStore = useAccountStore();
 
-const infoetudiant = ref([]);
+  const infoetudiant = ref([]);
 
-const arbitrage = ref([]);
+  const arbitrage = ref([]);
 
-const anneesmobilite = ref([]);
+  const anneesmobilite = ref([]);
 
-const localEtus = ref([]);
-const localArbitrage = ref([]);
+  const localEtus = ref([]);
+  const localArbitrage = ref([]);
 
-const archivageEnCours = ref(false);
+  const archivageEnCours = ref(false);
 
-const prets = ref([]);
-const newPret = ref([]);
+  const prets = ref([]);
+  const newPret = ref([]);
 
-const voeuxNoms = [
-  { val: 0, name: "Aucun voeux" },
-  { val: 1, name: "1 voeu" },
-  { val: 2, name: "2 voeux" },
-  { val: 3, name: "3 voeux" },
-  { val: 4, name: "4 voeux" },
-  { val: 5, name: "5 voeux" },
-  { val: 6, name: "6 voeux" },
-];
+  const voeuxNoms = [
+    { val: 0, name: "Aucun voeux" },
+    { val: 1, name: "1 voeu" },
+    { val: 2, name: "2 voeux" },
+    { val: 3, name: "3 voeux" },
+    { val: 4, name: "4 voeux" },
+    { val: 5, name: "5 voeux" },
+    { val: 6, name: "6 voeux" },
+  ];
 
-const isOpen = ref({
-  pays: false,
-  departments: false,
-  accords: false,
-  university: false,
-  accordsarbitrage: false,
-  arbitrage: false,
-  isced: false,
-  voeux: false,
-  anneemobilite: false,
-  etudiants: [],
-});
+  const isOpen = ref({
+    pays: false,
+    departments: false,
+    accords: false,
+    university: false,
+    accordsarbitrage: false,
+    arbitrage: false,
+    isced: false,
+    voeux: false,
+    anneemobilite: false,
+    etudiants: [],
+  });
 
-//Changer l'état d'un menu de filtre
-function toggleCollapse(section) {
-  isOpen.value[section] = !isOpen.value[section];
-}
-
-//Changer l'état d'un menu de filtre partie étudiant
-const toggleCollapseEtu = (acc_id) => {
-  isOpen.value.etudiants[acc_id] = !isOpen.value.etudiants[acc_id];
-};
-
-// Récupération des données
-async function fetch() {
-  isLoaded.value = false;
-  await request("GET", false, accords, config.apiUrl + "api/agreement");
-  await request("GET", false, university, config.apiUrl + "api/university");
-  await request("GET", false, components, config.apiUrl + "api/component");
-  await request("GET", false, partnercountry, config.apiUrl + "api/partnercountry");
-  await request("GET", false, isceds, config.apiUrl + "api/isced");
-  await request("GET", false, etudiants, config.apiUrl + "api/account/students/actuel");
-  await request("GET", false, arbitrage, config.apiUrl + "api/arbitrage/actuel");
-  await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
-  const currentYear = new Date().getFullYear();
-
-  for (let i = 0; i < 4; i++) {
-    const startYear = currentYear + i;
-    const endYear = startYear + 1;
-    anneesmobilite.value.push(`${startYear}-${endYear}`);
+  //Changer l'état d'un menu de filtre
+  function toggleCollapse(section) {
+    isOpen.value[section] = !isOpen.value[section];
   }
 
-  isLoaded.value = true;
-  init();
-  if (etudiants.value && etudiants.value.accounts) {
-    isOpen.value.etudiants = etudiants.value.accounts.reduce((acc, student) => {
-      acc[student.acc_id] = false;
-      return acc;
-    }, {});
+  //Changer l'état d'un menu de filtre partie étudiant
+  const toggleCollapseEtu = (acc_id) => {
+    isOpen.value.etudiants[acc_id] = !isOpen.value.etudiants[acc_id];
+  };
+
+  // Récupération des données
+  async function fetch() {
+    isLoaded.value = false;
+    await request("GET", false, accords, config.apiUrl + "api/agreement");
+    await request("GET", false, university, config.apiUrl + "api/university");
+    await request("GET", false, components, config.apiUrl + "api/component");
+    await request("GET", false, partnercountry, config.apiUrl + "api/partnercountry");
+    await request("GET", false, isceds, config.apiUrl + "api/isced");
+    await request("GET", false, etudiants, config.apiUrl + "api/account/students/actuel");
+    await request("GET", false, arbitrage, config.apiUrl + "api/arbitrage/actuel");
+    await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
+    const currentYear = new Date().getFullYear();
+
+    for (let i = 0; i < 4; i++) {
+      const startYear = currentYear + i;
+      const endYear = startYear + 1;
+      anneesmobilite.value.push(`${startYear}-${endYear}`);
+    }
+
+    isLoaded.value = true;
+    init();
+    if (etudiants.value && etudiants.value.accounts) {
+      isOpen.value.etudiants = etudiants.value.accounts.reduce((acc, student) => {
+        acc[student.acc_id] = false;
+        return acc;
+      }, {});
+    }
   }
-}
 
-// Fermer le modal de confirmation de suppression
-function closeModal() {
-  const modal = document.getElementById("archivageModal");
-  modal.close();
-  const modal2 = document.getElementById("infoEtu");
-  modal2.close();
-  const modal3 = document.getElementById("validerModal");
-  modal3.close();
-}
+  // Fermer le modal de confirmation de suppression
+  function closeModal() {
+    const modal = document.getElementById("archivageModal");
+    modal.close();
+    const modal2 = document.getElementById("infoEtu");
+    modal2.close();
+    const modal3 = document.getElementById("validerModal");
+    modal3.close();
+  }
 
-function openConfirmModal() {
-  const modal = document.getElementById("archivageModal");
-  modal.showModal();
-}
+  function openConfirmModal() {
+    const modal = document.getElementById("archivageModal");
+    modal.showModal();
+  }
 
-function openConfirmModalValidation() {
-  const modal = document.getElementById("validerModal");
-  modal.showModal();
-}
+  function openConfirmModalValidation() {
+    const modal = document.getElementById("validerModal");
+    modal.showModal();
+  }
 
-function openEtuModal(etu) {
-  infoetudiant.value = etu;
-  const modal = document.getElementById("infoEtu");
-  modal.showModal();
-}
+  function openEtuModal(etu) {
+    infoetudiant.value = etu;
+    const modal = document.getElementById("infoEtu");
+    modal.showModal();
+  }
 
-async function confirmArchivage() {
-  archivageEnCours.value = true;
-  await request(
-    "POST",
-    true,
-    response,
-    config.apiUrl + "api/arbitrage/archiver"
-  );
-  if (response.value.status == 200) fetch();
-  addAction(accountStore.account.acc_id, 'arbitrage', response, 'Archivage de l\'arbitrage.');  
-  archivageEnCours.value = false;
-  closeModal();
+  async function confirmArchivage() {
+    archivageEnCours.value = true;
+    await request(
+      "POST",
+      true,
+      response,
+      config.apiUrl + "api/arbitrage/archiver"
+    );
+    if (response.value.status == 200) fetch();
+    addAction(accountStore.account.acc_id, 'arbitrage', response, 'Archivage de l\'arbitrage.');  
+    archivageEnCours.value = false;
+    closeModal();
+  }
 
-}
+  async function confirmValidation() {
+    archivageEnCours.value = true;
+    await request(
+      "POST",
+      true,
+      response,
+      config.apiUrl + "api/arbitrage/valider"
+    );
+    if (response.value.status == 200) fetch();
+    addAction(accountStore.account.acc_id, 'arbitrage', response, 'Validation de l\'arbitrage.');  
+    archivageEnCours.value = false;
+    closeModal();
+  }
 
-async function confirmValidation() {
-  archivageEnCours.value = true;
-  await request(
-    "POST",
-    true,
-    response,
-    config.apiUrl + "api/arbitrage/valider"
-  );
-  if (response.value.status == 200) fetch();
-  addAction(accountStore.account.acc_id, 'arbitrage', response, 'Validation de l\'arbitrage.');  
-  archivageEnCours.value = false;
-  closeModal();
-
-}
-
-// Initialisation des données et mise en place des drops
-async function init() {
-  // Initialiser localEtus avec les étudiants qui ne sont pas dans arbitrage
-  localEtus.value = etudiants.value.accounts
-    .filter(
-      (etu) =>
+  // Initialisation des données et mise en place des drops
+  async function init() {
+    // Initialiser localEtus avec les étudiants qui ne sont pas dans arbitrage
+    localEtus.value = etudiants.value.accounts
+      .filter((etu) =>
         !arbitrage.value.some(
           (arbitre) => arbitre.account.acc_id === etu.acc_id
         )
-    )
-    .reduce((acc, etu) => {
-      acc[etu.acc_id] = etu;
+      )
+      .reduce((acc, etu) => {
+        acc[etu.acc_id] = etu;
+        return acc;
+      }, {});
+
+    // Initialiser localArbitrage avec les accords et les informations sur les étudiants correspondants
+    localArbitrage.value = accords.value.agreements.reduce((acc, accord) => {
+      // Obtenir toutes les positions possibles pour l'accord actuel
+      const allPositions = getNumberOfPlace(accord.agree_id);
+
+      // Chercher les étudiants correspondants dans arbitrage
+      const matchingArbitrages = arbitrage.value.filter(
+        (arbitre) => arbitre.agreement.agree_id === accord.agree_id
+      );
+
+      // Créer l'objet pour l'accord actuel
+      acc[accord.agree_id] = {
+        agreement: accord,
+        accounts: allPositions.map((pos) => {
+          // Chercher les arbitrages qui correspondent à la position actuelle
+          const matchingArbitrage = matchingArbitrages.find(
+            (arbitre) => arbitre.arb_pos === pos + 1
+          );
+          return {
+            arb_pos: pos + 1, // Les positions doivent être basées sur 1
+            account: matchingArbitrage ? matchingArbitrage.account : null, // Mettre account à null si matchingArbitrage n'existe pas
+          };
+        }),
+      };
+
       return acc;
     }, {});
 
-  // Initialiser localArbitrage avec les accords et les informations sur les étudiants correspondants
-  localArbitrage.value = accords.value.agreements.reduce((acc, accord) => {
-    // Obtenir toutes les positions possibles pour l'accord actuel
-    const allPositions = getNumberOfPlace(accord.agree_id);
-
-    // Chercher les étudiants correspondants dans arbitrage
-    const matchingArbitrages = arbitrage.value.filter(
-      (arbitre) => arbitre.agreement.agree_id === accord.agree_id
-    );
-
-    // Créer l'objet pour l'accord actuel
-    acc[accord.agree_id] = {
-      agreement: accord,
-      accounts: allPositions.map((pos) => {
-        // Chercher les arbitrages qui correspondent à la position actuelle
-        const matchingArbitrage = matchingArbitrages.find(
-          (arbitre) => arbitre.arb_pos === pos + 1
-        );
-        return {
-          arb_pos: pos + 1, // Les positions doivent être basées sur 1
-          account: matchingArbitrage ? matchingArbitrage.account : null, // Mettre account à null si matchingArbitrage n'existe pas
-        };
-      }),
-    };
-
-    return acc;
-  }, {});
-
-  // Attendre le prochain "tick" pour assurer que les changements sont appliqués
-  await nextTick();
-
-  // Rafraîchir les éléments de drag and drop
-  refreshDrag();
-  refreshDrop();
-}
-
-
-// Renvoie la date formatée
-function formatDate(date) {
-  const d = new Date(date);
-
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0"); // Les mois commencent à 0
-  const year = d.getFullYear();
-  const hours = String(d.getHours()).padStart(2, "0");
-  const minutes = String(d.getMinutes()).padStart(2, "0");
-
-  return `${day}/${month}/${year} à ${hours}h${minutes}`;
-}
-
-// Enregistrement de l'arbitrage
-async function saveArbitrage() {
-  // Sauvegarder l'état précédent pour comparaison
-  const previousState = arbitrage.value.map((arb) => ({
-    acc_id: arb.account.acc_id,
-    agree_id: arb.agreement.agree_id,
-    arb_pos: arb.arb_pos,
-  }));
-
-  const extractedData = Object.values(localArbitrage.value).reduce(
-    (acc, arbitrage) => {
-      arbitrage.accounts.forEach((accountInfo) => {
-        if (accountInfo.account) {
-          acc.push({
-            acc_id: accountInfo.account.acc_id,
-            agree_id: arbitrage.agreement.agree_id,
-            arb_pos: accountInfo.arb_pos,
-          });
-        }
-      });
-      return acc;
-    },
-    []
-  );
-
-  await request(
-    "POST",
-    false,
-    response,
-    config.apiUrl + "api/arbitrage",
-    extractedData
-  );
-
-  if (response.value.status == 200) {
-    // Créer une map des positions précédentes par étudiant et accord
-    const previousPositions = new Map(
-      previousState.map((state) => [
-        `${state.acc_id}-${state.agree_id}`,
-        state.arb_pos,
-      ])
-    );
-
-    // Créer une map des nouvelles positions
-    const newPositions = new Map(
-      extractedData.map((data) => [
-        `${data.acc_id}-${data.agree_id}`,
-        data.arb_pos,
-      ])
-    );
-
-    // Trouver les suppressions (étudiants qui ne sont plus sur le même accord)
-    const removals = previousState.filter((prevData) => {
-      const key = `${prevData.acc_id}-${prevData.agree_id}`;
-      const hasKey = !newPositions.has(key);
-      return hasKey;
-    });
-
-    // Trouver les changements (nouveaux placements ou modifications de position)
-    const changes = extractedData.filter((newData) => {
-      const key = `${newData.acc_id}-${newData.agree_id}`;
-      const previousPos = previousPositions.get(key);
-      return !previousPos || previousPos !== newData.arb_pos;
-    });
-
-    // Créer une entrée dans l'historique pour les changements
-    for (const data of changes) {
-      addAction(
-        accountStore.account.acc_id,
-        "arbitrage",
-        response,
-        `Changement de l'arbitrage pour ${data.acc_id} sur l'accord ${data.agree_id} à la position ${data.arb_pos}.`
-      );
-    }
-
-    // Créer une entrée dans l'historique pour les suppressions
-    for (const data of removals) {
-      addAction(
-        accountStore.account.acc_id,
-        "arbitrage",
-        response,
-        `Suppression de l'arbitrage pour ${data.acc_id} (précédemment sur l'accord ${data.agree_id}).`
-      );
-    }
-  }
-}
-
-const disabledUniversities = computed(() => {
-  if (selectedCountries.value.length === 0) return new Set();
-  return new Set(
-    university.value
-      .filter((univ) => {
-        const isLinked = accords.value.agreements.some(
-          (a) =>
-            a.university?.univ_id === univ.univ_id &&
-            selectedCountries.value.includes(a.partnercountry?.parco_name)
-        );
-        return !isLinked;
-      })
-      .map((u) => u.univ_id)
-  );
-});
-
-const disabledIsceds = computed(() => {
-  if (selectedUniversity.value.length === 0) return new Set();
-  return new Set(
-    isceds.value
-      .filter((isced) => {
-        const isLinked = accords.value.agreements.some(
-          (a) =>
-            a.isced?.isc_id === isced.isc_id &&
-            selectedUniversity.value.includes(a.university?.univ_id)
-        );
-        return !isLinked;
-      })
-      .map((i) => i.isc_id)
-  );
-});
-
-const disabledCountries = computed(() => {
-  if (selectedUniversity.value.length === 0) return new Set();
-  return new Set(
-    partnercountry.value
-      .filter((country) => {
-        const isLinked = accords.value.agreements.some(
-          (a) =>
-            a.partnercountry?.parco_name === country.parco_name &&
-            selectedUniversity.value.includes(a.university?.univ_id)
-        );
-        return !isLinked;
-      })
-      .map((c) => c.parco_name)
-  );
-});
-
-// Liste des étudiants après filtres
-const filteredEtus = computed(() => {
-  return Object.values(localEtus.value)
-    .filter((etu) => {
-      // Filtre par défaut: prend uniquement les étudiants avec acc_validateacc à true
-      return etu.acc_validateacc === true;
-    })
-    .filter((etu) => {
-      // Filtre par département avec possibilité de filtrer par "Aucun"
-      const matchesDepartments =
-        selectedDepartment.value.length === 0 ||
-        (etu.department &&
-          selectedDepartment.value.includes(etu.department.dept_shortname)) ||
-        (selectedDepartment.value.includes("Aucun") && !etu.department);
-
-      // Filtre par recherche
-      const matchesSearchQuery =
-        !searchQuery.value ||
-        [etu.acc_fullname, etu.acc_id.toString()].some((field) =>
-          field.toLowerCase().includes(searchQuery.value.toLowerCase())
-        );
-
-      return matchesDepartments && matchesSearchQuery;
-    })
-    .filter((etu) => {
-      // Filtre par accords
-      const filteredAgreements = getFilteredAgreements(etu).map(
-        (item) => item.agreement.agree_id
-      );
-      return (
-        selectedAccord.value.length === 0 ||
-        selectedAccord.value.some((accord) =>
-          filteredAgreements.includes(accord)
-        )
-      );
-    })
-    .filter((etu) => {
-      // Filtre par nombre de vœux
-      const voeuxCount = etu.wishes.count;
-      return (
-        selectedVoeux.value.length === 0 ||
-        selectedVoeux.value.includes(voeuxCount)
-      );
-    })
-    .filter((etu) => {
-      // Filtre par année de mobilité
-      return (
-        selectedAnneeMobilite.value.length === 0 ||
-        selectedAnneeMobilite.value.includes(etu.acc_anneemobilite)
-      );
-    })
-    .sort((a, b) => {
-      // Tri par position du vœu et alphabétiquement
-      const aMinPlace = Math.min(
-        ...getFilteredAgreements(a)
-          .filter((item) =>
-            selectedAccord.value.includes(item.agreement.agree_id)
-          )
-          .map((item) => item.place)
-      );
-      const bMinPlace = Math.min(
-        ...getFilteredAgreements(b)
-          .filter((item) =>
-            selectedAccord.value.includes(item.agreement.agree_id)
-          )
-          .map((item) => item.place)
-      );
-      if (aMinPlace !== bMinPlace) {
-        return aMinPlace - bMinPlace;
-      }
-      return a.acc_fullname.localeCompare(b.acc_fullname);
-    });
-});
-
-// Liste des accords avec arbitrage après filtres
-const filteredArbitrage = computed(() => {
-  return Object.values(localArbitrage.value)
-    .filter((arbitrage) => {
-      const countryFilter =
-        selectedCountries.value.length === 0 ||
-        selectedCountries.value.includes(
-          arbitrage.agreement.partnercountry.parco_name
-        );
-
-      const allAccountsNull = arbitrage.accounts.every(
-        (account) => account.account === null
-      );
-      const atLeastOneAccountNotNull = arbitrage.accounts.some(
-        (account) => account.account !== null
-      );
-
-      const arbitrageFilter =
-        selectedArbitrage.value.length === 0 ||
-        (selectedArbitrage.value.includes("aucun") && allAccountsNull) ||
-        (selectedArbitrage.value.includes("aumoinsun") &&
-          atLeastOneAccountNotNull);
-
-      const iscedFilter =
-        selectedIsced.value.length === 0 ||
-        (arbitrage.agreement.isced &&
-          selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
-
-      const universityFilter =
-        selectedUniversity.value.length === 0 ||
-        (arbitrage.agreement.university &&
-          selectedUniversity.value.includes(
-            arbitrage.agreement.university.univ_id
-          ));
-
-      return (
-        countryFilter && arbitrageFilter && iscedFilter && universityFilter
-      );
-    })
-    .sort((a, b) => {
-      const countryComparison =
-        a.agreement.partnercountry.parco_name.localeCompare(
-          b.agreement.partnercountry.parco_name
-        );
-      if (countryComparison !== 0) {
-        return countryComparison;
-      }
-      const universityA = a.agreement.university
-        ? a.agreement.university.univ_name
-        : "";
-      const universityB = b.agreement.university
-        ? b.agreement.university.univ_name
-        : "";
-      return universityA.localeCompare(universityB);
-    });
-});
-
-// renvoie les voeux d'un étudiant
-function getFilteredAgreements(etu) {
-  if (!etu || !etu.wishes) {
-    return [];
-  }
-  const wishes = etu.wishes;
-  const wishIds = [
-    { place: 1, id: wishes.wsha_one },
-    { place: 2, id: wishes.wsha_two },
-    { place: 3, id: wishes.wsha_three },
-    { place: 4, id: wishes.wsha_four },
-    { place: 5, id: wishes.wsha_five },
-    { place: 6, id: wishes.wsha_six },
-  ].filter((wsha) => wsha !== null);
-  return wishIds
-    .map((wsha) => {
-      const agreement = accords.value.agreements.find(
-        (agreement) => agreement.agree_id === wsha.id
-      );
-      return { place: wsha.place, agreement };
-    })
-    .filter((item) => item.agreement !== undefined);
-}
-
-// Enlever un étudiant d'un accord
-function removeEtuFromPlace(agree_id, pos) {
-  const etu = localArbitrage.value[agree_id].accounts[pos].account;
-  localEtus.value[etu.acc_id] = etu;
-  localArbitrage.value[agree_id].accounts[pos].account = null;
-  refreshDrag();
-  saveArbitrage();
-}
-
-// Fonction pour ajouter une place temporaire
-async function addPlace(agreeId) {
-  // Trouver l'accord correspondant par son ID
-  let foundAgreement = accords.value.agreements.find(
-    (agreement) => agreement.agree_id === agreeId
-  );
-  let currentPlaces = getNumberOfPlace(agreeId).length;
-
-  if (foundAgreement) {
-    // Synchroniser les places si elles sont différentes
-    if (foundAgreement.agree_nbplace !== currentPlaces) {
-      foundAgreement.agree_nbplace = currentPlaces;
-    }
-
-    // Ajouter temporairement une place en incrémentant agree_nbplace
-    foundAgreement.agree_nbplace += 1;
-
-    // Ajouter temporairement une place dans localArbitrage
-    if (!localArbitrage.value[agreeId]) {
-      localArbitrage.value[agreeId] = { accounts: [] };
-    }
-    if (!localArbitrage.value[agreeId].accounts) {
-      localArbitrage.value[agreeId].accounts = [];
-    }
-    localArbitrage.value[agreeId].accounts.push({
-      arb_pos: localArbitrage.value[agreeId].accounts.length + 1,
-      account: null,
-    });
-
+    // Attendre le prochain "tick" pour assurer que les changements sont appliqués
     await nextTick();
+
+    // Rafraîchir les éléments de drag and drop
+    refreshDrag();
     refreshDrop();
   }
-}
 
-// Renvoie le nombre de place d'un accord
-function getNumberOfPlace(agreeId) {
-  const agreements = accords.value.agreements;
 
-  const agreement = agreements.find(
-    (agreement) => agreement.agree_id === agreeId
-  );
+  // Renvoie la date formatée
+  function formatDate(date) {
+    const d = new Date(date);
 
-  if (!agreement) {
-    console.error(`Accord avec agreeId ${agreeId} non trouvé.`);
-    return [];
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0"); // Les mois commencent à 0
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, "0");
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+
+    return `${day}/${month}/${year} à ${hours}h${minutes}`;
   }
 
-  const numberOfPlaces = agreement.agree_nbplace;
+  // Enregistrement de l'arbitrage
+  async function saveArbitrage() {
+    // Sauvegarder l'état précédent pour comparaison
+    const previousState = arbitrage.value.map((arb) => ({
+      acc_id: arb.account.acc_id,
+      agree_id: arb.agreement.agree_id,
+      arb_pos: arb.arb_pos,
+    }));
 
-  const studentPositions = arbitrage.value.filter(
-    (entry) => entry.agree_id === agreeId
-  );
+    const extractedData = Object.values(localArbitrage.value).reduce(
+      (acc, arbitrage) => {
+        arbitrage.accounts.forEach((accountInfo) => {
+          if (accountInfo.account) {
+            acc.push({
+              acc_id: accountInfo.account.acc_id,
+              agree_id: arbitrage.agreement.agree_id,
+              arb_pos: accountInfo.arb_pos,
+            });
+          }
+        });
+        return acc;
+      },
+      []
+    );
 
-  const maxPosition = studentPositions.reduce((max, student) => {
-    return student.arb_pos > max ? student.arb_pos : max;
-  }, numberOfPlaces - 1);
+    await request("POST", false, response, config.apiUrl + "api/arbitrage", extractedData);
 
-  const totalPlaces = Math.max(numberOfPlaces, maxPosition);
+    if (response.value.status == 200) {
+      // Créer une map des positions précédentes par étudiant et accord
+      const previousPositions = new Map(
+        previousState.map((state) => [
+          `${state.acc_id}-${state.agree_id}`,
+          state.arb_pos,
+        ])
+      );
 
-  const places = Array.from({ length: totalPlaces }, (v, k) => k);
+      // Créer une map des nouvelles positions
+      const newPositions = new Map(
+        extractedData.map((data) => [
+          `${data.acc_id}-${data.agree_id}`,
+          data.arb_pos,
+        ])
+      );
 
-  return places;
-}
+      // Trouver les suppressions (étudiants qui ne sont plus sur le même accord)
+      const removals = previousState.filter((prevData) => {
+        const key = `${prevData.acc_id}-${prevData.agree_id}`;
+        const hasKey = !newPositions.has(key);
+        return hasKey;
+      });
 
-// Quand on change un filtre, permet d'actualiser les drag et drop
-async function handleFiltreEtu() {
-  await nextTick();
-  refreshDrag();
-  refreshDrop();
-}
+      // Trouver les changements (nouveaux placements ou modifications de position)
+      const changes = extractedData.filter((newData) => {
+        const key = `${newData.acc_id}-${newData.agree_id}`;
+        const previousPos = previousPositions.get(key);
+        return !previousPos || previousPos !== newData.arb_pos;
+      });
 
-const availableIsceds = computed(() => {
-  if (!selectedUniversity.value || !isceds.value || !accords.value) {
-    return [];
-  }
-
-  const uniqueIscedIds = new Set();
-
-  if (selectedUniversity.value.length === 0) {
-    // Si aucune université n'est sélectionnée, retourner tous les ISCED disponibles
-    accords.value.agreements.forEach((accord) => {
-      if (accord.isced) {
-        uniqueIscedIds.add(accord.isced.isc_id);
+      // Créer une entrée dans l'historique pour les changements
+      for (const data of changes) {
+        addAction(
+          accountStore.account.acc_id,
+          "arbitrage",
+          response,
+          `Changement de l'arbitrage pour ${data.acc_id} sur l'accord ${data.agree_id} à la position ${data.arb_pos}.`
+        );
       }
-    });
-    return isceds.value.filter((isced) => uniqueIscedIds.has(isced.isc_id));
-  }
 
-  // Récupérer tous les ISCED des accords des universités sélectionnées
-  accords.value.agreements
-    .filter((accord) =>
-      selectedUniversity.value.includes(accord.university?.univ_id)
-    )
-    .forEach((accord) => {
-      if (accord.isced) {
-        uniqueIscedIds.add(accord.isced.isc_id);
+      // Créer une entrée dans l'historique pour les suppressions
+      for (const data of removals) {
+        addAction(
+          accountStore.account.acc_id,
+          "arbitrage",
+          response,
+          `Suppression de l'arbitrage pour ${data.acc_id} (précédemment sur l'accord ${data.agree_id}).`
+        );
       }
-    });
-
-  return isceds.value.filter((isced) => uniqueIscedIds.has(isced.isc_id));
-});
-
-// Computed property pour obtenir les universités avec le compte des ISCED
-
-const availableUniversities = computed(() => {
-  if (!selectedIsced.value || !university.value || !accords.value) {
-    return [];
+    }
   }
 
-  let universities;
+  const disabledUniversities = computed(() => {
+    if (selectedCountries.value.length === 0) return new Set();
+    return new Set(
+      university.value
+        .filter((univ) => {
+          const isLinked = accords.value.agreements.some(
+            (a) =>
+              a.university?.univ_id === univ.univ_id &&
+              selectedCountries.value.includes(a.partnercountry?.parco_name)
+          );
+          return !isLinked;
+        })
+        .map((u) => u.univ_id)
+    );
+  });
 
-  if (selectedIsced.value.length === 0) {
-    universities = university.value;
-  } else {
-    const validUnivIds = new Set();
-    accords.value.agreements
-      .filter(
-        (accord) =>
-          accord.isced && selectedIsced.value.includes(accord.isced.isc_id)
-      )
-      .forEach((accord) => {
-        if (accord.university) {
-          validUnivIds.add(accord.university.univ_id);
+  const disabledIsceds = computed(() => {
+    if (selectedUniversity.value.length === 0) return new Set();
+    return new Set(
+      isceds.value
+        .filter((isced) => {
+          const isLinked = accords.value.agreements.some(
+            (a) =>
+              a.isced?.isc_id === isced.isc_id &&
+              selectedUniversity.value.includes(a.university?.univ_id)
+          );
+          return !isLinked;
+        })
+        .map((i) => i.isc_id)
+    );
+  });
+
+  const disabledCountries = computed(() => {
+    if (selectedUniversity.value.length === 0) return new Set();
+    return new Set(
+      partnercountry.value
+        .filter((country) => {
+          const isLinked = accords.value.agreements.some(
+            (a) =>
+              a.partnercountry?.parco_name === country.parco_name &&
+              selectedUniversity.value.includes(a.university?.univ_id)
+          );
+          return !isLinked;
+        })
+        .map((c) => c.parco_name)
+    );
+  });
+
+  // Liste des étudiants après filtres
+  const filteredEtus = computed(() => {
+    return Object.values(localEtus.value)
+      .filter((etu) => {
+        // Filtre par défaut: prend uniquement les étudiants avec acc_validateacc à true
+        return etu.acc_validateacc === true;
+      })
+      .filter((etu) => {
+        // Filtre par département avec possibilité de filtrer par "Aucun"
+        const matchesDepartments =
+          selectedDepartment.value.length === 0 ||
+          (etu.department &&
+            selectedDepartment.value.includes(etu.department.dept_shortname)) ||
+          (selectedDepartment.value.includes("Aucun") && !etu.department);
+
+        // Filtre par recherche
+        const matchesSearchQuery =
+          !searchQuery.value ||
+          [etu.acc_fullname, etu.acc_id.toString()].some((field) =>
+            field.toLowerCase().includes(searchQuery.value.toLowerCase())
+          );
+
+        return matchesDepartments && matchesSearchQuery;
+      })
+      .filter((etu) => {
+        // Filtre par accords
+        const filteredAgreements = getFilteredAgreements(etu).map(
+          (item) => item.agreement.agree_id
+        );
+        return (
+          selectedAccord.value.length === 0 ||
+          selectedAccord.value.some((accord) =>
+            filteredAgreements.includes(accord)
+          )
+        );
+      })
+      .filter((etu) => {
+        // Filtre par nombre de vœux
+        const voeuxCount = etu.wishes.count;
+        return (
+          selectedVoeux.value.length === 0 ||
+          selectedVoeux.value.includes(voeuxCount)
+        );
+      })
+      .filter((etu) => {
+        // Filtre par année de mobilité
+        return (
+          selectedAnneeMobilite.value.length === 0 ||
+          selectedAnneeMobilite.value.includes(etu.acc_anneemobilite)
+        );
+      })
+      .sort((a, b) => {
+        // Tri par position du vœu et alphabétiquement
+        const aMinPlace = Math.min(
+          ...getFilteredAgreements(a)
+            .filter((item) =>
+              selectedAccord.value.includes(item.agreement.agree_id)
+            )
+            .map((item) => item.place)
+        );
+        const bMinPlace = Math.min(
+          ...getFilteredAgreements(b)
+            .filter((item) =>
+              selectedAccord.value.includes(item.agreement.agree_id)
+            )
+            .map((item) => item.place)
+        );
+        if (aMinPlace !== bMinPlace) {
+          return aMinPlace - bMinPlace;
+        }
+        return a.acc_fullname.localeCompare(b.acc_fullname);
+      });
+  });
+
+  // Liste des accords avec arbitrage après filtres
+  const filteredArbitrage = computed(() => {
+    return Object.values(localArbitrage.value)
+      .filter((arbitrage) => {
+        const countryFilter =
+          selectedCountries.value.length === 0 ||
+          selectedCountries.value.includes(
+            arbitrage.agreement.partnercountry.parco_name
+          );
+
+        const allAccountsNull = arbitrage.accounts.every(
+          (account) => account.account === null
+        );
+        const atLeastOneAccountNotNull = arbitrage.accounts.some(
+          (account) => account.account !== null
+        );
+
+        const arbitrageFilter =
+          selectedArbitrage.value.length === 0 ||
+          (selectedArbitrage.value.includes("aucun") && allAccountsNull) ||
+          (selectedArbitrage.value.includes("aumoinsun") &&
+            atLeastOneAccountNotNull);
+
+        const iscedFilter =
+          selectedIsced.value.length === 0 ||
+          (arbitrage.agreement.isced &&
+            selectedIsced.value.includes(arbitrage.agreement.isced.isc_id));
+
+        const universityFilter =
+          selectedUniversity.value.length === 0 ||
+          (arbitrage.agreement.university &&
+            selectedUniversity.value.includes(
+              arbitrage.agreement.university.univ_id
+            ));
+
+        return (
+          countryFilter && arbitrageFilter && iscedFilter && universityFilter
+        );
+      })
+      .sort((a, b) => {
+        const countryComparison =
+          a.agreement.partnercountry.parco_name.localeCompare(
+            b.agreement.partnercountry.parco_name
+          );
+        if (countryComparison !== 0) {
+          return countryComparison;
+        }
+        const universityA = a.agreement.university
+          ? a.agreement.university.univ_name
+          : "";
+        const universityB = b.agreement.university
+          ? b.agreement.university.univ_name
+          : "";
+        return universityA.localeCompare(universityB);
+      });
+  });
+
+  // renvoie les voeux d'un étudiant
+  function getFilteredAgreements(etu) {
+    if (!etu || !etu.wishes) {
+      return [];
+    }
+    const wishes = etu.wishes;
+    const wishIds = [
+      { place: 1, id: wishes.wsha_one },
+      { place: 2, id: wishes.wsha_two },
+      { place: 3, id: wishes.wsha_three },
+      { place: 4, id: wishes.wsha_four },
+      { place: 5, id: wishes.wsha_five },
+      { place: 6, id: wishes.wsha_six },
+    ].filter((wsha) => wsha !== null);
+    return wishIds
+      .map((wsha) => {
+        const agreement = accords.value.agreements.find(
+          (agreement) => agreement.agree_id === wsha.id
+        );
+        return { place: wsha.place, agreement };
+      })
+      .filter((item) => item.agreement !== undefined);
+  }
+
+  // Enlever un étudiant d'un accord
+  function removeEtuFromPlace(agree_id, pos) {
+    const etu = localArbitrage.value[agree_id].accounts[pos].account;
+    localEtus.value[etu.acc_id] = etu;
+    localArbitrage.value[agree_id].accounts[pos].account = null;
+    refreshDrag();
+    saveArbitrage();
+  }
+
+  // Fonction pour ajouter une place temporaire
+  async function addPlace(agreeId) {
+    // Trouver l'accord correspondant par son ID
+    let foundAgreement = accords.value.agreements.find(
+      (agreement) => agreement.agree_id === agreeId
+    );
+    let currentPlaces = getNumberOfPlace(agreeId).length;
+
+    if (foundAgreement) {
+      // Synchroniser les places si elles sont différentes
+      if (foundAgreement.agree_nbplace !== currentPlaces) {
+        foundAgreement.agree_nbplace = currentPlaces;
+      }
+
+      // Ajouter temporairement une place en incrémentant agree_nbplace
+      foundAgreement.agree_nbplace += 1;
+
+      // Ajouter temporairement une place dans localArbitrage
+      if (!localArbitrage.value[agreeId]) {
+        localArbitrage.value[agreeId] = { accounts: [] };
+      }
+      if (!localArbitrage.value[agreeId].accounts) {
+        localArbitrage.value[agreeId].accounts = [];
+      }
+      localArbitrage.value[agreeId].accounts.push({
+        arb_pos: localArbitrage.value[agreeId].accounts.length + 1,
+        account: null,
+      });
+
+      await nextTick();
+      refreshDrop();
+    }
+  }
+
+  // Renvoie le nombre de place d'un accord
+  function getNumberOfPlace(agreeId) {
+    const agreements = accords.value.agreements;
+
+    const agreement = agreements.find(
+      (agreement) => agreement.agree_id === agreeId
+    );
+
+    if (!agreement) {
+      console.error(`Accord avec agreeId ${agreeId} non trouvé.`);
+      return [];
+    }
+
+    const numberOfPlaces = agreement.agree_nbplace;
+
+    const studentPositions = arbitrage.value.filter(
+      (entry) => entry.agree_id === agreeId
+    );
+
+    const maxPosition = studentPositions.reduce((max, student) => {
+      return student.arb_pos > max ? student.arb_pos : max;
+    }, numberOfPlaces - 1);
+
+    const totalPlaces = Math.max(numberOfPlaces, maxPosition);
+
+    const places = Array.from({ length: totalPlaces }, (v, k) => k);
+
+    return places;
+  }
+
+  // Quand on change un filtre, permet d'actualiser les drag et drop
+  async function handleFiltreEtu() {
+    await nextTick();
+    refreshDrag();
+    refreshDrop();
+  }
+
+  const availableIsceds = computed(() => {
+    if (!selectedUniversity.value || !isceds.value || !accords.value) {
+      return [];
+    }
+
+    const uniqueIscedIds = new Set();
+
+    if (selectedUniversity.value.length === 0) {
+      // Si aucune université n'est sélectionnée, retourner tous les ISCED disponibles
+      accords.value.agreements.forEach((accord) => {
+        if (accord.isced) {
+          uniqueIscedIds.add(accord.isced.isc_id);
         }
       });
-    universities = university.value.filter((univ) =>
-      validUnivIds.has(univ.univ_id)
-    );
-  }
+      return isceds.value.filter((isced) => uniqueIscedIds.has(isced.isc_id));
+    }
 
-  // Ajouter le compte des ISCED pour chaque université
-  return universities.map((univ) => {
-    // Obtenir tous les ISCED uniques pour cette université
-    const uniqueIsceds = new Set(
+    // Récupérer tous les ISCED des accords des universités sélectionnées
+    accords.value.agreements
+      .filter((accord) =>
+        selectedUniversity.value.includes(accord.university?.univ_id)
+      )
+      .forEach((accord) => {
+        if (accord.isced) {
+          uniqueIscedIds.add(accord.isced.isc_id);
+        }
+      });
+
+    return isceds.value.filter((isced) => uniqueIscedIds.has(isced.isc_id));
+  });
+
+  // Computed property pour obtenir les universités avec le compte des ISCED
+
+  const availableUniversities = computed(() => {
+    if (!selectedIsced.value || !university.value || !accords.value) {
+      return [];
+    }
+
+    let universities;
+
+    if (selectedIsced.value.length === 0) {
+      universities = university.value;
+    } else {
+      const validUnivIds = new Set();
       accords.value.agreements
         .filter(
           (accord) =>
-            accord.university &&
-            accord.university.univ_id === univ.univ_id &&
-            accord.isced
+            accord.isced && selectedIsced.value.includes(accord.isced.isc_id)
         )
-        .map((accord) => accord.isced.isc_id)
-    );
-    // Retourner l'université avec les ISCED uniques
-    return {
-      ...univ,
-      uniqueIsceds: Array.from(uniqueIsceds),
-    };
-  });
-});
+        .forEach((accord) => {
+          if (accord.university) {
+            validUnivIds.add(accord.university.univ_id);
+          }
+        });
+      universities = university.value.filter((univ) =>
+        validUnivIds.has(univ.univ_id)
+      );
+    }
 
-watch(selectedDepartment, handleFiltreEtu);
-watch(selectedAccord, handleFiltreEtu);
-watch(selectedVoeux, handleFiltreEtu);
-watch(selectedCountries, () => {
-  applyCrossFilters();
-  handleFiltreEtu();
-});
-watch(selectedIsced, () => {
-  applyCrossFilters();
-  handleFiltreEtu();
-});
-watch(selectedAnneeMobilite, handleFiltreEtu);
-watch(selectedAccordArbitrage, handleFiltreEtu);
-watch(selectedArbitrage, handleFiltreEtu);
-watch(selectedUniversity, () => {
-  applyCrossFilters();
-  handleFiltreEtu();
-});
-
-// définit les drop zones
-async function refreshDrop() {
-  let dropZones = document.getElementsByClassName("dropZones");
-  for (let dropZone of dropZones) {
-    dropZone.addEventListener("dragover", function (e) {
-      e.preventDefault();
+    // Ajouter le compte des ISCED pour chaque université
+    return universities.map((univ) => {
+      // Obtenir tous les ISCED uniques pour cette université
+      const uniqueIsceds = new Set(
+        accords.value.agreements
+          .filter(
+            (accord) =>
+              accord.university &&
+              accord.university.univ_id === univ.univ_id &&
+              accord.isced
+          )
+          .map((accord) => accord.isced.isc_id)
+      );
+      // Retourner l'université avec les ISCED uniques
+      return {
+        ...univ,
+        uniqueIsceds: Array.from(uniqueIsceds),
+      };
     });
-    dropZone.addEventListener("drop", function (e) {
-      e.preventDefault();
-      let id = e.dataTransfer.getData("text/plain");
-      let selected = document.getElementById(id);
-      if (selected) {
-        const etuId = selected.id.replace("etu_drag_", "");
-        const idMatch = dropZone.id.match(/^drop_(\d+)_(\d+)$/);
-        if (idMatch) {
-          const agree_id = parseInt(idMatch[1]); // Convertir en entier si nécessaire
-          const pos = parseInt(idMatch[2]); // Convertir en entier si nécessaire
+  });
 
-          let etu = localEtus.value[etuId];
+  watch(selectedDepartment, handleFiltreEtu);
+  watch(selectedAccord, handleFiltreEtu);
+  watch(selectedVoeux, handleFiltreEtu);
+  watch(selectedCountries, () => {
+    applyCrossFilters();
+    handleFiltreEtu();
+  });
+  watch(selectedIsced, () => {
+    applyCrossFilters();
+    handleFiltreEtu();
+  });
+  watch(selectedAnneeMobilite, handleFiltreEtu);
+  watch(selectedAccordArbitrage, handleFiltreEtu);
+  watch(selectedArbitrage, handleFiltreEtu);
+  watch(selectedUniversity, () => {
+    applyCrossFilters();
+    handleFiltreEtu();
+  });
 
-          if (etu) {
-            // Vérifier si l'étudiant est déjà dans localArbitrage.value
-            const existingStudent =
-              localArbitrage.value[agree_id].accounts[pos];
-            if (existingStudent && existingStudent.account != null) {
-              if(existingStudent.account.acc_arbitragefait == true){
-                return;
-              }
-              // Échanger les étudiants si celui en cours de drag n'est pas déjà dans la dropzone
-              const currentEtuId = existingStudent.account.acc_id;
-              if (currentEtuId !== etu.acc_id) {
-                // Remettre l'étudiant existant dans localEtus.value
-                localEtus.value[currentEtuId] = existingStudent.account;
-              }
-            }
+  // définit les drop zones
+  async function refreshDrop() {
+    let dropZones = document.getElementsByClassName("dropZones");
+    for (let dropZone of dropZones) {
+      dropZone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+      });
+      dropZone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        let id = e.dataTransfer.getData("text/plain");
+        let selected = document.getElementById(id);
+        if (selected) {
+          const etuId = selected.id.replace("etu_drag_", "");
+          const idMatch = dropZone.id.match(/^drop_(\d+)_(\d+)$/);
+          if (idMatch) {
+            const agree_id = parseInt(idMatch[1]); // Convertir en entier si nécessaire
+            const pos = parseInt(idMatch[2]); // Convertir en entier si nécessaire
 
-            // Supprimer l'étudiant de localEtus.value s'il est là
-            if (localEtus.value[etuId]) {
-              delete localEtus.value[etuId];
-            }
+            let etu = localEtus.value[etuId];
 
-            // Mettre l'étudiant dans la dropzone actuelle de l'arbitrage
-            localArbitrage.value[agree_id].accounts[pos].account = etu;
-            refreshDrag();
-            saveArbitrage();
-            // Si l'étudiant n'est pas trouvé dans localEtus.value, chercher dans localArbitrage.value
-          } else if (!etu) {
-            etu = findStudentInArbitrage(etuId);
-            if (
-              findStudentPositionInArbitrage(etuId) - 1 != pos ||
-              getCurrentAgreeIdByAccId(etuId) != agree_id
-            ) {
+            if (etu) {
+              // Vérifier si l'étudiant est déjà dans localArbitrage.value
               const existingStudent =
                 localArbitrage.value[agree_id].accounts[pos];
               if (existingStudent && existingStudent.account != null) {
-                localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[
-                  findStudentPositionInArbitrage(etuId) - 1
-                ].account = existingStudent.account;
-                localArbitrage.value[agree_id].accounts[pos].account = etu;
-                refreshDrag();
-                saveArbitrage();
-              } else {
-                localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[
-                  findStudentPositionInArbitrage(etuId) - 1
-                ].account = null;
-                localArbitrage.value[agree_id].accounts[pos].account = etu;
-                refreshDrag();
-                saveArbitrage();
+                if(existingStudent.account.acc_arbitragefait == true){
+                  return;
+                }
+                // Échanger les étudiants si celui en cours de drag n'est pas déjà dans la dropzone
+                const currentEtuId = existingStudent.account.acc_id;
+                if (currentEtuId !== etu.acc_id) {
+                  // Remettre l'étudiant existant dans localEtus.value
+                  localEtus.value[currentEtuId] = existingStudent.account;
+                }
               }
-              //Verifier si il y a deja un étudiant dans la dropzone
+
+              // Supprimer l'étudiant de localEtus.value s'il est là
+              if (localEtus.value[etuId]) {
+                delete localEtus.value[etuId];
+              }
+
+              // Mettre l'étudiant dans la dropzone actuelle de l'arbitrage
+              localArbitrage.value[agree_id].accounts[pos].account = etu;
+              refreshDrag();
+              saveArbitrage();
+              // Si l'étudiant n'est pas trouvé dans localEtus.value, chercher dans localArbitrage.value
+            } else if (!etu) {
+              etu = findStudentInArbitrage(etuId);
+              if (
+                findStudentPositionInArbitrage(etuId) - 1 != pos ||
+                getCurrentAgreeIdByAccId(etuId) != agree_id
+              ) {
+                const existingStudent =
+                  localArbitrage.value[agree_id].accounts[pos];
+                if (existingStudent && existingStudent.account != null) {
+                  localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[
+                    findStudentPositionInArbitrage(etuId) - 1
+                  ].account = existingStudent.account;
+                  localArbitrage.value[agree_id].accounts[pos].account = etu;
+                  refreshDrag();
+                  saveArbitrage();
+                } else {
+                  localArbitrage.value[getCurrentAgreeIdByAccId(etuId)].accounts[
+                    findStudentPositionInArbitrage(etuId) - 1
+                  ].account = null;
+                  localArbitrage.value[agree_id].accounts[pos].account = etu;
+                  refreshDrag();
+                  saveArbitrage();
+                }
+                //Verifier si il y a deja un étudiant dans la dropzone
+              }
+            } else {
+              console.error(
+                "Étudiant non trouvé dans localEtus.value ou localArbitrage.value avec etuId :",
+                etuId
+              );
             }
           } else {
-            console.error(
-              "Étudiant non trouvé dans localEtus.value ou localArbitrage.value avec etuId :",
-              etuId
-            );
+            console.error("ID de dropZone non valide :", dropZone.id);
           }
-        } else {
-          console.error("ID de dropZone non valide :", dropZone.id);
+        }
+      });
+    }
+  }
+
+  // Trouver un étudiant si il fait partie d'un accord ou non
+  function findStudentInArbitrage(etuId) {
+    for (let agreementId in localArbitrage.value) {
+      const accounts = localArbitrage.value[agreementId].accounts;
+      for (let accountInfo of accounts) {
+        if (accountInfo.account && accountInfo.account.acc_id == etuId) {
+          return accountInfo.account;
         }
       }
+    }
+    return null;
+  }
+
+  //Trouver la position d'un étudiant dans l'accord
+  function findStudentPositionInArbitrage(accId) {
+    for (let agreementId in localArbitrage.value) {
+      const accounts = localArbitrage.value[agreementId].accounts;
+      for (let i = 0; i < accounts.length; i++) {
+        const accountInfo = accounts[i];
+        if (accountInfo.account && accountInfo.account.acc_id === accId) {
+          return i + 1; // Return arb_pos (adjusted to 1-based index)
+        }
+      }
+    }
+    return null; // Return null if student not found
+  }
+
+  // Renvoie l'accord de l'étudiant (id) passé en param
+  function getCurrentAgreeIdByAccId(accId) {
+    for (let agreementId in localArbitrage.value) {
+      const accounts = localArbitrage.value[agreementId].accounts;
+      for (let accountInfo of accounts) {
+        if (accountInfo.account && accountInfo.account.acc_id === accId) {
+          return parseInt(agreementId);
+        }
+      }
+    }
+    console.error("Aucun accord trouvé pour l'acc_id :", accId);
+    return null;
+  }
+
+  // Refresh les drag zone
+  async function refreshDrag() {
+    await nextTick();
+    let elementsDraggable = document.getElementsByClassName("elementDrag");
+    // Parcourir tous les éléments
+    for (let element of elementsDraggable) {
+      if (!element.hasListener) {
+        element.addEventListener("dragstart", dragStartHandler);
+        element.hasListener = true;
+      }
+    }
+  }
+
+  // Permet de définir le handler d'un drag
+  function dragStartHandler(e) {
+    e.dataTransfer.setData("text/plain", e.target.id);
+  }
+
+  // voir tous les filtres
+  function watchAllWish() {
+    filteredEtus.value.forEach((etu) => {
+      isOpen.value.etudiants[etu.acc_id] = true;
     });
   }
-}
 
-// Trouver un étudiant si il fait partie d'un accord ou non
-function findStudentInArbitrage(etuId) {
-  for (let agreementId in localArbitrage.value) {
-    const accounts = localArbitrage.value[agreementId].accounts;
-    for (let accountInfo of accounts) {
-      if (accountInfo.account && accountInfo.account.acc_id == etuId) {
-        return accountInfo.account;
-      }
+  // déséléctionner les filtres
+  function deselectAll() {
+    selectedDepartment.value = [];
+    selectedVoeux.value = [];
+    selectedAnneeMobilite.value = [];
+    selectedAccord.value = [];
+  }
+
+  // déséléctionner les filtres arbitrage
+  function deselectAllArb() {
+    selectedCountries.value = [];
+    selectedIsced.value = [];
+    selectedAccordArbitrage.value = [];
+    selectedArbitrage.value = [];
+    selectedUniversity.value = [];
+  }
+
+  function deselectAllDept() {
+    selectedDepartment.value = [];
+  }
+  function deselectAllAccord() {
+    selectedAccord.value = [];
+  }
+  function deselectAllCountry() {
+    selectedCountries.value = [];
+  }
+  function deselectAllVoeux() {
+    selectedVoeux.value = [];
+  }
+  function deselectAllIsced() {
+    selectedIsced.value = [];
+  }
+  function deselectAllAnneeMobilite() {
+    selectedAnneeMobilite.value = [];
+  }
+  function deselectAllAccordArbitrage() {
+    selectedAccordArbitrage.value = [];
+  }
+  function deselectAllArbitrage() {
+    selectedArbitrage.value = [];
+  }
+  function deselectAllUniversity() {
+    selectedUniversity.value = [];
+  }
+
+  function createPret(agreeId, placeNum){
+    newPret.value.agree_id = agreeId;
+    newPret.value.pplace_pos = placeNum;
+    newPret.value.comp_id = null;
+  }
+
+  function setComposantePret(compId){
+    newPret.value.comp_id = compId;
+  }
+
+  function cancelPret(){
+    newPret.value.agree_id = null;
+    newPret.value.pplace_pos = null;
+    newPret.value.comp_id = null;
+  }
+
+  async function confirmPret(){
+    const requestData = {
+      comp_id: newPret.value.comp_id,
+      agree_id: newPret.value.agree_id,
+      pplace_pos: newPret.value.pplace_pos
     }
-  }
-  return null;
-}
 
-//Trouver la position d'un étudiant dans l'accord
-function findStudentPositionInArbitrage(accId) {
-  for (let agreementId in localArbitrage.value) {
-    const accounts = localArbitrage.value[agreementId].accounts;
-    for (let i = 0; i < accounts.length; i++) {
-      const accountInfo = accounts[i];
-      if (accountInfo.account && accountInfo.account.acc_id === accId) {
-        return i + 1; // Return arb_pos (adjusted to 1-based index)
-      }
-    }
-  }
-  return null; // Return null if student not found
-}
+    let currentComp;
 
-// Renvoie l'accord de l'étudiant (id) passé en param
-function getCurrentAgreeIdByAccId(accId) {
-  for (let agreementId in localArbitrage.value) {
-    const accounts = localArbitrage.value[agreementId].accounts;
-    for (let accountInfo of accounts) {
-      if (accountInfo.account && accountInfo.account.acc_id === accId) {
-        return parseInt(agreementId);
-      }
-    }
-  }
-  console.error("Aucun accord trouvé pour l'acc_id :", accId);
-  return null;
-}
-
-// Refresh les drag zone
-async function refreshDrag() {
-  await nextTick();
-  let elementsDraggable = document.getElementsByClassName("elementDrag");
-  // Parcourir tous les éléments
-  for (let element of elementsDraggable) {
-    if (!element.hasListener) {
-      element.addEventListener("dragstart", dragStartHandler);
-      element.hasListener = true;
-    }
-  }
-}
-
-// Permet de définir le handler d'un drag
-function dragStartHandler(e) {
-  e.dataTransfer.setData("text/plain", e.target.id);
-}
-
-// voir tous les filtres
-function watchAllWish() {
-  filteredEtus.value.forEach((etu) => {
-    isOpen.value.etudiants[etu.acc_id] = true;
-  });
-}
-
-// déséléctionner les filtres
-function deselectAll() {
-  selectedDepartment.value = [];
-  selectedVoeux.value = [];
-  selectedAnneeMobilite.value = [];
-  selectedAccord.value = [];
-}
-
-// déséléctionner les filtres arbitrage
-function deselectAllArb() {
-  selectedCountries.value = [];
-  selectedIsced.value = [];
-  selectedAccordArbitrage.value = [];
-  selectedArbitrage.value = [];
-  selectedUniversity.value = [];
-}
-
-function deselectAllDept() {
-  selectedDepartment.value = [];
-}
-function deselectAllAccord() {
-  selectedAccord.value = [];
-}
-function deselectAllCountry() {
-  selectedCountries.value = [];
-}
-function deselectAllVoeux() {
-  selectedVoeux.value = [];
-}
-function deselectAllIsced() {
-  selectedIsced.value = [];
-}
-function deselectAllAnneeMobilite() {
-  selectedAnneeMobilite.value = [];
-}
-function deselectAllAccordArbitrage() {
-  selectedAccordArbitrage.value = [];
-}
-function deselectAllArbitrage() {
-  selectedArbitrage.value = [];
-}
-function deselectAllUniversity() {
-  selectedUniversity.value = [];
-}
-
-function createPret(agreeId, placeNum){
-  newPret.value.agree_id = agreeId;
-  newPret.value.pplace_pos = placeNum;
-  newPret.value.comp_id = null;
-}
-
-function setComposantePret(compId){
-  newPret.value.comp_id = compId;
-}
-
-function cancelPret(){
-  newPret.value.agree_id = null;
-  newPret.value.pplace_pos = null;
-  newPret.value.comp_id = null;
-}
-
-async function confirmPret(){
-  const requestData = {
-    comp_id: newPret.value.comp_id,
-    agree_id: newPret.value.agree_id,
-    pplace_pos: newPret.value.pplace_pos
-  }
-
-  let currentComp;
-
-  components.value.components.forEach((element) => {
-    if(element.comp_id === newPret.value.comp_id) currentComp = element.comp_shortname;
-  });
-
-  console.log(requestData);
-  await request('POST', true, response, config.apiUrl+'api/arbitrage/pret', requestData);
-  if (response.value.status === 200) {
-    addAction(accountStore.account.acc_id, "arbitrage", response, 'Session d\'une place de l\'accord '+ newPret.value.agree_id +' à '+ currentComp +'.');
-    await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
-  }
-}
-
-function getPlacePretee(agreeId, placeNum){
-  return prets.value.find((pret) => {
-      return pret.pplace_pos === placeNum && pret.agree_id === agreeId;
+    components.value.components.forEach((element) => {
+      if(element.comp_id === newPret.value.comp_id) currentComp = element.comp_shortname;
     });
-}
 
-async function deletePret(pret){
-  await request('DELETE', true, response, config.apiUrl+'api/arbitrage/pret/'+pret.pplace_id);
-  if (response.value.status === 200) {
-    addAction(accountStore.account.acc_id, "arbitrage", response, 'Annulation prêt d\'une place de l\'accord '+ pret.agree_id +' à '+ pret.component.comp_shortname +'.');
-    await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
-    console.log(getPlacePretee(pret.agree_id, pret.pplace_pos));
+    console.log(requestData);
+    await request('POST', true, response, config.apiUrl+'api/arbitrage/pret', requestData);
+    if (response.value.status === 200) {
+      addAction(accountStore.account.acc_id, "arbitrage", response, 'Session d\'une place de l\'accord '+ newPret.value.agree_id +' à '+ currentComp +'.');
+      await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
+    }
   }
-}
 
-onMounted(fetch);
+  function getPlacePretee(agreeId, placeNum){
+    return prets.value.find((pret) => {
+        return pret.pplace_pos === placeNum && pret.agree_id === agreeId;
+      });
+  }
+
+  async function deletePret(pret){
+    await request('DELETE', true, response, config.apiUrl+'api/arbitrage/pret/'+pret.pplace_id);
+    if (response.value.status === 200) {
+      addAction(accountStore.account.acc_id, "arbitrage", response, 'Annulation prêt d\'une place de l\'accord '+ pret.agree_id +' à '+ pret.component.comp_shortname +'.');
+      await request("GET", false, prets, config.apiUrl + "api/arbitrage/prets");
+      console.log(getPlacePretee(pret.agree_id, pret.pplace_pos));
+    }
+  }
+
+  onMounted(fetch);
 </script>
 
 // Cross-filtering logic for arbitrage filters (Pays, Universités, ISCED, Arbitrage)

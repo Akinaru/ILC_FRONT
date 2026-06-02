@@ -1,159 +1,157 @@
 <template>
-    <div>
-      <div v-if="isLoaded">
-        <div class="m-5 my-20">
-          <p class="text-lg font-bold text-center mb-10">Témoignages des utilisateurs</p>
-  
-  
-            <!-- Sélecteur d'année avec design DaisyUI -->
-            <div class="flex justify-center items-center mb-8">
-            <div class="join">
-                <button @click="decrementYear" class="join-item btn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-                </button>
-                <div class="join-item btn px-6 pointer-events-none">
-                {{ selectedYear }}-{{ selectedYear + 1 }}
-                </div>
-                <button @click="incrementYear" class="join-item btn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-                </button>
-            </div>
-            </div>
+  <div>
+    <div v-if="isLoaded">
+      <div class="m-5 my-20">
+        <p class="text-lg font-bold text-center mb-10">Témoignages des utilisateurs</p>
 
-          <!-- Liste des témoignages -->
-          <div class="columns-1 md:columns-2 gap-6 space-y-6">
-            <div
-              v-for="(account, index) in filteredAccounts"
-              :key="index"
-              class="bg-base-300 p-5 rounded-lg shadow-lg break-inside-avoid"
-            >
-              <div class="flex items-center gap-3 mb-4">
-                <!-- Avatar avec couleur du rôle -->
-                <div class="w-12 h-12 rounded-full flex items-center justify-center"
-                     :style="{ backgroundColor: account.role?.color || '#666666' }">
-                  <span class="text-lg text-white font-bold">
-                    {{ getInitials(account.acc_fullname) }}
-                  </span>
-                </div>
-                <!-- Nom et rôle -->
-                <div class="flex-1">
-                    <RouterLink
-                    target="_blank"
-                    :to="{ name: 'Profile', params: { acc_id: account.acc_id } }"
-                    class="font-bold transition-colors duration-200  hover:opacity-75 opacity-100"
-                    >
-                    {{ account.acc_fullname }}
-                    </RouterLink>
+        <!-- Sélecteur d'année avec design DaisyUI -->
+        <div class="flex justify-center items-center mb-8">
+          <div class="join">
+            <button @click="decrementYear" class="join-item btn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            </button>
+            <div class="join-item btn px-6 pointer-events-none">
+            {{ selectedYear }}-{{ selectedYear + 1 }}
+            </div>
+            <button @click="incrementYear" class="join-item btn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            </button>
+          </div>
+        </div>
 
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <span class="text-sm" :style="{ color: account.role?.color || '#666666' }">
-                      {{ account.role?.role || 'Rôle non défini' }}
-                    </span>
-                    <span v-if="account.acc_anneemobilite" class="text-sm opacity-70">{{ account.acc_anneemobilite }}</span>
-                  </div>
-                </div>
-                <!-- Bouton suppression -->
-                <button class="btn btn-square btn-ghost"
-                  @click="openConfirmDeleteTemoignageModal(account.acc_id)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" 
-                      stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                  </svg>
-                </button>
+        <!-- Liste des témoignages -->
+        <div class="columns-1 md:columns-2 gap-6 space-y-6">
+          <div
+            v-for="(account, index) in filteredAccounts"
+            :key="index"
+            class="bg-base-300 p-5 rounded-lg shadow-lg break-inside-avoid"
+          >
+            <div class="flex items-center gap-3 mb-4">
+              <!-- Avatar avec couleur du rôle -->
+              <div class="w-12 h-12 rounded-full flex items-center justify-center"
+                :style="{ backgroundColor: account.role?.color || '#666666' }">
+                <span class="text-lg text-white font-bold">
+                  {{ getInitials(account.acc_fullname) }}
+                </span>
               </div>
-  
-              <!-- Accord / destination -->
-              <div class="p-2 mt-1 rounded w-full" :class="account.arbitrage ? 'bg-base-200' : 'bg-base-300 opacity-60'">
+              <!-- Nom et rôle -->
+              <div class="flex-1">
                 <RouterLink
                   target="_blank"
-                  :to="{ name: 'Accord', params: { agree_id: account.arbitrage.agree_id } }"
-                  v-if="account.arbitrage"
-                  class="text-sm select-none hover:opacity-60"
+                  :to="{ name: 'Profile', params: { acc_id: account.acc_id } }"
+                  class="font-bold transition-colors duration-200  hover:opacity-75 opacity-100"
                 >
-                  <div class="flex items-center">
-                    <!-- Drapeau -->
-                    <span class="relative inline-block mr-2">
-                      <span class="fi" :class="'fi-' + (account.arbitrage.partnercountry?.parco_code)"></span>
-                      <span v-if="!account.arbitrage.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">?</span>
-                    </span>
-  
-                    <!-- Infos -->
-                    <div class="flex flex-col flex-1 overflow-hidden">
-                      <span class="font-medium truncate">
-                        {{ account.arbitrage.university?.univ_name || 'Université indisponible' }}
-                      </span>
-                      <span class="text-gray-500 truncate">
-                        {{ account.arbitrage.university?.univ_city || 'Ville indisponible' }} -
-                        {{ account.arbitrage.partnercountry?.parco_name || 'Pays indisponible' }}
-                        <span class="text-xs">
-                          ({{ account.arbitrage.isced?.isc_code || 'Code ISCED ?' }})
-                        </span>
-                      </span>
-                    </div>
-                  </div>
+                  {{ account.acc_fullname }}
                 </RouterLink>
-                <div v-else class="text-sm text-gray-400 italic flex items-center justify-center w-full min-h-12">
-                  Pas de destination
+
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-sm" :style="{ color: account.role?.color || '#666666' }">
+                    {{ account.role?.role || 'Rôle non défini' }}
+                  </span>
+                  <span v-if="account.acc_anneemobilite" class="text-sm opacity-70">{{ account.acc_anneemobilite }}</span>
                 </div>
               </div>
-  
-              <!-- Témoignage -->
-              <div class="mt-6 break-words whitespace-pre-line text-sm leading-relaxed">
-                {{ account.acc_temoignage }}
+              <!-- Bouton suppression -->
+              <button class="btn btn-square btn-ghost"
+                @click="openConfirmDeleteTemoignageModal(account.acc_id)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" 
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" 
+                    stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Accord / destination -->
+            <div class="p-2 mt-1 rounded w-full" :class="account.arbitrage ? 'bg-base-200' : 'bg-base-300 opacity-60'">
+              <RouterLink
+                target="_blank"
+                :to="{ name: 'Accord', params: { agree_id: account.arbitrage.agree_id } }"
+                v-if="account.arbitrage"
+                class="text-sm select-none hover:opacity-60"
+              >
+                <div class="flex items-center">
+                  <!-- Drapeau -->
+                  <span class="relative inline-block mr-2">
+                    <span class="fi" :class="'fi-' + (account.arbitrage.partnercountry?.parco_code)"></span>
+                    <span v-if="!account.arbitrage.partnercountry?.parco_code" class="absolute inset-0 flex items-center justify-center text-black text-lg font-bold bg-white select-none">?</span>
+                  </span>
+
+                  <!-- Infos -->
+                  <div class="flex flex-col flex-1 overflow-hidden">
+                    <span class="font-medium truncate">
+                      {{ account.arbitrage.university?.univ_name || 'Université indisponible' }}
+                    </span>
+                    <span class="text-gray-500 truncate">
+                      {{ account.arbitrage.university?.univ_city || 'Ville indisponible' }} -
+                      {{ account.arbitrage.partnercountry?.parco_name || 'Pays indisponible' }}
+                      <span class="text-xs">
+                        ({{ account.arbitrage.isced?.isc_code || 'Code ISCED ?' }})
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </RouterLink>
+              <div v-else class="text-sm text-gray-400 italic flex items-center justify-center w-full min-h-12">
+                Pas de destination
               </div>
             </div>
+
+            <!-- Témoignage -->
+            <div class="mt-6 break-words whitespace-pre-line text-sm leading-relaxed">
+              {{ account.acc_temoignage }}
+            </div>
           </div>
-  
-          <!-- Message si aucun témoignage -->
-          <div v-if="filteredAccounts.length === 0" class="text-center mt-10">
-            <p class="text-lg opacity-70">Aucun témoignage n'a encore été publié.</p>
-          </div>
-
-          <!-- Modal de confirmation suppression de temoignage -->
-          <Teleport to="body">
-            <dialog id="confirmModalTemoignage" ref="confirmModalTemoignage" class="modal">
-              <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
-                <h3 class="text-xl font-bold">Suppression du témoignage</h3>
-                <p class="text-sm text-base-content/70 mt-1">Cette action est irréversible et entraînera la suppression définitive du témoignage.</p>
-                <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
-
-                <div class="py-3">
-                  <p>Souhaitez-vous vraiment supprimer le témoignage ?</p>
-                </div>
-
-                <div class="modal-action">
-                  <button class="btn btn-ghost" @click="closeModal">Annuler</button>
-                  <button class="btn btn-error" @click="supprimerTemoignage()">Supprimer</button>
-                </div>
-              </div>
-            </dialog>
-          </Teleport>
         </div>
+
+        <!-- Message si aucun témoignage -->
+        <div v-if="filteredAccounts.length === 0" class="text-center mt-10">
+          <p class="text-lg opacity-70">Aucun témoignage n'a encore été publié.</p>
+        </div>
+
+        <!-- Modal de confirmation suppression de temoignage -->
+        <Teleport to="body">
+          <dialog id="confirmModalTemoignage" ref="confirmModalTemoignage" class="modal">
+            <div class="modal-box rounded-2xl border border-base-300 shadow-xl">
+              <h3 class="text-xl font-bold">Suppression du témoignage</h3>
+              <p class="text-sm text-base-content/70 mt-1">Cette action est irréversible et entraînera la suppression définitive du témoignage.</p>
+              <div class="w-full h-px bg-gradient-to-r from-error/30 via-error/20 to-transparent my-4"></div>
+
+              <div class="py-3">
+                <p>Souhaitez-vous vraiment supprimer le témoignage ?</p>
+              </div>
+
+              <div class="modal-action">
+                <button class="btn btn-ghost" @click="closeModal">Annuler</button>
+                <button class="btn btn-error" @click="supprimerTemoignage()">Supprimer</button>
+              </div>
+            </div>
+          </dialog>
+        </Teleport>
       </div>
-      <LoadingComp v-else />
     </div>
-  </template>
+    <LoadingComp v-else />
+  </div>
+</template>
   
-
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import config from '../../config';
-import { request } from '../../composables/httpRequest';
-import LoadingComp from '../../components/utils/LoadingComp.vue';
-import { addAction } from '../../composables/actionType';
-import { useAccountStore } from '../../stores/accountStore';
+  import { ref, onMounted, computed } from 'vue';
+  import config from '../../config';
+  import { request } from '../../composables/httpRequest';
+  import LoadingComp from '../../components/utils/LoadingComp.vue';
+  import { addAction } from '../../composables/actionType';
+  import { useAccountStore } from '../../stores/accountStore';
 
-const accountStore = useAccountStore();
-const isLoaded = ref(false);
-const accounts = ref([]);
-const response = ref([]);
+  const accountStore = useAccountStore();
+  const isLoaded = ref(false);
+  const accounts = ref([]);
+  const response = ref([]);
 
-const supprimerTemoignageRef = ref(null);
+  const supprimerTemoignageRef = ref(null);
 
   // Année académique actuelle (par défaut)
   const currentYear = new Date().getFullYear();
@@ -169,72 +167,67 @@ const supprimerTemoignageRef = ref(null);
     selectedYear.value++;
   };
 
-// Filtre uniquement les comptes avec des témoignages
-const filteredAccounts = computed(() => {
-  const selectedAcademicYear = `${selectedYear.value}-${selectedYear.value + 1}`;
-  const currentAcademicYear = `${currentYear}-${currentYear + 1}`;
+  // Filtre uniquement les comptes avec des témoignages
+  const filteredAccounts = computed(() => {
+    const selectedAcademicYear = `${selectedYear.value}-${selectedYear.value + 1}`;
+    const currentAcademicYear = `${currentYear}-${currentYear + 1}`;
 
-  return accounts.value.accounts
-    ?.filter(account => {
-      const hasTemoignage = account.acc_temoignage && account.acc_temoignage.trim() !== '';
-      const isMatchingYear = account.acc_anneemobilite === selectedAcademicYear;
-      const isNoYearButCurrent = !account.acc_anneemobilite && selectedAcademicYear === currentAcademicYear;
-      return hasTemoignage && (isMatchingYear || isNoYearButCurrent);
-    })
-    .sort((a, b) => {
-      const nameA = a.acc_fullname || '';
-      const nameB = b.acc_fullname || '';
-      return nameA.localeCompare(nameB);
-    }) || [];
-});
+    return accounts.value.accounts
+      ?.filter(account => {
+        const hasTemoignage = account.acc_temoignage && account.acc_temoignage.trim() !== '';
+        const isMatchingYear = account.acc_anneemobilite === selectedAcademicYear;
+        const isNoYearButCurrent = !account.acc_anneemobilite && selectedAcademicYear === currentAcademicYear;
+        return hasTemoignage && (isMatchingYear || isNoYearButCurrent);
+      })
+      .sort((a, b) => {
+        const nameA = a.acc_fullname || '';
+        const nameB = b.acc_fullname || '';
+        return nameA.localeCompare(nameB);
+      }) || [];
+  });
 
 
-async function supprimerTemoignage() {
+  async function supprimerTemoignage() {
     closeModal();
     const acc_id = supprimerTemoignageRef.value;
-      const requestData = {
-        acc_id: acc_id,
-      };
-      await request(
-        "DELETE",
-        true,
-        response,
-        config.apiUrl + "api/account/temoignage",
-        requestData
-      );
-      addAction(accountStore.account.acc_id, 'other', response, 'Suppression du témoignage de '+ acc_id +'.');
-      fetchAccounts();
-    }
+    const requestData = {
+      acc_id: acc_id,
+    };
 
-    function openConfirmDeleteTemoignageModal(acc_id) {
-      supprimerTemoignageRef.value = acc_id;
-      const modal = document.getElementById("confirmModalTemoignage");
-      modal.showModal();
-    }
+    await request("DELETE", true, response, config.apiUrl + "api/account/temoignage", requestData);
+    addAction(accountStore.account.acc_id, 'other', response, 'Suppression du témoignage de '+ acc_id +'.');
+    fetchAccounts();
+  }
+
+  function openConfirmDeleteTemoignageModal(acc_id) {
+    supprimerTemoignageRef.value = acc_id;
+    const modal = document.getElementById("confirmModalTemoignage");
+    modal.showModal();
+  }
 
 
-    // Fermer le modal de confirmation de suppression
-    function closeModal() {
-        const modal = document.getElementById("confirmModalTemoignage");
-        modal.close();
-    }
+  // Fermer le modal de confirmation de suppression
+  function closeModal() {
+    const modal = document.getElementById("confirmModalTemoignage");
+    modal.close();
+  }
 
 
-// Fonction pour obtenir les initiales à partir du nom complet
-function getInitials(fullName) {
+  // Fonction pour obtenir les initiales à partir du nom complet
+  function getInitials(fullName) {
     if (!fullName) return '';
     const nameParts = fullName.split(' ');
     if (nameParts.length >= 2) {
-        return (nameParts[0].charAt(0) + nameParts[1].charAt(0)).toUpperCase();
+      return (nameParts[0].charAt(0) + nameParts[1].charAt(0)).toUpperCase();
     }
     return fullName.charAt(0).toUpperCase();
-}
+  }
 
-async function fetchAccounts() {
+  async function fetchAccounts() {
     isLoaded.value = false;
     await request('GET', false, accounts, config.apiUrl + 'api/account');
     isLoaded.value = true;
-}
+  }
 
-onMounted(fetchAccounts);
+  onMounted(fetchAccounts);
 </script>

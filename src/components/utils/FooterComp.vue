@@ -97,12 +97,12 @@
 </template>
 
 <script setup>
-import config from '../../config'
-import { ref } from 'vue'
-import appVersion from '../../composables/version'
-import { useAccountStore } from '../../stores/accountStore'
+  import config from '../../config'
+  import { ref } from 'vue'
+  import appVersion from '../../composables/version'
+  import { useAccountStore } from '../../stores/accountStore'
 
-const accountStore = useAccountStore()
-const date = ref(new Date().getFullYear())
-const version = appVersion
+  const accountStore = useAccountStore()
+  const date = ref(new Date().getFullYear())
+  const version = appVersion
 </script>

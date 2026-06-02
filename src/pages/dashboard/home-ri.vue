@@ -240,140 +240,139 @@
 </template>
   
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import CalendarComp from '../../components/utils/CalendarComp.vue';
-import { request } from '../../composables/httpRequest';
-import config from '../../config';
-import { useAccountStore } from '../../stores/accountStore';
-import { getType } from '../../composables/actionType';
-import LoadingComp from '../../components/utils/LoadingComp.vue';
-import { addAlert } from '../../composables/addAlert';
+  import { ref, computed, onMounted } from 'vue';
+  import CalendarComp from '../../components/utils/CalendarComp.vue';
+  import { request } from '../../composables/httpRequest';
+  import config from '../../config';
+  import { useAccountStore } from '../../stores/accountStore';
+  import { getType } from '../../composables/actionType';
+  import LoadingComp from '../../components/utils/LoadingComp.vue';
+  import { addAlert } from '../../composables/addAlert';
 
-const accountStore = useAccountStore();
-const events = ref([]);
-const actions = ref([]);
-const admin = ref([]);
-const isLoaded = ref(false);
-const modifDatePrintemps = ref(null);
-const modifDateAutomne = ref(null);
-const response = ref([]);
+  const accountStore = useAccountStore();
+  const events = ref([]);
+  const actions = ref([]);
+  const admin = ref([]);
+  const isLoaded = ref(false);
+  const modifDatePrintemps = ref(null);
+  const modifDateAutomne = ref(null);
+  const response = ref([]);
 
-// Variables simplifiées pour la sauvegarde
-const isBackingUp = ref(false);
-const backupSuccess = ref(false);
+  // Variables simplifiées pour la sauvegarde
+  const isBackingUp = ref(false);
+  const backupSuccess = ref(false);
 
-
-async function fetch() {
-  isLoaded.value = false;
-  await request('GET', false, events, config.apiUrl + 'api/event');
-  await request('GET', false, actions, config.apiUrl + 'api/action/getfivebylogin/' + accountStore.account.acc_id);
-  await request('GET', false, admin, config.apiUrl + 'api/admin');
-  modifDateAutomne.value = formatDateModif(admin.value.adm_datelimite_automne);
-  modifDatePrintemps.value = formatDateModif(admin.value.adm_datelimite_printemps);
-  isLoaded.value = true;
-}
-
-onMounted(fetch);
-
-const limitedActions = computed(() => {
-  return actions.value.slice(0, 5);
-});
-
-async function updateArbitrageStatus(event) {
-  const requestData = {
-    adm_id: admin.value.adm_id,
-    adm_arbitragetemporaire: !event.target.checked
-  };
-  
-  await request('PUT', true, response, config.apiUrl + 'api/admin/arbitrage', requestData);
-  if(response.value.status == 200) {
+  async function fetch() {
+    isLoaded.value = false;
+    await request('GET', false, events, config.apiUrl + 'api/event');
+    await request('GET', false, actions, config.apiUrl + 'api/action/getfivebylogin/' + accountStore.account.acc_id);
     await request('GET', false, admin, config.apiUrl + 'api/admin');
+    modifDateAutomne.value = formatDateModif(admin.value.adm_datelimite_automne);
+    modifDatePrintemps.value = formatDateModif(admin.value.adm_datelimite_printemps);
+    isLoaded.value = true;
   }
-}
 
-// Fonction simplifiée pour la sauvegarde de la base de données
-async function backupDatabase() {
-  if (isBackingUp.value) return;
-  
-  isBackingUp.value = true;
-  
-  try {
-    const backupResp = ref([]);
-    await request('POST', true, backupResp, config.apiUrl + 'api/admin/database');
+  onMounted(fetch);
+
+  const limitedActions = computed(() => {
+    return actions.value.slice(0, 5);
+  });
+
+  async function updateArbitrageStatus(event) {
+    const requestData = {
+      adm_id: admin.value.adm_id,
+      adm_arbitragetemporaire: !event.target.checked
+    };
     
-    if (backupResp.value && backupResp.value.status === 200) {
-      backupSuccess.value = true;
-    } else {
-      backupSuccess.value = false;
+    await request('PUT', true, response, config.apiUrl + 'api/admin/arbitrage', requestData);
+    if(response.value.status == 200) {
+      await request('GET', false, admin, config.apiUrl + 'api/admin');
     }
-  } catch (error) {
-    backupSuccess.value = false;
-  } finally {
-    isBackingUp.value = false;
-  }
-}
-
-function getJoursRestants(date){
-  if(joursRestants(date) == 0){
-    return "aujourd'hui";
-  }
-  else if(joursRestants(date) == 1){
-    return 'demain';
-  }
-  else if(joursRestants(date) < 0){
-    return 'il y a '+(-joursRestants(date)) + ' jour' + (-joursRestants(date) > 1 ? 's' : '');
-  }
-  return '('+ joursRestants(date) +' jours restants)';
-}
-
-function joursRestants(date) {
-  const dateLimite = new Date(date);
-  const currentDate = new Date();
-  const timeDifference = dateLimite - currentDate;
-  const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-  return daysRemaining;
-}
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-}
-
-async function confirmModifDate(periode){
-  var selectedDate = null;
-  if(periode == 'printemps'){
-   selectedDate = new Date(modifDatePrintemps.value);
-
-  }
-  else if (periode == 'automne'){
-    selectedDate = new Date(modifDateAutomne.value);
-  }
-  else{
-    return;
   }
 
-  const currentDate = new Date();
-  var requestData = {}
-  if(periode == 'printemps'){
-    requestData.adm_datelimite_printemps = modifDatePrintemps.value;
+  // Fonction simplifiée pour la sauvegarde de la base de données
+  async function backupDatabase() {
+    if (isBackingUp.value) return;
+    
+    isBackingUp.value = true;
+    
+    try {
+      const backupResp = ref([]);
+      await request('POST', true, backupResp, config.apiUrl + 'api/admin/database');
+      
+      if (backupResp.value && backupResp.value.status === 200) {
+        backupSuccess.value = true;
+      } else {
+        backupSuccess.value = false;
+      }
+    } catch (error) {
+      backupSuccess.value = false;
+    } finally {
+      isBackingUp.value = false;
+    }
   }
-  else{
-    requestData.adm_datelimite_automne = modifDateAutomne.value;
-  }
-  await request('PUT', false, response, config.apiUrl+'api/admin/date/'+ (periode == 'printemps' ? 'printemps' : 'automne'), requestData);
-  if(response.value.status == 200){
-    await request('GET', false, admin, config.apiUrl + 'api/admin');
-  }
-}
 
-function formatDateModif(dateTime) {
-   const date = new Date(dateTime);
-   const year = date.getFullYear();
-   const month = String(date.getMonth() + 1).padStart(2, '0');
-   const day = String(date.getDate()).padStart(2, '0');
-   return `${year}-${month}-${day}`;
-}
+  function getJoursRestants(date){
+    if(joursRestants(date) == 0){
+      return "aujourd'hui";
+    }
+    else if(joursRestants(date) == 1){
+      return 'demain';
+    }
+    else if(joursRestants(date) < 0){
+      return 'il y a '+(-joursRestants(date)) + ' jour' + (-joursRestants(date) > 1 ? 's' : '');
+    }
+    return '('+ joursRestants(date) +' jours restants)';
+  }
+
+  function joursRestants(date) {
+    const dateLimite = new Date(date);
+    const currentDate = new Date();
+    const timeDifference = dateLimite - currentDate;
+    const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    return daysRemaining;
+  }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  async function confirmModifDate(periode){
+    var selectedDate = null;
+    if(periode == 'printemps'){
+    selectedDate = new Date(modifDatePrintemps.value);
+
+    }
+    else if (periode == 'automne'){
+      selectedDate = new Date(modifDateAutomne.value);
+    }
+    else{
+      return;
+    }
+
+    const currentDate = new Date();
+    var requestData = {}
+    if(periode == 'printemps'){
+      requestData.adm_datelimite_printemps = modifDatePrintemps.value;
+    }
+    else{
+      requestData.adm_datelimite_automne = modifDateAutomne.value;
+    }
+    await request('PUT', false, response, config.apiUrl+'api/admin/date/'+ (periode == 'printemps' ? 'printemps' : 'automne'), requestData);
+    if(response.value.status == 200){
+      await request('GET', false, admin, config.apiUrl + 'api/admin');
+    }
+  }
+
+  function formatDateModif(dateTime) {
+    const date = new Date(dateTime);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 </script>

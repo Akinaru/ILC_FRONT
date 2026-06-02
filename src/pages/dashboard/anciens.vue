@@ -156,115 +156,115 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { request } from "../../composables/httpRequest";
-import config from "../../config";
-import LoadingComp from "../../components/utils/LoadingComp.vue";
-import { useAccountStore } from "../../stores/accountStore";
-import { addAction } from "../../composables/actionType";
+  import { ref, onMounted, computed } from "vue";
+  import { request } from "../../composables/httpRequest";
+  import config from "../../config";
+  import LoadingComp from "../../components/utils/LoadingComp.vue";
+  import { useAccountStore } from "../../stores/accountStore";
+  import { addAction } from "../../composables/actionType";
 
 
-const accountStore = useAccountStore();
-const accounts = ref([]);
-const isLoaded = ref(false);
-const response = ref([]);
+  const accountStore = useAccountStore();
+  const accounts = ref([]);
+  const isLoaded = ref(false);
+  const response = ref([]);
 
-// Année académique actuelle (par défaut)
-const currentYear = new Date().getFullYear();
-const selectedYear = ref(currentYear);
+  // Année académique actuelle (par défaut)
+  const currentYear = new Date().getFullYear();
+  const selectedYear = ref(currentYear);
 
-// Fonction pour diminuer l'année
-const decrementYear = () => {
-  selectedYear.value--;
-};
+  // Fonction pour diminuer l'année
+  const decrementYear = () => {
+    selectedYear.value--;
+  };
 
-// Fonction pour augmenter l'année
-const incrementYear = () => {
-  selectedYear.value++;
-};
+  // Fonction pour augmenter l'année
+  const incrementYear = () => {
+    selectedYear.value++;
+  };
 
-// Récupération sécurisée du département depuis JSON si nécessaire
-const getDept = (student) => {
-  return student.department || (student.acc_json_department ? JSON.parse(student.acc_json_department) : null);
-};
+  // Récupération sécurisée du département depuis JSON si nécessaire
+  const getDept = (student) => {
+    return student.department || (student.acc_json_department ? JSON.parse(student.acc_json_department) : null);
+  };
 
-// Récupération sécurisée de l'accord depuis JSON si nécessaire
-const getAgreement = (student) => {
-  return student.acc_json_agreement ? JSON.parse(student.acc_json_agreement) : null;
-};
+  // Récupération sécurisée de l'accord depuis JSON si nécessaire
+  const getAgreement = (student) => {
+    return student.acc_json_agreement ? JSON.parse(student.acc_json_agreement) : null;
+  };
 
-// Computed property pour filtrer les destinations par année académique
-const filteredDestinations = computed(() => {
-  if (!groupedAccounts.value.length) return [];
+  // Computed property pour filtrer les destinations par année académique
+  const filteredDestinations = computed(() => {
+    if (!groupedAccounts.value.length) return [];
 
-  return groupedAccounts.value.map(destination => {
-    const filteredStudents = destination.students.filter(student => {
-      return student.acc_anneemobilite === `${selectedYear.value}-${selectedYear.value + 1}`;
-    });
-
-    if (filteredStudents.length > 0) {
-      return {
-        ...destination,
-        students: filteredStudents
-      };
-    }
-    return null;
-  }).filter(Boolean);
-});
-
-// Computed property pour regrouper les comptes par destination JSON
-const groupedAccounts = computed(() => {
-  if (!accounts.value || !accounts.value.accounts) return [];
-
-  const arbitragedAccounts = accounts.value.accounts.filter(account => 
-    account.acc_ancienetu === true || account.acc_ancienetu === 1
-  );
-
-  const destinationMap = new Map();
-
-  arbitragedAccounts.forEach(account => {
-    const destination = getAgreement(account);
-    if (!destination) return;
-
-    const destId = destination.agree_id;
-
-    if (!destinationMap.has(destId)) {
-      destinationMap.set(destId, {
-        ...destination,
-        students: []
+    return groupedAccounts.value.map(destination => {
+      const filteredStudents = destination.students.filter(student => {
+        return student.acc_anneemobilite === `${selectedYear.value}-${selectedYear.value + 1}`;
       });
-    }
 
-    destinationMap.get(destId).students.push({
-      ...account,
-      department: getDept(account),
-      destination: destination
-    });
+      if (filteredStudents.length > 0) {
+        return {
+          ...destination,
+          students: filteredStudents
+        };
+      }
+      return null;
+    }).filter(Boolean);
   });
 
-  return Array.from(destinationMap.values())
-    .sort((a, b) => a.university.univ_name.localeCompare(b.university.univ_name));
-});
+  // Computed property pour regrouper les comptes par destination JSON
+  const groupedAccounts = computed(() => {
+    if (!accounts.value || !accounts.value.accounts) return [];
 
-async function fetchAccounts() {
-  isLoaded.value = false;
-  try {
-    await request("GET", false, accounts, config.apiUrl + "api/account");
-  } catch (error) {
-    console.error("Erreur lors de la récupération des comptes:", error);
-  } finally {
-    isLoaded.value = true;
+    const arbitragedAccounts = accounts.value.accounts.filter(account => 
+      account.acc_ancienetu === true || account.acc_ancienetu === 1
+    );
+
+    const destinationMap = new Map();
+
+    arbitragedAccounts.forEach(account => {
+      const destination = getAgreement(account);
+      if (!destination) return;
+
+      const destId = destination.agree_id;
+
+      if (!destinationMap.has(destId)) {
+        destinationMap.set(destId, {
+          ...destination,
+          students: []
+        });
+      }
+
+      destinationMap.get(destId).students.push({
+        ...account,
+        department: getDept(account),
+        destination: destination
+      });
+    });
+
+    return Array.from(destinationMap.values())
+      .sort((a, b) => a.university.univ_name.localeCompare(b.university.univ_name));
+  });
+
+  async function fetchAccounts() {
+    isLoaded.value = false;
+    try {
+      await request("GET", false, accounts, config.apiUrl + "api/account");
+    } catch (error) {
+      console.error("Erreur lors de la récupération des comptes:", error);
+    } finally {
+      isLoaded.value = true;
+    }
   }
-}
 
-async function desarchiverEtudiant(acc_id) {
-  const requestData = { acc_id };
-  await request("POST", true, response, config.apiUrl + "api/arbitrage/desarchiver", requestData);
-  if (response.value.status === 200) fetchAccounts();
-  addAction(accountStore.account.acc_id, 'arbitrage', response, 'Désarchivage de l\'étudiant '+ acc_id +'.');
-}
+  async function desarchiverEtudiant(acc_id) {
+    const requestData = { acc_id };
+    await request("POST", true, response, config.apiUrl + "api/arbitrage/desarchiver", requestData);
+    if (response.value.status === 200) fetchAccounts();
+    addAction(accountStore.account.acc_id, 'arbitrage', response, 'Désarchivage de l\'étudiant '+ acc_id +'.');
+  }
 
-onMounted(() => {
-  fetchAccounts();
-});
+  onMounted(() => {
+    fetchAccounts();
+  });
 </script>

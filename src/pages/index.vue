@@ -156,7 +156,6 @@
               <button
                 class="btn btn-xs btn-ghost mb-3 select-none"
                 @click="deselectAllDept"
-               
               >
                 Tout désélectionner
               </button>
@@ -192,8 +191,6 @@
                   Aucun département disponible
                 </div>
               </div>
-              
-
             </div>
           </div>
         </div>
@@ -245,38 +242,22 @@
                           <div class="flex flex-col flex-1">
                             <!-- Premiere ligne -->
                             <p class="text-sm md:text-base lg:text-lg">
-                              <span class="font-bold">{{
-                                accord.university?.univ_name ||
-                                "Université indisponible"
-                              }}</span>
+                              <span class="font-bold">
+                                {{accord.university?.univ_name || "Université indisponible"}}
+                              </span>
                               <span class="whitespace-normal">
                                 à
-                                {{
-                                  accord.university?.univ_city ||
-                                  "Ville indisponible"
-                                }}</span
-                              >
-                              <span class="whitespace-normal"
-                                > ({{
-                                  accord.partnercountry?.parco_name ||
-                                  "Pays indisponible"
-                                }})</span
-                              >
+                                {{accord.university?.univ_city ||"Ville indisponible"}}
+                              </span>
+                              <span class="whitespace-normal">
+                                 ({{accord.partnercountry?.parco_name || "Pays indisponible"}})
+                              </span>
                             </p>
                             <!-- Deuxieme ligne -->
                             <p class="text-xs md:text-sm text-base-content/80">
-                              [{{
-                                accord.isced?.isc_code ||
-                                "Code ISCED indisponible"
-                              }}
-                              {{
-                                accord.isced?.isc_name ||
-                                "Nom ISCED indisponible"
-                              }}] pour
-                              {{
-                                accord.component?.comp_name ||
-                                "Composante indisponible"
-                              }}
+                              [{{accord.isced?.isc_code || "Code ISCED indisponible"}}
+                              {{accord.isced?.isc_name || "Nom ISCED indisponible"}}] pour
+                              {{accord.component?.comp_name || "Composante indisponible"}}
                             </p>
                           </div>
                         </div>
@@ -307,8 +288,6 @@
                             <p class="px-3 py-2">Aucun département</p>
                           </div>
                         </div>
-
-
 
                         <div
                           class="absolute inset-0 bg-base-300/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -722,19 +701,7 @@
                             </div>
                             <div class="text-xs">
                               {{
-                                [
-                                  "JAN",
-                                  "FEV",
-                                  "MAR",
-                                  "AVR",
-                                  "MAI",
-                                  "JUN",
-                                  "JUL",
-                                  "AOU",
-                                  "SEP",
-                                  "OCT",
-                                  "NOV",
-                                  "DEC",
+                                ["JAN", "FEV", "MAR", "AVR", "MAI", "JUN", "JUL", "AOU", "SEP", "OCT", "NOV", "DEC",
                                 ][new Date(event.evt_datetime).getMonth()]
                               }}
                             </div>
@@ -900,129 +867,130 @@
 </template>
 
 <style scoped>
-.scale-102 {
-  transform: scale(1.02);
-}
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-@media (min-width: 1280px) {
-  .max-w-8xl {
-    max-width: 90rem;
+  .scale-102 {
+    transform: scale(1.02);
   }
-}
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1280px) {
+    .max-w-8xl {
+      max-width: 90rem;
+    }
+  }
 </style>
 
 <script setup>
-import { onMounted } from "vue";
-import { ref, computed, watch } from "vue";
-import { request } from "../composables/httpRequest";
-import config from "../config";
+  import { onMounted } from "vue";
+  import { ref, computed, watch } from "vue";
+  import { request } from "../composables/httpRequest";
+  import config from "../config";
 
-import CalendarComp from "../components/utils/CalendarComp.vue";
-import { useAccountStore } from "../stores/accountStore";
-import LoadingComp from "../components/utils/LoadingComp.vue";
+  import CalendarComp from "../components/utils/CalendarComp.vue";
+  import { useAccountStore } from "../stores/accountStore";
+  import LoadingComp from "../components/utils/LoadingComp.vue";
 
-import "/node_modules/flag-icons/css/flag-icons.min.css";
+  import "/node_modules/flag-icons/css/flag-icons.min.css";
 
-const accountStore = useAccountStore();
+  const accountStore = useAccountStore();
 
-const response = ref([]);
-const articles = ref([]);
-const accords = ref([]);
-const partnercountry = ref([]);
-const components = ref([]);
-const events = ref([]);
-const eventspf = ref([]);
-const favoris = ref([]);
-const isLoadingAccords = ref(false);
+  const response = ref([]);
+  const articles = ref([]);
+  const accords = ref([]);
+  const partnercountry = ref([]);
+  const components = ref([]);
+  const events = ref([]);
+  const eventspf = ref([]);
+  const favoris = ref([]);
+  const isLoadingAccords = ref(false);
 
-const itemsToShow = ref(18);
+  const itemsToShow = ref(18);
 
-const isLoaded = ref(false);
+  const isLoaded = ref(false);
 
-const currentPage = ref();
-const perPage = ref(18);
-const lastPage = ref(1);
+  const currentPage = ref();
+  const perPage = ref(18);
+  const lastPage = ref(1);
 
-const selectedDepartment = ref([]);
-const selectedCountries = ref([]);
-// Fonction pour charger les filtres depuis sessionStorage pour la page d'accueil
-function loadFilters() {
-  const savedDepartments = sessionStorage.getItem("home_dashboard.selectedDepartment");
-  const savedCountries = sessionStorage.getItem("home_dashboard.selectedCountries");
-  const savedPage = sessionStorage.getItem("home_dashboard.currentPage");
+  const selectedDepartment = ref([]);
+  const selectedCountries = ref([]);
 
-  if (savedDepartments) {
-    selectedDepartment.value = JSON.parse(savedDepartments);
-  }
-  if (savedCountries) {
-    selectedCountries.value = JSON.parse(savedCountries);
-  }
+  // Fonction pour charger les filtres depuis sessionStorage pour la page d'accueil
+  function loadFilters() {
+    const savedDepartments = sessionStorage.getItem("home_dashboard.selectedDepartment");
+    const savedCountries = sessionStorage.getItem("home_dashboard.selectedCountries");
+    const savedPage = sessionStorage.getItem("home_dashboard.currentPage");
 
-  if (savedPage) {
-    const page = parseInt(savedPage);
-    currentPage.value = page >= 1 ? page : 1;
-  } else {
-    currentPage.value = 1;
-  }
-}
+    if (savedDepartments) {
+      selectedDepartment.value = JSON.parse(savedDepartments);
+    }
+    if (savedCountries) {
+      selectedCountries.value = JSON.parse(savedCountries);
+    }
 
-// Fonction pour sauvegarder les filtres dans sessionStorage pour la page d'accueil
-function saveFilters() {
-  sessionStorage.setItem("home_dashboard.selectedDepartment", JSON.stringify(selectedDepartment.value));
-  sessionStorage.setItem("home_dashboard.selectedCountries", JSON.stringify(selectedCountries.value));
-  sessionStorage.setItem("home_dashboard.currentPage", JSON.stringify(currentPage.value));
-}
-
-const isOpen = ref({
-  pays: false,
-  departments: false,
-});
-
-function toggleCollapse(section) {
-  isOpen.value[section] = !isOpen.value[section];
-}
-
-async function fetchFilteredAccords() {
-  isLoadingAccords.value = true;
-  const params = new URLSearchParams();
-
-  if (selectedDepartment.value.length > 0) {
-    selectedDepartment.value.forEach(dep => params.append('departments[]', dep));
-  }
-  if (selectedCountries.value.length > 0) {
-    selectedCountries.value.forEach(country => params.append('countries[]', country));
+    if (savedPage) {
+      const page = parseInt(savedPage);
+      currentPage.value = page >= 1 ? page : 1;
+    } else {
+      currentPage.value = 1;
+    }
   }
 
-  params.append('page', currentPage.value.toString());
-  params.append('perPage', perPage.value.toString());
-
-  await request('GET', false, accords, `${config.apiUrl}api/agreement/filtered?${params.toString()}`);
-
-  lastPage.value = accords.value.last_page;
-
-  // 🟡 Vérifier si la page actuelle dépasse le total
-  if (currentPage.value > lastPage.value) {
-    currentPage.value = 1;
+  // Fonction pour sauvegarder les filtres dans sessionStorage pour la page d'accueil
+  function saveFilters() {
+    sessionStorage.setItem("home_dashboard.selectedDepartment", JSON.stringify(selectedDepartment.value));
+    sessionStorage.setItem("home_dashboard.selectedCountries", JSON.stringify(selectedCountries.value));
+    sessionStorage.setItem("home_dashboard.currentPage", JSON.stringify(currentPage.value));
   }
 
-  isLoadingAccords.value = false;
-}
+  const isOpen = ref({
+    pays: false,
+    departments: false,
+  });
 
-watch(currentPage, () => fetchFilteredAccords());
+  function toggleCollapse(section) {
+    isOpen.value[section] = !isOpen.value[section];
+  }
+
+  async function fetchFilteredAccords() {
+    isLoadingAccords.value = true;
+    const params = new URLSearchParams();
+
+    if (selectedDepartment.value.length > 0) {
+      selectedDepartment.value.forEach(dep => params.append('departments[]', dep));
+    }
+    if (selectedCountries.value.length > 0) {
+      selectedCountries.value.forEach(country => params.append('countries[]', country));
+    }
+
+    params.append('page', currentPage.value.toString());
+    params.append('perPage', perPage.value.toString());
+
+    await request('GET', false, accords, `${config.apiUrl}api/agreement/filtered?${params.toString()}`);
+
+    lastPage.value = accords.value.last_page;
+
+    // 🟡 Vérifier si la page actuelle dépasse le total
+    if (currentPage.value > lastPage.value) {
+      currentPage.value = 1;
+    }
+
+    isLoadingAccords.value = false;
+  }
+
+  watch(currentPage, () => fetchFilteredAccords());
 
   const pagesToShow = computed(() => {
     const total = lastPage.value;
@@ -1048,189 +1016,173 @@ watch(currentPage, () => fetchFilteredAccords());
   
   const totalPages = computed(() => lastPage.value);
 
-async function fetchAll() {
-  await request("GET", false, articles, config.apiUrl + "api/article");
-  await fetchFilteredAccords();
-  //await request("GET", false, accords, config.apiUrl + "api/agreement");
-  await request(
-    "GET",
-    false,
-    partnercountry,
-    config.apiUrl + "api/partnercountry"
-  );
-  await request("GET", false, components, config.apiUrl + "api/component");
-  await request("GET", false, events, config.apiUrl + "api/event");
-  await request("GET", false, eventspf, config.apiUrl + "api/event/pfonly");
-  if (accountStore.isLogged()) {
-    await request("GET", false, favoris, config.apiUrl + "api/favoris/me");
-  }
-  isLoaded.value = true;
-}
-
-// Renvoie la date formatée
-function formatDate(date) {
-  const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
-  return new Date(date).toLocaleDateString("fr-FR", options);
-}
-
-function getTextColor(bgColor) {
-  // Nettoyage éventuel
-  if (!bgColor) return '#000'
-
-  // Extraction R, G, B
-  const hex = bgColor.replace('#', '')
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
-
-  // Calcul de la luminance
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-
-  // Retourne noir si fond clair, blanc si fond foncé
-  return luminance > 0.6 ? '#000' : '#fff'
-}
-
-
-const filteredAccords = computed(() => {
-  return accords.value.agreements
-    .filter((accord) => {
-      // Gestion des valeurs nulles ou undefined
-      const departments = accord.departments || [];
-      const partnercountry = accord.partnercountry || {};
-      const component = accord.component || {};
-      const deptShortnames = selectedDepartment.value || [];
-      const countryNames = selectedCountries.value || [];
-
-      // Les accords doivent être filtrés en fonction des départements, pays et composantes sélectionnés
-      const matchesDepartments =
-        deptShortnames.length === 0 ||
-        departments.some(
-          (dept) =>
-            dept &&
-            dept.dept_shortname &&
-            deptShortnames.includes(dept.dept_shortname)
-        );
-
-      const matchesCountries =
-        countryNames.length === 0 ||
-        (partnercountry &&
-          partnercountry.parco_name &&
-          countryNames.includes(partnercountry.parco_name));
-
-      // Assurez-vous que departments est un tableau et vérifiez sa longueur
-      const hasDepartments =
-        Array.isArray(departments) && departments.length > 0;
-
-      // Retourner les accords qui correspondent aux filtres ou qui ont des départements
-      return (
-        matchesDepartments &&
-        matchesCountries &&
-        (hasDepartments || deptShortnames.length === 0)
-      );
-    })
-    .sort((a, b) => {
-      // Récupération des noms de pays avec gestion des undefined
-      const countryA = a.partnercountry?.parco_name || "";
-      const countryB = b.partnercountry?.parco_name || "";
-
-      // Si les pays sont différents, on trie par pays
-      if (countryA !== countryB) {
-        return countryA.localeCompare(countryB);
-      }
-
-      // Si les pays sont identiques, on trie par nom d'université
-      const univA = a.university?.univ_name || "";
-      const univB = b.university?.univ_name || "";
-      return univA.localeCompare(univB);
-    });
-});
-
-const canShowMore = computed(() => {
-  return itemsToShow.value < filteredAccords.value.length;
-});
-const paginatedAccords = computed(() => {
-  return filteredAccords.value.slice(0, itemsToShow.value);
-});
-
-const showMore = () => {
-  itemsToShow.value += 5;
-};
-
-function isFavorited(agree_id) {
-  return favoris.value.favoris.some(
-    (favori) =>
-      favori.acc_id === accountStore.account.acc_id && favori.agree_id === agree_id
-  );
-}
-
-async function toggleFavoris(agree_id) {
-  if (!isFavorited(agree_id)) {
-    const requestData = {
-      agree_id: agree_id,
-    };
-    await request(
-      "post",
-      true,
-      response,
-      config.apiUrl + "api/favoris",
-      requestData
-    );
-    if (response.value.status == 201) {
-      favoris.value.favoris.push({
-        acc_id: accountStore.account.acc_id,
-        agree_id: agree_id,
-      });
+  async function fetchAll() {
+    await request("GET", false, articles, config.apiUrl + "api/article");
+    await fetchFilteredAccords();
+    //await request("GET", false, accords, config.apiUrl + "api/agreement");
+    await request("GET", false, partnercountry, config.apiUrl + "api/partnercountry");
+    await request("GET", false, components, config.apiUrl + "api/component");
+    await request("GET", false, events, config.apiUrl + "api/event");
+    await request("GET", false, eventspf, config.apiUrl + "api/event/pfonly");
+    if (accountStore.isLogged()) {
+      await request("GET", false, favoris, config.apiUrl + "api/favoris/me");
     }
-  } else {
-    await request(
-      "delete",
-      true,
-      response,
-      config.apiUrl +
-        "api/favoris/delete/" + agree_id
-    );
-    favoris.value.favoris = favoris.value.favoris.filter(
+    isLoaded.value = true;
+  }
+
+  // Renvoie la date formatée
+  function formatDate(date) {
+    const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
+    return new Date(date).toLocaleDateString("fr-FR", options);
+  }
+
+  function getTextColor(bgColor) {
+    // Nettoyage éventuel
+    if (!bgColor) return '#000'
+
+    // Extraction R, G, B
+    const hex = bgColor.replace('#', '')
+    const r = parseInt(hex.substring(0, 2), 16)
+    const g = parseInt(hex.substring(2, 4), 16)
+    const b = parseInt(hex.substring(4, 6), 16)
+
+    // Calcul de la luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+
+    // Retourne noir si fond clair, blanc si fond foncé
+    return luminance > 0.6 ? '#000' : '#fff'
+  }
+
+
+  const filteredAccords = computed(() => {
+    return accords.value.agreements
+      .filter((accord) => {
+        // Gestion des valeurs nulles ou undefined
+        const departments = accord.departments || [];
+        const partnercountry = accord.partnercountry || {};
+        const component = accord.component || {};
+        const deptShortnames = selectedDepartment.value || [];
+        const countryNames = selectedCountries.value || [];
+
+        // Les accords doivent être filtrés en fonction des départements, pays et composantes sélectionnés
+        const matchesDepartments =
+          deptShortnames.length === 0 ||
+          departments.some(
+            (dept) =>
+              dept &&
+              dept.dept_shortname &&
+              deptShortnames.includes(dept.dept_shortname)
+          );
+
+        const matchesCountries =
+          countryNames.length === 0 ||
+          (partnercountry &&
+            partnercountry.parco_name &&
+            countryNames.includes(partnercountry.parco_name));
+
+        // Assurez-vous que departments est un tableau et vérifiez sa longueur
+        const hasDepartments =
+          Array.isArray(departments) && departments.length > 0;
+
+        // Retourner les accords qui correspondent aux filtres ou qui ont des départements
+        return (
+          matchesDepartments &&
+          matchesCountries &&
+          (hasDepartments || deptShortnames.length === 0)
+        );
+      })
+      .sort((a, b) => {
+        // Récupération des noms de pays avec gestion des undefined
+        const countryA = a.partnercountry?.parco_name || "";
+        const countryB = b.partnercountry?.parco_name || "";
+
+        // Si les pays sont différents, on trie par pays
+        if (countryA !== countryB) {
+          return countryA.localeCompare(countryB);
+        }
+
+        // Si les pays sont identiques, on trie par nom d'université
+        const univA = a.university?.univ_name || "";
+        const univB = b.university?.univ_name || "";
+        return univA.localeCompare(univB);
+      });
+  });
+
+  const canShowMore = computed(() => {
+    return itemsToShow.value < filteredAccords.value.length;
+  });
+  const paginatedAccords = computed(() => {
+    return filteredAccords.value.slice(0, itemsToShow.value);
+  });
+
+  const showMore = () => {
+    itemsToShow.value += 5;
+  };
+
+  function isFavorited(agree_id) {
+    return favoris.value.favoris.some(
       (favori) =>
-        !(favori.acc_id === accountStore.account.acc_id && favori.agree_id === agree_id)
+        favori.acc_id === accountStore.account.acc_id && favori.agree_id === agree_id
     );
   }
-}
 
-// renvoie le nombre de département visible d'un accord
-function countVisibleDepartments(accord) {
-  return (
-    accord.departments?.filter((dept) => dept.pivot?.deptagree_valide).length ||
-    0
+  async function toggleFavoris(agree_id) {
+    if (!isFavorited(agree_id)) {
+      const requestData = {
+        agree_id: agree_id,
+      };
+      await request("post", true, response, config.apiUrl + "api/favoris", requestData);
+      if (response.value.status == 201) {
+        favoris.value.favoris.push({
+          acc_id: accountStore.account.acc_id,
+          agree_id: agree_id,
+        });
+      }
+    } else {
+      await request("delete", true, response, config.apiUrl + "api/favoris/delete/" + agree_id);
+      favoris.value.favoris = favoris.value.favoris.filter(
+        (favori) =>
+          !(favori.acc_id === accountStore.account.acc_id && favori.agree_id === agree_id)
+      );
+    }
+  }
+
+  // renvoie le nombre de département visible d'un accord
+  function countVisibleDepartments(accord) {
+    return (
+      accord.departments?.filter((dept) => dept.pivot?.deptagree_valide).length ||
+      0
+    );
+  }
+
+  function deselectAll() {
+    selectedDepartment.value = [];
+    selectedCountries.value = [];
+  }
+
+  function deselectAllDept() {
+    selectedDepartment.value = [];
+  }
+
+  function deselectAllCountry() {
+    selectedCountries.value = [];
+  }
+
+  // Surveiller les changements et sauvegarder les filtres
+  watch(selectedDepartment, saveFilters);
+  watch(selectedCountries, saveFilters);
+  watch(currentPage, saveFilters);
+
+  onMounted(() => {
+    loadFilters();
+    fetchAll();
+  });
+
+  watch(
+    [selectedDepartment, selectedCountries],
+    () => {
+      fetchFilteredAccords();
+    },
+    { deep: true }
   );
-}
-
-function deselectAll() {
-  selectedDepartment.value = [];
-  selectedCountries.value = [];
-}
-function deselectAllDept() {
-  selectedDepartment.value = [];
-}
-function deselectAllCountry() {
-  selectedCountries.value = [];
-}
-// Surveiller les changements et sauvegarder les filtres
-watch(selectedDepartment, saveFilters);
-watch(selectedCountries, saveFilters);
-watch(currentPage, saveFilters);
-
-onMounted(() => {
-  loadFilters();
-  fetchAll();
-});
-
-watch(
-  [selectedDepartment, selectedCountries],
-  () => {
-    fetchFilteredAccords();
-  },
-  { deep: true }
-);
-
-
 </script>

@@ -23,44 +23,44 @@
   import AlertContainer from './components/utils/AlertContainer.vue';
   import config from './config';
   import router from './router';
-import { addAlert } from './composables/addAlert';
+  import { addAlert } from './composables/addAlert';
 
-// Fonction pour vérifier l'état de connexion
-async function checkUserLogin() {
+  // Fonction pour vérifier l'état de connexion
+  async function checkUserLogin() {
     try {
-        const accountStore = useAccountStore();
-        const response = await fetch(config.apiUrl + 'cas.php' + '?check_login=true');
+      const accountStore = useAccountStore();
+      const response = await fetch(config.apiUrl + 'cas.php' + '?check_login=true');
         
-        if (response.ok) {
-            const data = await response.json();
-            const isLogged = data.logged_in;
-            const userLogin = data.login;
+      if (response.ok) {
+        const data = await response.json();
+        const isLogged = data.logged_in;
+        const userLogin = data.login;
+          
+        if (!isLogged) {
+          accountStore.logoutAccount();
+          // Vérifie si la route actuelle nécessite une authentification
+          if (router.currentRoute.value.meta?.requiresAuth) {
             
-            if (!isLogged) {
-                accountStore.logoutAccount();
-                // Vérifie si la route actuelle nécessite une authentification
-                if (router.currentRoute.value.meta?.requiresAuth) {
-                  
-                    addAlert('error', {
-                      data: { 
-                          error: 'Vous avez été déconnecté automatiquement.', 
-                          message: 'Vous avez été redirigé vers la page d\'accueil.' 
-                      }
-                    }, null);
-                    router.push({ name: 'Accueil' });
-                }
-            }
-
-            return [isLogged, userLogin];
-        } else {
-            console.error("Erreur lors de la vérification de l'état de connexion.");
-            return [false, null];
+            addAlert('error', {
+              data: { 
+                error: 'Vous avez été déconnecté automatiquement.', 
+                message: 'Vous avez été redirigé vers la page d\'accueil.' 
+              }
+            }, null);
+            router.push({ name: 'Accueil' });
+          }
         }
-    } catch (error) {
-        console.error('Erreur réseau :', error);
+
+        return [isLogged, userLogin];
+      } else {
+        console.error("Erreur lors de la vérification de l'état de connexion.");
         return [false, null];
+      }
+    } catch (error) {
+      console.error('Erreur réseau :', error);
+      return [false, null];
     }
-}
+  }
 
   // Déclenche la vérification toutes les 5 minutes
   let intervalId;
@@ -74,42 +74,40 @@ async function checkUserLogin() {
   });
 </script>
 
-
 <style>
+  html, body {
+    overscroll-behavior-y: contain; /* Empêche le scroll au-delà des limites de la page */
+    /* overflow-x: hidden; /* Empêche le scroll horizontal */
+  }
 
-html, body {
-  overscroll-behavior-y: contain; /* Empêche le scroll au-delà des limites de la page */
-  /* overflow-x: hidden; /* Empêche le scroll horizontal */
-}
+  #content {
+    position: relative;
+    z-index: 1;
+  }
 
-#content {
-  position: relative;
-  z-index: 1;
-}
+  header {
+    position: relative;
+  }
 
-header {
-  position: relative;
-}
+  .modal-box{
+    z-index: 1001;
+  }
 
-.modal-box{
-  z-index: 1001;
-}
+  .notification-container {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 2000;
+  }
 
-.notification-container {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  z-index: 2000;
-}
+  #alert-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 1500; 
+  }
 
-#alert-container {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  z-index: 1500; 
-}
-
-footer {
-  position: relative;
-}
+  footer {
+    position: relative;
+  }
 </style>
